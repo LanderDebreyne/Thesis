@@ -56,8 +56,8 @@ scoped e = Scope (liftEff e) Pure Pure
 data ForSc m r where
   ForS :: m -> ForSc m m
 
-for :: (ForSc Int :<: sc) => Int -> (Int -> Comp op sc [b]) -> ([b] -> Comp op sc a)-> Comp op sc a
-for l f g = Scope (liftEff (ForS l)) f g
+for :: (ForSc Int :<: sc) => Int -> (Int -> Comp op sc a) -> Comp op sc a
+for l f = Scope (liftEff (ForS l)) f Pure
 
 (#) :: (f a -> b) -> (g a -> b) -> (f :+: g) a -> b
 (alg # fwd) (Inl x) = alg x
@@ -82,24 +82,29 @@ swap :: (a, b) -> (b, a)
 swap (x, y) = (y, x)
 
 hAccum :: Monoid m => Comp (Accum m :+: c) (ForSc Int :+: scs) a -> Comp c scs (m, a)
-hAccum = fold AlgPar{ 
-      gen = \r -> return (mempty, r), 
-      hPerform = \ (Acc m) k -> do
-        (m', v) <- k ()
-        return (m <> m', v), 
-      hScope = \(ForS i) p k -> do 
-        (m1, x) <- p i
-        _
-        (m', b) <- k (m1,x)
-        return (m1 <> m', b),
-      lift = \(m, x) k -> hAccum (k x)
-    }
+hAccum = fold (AlgPar ret per scop lift) where
+  ret ::(Monoid m) => a -> Comp c scs (m, a)
+  ret x = return (mempty, x)
+  per :: (Monoid m) => Accum m b -> (b -> Comp c scs (m, a)) -> Comp c scs (m, a)
+  per (Acc m) k = do
+    (m', v) <- k ()
+    return (m <> m', v) 
+  scop :: (Monoid m) => ForSc Int c' -> (c' -> Comp c scs (m, b)) -> ((m, b) -> Comp c scs (m, a)) -> Comp c scs (m, a)
+  scop (ForS i) p k = let 
+    handle [(m,x)] = (m, x)
+    handle ((m, x):xs) = ((fst (handle xs)) <> m, x) in do
+    x <- sequence [p j|j <- [0..i-1]]
+    (m, x) <- Pure (handle x)
+    (m', b) <- k (m, x)
+    return (m <> m', b)
+  lift :: (Monoid m) => (m, b) -> (b -> Comp (Accum m :+: c) (ForSc Int :+: scs) a) -> Comp c scs (m, a)
+  lift (m, x) k = hAccum (k x)
 
 
 sumEx :: forall a. (Num a) => [a] -> a
 sumEx xs = let
   (Sum total, _) = hVoid $ hAccum @(Sum a) $ do
-    for (length xs) (\x  -> sequence [perform $ Acc (Sum $ xs !! i) | i <- [0..(x-1)]]) (Pure . Fold.fold)
+    for (length xs) (\x  -> perform $ Acc (Sum $ xs !! x))
   in total
 
 
@@ -111,22 +116,20 @@ testSum = sumEx [1,2,3,12]
 data Except e a = Throw e deriving (Functor)
 
 hWeak :: (Monoid e) => Comp (Except e :+: c) (ForSc Int :+: scs) a -> Comp c scs (Either e a)
-hWeak = fold AlgPar{
-    gen = \x -> return (Right x),
-    hPerform = \(Throw err) _ -> return (Left err),
-    -- hFor = \iters k -> do
-    --    res <- Pure iters
-    --    case firstFailure res of
-    --      Left err -> return (Left err)
-    --      Right t  -> k t,
-    hScope = \(ForS i) p k -> do
-       iters <- p i
-       _
-       case iters of 
-        Left err -> return (Left err)
-        Right t -> k (Right t),
-    lift = \(Right a) k -> hWeak (k a)
-}
+hWeak = fold (AlgPar ret per scop lift) where
+  ret :: (Monoid e) => a -> Comp c scs (Either e a)
+  ret x = return (Right x)
+  per :: (Monoid e) => (Except e b) -> (b -> Comp c scs (Either e a)) -> Comp c scs (Either e a)
+  per (Throw err) _  = return (Left err)
+  scop :: (Monoid e) => (ForSc Int c') -> (c' -> Comp c scs (Either e b)) -> ((Either e b) -> Comp c scs (Either e a)) -> Comp c scs (Either e a)
+  scop (ForS i) p k = do
+    iters <- sequence [p j| j <- [1..i]]
+    case firstFailure iters of 
+      Left err -> return (Left err)
+      Right t -> k (Right (head t))
+  lift :: (Monoid e) => (Either e b) -> (b -> Comp (Except e :+: c) (ForSc Int :+: scs) a) -> Comp c scs (Either e a)
+  lift (Right x) k = hWeak (k x)
+
 
 firstFailure :: Monoid err => [Either err a] -> Either err [a]
 firstFailure lst = case Fold.fold (fmap firstError lst) of
@@ -138,12 +141,12 @@ firstFailure lst = case Fold.fold (fmap firstError lst) of
 prog :: Comp (Except String :+: (Accum String :+: Empty)) (ForSc Int :+: sc) String
 prog = do    
     perform $ Acc "start "
-    for 5 (\x -> sequence $ [if i == 2
+    for 5 (\x -> if x == 2
       then do
         perform $ Acc "!"
         perform $ Throw "error"
         perform $ Acc "unreachable"
-      else perform $ Acc (show i) | i <- [1..x] ]) (\x -> Pure (Fold.fold x))
+      else perform $ Acc (show x))
     perform $ Acc " end"
     return "success"
 
@@ -173,9 +176,7 @@ hOnce = fold (AlgPar ret onc scop lift) where
     Comp c scs [a]) -> Comp c scs [a]
   scop (One m) p k = do
     a <- p ()
-    _
-    b <- k ([head a])
-    return b
+    k ([head a])
   lift  :: (Monoid e) => [b] -> (b -> Comp (Choose e :+: c) (Once e :+: scs) a) -> Comp c scs [a]
   lift x k = concMap x k hOnce
 
