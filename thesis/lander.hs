@@ -40,32 +40,32 @@ instance Monad (Comp op sc) where
    (Perform x k)  >>= f = Perform x ((>>= f) . k)
    (Scope x p k)  >>= f = Scope x p ((>>= f) . k)
 
-data AlgPar op sc f g m l = AlgPar {
+data AlgPar op sc scs f g m l = AlgPar {
     gen      :: forall a.      a -> m (f a),
     hPerform :: forall a b.    op b -> (b -> m (f a)) -> m (f a),
-    hScope   :: forall a b c.  sc c -> (c -> m (f b)) -> (f b -> m (f a)) -> m (f a),
-    lift     :: forall a b.    f b -> (b -> l (a)) ->  m (f a)}
+    hScope   :: forall a b c.  sc c -> (c -> m (f b)) -> (b -> m (f a)) -> m (f a),
+    forward  :: forall a b c.  scs c -> (c -> l b) -> (b -> l a) ->  m (f a)}
 
-fold :: AlgPar op sc f g (Comp ops scs) (Comp (op :+: ops) (sc :+: scs)) -> Comp (op :+: ops) (sc :+: scs) a -> Comp ops scs (f a)
+fold :: AlgPar op sc scs f g (Comp ops scs) (Comp (op :+: ops) (sc :+: scs)) -> Comp (op :+: ops) (sc :+: scs) a -> Comp ops scs (f a)
 fold alg (Pure x)             = gen alg x
 fold alg (Perform op k)       = (per # fwd) op where
   per o                       = hPerform alg o (fold alg . k)
   fwd o                       = Perform o (fold alg . k)
 fold alg (Scope sc p k)       = (sco # fwd) sc p where
-  sco s                       = \p -> hScope alg s (fold alg . p) (\x -> lift alg x k)
-  fwd s                       = \p -> Scope s (fold alg . p) (\x -> lift alg x k)
+  sco s                       = \p -> hScope alg s (fold alg . p) (fold alg . k)
+  fwd s                       = \p -> forward alg s p k
 
 perform :: (op :<: ops) => op a -> Comp ops sc a
 perform e = Perform (liftEff e) Pure
 
-scoped :: (sc :<: scs) => sc a -> Comp op scs a 
+scoped :: sc a -> Comp op (sc :+: scs) a 
 scoped e = Scope (liftEff e) Pure Pure  
 
 data ForSc m r where
   ForS :: m -> ForSc m m
 
-for :: (ForSc Int :<: sc) => Int -> (Int -> Comp op sc a) -> Comp op sc a
-for l f = Scope (liftEff (ForS l)) f Pure
+for :: Int -> (Int -> Comp op (ForSc Int :+: sc) a) -> Comp op (ForSc Int :+: sc) a
+for l f = Scope (Inl (ForS l)) f Pure-- (liftEff (ForS l)) f Pure
 
 (#) :: (f a -> b) -> (g a -> b) -> (f :+: g) a -> b
 (alg # fwd) (Inl x) = alg x
@@ -90,24 +90,21 @@ swap :: (a, b) -> (b, a)
 swap (x, y) = (y, x)
 
 hAccum :: Monoid m => Comp (Accum m :+: c) (ForSc Int :+: scs) a -> Comp c scs (m, a)
-hAccum = fold (AlgPar ret per scop lift) where
+hAccum = fold (AlgPar ret per scop forward) where
   ret ::(Monoid m) => a -> Comp c scs (m, a)
   ret x = return (mempty, x)
   per :: (Monoid m) => Accum m b -> (b -> Comp c scs (m, a)) -> Comp c scs (m, a)
   per (Acc m) k = do
-    (m', v) <- k ()
+    (m', v) <- k ()    
     return (m <> m', v) 
-  -- TODO: rewrite as fold
-  scop :: (Monoid m) => ForSc Int c' -> (c' -> Comp c scs (m, b)) -> ((m, b) -> Comp c scs (m, a)) -> Comp c scs (m, a)
-  scop (ForS i) p k = let 
-    handle [(m,x)] = (m, x)
-    handle ((m, x):xs) = ((fst (handle xs)) <> m, x) in do
-    x <- sequence [p j|j <- reverse [1..i]]
-    (m, x) <- Pure (handle x)
-    (m', b) <- k (m, x)
+  scop :: (Monoid m) => ForSc Int c' -> (c' -> Comp c scs (m, b)) -> (b -> Comp c scs (m, a)) -> Comp c scs (m, a)
+  scop (ForS i) p k = do
+    l <- sequence [p j|j <- reverse [0..i-1]]
+    let (m, x) = foldr (\n a -> (fst n <> fst a, snd a)) (head l) (tail l)
+    (m', b) <- k x
     return (m <> m', b)
-  lift :: (Monoid m) => (m, b) -> (b -> Comp (Accum m :+: c) (ForSc Int :+: scs) a) -> Comp c scs (m, a)
-  lift (m, x) k = hAccum (k x)
+  forward :: (Monoid m) => scs c1 -> (c1 -> Comp (Accum m :+: c) (ForSc Int :+: scs) b) -> (b -> Comp (Accum m :+: c) (ForSc Int :+: scs) a) -> Comp c scs (m, a)
+  forward s p k = Scope s (hAccum . p) (\(m, x) -> hAccum (k x))
 
 
 sumEx :: forall a. (Num a) => [a] -> a
@@ -125,19 +122,19 @@ testSum = sumEx [1,2,3,12]
 data Except e a = Throw e deriving (Functor)
 
 hWeak :: (Monoid e) => Comp (Except e :+: c) (ForSc Int :+: scs) a -> Comp c scs (Either e a)
-hWeak = fold (AlgPar ret per scop lift) where
+hWeak = fold (AlgPar ret per scop forward) where
   ret :: (Monoid e) => a -> Comp c scs (Either e a)
   ret x = return (Right x)
   per :: (Monoid e) => (Except e b) -> (b -> Comp c scs (Either e a)) -> Comp c scs (Either e a)
   per (Throw err) _  = return (Left err)
-  scop :: (Monoid e) => (ForSc Int c') -> (c' -> Comp c scs (Either e b)) -> ((Either e b) -> Comp c scs (Either e a)) -> Comp c scs (Either e a)
+  scop :: (Monoid e) => (ForSc Int c') -> (c' -> Comp c scs (Either e b)) -> (b -> Comp c scs (Either e a)) -> Comp c scs (Either e a)
   scop (ForS i) p k = do
     iters <- sequence [p j| j <- [1..i]]
     case firstFailure iters of 
       Left err -> return (Left err)
-      Right t -> k (Right (head t))
-  lift :: (Monoid e) => (Either e b) -> (b -> Comp (Except e :+: c) (ForSc Int :+: scs) a) -> Comp c scs (Either e a)
-  lift (Right x) k = hWeak (k x)
+      Right t -> k (head t)
+  forward :: (Monoid e) => scs c1 -> (c1 -> Comp (Except e :+: c) (ForSc Int :+: scs) b) -> (b -> Comp (Except e :+: c) (ForSc Int :+: scs) a) -> Comp c scs (Either e a)
+  forward s p k = Scope s (hWeak . p) (\(Right x) -> hWeak (k x))
 
 
 firstFailure :: Monoid err => [Either err a] -> Either err [a]
@@ -181,13 +178,13 @@ hOnce = fold (AlgPar ret onc scop lift) where
     b <- k False
     return (a ++ b)
   scop :: Once e d -> (d -> 
-    Comp c scs [b]) -> ([b] -> 
+    Comp c scs [b]) -> (b -> 
     Comp c scs [a]) -> Comp c scs [a]
   scop (One m) p k = do
     a <- p ()
-    k ([head a])
-  lift  :: (Monoid e) => [b] -> (b -> Comp (Choose e :+: c) (Once e :+: scs) a) -> Comp c scs [a]
-  lift x k = concMap x k hOnce
+    k (head a)
+  lift  :: (Monoid e) => scs c1 -> (c1 -> Comp (Choose e :+: c) (Once e :+: scs) b) -> (b -> Comp (Choose e :+: c) (Once e :+: scs) a) -> Comp c scs [a]
+  lift s p k = Scope s (hOnce . p) (\x -> concMap x k hOnce)
 
 concMap :: (Monad m) => [c] -> (c -> b) -> (b -> m [a]) -> m [a]
 concMap [] k f = return []
@@ -202,62 +199,53 @@ testOnce = do
 
 tOnce = hVoid $ hOnce testOnce
 
--- PRNG
+-- -- PRNG
 
-data Rand r where
-  SampleUniform :: Rand Float
+-- data AlgParState op sc scs s f g m l = AlgParState {
+--     genS      :: forall a.      s -> a -> m (f a),
+--     hPerformS :: forall a b.    s -> op b -> (s -> b -> m (f a)) -> m (f a),
+--     hScopeS   :: forall a b c.  s -> sc c -> (c -> m (f b)) -> (s -> b -> m (f a)) -> m (f a),
+--     forwardS  :: forall a b c.  s -> scs c -> (c -> l b) -> (b -> l a) ->  m (f a)}
 
--- RandomGen can only split pairwise, so we recursively unfold it to a table
--- of the right length. (This is a serial implementation, but we note that
--- n-ary split can be implemented in parallel. See for instance
--- https://github.com/google/jax/blob/main/design_notes/prng.md)
--- splitKey :: forall g. (System.Random.RandomGen g) => g -> [g]
--- splitKey g = (splitTo g $ natVal $ Proxy n) where
+-- foldS :: AlgParState op sc scs s f g (Comp ops scs) (Comp (op :+: ops) (sc :+: scs)) -> s -> Comp (op :+: ops) (sc :+: scs) a -> Comp ops scs (f a)
+-- foldS alg s (Pure x)             = genS alg s x
+-- foldS alg s (Perform op k)       = (per # fwd) op where
+--   per o                          = hPerformS alg s o (\s x -> foldS alg s (k x))
+--   fwd o                          = Perform o (foldS alg s . k)
+-- foldS alg s (Scope sc p k)       = (sco # fwd) sc p where
+--   sco sc'                        = \p -> hScopeS alg s sc' (\x -> foldS alg s (p x)) (\s x -> foldS alg s (k x))
+--   fwd sc'                        = \p -> forwardS alg s sc' p k
+
+-- data Rand r where
+--   SampleUniform :: Rand Float
+
+-- -- RandomGen can only split pairwise, so we recursively unfold it to a table
+-- -- of the right length. (This is a serial implementation, but we note that
+-- -- n-ary split can be implemented in parallel. See for instance
+-- -- https://github.com/google/jax/blob/main/design_notes/prng.md)
+-- splitKey :: (RandomGen g) => g -> Int -> [g]
+-- splitKey g n = splitTo g n where
 --   splitTo g 0 = []
 --   splitTo g 1 = [g]
---   splitTo g n = g1:(splitTo g2 (n-1)) where (g1, g2) = System.Random.split g
+--   splitTo g n = g1:(splitTo g2 (n-1)) where (g1, g2) = splitKeyPair g
 
 
-splitKeyPair :: System.Random.RandomGen g => g -> (g, g)
-splitKeyPair = System.Random.split
+-- splitKeyPair :: System.Random.RandomGen g => g -> (g, g)
+-- splitKeyPair = System.Random.split
 
-
--- newtype ManualStateRandomImpl effs key a = ManualStateRandomImpl (key -> effs a)
-
--- hRandom :: System.Random.RandomGen g => g -> Comp (Rand :+: c) (ForSc Int :+: scs) (ManualStateRandomImpl (Comp c scs) g b) -> Comp c scs (ManualStateRandomImpl (Comp c scs) g b)
--- hRandom g comp = do
---   ManualStateRandomImpl result <- fold AlgPar{ 
---     gen = return . ManualStateRandomImpl . const , 
---     hPerform = \SampleUniform k ->
---         return $ ManualStateRandomImpl $ \key -> do
---           let (key1, key2) = splitKeyPair key
---           ManualStateRandomImpl kthunk <- k key1
---           kthunk key2,
---     hScope = \(ForS i) p k -> do
---         return $ ManualStateRandomImpl $ \key -> do
---           let (key1, key2) = splitKeyPair key
---           iterResults <- for i (\j -> do
---             let ManualStateRandomImpl iterthunk = (sequence [p l| l <- [1..i]])!!j
---             iterthunk (key1!!j))
---           ManualStateRandomImpl contthunk <- k iterResults
---           k key2,
---     lift = \x k -> -- TODO
---     } comp
---   result g
-
-  -- do
-  -- Identity result <- fold AlgPar{ 
-  --   gen = \x -> return (Identity x), 
-  --   hPerform = \key SampleUniform cont -> let
-  --       (val, key') = System.Random.randomR (0.0, 1.0) key
-  --       in cont key' val,
-  --   hScope = \key ell cont -> do
-  --       let (key1, key2) = splitKeyPair key
-  --           key1s = splitKey key1
-  --       results <- ell key1s
-  --       cont key2 (runIdentity <$> results)
-  --   } g comp
-  -- return result
+-- hRandomS :: (RandomGen g) => g -> Comp (Rand :+: c) (ForSc Int :+: scs) b -> Comp c scs (Identity b)
+-- hRandomS g comp = foldS AlgParState{ 
+--     genS = \_ x -> return (Identity x), 
+--     hPerformS = \key SampleUniform k -> let
+--         (val, key') = System.Random.randomR (0.0, 1.0) key
+--         in k key' val,
+--     hScopeS = \key (ForS i) p k -> do
+--         let (key1, key2) = splitKeyPair key
+--             key1s = splitKey key1 i
+--         results <- sequence [p (key1s!!j) | j <- [0..i-1]]
+--         Pure (Identity (fmap runIdentity results)),
+--     forwardS = \s scs p k -> Scope scs (hRandomS s . p) (\(Identity x) -> hRandomS s (k x))
+--     } g comp
 
 -- Amb
 
@@ -275,27 +263,10 @@ hAmb = fold AlgPar{
     let   
       cartProd here rest = [x:y | x <- here, y <- rest]
       allOptions = foldr cartProd [[]] iterResults
-    allRes <- sequence [k (allOptions!!i) | i <- [0..(length allOptions - 1)]]
+    allRes <- sequence $ map k $ concat [(allOptions!!i) | i <- [0..(length (allOptions) - 1)]]
     return $ concat allRes,
-  lift = \x k -> concMap x k hAmb
+  forward = \s p k -> Scope s (hAmb . p) (\x -> concMap x k hAmb)
 }
--- hAmb = fold (AlgPar ret per scop lift) where
---       ret :: a -> Comp c scs [a]
---       ret x = return [x]
---       per :: Amb [b] b -> (d -> Comp c scs [a]) -> Comp c scs [a]
---       per (Ambl l) k = do
---         allRes <- sequence [k (l!!i) | i <- [0..(length l - 1)]]
---         return $ concat allRes
---       scop :: (ForSc Int c') -> (c' -> Comp c scs [b]) -> ([b] -> Comp c scs [a]) -> Comp c scs [a]
---       scop (ForS i) p k = do
---         iterResults <- sequence [p j| j <- [1..i]]
---         let   
---           cartProd here rest = [x:y | x <- here, y <- rest]
---           allOptions = foldr cartProd [[]] iterResults
---         allRes <- sequence [k (allOptions!!i) | i <- [0..(length allOptions - 1)]]
---         return $ concat allRes
---       lift :: [d] -> (d -> Comp (Amb [b] :+: c) (ForSc Int :+: scs) a) -> Comp c scs [a]
---       lift x k = concMap x k hAmb
 
 ambCoinFlips :: Comp ((Amb [String]) :+: Empty)  ((ForSc Int) :+: Empty ) String
 ambCoinFlips = do
