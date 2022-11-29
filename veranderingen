@@ -1,0 +1,45 @@
+Syntax
+    Lijst-datastructuur [c_1,...,c_n,v_1,...,v_m] (is value v)
+    letrec (is computation c)
+        -- https://www.cs.cornell.edu/courses/cs6110/2018sp/lectures/lec11.pdf
+        letrec f1 = λx1. v1 and ... and fn = λxn. vn in c 
+        http://pages.di.unipi.it/corradini/Didattica/PR2-B-14/OpSem.pdf
+        https://www.cs.swarthmore.edu/~zpalmer/cs73/s18/book.pdf
+        Mike Grant Zachary Palmer Scott Smith, Principles of Programming Languages, Chapter 2
+        letrec f x = c1 in c2
+    (pc: parallel computation)
+
+Semantiek
+
+    E-Letrec 
+    --------------------------------------------------------------------------------
+        let rec f x = c1 In c2 -> c2[λx. c1[(λx. let rec f x = c1 in f x)/f]/f]
+
+    E-ParDo
+                             c1->c1', ..., cn->cn', n != 0
+    ---------------------------------------------------------------------------------
+        do x <- [c1,...,cn,cn+1,...,cm]; cm+1 -> do x <- [c1',...,cn',cn+1,...,cm]; cm+1
+
+    E-ParList
+                             c1->c1', ..., cn->cn', n != 0
+    ---------------------------------------------------------------------------------
+        [c1,...,cn,cn+1,...,cm]; cm+1 -> [c1',...,cn',cn+1,...,cm]; cm+1
+
+    E-ParDoRet
+    ---------------------------------------------------------------------------------
+        do x <- [return v1,..., return vn]; cn+1 -> cn+1 [[v1,...,vn]/x]
+
+    E-IfFalse?
+    E-IfTrue?
+
+Calculus
+    (ParDo)
+    (ParDoRet)
+    Lijst values
+    Lijst computations
+    head
+    tail
+    let rec
+    mapToComp :: (ParallellisableFunction (v->c)) => [v] -> (v->c) -> [c] -- parallel
+    mapToValue :: (ParallellisableFunction (v->v)) => [v] -> (v->v) -> [v] -- parallel
+    reduce :: (ReducingFunction (v->v->v)) => [v] -> (v->v->v) -> v -- parallel

@@ -1,0 +1,330 @@
+sc for l (i. op accum i (x. return x)) (x. return x)
+
+hAccum (+) 0 = \(<>) mempty handler 
+    {
+        return x -> return (mempty, x)
+        op accum m k -> do  (m', v) <- k ();
+                        let r = m' <> m in return (r, v)
+        sc for l p k -> let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in
+                            do  pairs <- mapToComp l p; -- parallel foreach
+                            let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+                                let outs = mapToValue pairs fst in -- parallel foreach 
+                                    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+                                        let m = reduce outs (<>) in -- parallel reduce
+                                            do  (m', b) <- k ()
+                                            let r = m' <> m in return (r, b)
+        fwd f p k -> f (p, k) -- ?
+    }
+
+-- parallel moet mogelijk zijn
+-- Bijvoorbeeld door lijst te splitsen over threads en resultaat te concateneren
+-- niet-parallelle implementatie 
+mapToComp :: (ParallellisableFunction (v->c)) => [v] -> (v->c) -> [c] 
+let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in
+
+-- parallel moet mogelijk zijn
+-- Bijvoorbeeld door lijst te splitsen over threads en resultaat te concateneren
+-- niet-parallelle implementatie   
+mapToValue :: (ParallellisableFunction (v->v)) => [v] -> (v->v) -> [v]
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+
+-- parallel moet mogelijk zijn
+-- Bijvoorbeeld door lijst te splitsen over threads en resultaten te reduceren zelfde reducerende functie
+-- niet-parallelle implementatie 
+reduce :: (ReducingFunction (v->v->v)) => [v] -> (v->v->v) -> v 
+let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+
+cAccum = sc for [1,2,3,12] (i. op accum i (x. return x)) (x. return x) 
+
+hAccum # cAccum
+
+{- E-HandSc -}
+let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in
+                            do  pairs <- mapToComp [1,2,3,12] (i. op accum i (x. return x)); 
+                            let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+                                let outs = mapToValue pairs fst in 
+                                    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+                                        let m = reduce outs (<>) in
+                                            do  (m', b) <- k ()
+                                            let r = m' <> m in return (r, b)
+
+{- E-Letrec -}
+do  pairs <- (f. (f 1):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 2):mapToComp [3,12] f) f) (i. op accum i (x. return x)); -- parallel foreach
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+
+{- E-Do and E-AppAbs -}
+do  pairs <- ((i. op accum i (x. return x)) 1):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 2):mapToComp [3,12] f) (i. op accum i (x. return x));
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [E-AppAbs, E-Letrec] -}
+do  pairs <- (op accum 1 (x. return x)):(f. (f 2):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 3:mapToComp [12] f) f) (i. op accum i (x. return x)));
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [E-HandOp, E-AppAbs] -}
+do  pairs <- (do  (m', v) <- (x. return x) (); let r = m' <> 1 in return (r, v)):(((i. op accum i (x. return x)) 2):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 3:mapToComp [12] f) (i. op accum i (x. return x))));
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [E-Do and E-AppAbs, E-AppAbs, E-Letrec] -}
+do  pairs <- (do  (m', v) <- return (); let r = m' <> 1 in return (r, v)):((op accum 2 (x. return x)):(f. (f 3):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 12:mapToComp [] f) f) (i. op accum i (x. return x))));
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [E-Do and E-HandRet, E-HandOp, E-AppAbs] -}
+do  pairs <- (do  (m', v) <- return (0,()); let r = m' <> 1 in return (r, v)):
+    (do  (m', v) <- (x. return x) (); let r = m' <> 2 in return (r, v)):
+        ((i. op accum i (x. return x)) 3):
+            (let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 12:mapToComp [] f) (i. op accum i (x. return x)));
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [E-DoRet, E-Do and E-AppAbs, E-AppAbs, E-Letrec] -}
+do  pairs <- (let r = 1 in return (r, ())):
+    (do  (m', v) <- return (); let r = m' <> 2 in return (r, v)):
+        (op accum 3 (x. return x)):
+            (f. (f 12:[]) (i. op accum i (x. return x)));
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [E-Let, E-Do and E-HandRet, E-HandOp, E-AppAbs] -}
+do  pairs <- (return (1, ())):
+    (do  (m', v) <- return (0,()); let r = m' <> 2 in return (r, v)):
+        (do  (m', v) <- (x. return x) (); let r = m' <> 3 in return (r, v)):
+            (((i. op accum i (x. return x)) 12):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [Nothing, E-DoRet, E-Do and E-AppAbs, E-AppAbs] -}
+do  pairs <- (return (1, ())):
+    (let r = 2 in return (r, ())):
+        (do  (m', v) <- return (); let r = m' <> 3 in return (r, v)):
+            ((op accum 12 (x. return x)):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [Nothing, E-Let, E-Do and E-HandRet, E-HandOp] -}
+do  pairs <- (return (1, ())):
+    (return (2, ())):
+        (do  (m', v) <- return (0,()); let r = m' <> 3 in return (r, v)):
+            ((do  (m', v) <- (x. return x) (); let r = m' <> 12 in return (r, v)):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [Nothing, Nothing, E-DoRet, E-Do and E-AppAbs] -}
+do  pairs <- (return (1, ())):
+    (return (2, ())):
+        (let r = 3 in return (r, ())):
+            ((do  (m', v) <- return (); let r = m' <> 12 in return (r, v)):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [Nothing, Nothing, E-Let, E-Do and E-HandRet] -}
+do  pairs <- (return (1, ())):
+    (return (2, ())):
+        (return (3, ())):
+            ((do  (m', v) <- return (0, ()); let r = m' <> 12 in return (r, v)):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [Nothing, Nothing, Nothing, E-DoRet] -}
+do  pairs <- (return (1, ())):(return (2, ())):(return (3, ())):
+            (let r = 12 in return (r, ()):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDo and [Nothing, Nothing, Nothing, E-Let] -}
+do  pairs <- (return (1, ())):(return (2, ())):(return (3, ())):(return (12, ()):[]);
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue pairs fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-ParDoRet -}
+let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+    let outs = mapToValue [(1, ()), (2, ()), (3, ()), (12, ())] fst in 
+        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+            let m = reduce outs (<>) in
+                do  (m', b) <- k ()
+                let r = m' <> m in return (r, b)
+
+{- E-Letrec -}
+let outs = (f. (f (1,())):((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (2, ())):mapToComp [(3, ()), (12, ())] f)) f) fst in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let outs = (1:((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (2, ())):mapToComp [(3, ()), (12, ())] f)) fst) in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-Letrec -}
+let outs = 1:(f. (f (2,())):((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (3, ())):mapToComp [(12, ())] f)) f) fst in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let outs = 1:2:((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (3, ())):mapToComp [(12, ())] fst))in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-Letrec -}
+let outs = 1:2:(f. (f (3,())):((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (12, ())):mapToComp [] f)) f) fst in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let outs = 1:2:3:((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (12, ())):mapToComp [] f) fst) in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-Letrec -}
+let outs = 1:2:3:((f. (f (12,())):[]) fst) in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let outs = 1:2:3:12:[] in
+    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+        let m = reduce outs (<>) in
+            do  (m', b) <- (x. return x) ()
+            let r = m' <> m in return (r, b)
+
+{- E-Let -}
+let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+    let m = reduce [1,2,3,12] <> in
+        do  (m', b) <- (x. return x) ()
+        let r = m' <> m in return (r, b)
+
+{- E-Letrec -}
+let m = (f. f 1 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 2 (reduce [3,12] f)) f)) (<>) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let m = ((<>) 1 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 2 (reduce [3,12] f)) (<>))) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-LetRec -}
+let m = ((<>) 1 (f. f 2 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 3 (reduce [12] f)) f)) (<>)) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let m = ((<>) 1 ((<>) 2 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 3 (reduce [12] f)) (<>)))) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-LetRec -}
+let m = ((<>) 1 ((<>) 2 (f. f 3 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 12 (reduce [] f)) f)) (<>))) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let m = ((<>) 1 ((<>) 2 ((<>) 3 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 12 (reduce [] f)) (<>))))) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-LetRec -}
+let m = ((<>) 1 ((<>) 2 ((<>) 3 (f. f 12 (mempty)) (<>)))) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-AppAbs -}
+let m = ((<>) 1 ((<>) 2 ((<>) 3 ((<>) 12 (mempty))))) in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+let m = 18 in
+    do  (m', b) <- (x. return x) ()
+    let r = m' <> m in return (r, b)
+
+{- E-Let -}
+do  (m', b) <- (x. return x) ()
+let r = m' <> 18 in return (r, b)
+
+{- E-AppAbs -}
+do  (m', b) <- return ()
+let r = m' <> 18 in return (r, b)
+
+{- E-HandRet -}
+do  (m', b) <- return (0,())
+let r = m' <> 18 in return (r, b)
+
+{- E-DoRet -}
+let r = 18 in return (r, ())
+
+{- E-Let -}
+return (18, ())

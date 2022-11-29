@@ -1,0 +1,64 @@
+1. Inleiding
+        Side-effects
+            Monads
+            Effecten en handlers
+        Algebraïsche Effecten
+        Calculus 
+            Syntax (Startpunt: Eff?)
+            Operationele semantiek (Startpunt: Eff?)
+            Type- en Effect-systeem (Startpunt: Eff?)
+            Metatheorie
+2. Achtergrond
+        Scoped Effecten
+            Effecten met scope
+        Parallelle Effecten
+            Parallelle constructies met effecten
+3. Startpunt
+        lambda sc: A Calculus for Scoped Effects & Handlers
+                Toevoegingen tov calculus algebraïsche effecten
+        lambda p: Parallel Algebraic Effect Handlers 
+                Toevoegingen tov calculus algebraïsche effecten
+4. Motivatie, Uitdagingen
+        Uitdaging: Niet alle effecten kunnen parallel uitgevoerd worden
+                bv. state (race-condities/non-determinisme get-put)
+        Uitdaging: Parallelle semantiek inbouwen in calculus
+                Delen van effecten parallel uitvoeren
+        Motivatie: Veel realistische programma's maken gebruik van effecten
+                Effecten (gedeeltelijk) parallel uitvoeren kan grote performantieboost geven
+        Motivatie: Waarom op de gekozen manier toevoegen
+5. Syntax
+        Nieuwe syntax die nodig is
+                ...
+                Lijst van values en computations - als value
+                head lijst - value of computation?
+                tail lijst
+                Letrec
+                (Parallelle computaties)
+6. Operationele semantiek
+        ...
+        Parallelle semantiek (op lijsten van parallelle computaties)
+        Letrec
+7. Type- en Effect-systeem
+        Lijst
+        Parallelle computaties
+        Geen veranderingen aan effect systeem?
+8. Voorbeelden
+        Scoped
+        Parallel
+        Beide
+9. Metatheorie/Correctheid
+        Lemmas
+        Preservation
+        Progress
+10. Evaluatie
+        Contributie (wat toegevoegd)
+        Bruikbaarheid (zijn de toevoegingen zinvol)
+        Correctheid (zijn de toevoegingen Correct)
+        Implementatie (is de implementatie bruikbaar/compleet, etc.)
+        Backwards compatibility met lambda sc
+11. Gerelateerd werk
+        ...
+12. Besluit
+        Resultaten
+        Beperking
+        Toekomstig werk
