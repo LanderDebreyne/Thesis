@@ -1,4 +1,7 @@
 1. Inleiding
+        Context
+        Probleemstelling
+2. Achtergrond
         Side-effects
             Monads
             Effecten en handlers
@@ -8,7 +11,6 @@
             Operationele semantiek (Startpunt: Eff?)
             Type- en Effect-systeem (Startpunt: Eff?)
             Metatheorie
-2. Achtergrond
         Scoped Effecten
             Effecten met scope
         Parallelle Effecten
@@ -26,6 +28,7 @@
         Motivatie: Veel realistische programma's maken gebruik van effecten
                 Effecten (gedeeltelijk) parallel uitvoeren kan grote performantieboost geven
         Motivatie: Waarom op de gekozen manier toevoegen
+        Hoe evalueren?
 5. Syntax
         Nieuwe syntax die nodig is
                 ...

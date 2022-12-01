@@ -3,328 +3,2122 @@ sc for l (i. op accum i (x. return x)) (x. return x)
 hAccum (+) 0 = \(<>) mempty handler 
     {
         return x -> return (mempty, x)
-        op accum m k -> do  (m', v) <- k ();
-                        let r = m' <> m in return (r, v)
-        sc for l p k -> let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in
-                            do  pairs <- mapToComp l p; -- parallel foreach
-                            let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-                                let outs = mapToValue pairs fst in -- parallel foreach 
-                                    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-                                        let m = reduce outs (<>) in -- parallel reduce
-                                            do  (m', b) <- k ()
-                                            let r = m' <> m in return (r, b)
-        fwd f p k -> f (p, k) -- ?
+        op accum m k -> k (m, ())
+        sc for l p k -> let rec map = l. f.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return [] else 
+                                (do x <- (f h)):(do xs <- map t f):[]
+                                return (x:xs) in
+                                    do pairs <- map l p; 
+                                    do outs  <- map pairs fst;
+                                    let rec reduce = l. f. mempty.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return mempty else
+                                            do y <- reduce t f mempty
+                                            return (f h y) in
+                                                do m <- reduce outs (<>) mempty
+                                                do  (m', b) <- k mempty
+                                                do r <- (_. return m' <> m)
+                                                return (r, b)
+        fwd f p k -> f (p, k) -- TODO
     }
 
 -- parallel moet mogelijk zijn
 -- Bijvoorbeeld door lijst te splitsen over threads en resultaat te concateneren
--- niet-parallelle implementatie 
-mapToComp :: (ParallellisableFunction (v->c)) => [v] -> (v->c) -> [c] 
-let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in
-
--- parallel moet mogelijk zijn
--- Bijvoorbeeld door lijst te splitsen over threads en resultaat te concateneren
 -- niet-parallelle implementatie   
-mapToValue :: (ParallellisableFunction (v->v)) => [v] -> (v->v) -> [v]
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
+map :: [a] -> (a->b) -> [b]
+let rec map = l. f.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return [] else 
+        (do x <- (f h)):(do xs <- map t f):[]
+        return (x:xs) in
+-- mapToComp :: (ParallellisableFunction (v->c)) => [v] -> (v->c) -> [c] 
+-- mapToValue :: (ParallellisableFunction (v->v)) => [v] -> (v->v) -> [v]
+
 
 -- parallel moet mogelijk zijn
 -- Bijvoorbeeld door lijst te splitsen over threads en resultaten te reduceren zelfde reducerende functie
 -- niet-parallelle implementatie 
 reduce :: (ReducingFunction (v->v->v)) => [v] -> (v->v->v) -> v 
-let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
+let rec reduce = l. f. mempty.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return mempty else
+        do y <- reduce t f mempty
+        return (f h y) in
 
-cAccum = sc for [1,2,3,12] (i. op accum i (x. return x)) (x. return x) 
+cAccum = sc for 1:2:3:12:[] (i. op accum i (x. return x)) (x. return x) 
 
-hAccum # cAccum
+hAccum (+) 0 # cAccum
 
 {- E-HandSc -}
-let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in
-                            do  pairs <- mapToComp [1,2,3,12] (i. op accum i (x. return x)); 
-                            let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-                                let outs = mapToValue pairs fst in 
-                                    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-                                        let m = reduce outs (<>) in
-                                            do  (m', b) <- k ()
-                                            let r = m' <> m in return (r, b)
+let rec map = l. f.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return [] else 
+        (do x <- (f h)):(do xs <- map t f):[]
+        return (x:xs) in
+            do pairs <- map 1:2:3:12:[] (i. hAccum # op accum i (x. return x)); 
+            do outs  <- map pairs fst;
+            let rec reduce = l. f. mempty.
+                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                if n then return mempty else
+                    do y <- reduce t f mempty
+                    return (f h y) in 
+                        do m <- reduce outs (+) 0
+                        do  (m', b) <- (x. hAccum # return x) 0
+                        do r <- (_. return m' + m)
+                        return (r, b)
 
 {- E-Letrec -}
-do  pairs <- (f. (f 1):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 2):mapToComp [3,12] f) f) (i. op accum i (x. return x)); -- parallel foreach
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-
-{- E-Do and E-AppAbs -}
-do  pairs <- ((i. op accum i (x. return x)) 1):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 2):mapToComp [3,12] f) (i. op accum i (x. return x));
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [E-AppAbs, E-Letrec] -}
-do  pairs <- (op accum 1 (x. return x)):(f. (f 2):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 3:mapToComp [12] f) f) (i. op accum i (x. return x)));
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [E-HandOp, E-AppAbs] -}
-do  pairs <- (do  (m', v) <- (x. return x) (); let r = m' <> 1 in return (r, v)):(((i. op accum i (x. return x)) 2):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 3:mapToComp [12] f) (i. op accum i (x. return x))));
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [E-Do and E-AppAbs, E-AppAbs, E-Letrec] -}
-do  pairs <- (do  (m', v) <- return (); let r = m' <> 1 in return (r, v)):((op accum 2 (x. return x)):(f. (f 3):(let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 12:mapToComp [] f) f) (i. op accum i (x. return x))));
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [E-Do and E-HandRet, E-HandOp, E-AppAbs] -}
-do  pairs <- (do  (m', v) <- return (0,()); let r = m' <> 1 in return (r, v)):
-    (do  (m', v) <- (x. return x) (); let r = m' <> 2 in return (r, v)):
-        ((i. op accum i (x. return x)) 3):
-            (let rec mapToComp l = f. if null l then [] else (f (head l)):mapToComp (tail l) f in f. (f 12:mapToComp [] f) (i. op accum i (x. return x)));
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [E-DoRet, E-Do and E-AppAbs, E-AppAbs, E-Letrec] -}
-do  pairs <- (let r = 1 in return (r, ())):
-    (do  (m', v) <- return (); let r = m' <> 2 in return (r, v)):
-        (op accum 3 (x. return x)):
-            (f. (f 12:[]) (i. op accum i (x. return x)));
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [E-Let, E-Do and E-HandRet, E-HandOp, E-AppAbs] -}
-do  pairs <- (return (1, ())):
-    (do  (m', v) <- return (0,()); let r = m' <> 2 in return (r, v)):
-        (do  (m', v) <- (x. return x) (); let r = m' <> 3 in return (r, v)):
-            (((i. op accum i (x. return x)) 12):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [Nothing, E-DoRet, E-Do and E-AppAbs, E-AppAbs] -}
-do  pairs <- (return (1, ())):
-    (let r = 2 in return (r, ())):
-        (do  (m', v) <- return (); let r = m' <> 3 in return (r, v)):
-            ((op accum 12 (x. return x)):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [Nothing, E-Let, E-Do and E-HandRet, E-HandOp] -}
-do  pairs <- (return (1, ())):
-    (return (2, ())):
-        (do  (m', v) <- return (0,()); let r = m' <> 3 in return (r, v)):
-            ((do  (m', v) <- (x. return x) (); let r = m' <> 12 in return (r, v)):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [Nothing, Nothing, E-DoRet, E-Do and E-AppAbs] -}
-do  pairs <- (return (1, ())):
-    (return (2, ())):
-        (let r = 3 in return (r, ())):
-            ((do  (m', v) <- return (); let r = m' <> 12 in return (r, v)):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [Nothing, Nothing, E-Let, E-Do and E-HandRet] -}
-do  pairs <- (return (1, ())):
-    (return (2, ())):
-        (return (3, ())):
-            ((do  (m', v) <- return (0, ()); let r = m' <> 12 in return (r, v)):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [Nothing, Nothing, Nothing, E-DoRet] -}
-do  pairs <- (return (1, ())):(return (2, ())):(return (3, ())):
-            (let r = 12 in return (r, ()):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDo and [Nothing, Nothing, Nothing, E-Let] -}
-do  pairs <- (return (1, ())):(return (2, ())):(return (3, ())):(return (12, ()):[]);
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue pairs fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-ParDoRet -}
-let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in
-    let outs = mapToValue [(1, ()), (2, ()), (3, ()), (12, ())] fst in 
-        let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-            let m = reduce outs (<>) in
-                do  (m', b) <- k ()
-                let r = m' <> m in return (r, b)
-
-{- E-Letrec -}
-let outs = (f. (f (1,())):((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (2, ())):mapToComp [(3, ()), (12, ())] f)) f) fst in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
+do pairs <- (l. f.
+                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                return (x:xs) ) t f):[]
+                    return (x:xs)) 1:2:3:12:[] (i. hAccum # op accum i (x. return x)); 
+do outs  <- (l. f.
+                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                               return  (x:xs) ) t f):[]
+                    return (x:xs)) pairs fst;
+let rec reduce = l. f. mempty.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return mempty else
+        do y <- reduce t f mempty
+        return (f h y) in
+            do m <- reduce outs (+) 0
+            do  (m', b) <- (x. hAccum # return x) 0
+            do r <- (_. return m' + m)
+            return (r, b)
 
 {- E-AppAbs -}
-let outs = (1:((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (2, ())):mapToComp [(3, ()), (12, ())] f)) fst) in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
-
-{- E-Letrec -}
-let outs = 1:(f. (f (2,())):((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (3, ())):mapToComp [(12, ())] f)) f) fst in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
-
 {- E-AppAbs -}
-let outs = 1:2:((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (3, ())):mapToComp [(12, ())] fst))in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
+do pairs <- ((do h <- head 1:2:3:12:[]):(do t <- tail 1:2:3:12:[]):(do n <- null 1:2:3:12:[]):[];
+            if n then return [] else 
+                (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                return (x:xs)); 
+do outs  <- ...
 
-{- E-Letrec -}
-let outs = 1:2:(f. (f (3,())):((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (12, ())):mapToComp [] f)) f) fst in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-Do and E-Head, E-Do and E-tail, E-Do and E-NullFalse] -}
+do pairs <- ((do h <- return 1):(do t <- return 2:3:12:[]):(do n <- return False):[];
+            if n then return [] else 
+                (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                return (x:xs)); 
+do outs  <- ...
 
-{- E-AppAbs -}
-let outs = 1:2:3:((let rec mapToValue l = f. if null l then [] else (f (head l)):mapToValue (tail l) f in f. (f (12, ())):mapToComp [] f) fst) in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet] -}
+do pairs <- ([];
+            if False then return [] else 
+                (do x <- ((i. hAccum # op accum i (x. return x)) 1)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) 2:3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                return (x:xs)); 
+do outs  <- ...
 
-{- E-Letrec -}
-let outs = 1:2:3:((f. (f (12,())):[]) fst) in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
+{- E-Do and E-EmptyList -}
+do pairs <- (if False then return [] else 
+                (do x <- ((i. hAccum # op accum i (x. return x)) 1)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) 2:3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                return (x:xs)); 
+do outs  <- ...
 
-{- E-AppAbs -}
-let outs = 1:2:3:12:[] in
-    let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-        let m = reduce outs (<>) in
-            do  (m', b) <- (x. return x) ()
-            let r = m' <> m in return (r, b)
+{- E-Do and E-IfFalse] -}
+do pairs <- ((do x <- ((i. hAccum # op accum i (x. return x)) 1)):
+                            (do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) 2:3:12:[] (i. hAccum # op accum i (x. return x))):[]
+            return (x:xs)); 
+do outs  <- ...
 
-{- E-Let -}
-let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in
-    let m = reduce [1,2,3,12] <> in
-        do  (m', b) <- (x. return x) ()
-        let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-Letrec]] -}
+do pairs <- ((do x <- hAccum # op accum 1 (x. return x)):
+                (do xs <- (l. f.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return [] else 
+                        (do x <- (f h)):(do xs <- (let rec map = l. f.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return [] else 
+                                (do x <- (f h)):(do xs <- map t f):[]
+                                return (x:xs) in l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs)) t f):[]
+                        return (x:xs)) 2:3:12:[] (i. hAccum # op accum i (x. return x))):[]
+            return (x:xs)); 
+do outs  <- ...
 
-{- E-Letrec -}
-let m = (f. f 1 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 2 (reduce [3,12] f)) f)) (<>) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-Do and E-HandOp, E-Do and E-AppAbs]] -}
+do pairs <- ((do x <- (x. hAccum # return x) 1):
+                (do xs <- (f.
+                    (do h <- head 2:3:12:[]):(do t <- tail 2:3:12:[]):(do n <- null 2:3:12:[]):[];
+                    if n then return [] else 
+                        (do x <- (f h)):(do xs <- (let rec map = l. f.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return [] else 
+                                (do x <- (f h)):(do xs <- map t f):[]
+                                return (x:xs) in l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs)) t f):[]
+                        return (x:xs)) (i. hAccum # op accum i (x. return x))):[]
+            return (x:xs)); 
+do outs  <- ...
 
-{- E-AppAbs -}
-let m = ((<>) 1 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 2 (reduce [3,12] f)) (<>))) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-AppAbs]] -}
+do pairs <- ((do x <- hAccum # return 1):
+                (do xs <- ((do h <- head 2:3:12:[]):(do t <- tail 2:3:12:[]):(do n <- null 2:3:12:[]):[];
+                            if n then return [] else 
+                                (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs) in l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                return (x:xs))):[]
+            return (x:xs)); 
+do outs  <- ...
 
-{- E-LetRec -}
-let m = ((<>) 1 (f. f 2 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 3 (reduce [12] f)) f)) (<>)) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-Do and E-HandRet, E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse]]] -}
+do pairs <- ((do x <- return (1, ())):
+                (do xs <- ((do h <- return 2):(do t <- return 3:12:[]):(do n <- return False):[];
+                            if n then return [] else 
+                                (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs) in l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                return (x:xs))):[]
+            return (x:xs)); 
+do outs  <- ...
 
-{- E-AppAbs -}
-let m = ((<>) 1 ((<>) 2 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 3 (reduce [12] f)) (<>)))) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-ParList and [E-DoRet, E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]]] -}
+do pairs <- ((do xs <- ([];
+                        if False then return [] else 
+                            (do x <- ((i. hAccum # op accum i (x. return x)) 2)):(do xs <- (let rec map = l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs) in l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs)) 3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                            return (x:xs))):[]
+            return ((1, ()):xs)); 
+do outs  <- ...
 
-{- E-LetRec -}
-let m = ((<>) 1 ((<>) 2 (f. f 3 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 12 (reduce [] f)) f)) (<>))) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-Singleton -}
+do pairs <- do xs <- [];
+                if False then return [] else 
+                    (do x <- ((i. hAccum # op accum i (x. return x)) 2)):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) 3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                return (x:xs)
+            return ((1, ()):xs); 
+do outs  <- ...
 
-{- E-AppAbs -}
-let m = ((<>) 1 ((<>) 2 ((<>) 3 ((let rec reduce l = f. if null l then mempty else f (head l) (reduce (tail l) f) in f. f 12 (reduce [] f)) (<>))))) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-Do and E-EmptyList -}
+do pairs <- do xs <- (if False then return [] else 
+                    (do x <- ((i. hAccum # op accum i (x. return x)) 2)):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) 3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                return (x:xs))
+            return ((1, ()):xs); 
+do outs  <- ...
 
-{- E-LetRec -}
-let m = ((<>) 1 ((<>) 2 ((<>) 3 (f. f 12 (mempty)) (<>)))) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-Do and E-IfFalse -}
+do pairs <- do xs <- ((do x <- ((i. hAccum # op accum i (x. return x)) 2)):
+                            (do xs <- (let rec map = l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs) in l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs)) 3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                        return (x:xs))
+            return ((1, ()):xs); 
+do outs  <- ...
 
-{- E-AppAbs -}
-let m = ((<>) 1 ((<>) 2 ((<>) 3 ((<>) 12 (mempty))))) in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-Letrec] -}
+do pairs <- do xs <- ((do x <- hAccum # op accum 2 (x. return x)):
+                            (do xs <- (l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs) in l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs)) t f):[]
+                                    return (x:xs)) 3:12:[] (i. hAccum # op accum i (x. return x))):[]
+                    return (x:xs))
+            return ((1, ()):xs); 
+do outs  <- ...
 
-let m = 18 in
-    do  (m', b) <- (x. return x) ()
-    let r = m' <> m in return (r, b)
+{- E-Do and E-Do and E-ParList and [E-Do and E-HandOp, E-Do and E-AppAbs] -}
+do pairs <- do xs <- ((do x <- (x. hAccum # return x) 2):
+                            (do xs <- (f.
+                                (do h <- head 3:12:[]):(do t <- tail 3:12:[]):(do n <- null 3:12:[]):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs) in l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs)) t f):[]
+                                    return (x:xs))  (i. hAccum # op accum i (x. return x))):[]
+                    return (x:xs))
+            return ((1, ()):xs); 
+do outs  <- ...
 
-{- E-Let -}
-do  (m', b) <- (x. return x) ()
-let r = m' <> 18 in return (r, b)
+{- E-Do and E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-AppAbs] -}
+do pairs <- do xs <- ((do x <- hAccum # return 2):
+                            (do xs <- ((do h <- head 3:12:[]):(do t <- tail 3:12:[]):(do n <- null 3:12:[]):[];
+                                if n then return [] else 
+                                    (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs) in l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                    return (x:xs))):[]
+                    return (x:xs))
+            return ((1, ()):xs); 
+do outs  <- ...
 
-{- E-AppAbs -}
-do  (m', b) <- return ()
-let r = m' <> 18 in return (r, b)
 
-{- E-HandRet -}
-do  (m', b) <- return (0,())
-let r = m' <> 18 in return (r, b)
+{- E-Do and E-Do and E-ParList and [E-Do and E-HandRet, E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse]] -}
+do pairs <- do xs <- ((do x <- return (2, ())):
+                            (do xs <- ((do h <- return 3):(do t <- return 12:[]):(do n <- return False):[];
+                                if n then return [] else 
+                                    (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs) in l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                    return (x:xs))):[]
+                    return (x:xs))
+            return ((1, ()):xs); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-ParList and [E-DoRet, E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]] -}
+do pairs <- do xs <- ((do xs <- ([];
+                            if False then return [] else 
+                                (do x <- ((i. hAccum # op accum i (x. return x)) 3)):(do xs <- (let rec map = l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs) in l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs)) 12:[] (i. hAccum # op accum i (x. return x))):[]
+                                return (x:xs))):[]
+                    return ((2,()):xs))
+            return ((1,()):xs); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Singleton -}
+do pairs <- do xs <- (do xs <- ([];
+                            if False then return [] else 
+                                (do x <- ((i. hAccum # op accum i (x. return x)) 3)):(do xs <- (let rec map = l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs) in l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs)) 12:[] (i. hAccum # op accum i (x. return x))):[]
+                                return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-EmptyList -}
+do pairs <- do xs <- (do xs <- (if False then return [] else 
+                                (do x <- ((i. hAccum # op accum i (x. return x)) 3)):(do xs <- (let rec map = l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs) in l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs)) 12:[] (i. hAccum # op accum i (x. return x))):[]
+                                return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-IfFalse -}
+do pairs <- do xs <- (do xs <- ((do x <- ((i. hAccum # op accum i (x. return x)) 3)):
+                                    (do xs <- (let rec map = l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs) in l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs)) 12:[] (i. hAccum # op accum i (x. return x))):[]
+                                    return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-AppsAbs, E-Do and E-Letrec] -}
+do pairs <- do xs <- (do xs <- ((do x <- (hAccum # op accum 3 (x. return x))):
+                                    (do xs <- (l. f. (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t f):[]
+                                            return (x:xs)) 12:[] (i. hAccum # op accum i (x. return x))):[]
+                                    return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-HandOp, E-Do and E-AppAbs] -}
+do pairs <- (do xs <- (do xs <- ((do x <- (x. hAccum # return x) 3):
+                                    (do xs <- (f. (do h <- head 12:[]):(do t <- tail 12:[]):(do n <- null 12:[]):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t f):[]
+                                            return (x:xs))  (i. hAccum # op accum i (x. return x))):[]
+                                    return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-AppAbs] -}
+do pairs <- (do xs <- (do xs <- ((do x <- hAccum # return 3):
+                                    (do xs <- ((do h <- head 12:[]):(do t <- tail 12:[]):(do n <- null 12:[]):[];
+                                        if n then return [] else 
+                                            (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                            return (x:xs))):[]
+                                    return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-HandRet, E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse]] -}
+do pairs <- (do xs <- (do xs <- ((do x <- return (3, ())):
+                                    (do xs <- ((do h <- return 12):(do t <- return []):(do n <- return False):[];
+                                        if n then return [] else 
+                                            (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                            return (x:xs))):[]
+                                    return (x:xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-DoRet, E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]] -}
+do pairs <- (do xs <- (do xs <- ((do xs <- ([];
+                                    if False then return [] else 
+                                        (do x <- ((i. hAccum # op accum i (x. return x)) 12)):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                        return (x:xs))):[]
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Singleton -}
+do pairs <- (do xs <- (do xs <- (do xs <- ([];
+                                    if False then return [] else 
+                                        (do x <- ((i. hAccum # op accum i (x. return x)) 12)):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-EmptyList -}
+do pairs <- (do xs <- (do xs <- (do xs <- (if False then return [] else 
+                                        (do x <- ((i. hAccum # op accum i (x. return x)) 12)):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do x <- ((i. hAccum # op accum i (x. return x)) 12)):
+                                                (do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-Letrec] -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do x <- hAccum # op accum 12 (x. return x)):
+                                                (do xs <- (l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                return (x:xs) in l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs)) t f):[]
+                                                return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-HandOp, E-Do and E-AppAbs] -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do x <- (x. hAccum # return x) 12):
+                                                (do xs <- (f.
+                                                    (do h <- head []):(do t <- tail []):(do n <- null []):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                return (x:xs) in l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs)) t f):[]
+                                                return (x:xs)) (i. hAccum # op accum i (x. return x))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-AppAbs, E-Do and E-AppAbs] -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do x <- hAccum # return 12):
+                                                (do xs <- ((do h <- head []):(do t <- tail []):(do n <- null []):[];
+                                                            if n then return [] else 
+                                                                (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                                return (x:xs))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-HandRet, E-Do and E-ParList and [E-Do and E-HeadNull, E-Do and E-TailNull, E-Do and ENullTrue]] -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do x <- return (12, ())):
+                                                (do xs <- ((do h <- return []):(do t <- return []):(do n <- return True):[];
+                                                            if n then return [] else 
+                                                                (do x <- ((i. hAccum # op accum i (x. return x)) h)):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) t (i. hAccum # op accum i (x. return x))):[]
+                                                return (x:xs))):[]
+                                        return (x:xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]] -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do xs <- ([];
+                                                        if True then return [] else 
+                                                            (do x <- ((i. hAccum # op accum i (x. return x)) [])):(do xs <- (let rec map = l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs) in l. f.
+                                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                        if n then return [] else 
+                                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                                            return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                                return (x:xs))):[]
+                                        return ((12, ()):xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Singleton -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do xs <- ([];
+                                                        if True then return [] else 
+                                                            (do x <- ((i. hAccum # op accum i (x. return x)) [])):(do xs <- (let rec map = l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs) in l. f.
+                                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                        if n then return [] else 
+                                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                                            return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                                return (x:xs)))
+                                        return ((12, ()):xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-EmptyList -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do xs <- (if True then return [] else 
+                                                            (do x <- ((i. hAccum # op accum i (x. return x)) [])):(do xs <- (let rec map = l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs) in l. f.
+                                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                        if n then return [] else 
+                                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                                            return (x:xs)) [] (i. hAccum # op accum i (x. return x))):[]
+                                                return (x:xs)))
+                                        return ((12, ()):xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue -}
+do pairs <- (do xs <- (do xs <- (do xs <- ((do xs <- return [])
+                                        return ((12, ()):xs))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+do pairs <- (do xs <- (do xs <- (do xs <- (return ((12, ()):[]))
+                                return ((3,()):xs))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-Do and E-DoRet -}
+do pairs <- (do xs <- (do xs <- (return ((3,()):((12, ()):[])))
+                    return ((2,()):xs))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-Do and E-DoRet -}
+do pairs <- (do xs <- return ((2,()):((3,()):((12, ()):[])))
+            return ((1,()):xs)); 
+do outs  <- ...
+
+{- E-Do and E-DoRet -}
+do pairs <- return ((1,()):((2,()):((3,()):((12, ()):[])))); 
+do outs  <- (l. f.
+                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                               return  (x:xs) ) t f):[]
+                    return (x:xs)) pairs fst;
+let rec reduce = l. f. mempty.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return mempty else
+        do y <- reduce t f mempty
+        return (f h y) in
+            do m <- reduce outs (+) 0
+            do  (m', b) <- (x. hAccum # return x) 0
+            do r <- (_. return m' + m)
+            return (r, b)
 
 {- E-DoRet -}
-let r = 18 in return (r, ())
+do outs  <- (l. f.
+                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                               return  (x:xs) ) t f):[]
+                    return (x:xs)) (1,()):(2,()):(3,()):(12,()):[] fst;
+let rec reduce = ...
 
-{- E-Let -}
+{- E-Do and E-AppAbs -}
+do outs  <- (f.
+                (do h <- head (1,()):(2,()):(3,()):(12,()):[]):(do t <- tail (1,()):(2,()):(3,()):(12,()):[]):(do n <- null (1,()):(2,()):(3,()):(12,()):[]):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                               return (x:xs) ) t f):[]
+                    return (x:xs)) fst;
+let rec reduce = ...
+
+{- E-Do and E-AppAbs -}
+do outs  <- ((do h <- head (1,()):(2,()):(3,()):(12,()):[]):(do t <- tail (1,()):(2,()):(3,()):(12,()):[]):(do n <- null (1,()):(2,()):(3,()):(12,()):[]):[];
+            if n then return [] else 
+                (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) ) t fst):[]
+                return (x:xs));
+let rec reduce = ...
+
+{- E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse] -}
+do outs  <- ((do h <- return (1,())):(do t <- return (2,()):(3,()):(12,()):[]):(do n <- return False):[];
+            if n then return [] else 
+                (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) t fst):[]
+                return (x:xs));
+let rec reduce = ...
+
+{- E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet] -}
+do outs  <- ([];
+            if False then return [] else 
+                (do x <- (fst (1, ()))):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) (2,()):(3,()):(12,()):[] fst):[]
+                return (x:xs));
+let rec reduce = ...
+
+{- E-Do and E-EmptyList -}
+do outs  <- (if False then return [] else 
+                (do x <- (fst (1, ()))):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs)) (2,()):(3,()):(12,()):[] fst):[]
+                return (x:xs));
+let rec reduce = ...
+
+{- E-Do and E-IfFalse -}
+do outs  <- ((do x <- (fst (1, ()))):
+                (do xs <- (let rec map = l. f.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return [] else 
+                        (do x <- (f h)):(do xs <- map t f):[]
+                        return (x:xs) in l. f.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return [] else 
+                                (do x <- (f h)):(do xs <- map t f):[]
+                                return (x:xs)) (2,()):(3,()):(12,()):[] fst):[]
+            return (x:xs));
+let rec reduce = ...
+
+{- E-Do and E-ParList and [E-Do and E-First, E-Do and E-Letrec] -}
+do outs  <- ((do x <- return 1):
+                (do xs <- (l. f.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return [] else 
+                        (do x <- (f h)):(do xs <- (let rec map = l. f.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return [] else 
+                                (do x <- (f h)):(do xs <- map t f):[]
+                                return (x:xs) in l. f.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return [] else 
+                                        (do x <- (f h)):(do xs <- map t f):[]
+                                        return (x:xs)) t f):[]
+                        return (x:xs)) (2,()):(3,()):(12,()):[] fst):[]
+            return (x:xs));
+let rec reduce = ...
+
+{- E-Do and E-ParList and [E-DoRet, E-Do and E-AppAbs] -}
+do outs  <- ((do xs <- (l. f.
+                (do h <- head (2,()):(3,()):(12,()):[]):(do t <- tail (2,()):(3,()):(12,()):[]):(do n <- null (2,()):(3,()):(12,()):[]):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) t f):[]
+                    return (x:xs)) fst):[]
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Singleton -}
+do outs  <- ((do xs <- (f.
+                (do h <- head (2,()):(3,()):(12,()):[]):(do t <- tail (2,()):(3,()):(12,()):[]):(do n <- null (2,()):(3,()):(12,()):[]):[];
+                if n then return [] else 
+                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) t f):[]
+                    return (x:xs)) fst)
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-AppAbs -}
+do outs  <- ((do xs <- ((do h <- head (2,()):(3,()):(12,()):[]):(do t <- tail (2,()):(3,()):(12,()):[]):(do n <- null (2,()):(3,()):(12,()):[]):[];
+                if n then return [] else 
+                    (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) t fst):[]
+                    return (x:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Head, E-Do and E-NullFalse] -}
+do outs  <- ((do xs <- ((do h <- return (2,())):(do t <- return (3,()):(12,()):[]):(do n <- return False):[];
+                if n then return [] else 
+                    (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) t fst):[]
+                    return (x:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet] -}
+do outs  <- ((do xs <- ([];
+                if False then return [] else 
+                    (do x <- (fst (2, ()))):(do xs <- (let rec map = l. f.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return [] else 
+                            (do x <- (f h)):(do xs <- map t f):[]
+                            return (x:xs) in l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs)) (3,()):(12,()):[] fst):[]
+                    return (x:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-EmptyList] -}
+do outs  <- ((do xs <- (if False then return [] else 
+                            (do x <- (fst (2, ()))):(do xs <- (let rec map = l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs) in l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs)) (3,()):(12,()):[] fst):[]
+                            return (x:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-IfFalse] -}
+do outs  <- ((do xs <- ((do x <- (fst (2, ()))):
+                            (do xs <- (let rec map = l. f.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return [] else 
+                                    (do x <- (f h)):(do xs <- map t f):[]
+                                    return (x:xs) in l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- map t f):[]
+                                            return (x:xs)) (3,()):(12,()):[] fst):[]
+                        return (x:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-ParList and [E-Do and E-First, E-Do and E-Letrec]] -}
+do outs  <- ((do xs <- ((do x <- return 2):
+                            (do xs <- (l. f.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) ) t f):[]
+                                            return (x:xs)) (3,()):(12,()):[] fst):[]
+                        return (x:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-ParList and [E-DoRet, E-Do and E-AppAbs]] -}
+do outs  <- ((do xs <- ((do xs <- (f.
+                                    (do h <- head (3,()):(12,()):[]):(do t <- tail (3,()):(12,()):[]):(do n <- null (3,()):(12,()):[]):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) ) t f):[]
+                                            return (x:xs)) fst):[]
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Singleton -}
+do outs  <- ((do xs <- ((do xs <- (f.
+                                    (do h <- head (3,()):(12,()):[]):(do t <- tail (3,()):(12,()):[]):(do n <- null (3,()):(12,()):[]):[];
+                                        if n then return [] else 
+                                            (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                    return (x:xs) in l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) ) t f):[]
+                                            return (x:xs)) fst)
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-AppAbs -}
+do outs  <- ((do xs <- ((do xs <- ((do h <- head (3,()):(12,()):[]):(do t <- tail (3,()):(12,()):[]):(do n <- null (3,()):(12,()):[]):[];
+                                    if n then return [] else 
+                                        (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) ) t fst):[]
+                                        return (x:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse] -}
+do outs  <- ((do xs <- ((do xs <- ((do h <- return (3,())):(do t <- return (12,()):[]):(do n <- return False):[];
+                                    if n then return [] else 
+                                        (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) ) t fst):[]
+                                        return (x:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet] -}
+do outs  <- ((do xs <- ((do xs <- ([];
+                                    if False then return [] else 
+                                        (do x <- (fst (3,()))):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) (12,()):[] fst):[]
+                                        return (x:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-EmptyList -}
+do outs  <- ((do xs <- ((do xs <- (if False then return [] else 
+                                        (do x <- (fst (3,()))):(do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) (12,()):[] fst):[]
+                                        return (x:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-IfFalse -}
+do outs  <- ((do xs <- ((do xs <- ((do x <- (fst (3,()))):
+                                        (do xs <- (let rec map = l. f.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return [] else 
+                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                return (x:xs) in l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs)) (12,()):[] fst):[]
+                                        return (x:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-First, E-Do and E-Letrec] -}
+do outs  <- ((do xs <- ((do xs <- ((do x <- return 3):
+                                        (do xs <- (l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                return (x:xs) in l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs)) t f):[]
+                                                        return (x:xs)) (12,()):[] fst):[]
+                                        return (x:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-Do and E-AppAbs] -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- (f.
+                                                (do h <- head (12,()):[]):(do t <- tail (12,()):[]):(do n <- null (12,()):[]):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) in l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs)) t f):[]
+                                                    return (x:xs)) fst):[]
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Singleton -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- (f.
+                                                (do h <- head (12,()):[]):(do t <- tail (12,()):[]):(do n <- null (12,()):[]):[];
+                                                if n then return [] else 
+                                                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) in l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs)) t f):[]
+                                                    return (x:xs)) fst)
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do h <- head (12,()):[]):(do t <- tail (12,()):[]):(do n <- null (12,()):[]):[];
+                                                if n then return [] else 
+                                                    (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) in l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs)) t fst):[]
+                                                    return (x:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse] -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do h <- return (12,())):(do t <- return []):(do n <- return False):[];
+                                                if n then return [] else 
+                                                    (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) in l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs)) t fst):[]
+                                                    return (x:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet] -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ([];
+                                                if False then return [] else 
+                                                    (do x <- (fst (12,()))):(do xs <- (let rec map = l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) in l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs)) [] fst):[]
+                                                    return (x:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-EmptyList -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- (if False then return [] else 
+                                                (do x <- (fst (12,()))):(do xs <- (let rec map = l. f.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return [] else 
+                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                        return (x:xs) in l. f.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                return (x:xs)) [] fst):[]
+                                                return (x:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do x <- (fst (12,()))):
+                                                    (do xs <- (let rec map = l. f.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return [] else 
+                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                            return (x:xs) in l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs)) [] fst):[]
+                                                    return (x:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-First, E-Do and E-Letrec]-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do x <- return 12):
+                                                    (do xs <- (l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                        if n then return [] else 
+                                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                                            return (x:xs) in l. f.
+                                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                                if n then return [] else 
+                                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                                    return (x:xs)) t f):[]
+                                                                    return (x:xs)) [] fst):[]
+                                                    return (x:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-Do and E-AppAbs]-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- (f.
+                                                            (do h <- head []):(do t <- tail []):(do n <- null []):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) t f):[]
+                                                                return (x:xs)) fst):[]
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Singleton-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- (f.
+                                                            (do h <- head []):(do t <- tail []):(do n <- null []):[];
+                                                            if n then return [] else 
+                                                                (do x <- (f h)):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) t f):[]
+                                                                return (x:xs)) fst)
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- ((do h <- head []):(do t <- tail []):(do n <- null []):[];
+                                                            if n then return [] else 
+                                                                (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) t fst):[]
+                                                                return (x:xs)))
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-HeadNull, E-Do and E-TailNull, E-Do and E-NullTrue]-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- ((do h <- return []):(do t <- return []):(do n <- return True):[];
+                                                            if n then return [] else 
+                                                                (do x <- (fst h)):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) t fst):[]
+                                                                return (x:xs)))
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- ([];
+                                                            if True then return [] else 
+                                                                (do x <- (fst [])):(do xs <- (let rec map = l. f.
+                                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                    if n then return [] else 
+                                                                        (do x <- (f h)):(do xs <- map t f):[]
+                                                                        return (x:xs) in l. f.
+                                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                            if n then return [] else 
+                                                                                (do x <- (f h)):(do xs <- map t f):[]
+                                                                                return (x:xs)) [] fst):[]
+                                                                return (x:xs)))
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-EmptyList-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- (if True then return [] else 
+                                                            (do x <- (fst [])):(do xs <- (let rec map = l. f.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return [] else 
+                                                                    (do x <- (f h)):(do xs <- map t f):[]
+                                                                    return (x:xs) in l. f.
+                                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                        if n then return [] else 
+                                                                            (do x <- (f h)):(do xs <- map t f):[]
+                                                                            return (x:xs)) [] fst):[]
+                                                            return (x:xs)))
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- ((do xs <- (return []))
+                                                    return (12:xs)))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet-}
+do outs  <- ((do xs <- ((do xs <- ((do xs <- (return (12:[])))
+                                        return (3:xs)))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-Do and E-DoRet-}
+do outs  <- ((do xs <- ((do xs <- (return (3:(12:[]))))
+                        return (2:xs)))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-Do and E-DoRet-}
+do outs  <- ((do xs <- (return (2:(3:(12:[])))))
+            return (1:xs));
+let rec reduce = ...
+
+{- E-Do and E-DoRet -}
+do outs  <- (return (1:(2:(3:(12:[])))));
+let rec reduce = l. f. mempty.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return mempty else
+        do y <- reduce t f mempty
+        return (f h y) in
+            do m <- reduce outs (+) 0
+            do  (m', b) <- (x. hAccum # return x) 0
+            do r <- (_. return m' + m)
+            return (r, b)
+
+{- E-DoRet -}
+let rec reduce = l. f. mempty.
+    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+    if n then return mempty else
+        do y <- reduce t f mempty
+        return (f h y) in
+            do m <- reduce 1:2:3:12:[] (+) 0
+            do  (m', b) <- (x. hAccum # return x) 0
+            do r <- (_. return m' + m)
+            return (r, b)
+
+{- E-Letrec -}
+do m <- (let rec reduce = l. f. mempty.
+            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+            if n then return mempty else
+                do y <- reduce t f mempty
+                return (f h y) in l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y) ) 1:2:3:12:[] (+) 0
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Letrec -}
+do m <- (l. f. mempty.
+            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+            if n then return mempty else
+                do y <- (let rec reduce = l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y) in l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y)) t f
+                return (f h y) ) 1:2:3:12:[] (+) 0
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-AppAbs -}
+{- E-Do and E-AppAbs -}
+{- E-Do and E-AppAbs -}
+do m <- ((do h <- head 1:2:3:12:[]):(do t <- tail 1:2:3:12:[]):(do n <- null 1:2:3:12:[]):[];
+            if n then return 0 else
+                do y <- (let rec reduce = l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y) in l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y)) t (+) 0
+                return ((+) h y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse] -}
+do m <- ((do h <- return 1):(do t <- return 2:3:12:[]):(do n <- return False):[];
+            if n then return 0 else
+                do y <- (let rec reduce = l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y) in l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y)) t (+) 0
+                return ((+) h y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet] -}
+do m <- ([];
+            if False then return 0 else
+                do y <- (let rec reduce = l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y) in l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y)) 2:3:12:[] (+) 0
+                return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-EmptyList -}
+do m <- (if False then return 0 else
+            do y <- (let rec reduce = l. f. mempty.
+                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                if n then return mempty else
+                    do y <- reduce t f mempty
+                    return (f h y) in l. f. mempty.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return mempty else
+                            do y <- reduce t f mempty
+                            return (f h y)) 2:3:12:[] (+) 0
+            return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-IfFalse -}
+do m <- (do y <- (let rec reduce = l. f. mempty.
+            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+            if n then return mempty else
+                do y <- reduce t f mempty
+                return (f h y) in l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y)) 2:3:12:[] (+) 0
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Letrec -}
+do m <- (do y <- (l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- (let rec reduce = l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y) in l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y)) t f mempty
+                            return (f h y)) 2:3:12:[] (+) 0
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-AppAbs -}
+do m <- (do y <- ((do h <- head 2:3:12:[]):(do t <- tail 2:3:12:[]):(do n <- null 2:3:12:[]):[];
+                    if n then return 0 else
+                        do y <- (let rec reduce = l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y) in l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y)) t (+) 0
+                            return ((+) h y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse]-}
+do m <- (do y <- ((do h <- return 2):(do t <- return 3:12:[]):(do n <- return False):[];
+                    if n then return 0 else
+                        do y <- (let rec reduce = l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y) in l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y)) t (+) 0
+                            return ((+) h y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]-}
+do m <- (do y <- ([];
+                    if False then return 0 else
+                        do y <- (let rec reduce = l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y) in l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y)) 3:12:[] (+) 0
+                            return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-EmptyList-}
+do m <- (do y <- (if False then return 0 else
+                    do y <- (let rec reduce = l. f. mempty.
+                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                        if n then return mempty else
+                            do y <- reduce t f mempty
+                            return (f h y) in l. f. mempty.
+                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                if n then return mempty else
+                                    do y <- reduce t f mempty
+                                    return (f h y)) 3:12:[] (+) 0
+                        return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-IfFalse-}
+do m <- (do y <- (do y <- (let rec reduce = l. f. mempty.
+                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                    if n then return mempty else
+                        do y <- reduce t f mempty
+                        return (f h y) in l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y)) 3:12:[] (+) 0
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Letrec-}
+do m <- (do y <- (do y <- (l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- (let rec reduce = l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y) in l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y)) t f mempty
+                                return (f h y)) 3:12:[] (+) 0
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-AppAbs-}
+{- E-Do and E-Do and E-Do and E-AppAbs-}
+{- E-Do and E-Do and E-Do and E-AppAbs-}
+do m <- (do y <- (do y <- ((do h <- head 3:12:[]):(do t <- tail 3:12:[]):(do n <- null 3:12:[]):[];
+                            if n then return 0 else
+                                do y <- (let rec reduce = l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y) in l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y)) t (+) 0
+                                return ((+) h y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse]-}
+do m <- (do y <- (do y <- ((do h <- return 3):(do t <- return 12:[]):(do n <- return False):[];
+                            if n then return 0 else
+                                do y <- (let rec reduce = l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y) in l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y)) t (+) 0
+                                return ((+) h y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]-}
+do m <- (do y <- (do y <- ([];
+                            if False then return 0 else
+                                do y <- (let rec reduce = l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y) in l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y)) 12:[] (+) 0
+                                return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-EmptyList-}
+do m <- (do y <- (do y <- (if False then return 0 else
+                                do y <- (let rec reduce = l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y) in l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y)) 12:[] (+) 0
+                                return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-IfFalse-}
+do m <- (do y <- (do y <- (do y <- (let rec reduce = l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty
+                                return (f h y) in l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- reduce t f mempty
+                                        return (f h y)) 12:[] (+) 0
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Letrec-}
+do m <- (do y <- (do y <- (do y <- (l. f. mempty.
+                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                    if n then return mempty else
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y) in l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y)) t f mempty
+                                        return (f h y)) 12:[] (+) 0
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+do m <- (do y <- (do y <- (do y <- ((do h <- head 12:[]):(do t <- tail 12:[]):(do n <- null 12:[]):[];
+                                    if n then return 0 else
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y) in l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y)) t (+) 0
+                                        return ((+) h y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-Head, E-Do and E-Tail, E-Do and E-NullFalse]-}
+do m <- (do y <- (do y <- (do y <- ((do h <- return 12):(do t <- return []):(do n <- return False):[];
+                                    if n then return 0 else
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y) in l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y)) t (+) 0
+                                        return ((+) h y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]-}
+do m <- (do y <- (do y <- (do y <- ([];
+                                    if False then return 0 else
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y) in l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y)) [] (+) 0
+                                        return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-EmptyList-}
+do m <- (do y <- (do y <- (do y <- (if False then return 0 else
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                            if n then return mempty else
+                                                do y <- reduce t f mempty
+                                                return (f h y) in l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y)) [] (+) 0
+                                        return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-IfFalse-}
+do m <- (do y <- (do y <- (do y <- (do y <- (let rec reduce = l. f. mempty.
+                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                        if n then return mempty else
+                                            do y <- reduce t f mempty
+                                            return (f h y) in l. f. mempty.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return mempty else
+                                                    do y <- reduce t f mempty
+                                                    return (f h y)) [] (+) 0
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Letrec-}
+do m <- (do y <- (do y <- (do y <- (do y <- (l. f. mempty.
+                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                if n then return mempty else
+                                                    do y <- (let rec reduce = l. f. mempty.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return mempty else
+                                                            do y <- reduce t f mempty
+                                                            return (f h y) in l. f. mempty.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return mempty else
+                                                                    do y <- reduce t f mempty
+                                                                    return (f h y)) t f mempty
+                                                                            return (f h y)) [] (+) 0
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs-}
+do m <- (do y <- (do y <- (do y <- (do y <- ((do h <- head []):(do t <- tail []):(do n <- null []):[];
+                                                if n then return 0 else
+                                                    do y <- (let rec reduce = l. f. mempty.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return mempty else
+                                                            do y <- reduce t f mempty
+                                                            return (f h y) in l. f. mempty.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return mempty else
+                                                                    do y <- reduce t f mempty
+                                                                    return (f h y)) t (+) 0
+                                                                            return ((+) h y))
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-ParList and [E-Do and E-HeadNull, E-Do and E-TailNull, E-Do and E-NullTrue]-}
+do m <- (do y <- (do y <- (do y <- (do y <- ((do h <- return []):(do t <- return []):(do n <- return True):[];
+                                                if n then return 0 else
+                                                    do y <- (let rec reduce = l. f. mempty.
+                                                        (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                        if n then return mempty else
+                                                            do y <- reduce t f mempty
+                                                            return (f h y) in l. f. mempty.
+                                                                (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                                if n then return mempty else
+                                                                    do y <- reduce t f mempty
+                                                                    return (f h y)) t (+) 0
+                                                                            return ((+) h y))
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-ParList and [E-DoRet, E-DoRet, E-DoRet]-}
+do m <- (do y <- (do y <- (do y <- (do y <- ([];
+                                            if True then return 0 else
+                                                do y <- (let rec reduce = l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y) in l. f. mempty.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return mempty else
+                                                                do y <- reduce t f mempty
+                                                                return (f h y)) [] (+) 0
+                                                                        return ((+) [] y))
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-EmptyList -}
+do m <- (do y <- (do y <- (do y <- (do y <- (if True then return 0 else
+                                                do y <- (let rec reduce = l. f. mempty.
+                                                    (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                    if n then return mempty else
+                                                        do y <- reduce t f mempty
+                                                        return (f h y) in l. f. mempty.
+                                                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                                                            if n then return mempty else
+                                                                do y <- reduce t f mempty
+                                                                return (f h y)) [] (+) 0
+                                                                        return ((+) [] y))
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue -}
+do m <- (do y <- (do y <- (do y <- (do y <- return 0
+                                    return ((+) 12 y))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+do m <- (do y <- (do y <- (do y <- (return ((+) 12 0))
+                        return ((+) 3 y))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-Do and E-DoRet -}
+do m <- (do y <- (do y <- return ((+) 3 ((+) 12 0))
+                    return ((+) 2 y))
+        return ((+) 1 y))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-Do and E-DoRet -}
+do m <- (do y <- return ((+) 2 ((+) 3 ((+) 12 0))))
+        return ((+) 1 y)
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-Do and E-DoRet -}
+do m <- return ((+) 1 ((+) 2 ((+) 3 ((+) 12 0))))
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + m)
+return (r, b)
+
+{- E-DoRet -}
+do  (m', b) <- (x. hAccum # return x) 0
+do r <- (_. return m' + 18)
+return (r, b)
+
+{- E-Do and E-AppAbs -}
+do  (m', b) <- hAccum # return 0
+do r <- (_. return m' + 18)
+return (r, b)
+
+{- E-Do and E-HandRet -}
+do  (m', b) <- return (0,())
+do r <- (_. return m' + 18)
+return (r, b)
+
+{- E-DoRet -}
+do r <- (_. return 0 + 18)
+return (r, ())
+
+{- E-AppAbs -}
+do r <- return 18
+return (r, ())
+
+{- E-DoRet -}
 return (18, ())
