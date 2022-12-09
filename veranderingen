@@ -15,51 +15,47 @@ Semantiek
     --------------------------------------------------------------------------------
         let rec f = c1 In c2 -> c2[c1[(let rec f = c1 in f)/f]/f]
 
-    -- TODO: what if step is E-DoRet? (should be removed from list)
     E-ParList
-        Exist i: ci->ci', !Exists k<i: ck->ck', ForAll j>i: cj->cj'                
+        1. Exist i: ci->ci', !Exists k<i: ck->ck', ForAll j>i: cj->cj'  
+        2. ForAll i: ci->ci' <= ci not normalform             
     ------------------------------------------------------------------
                 (c1:ci:c) -> (c1:ci':c')
 
-
-    E-Singleton
-    -----------------------------------------------------------------
-                            c:[] -> c
-
-    E-EmptyList
+    E-Map             
     ------------------------------------------------------------------
-                            [];c -> c
+                map c0 (c1:...:cn) -> (c0 c1:....:c0 cn)
+
+    E-RetList              
+    ------------------------------------------------------------------
+                (return v1:...: return vn) -> return (v1:....:vn)
+
+    -- Is dit correct?
+    -- Lijst met andere normal forms: 
+    --      1. Andere handlers handlen tot lijst van returns
+    --      2. Handler/programma verkeerd geschreven
 
     E-Head
-    ------------------------
+    -----------------------------
         head (c1:c) -> return c1
 
-    E-HeadNull
-    ------------------------
-        head [] -> return []
-
     E-First
-    ------------------------
+    ----------------------------
         fst (x, y) -> return x
 
     E-Second
-    ------------------------
+    ----------------------------
         snd (x, y) -> return y
 
     E-Tail
-    ------------------------
-        tail (c1:c) -> return c
-
-    E-Tail
-    ------------------------
-        tail [] -> return []
+    ----------------------------
+        tail (c1:c) -> c
 
     E-NullTrue
-    ------------------------
+    ---------------------------
         null [] -> return True 
 
     E-NullFalse
-    ------------------------
+    ---------------------------
         null (c1:c) -> return False
 
     E-IfTrue
@@ -70,10 +66,10 @@ Semantiek
     --------------------------------------
         if False then c1 else c2 -> c2
 
-    -- E-If
-    --                     c1->c1'
-    -- -----------------------------------------------------
-    --     if c1 then c2 else c3 -> if c1' then c2 else c3
+    E-If
+                        c1->c1'
+    -----------------------------------------------------
+        if c1 then c2 else c3 -> if c1' then c2 else c3
 
     -- E-ParDo
     --                          c1->c1', ..., cn->cn', n != 0
@@ -88,13 +84,15 @@ Semantiek
     --     [return v1,...,return vn] -> return [v1,...,vn]
 
 Calculus
-    (ParDo)
-    (ParDoRet)
-    Lijst values
-    Lijst computations
-    head
-    tail
+    ParList
+    RetList
+    -- Lijst values
+    -- Lijst computations
+    Lijst
+    Head
+    Tail
+    Null
     let rec
-    mapToComp :: (ParallellisableFunction (v->c)) => [v] -> (v->c) -> [c] -- parallel
-    mapToValue :: (ParallellisableFunction (v->v)) => [v] -> (v->v) -> [v] -- parallel
+    map
+    -- map :: (ParallellisableFunction (v->c)) => [v] -> (v->c) -> [c] -- parallel
     reduce :: (ReducingFunction (v->v->v)) => [v] -> (v->v->v) -> v -- parallel

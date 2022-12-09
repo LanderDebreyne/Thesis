@@ -1,0 +1,864 @@
+sc for l (i. op accum i (x. return x)) (x. return x)
+
+hAccum (+) 0 = \(<>) mempty handler 
+    {
+        return x -> return (mempty, x)
+        op accum m k -> k m
+        sc for l p k -> do pairs <- map p l;
+                        do outs <- map pairs fst;
+                        let rec reduce = l. f. mempty.
+                            (do h <- head l):(do t <- tail l):(do n <- null l):[];
+                            if n then return mempty else
+                                do y <- reduce t f mempty;
+                                return (f h y) in
+                                    do out <- reduce outs (<>) mempty;
+                                    k out
+        fwd f p k -> f (p, k) -- TODO
+    }
+
+-- parallel implementatie moet mogelijk zijn
+-- Bijvoorbeeld door lijst te splitsen over threads en resultaten te reduceren zelfde reducerende functie
+-- niet-parallelle implementatie 
+reduce :: (ReducingFunction (v->v->v)) => [v] -> (v->v->v) -> v 
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+
+cAccum = sc for 1:2:3:12:[] (i. op accum i (x. return x)) (x. return x) 
+
+hAccum (+) 0 # cAccum
+
+hAccum (+) 0 # sc for 1:2:3:12:[] (i. op accum i (x. return x)) (x. return x)
+
+{- E-HandSc -}
+do pairs <- map (i. hAccum (+) 0 # op accum i (x. return x)) 1:2:3:12:[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-Map -}
+do pairs <- ((i. hAccum (+) 0 # op accum i (x. return x)) 1):((i. hAccum (+) 0 # op accum i (x. return x)) 2):((i. hAccum (+) 0 # op accum i (x. return x)) 3):((i. hAccum (+) 0 # op accum i (x. return x)) 12):[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-ParList and [E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs] -}
+do pairs <- (hAccum (+) 0 # op accum 1 (x. return x)):(hAccum (+) 0 # op accum 2 (x. return x)):(hAccum (+) 0 # op accum 3 (x. return x)):(hAccum (+) 0 # op accum 12 (x. return x)):[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-ParList and [E-HandOp, E-HandOp, E-HandOp, E-HandOp] -}
+do pairs <- ((x. hAccum (+) 0 # return x) 1):((x. hAccum (+) 0 # return x) 2):((x. hAccum (+) 0 # return x) 3):((x. hAccum (+) 0 # return x) 12):[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-ParList and [E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs] -}
+do pairs <- (hAccum (+) 0 # return 1):(hAccum (+) 0 # return 2):(hAccum (+) 0 # return 3):(hAccum (+) 0 # return 12):[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-ParList and [E-HandRet, E-HandRet, E-HandRet, E-HandRet] -}
+do pairs <- (return (1,())):(return (2,())):(return (3,())):(return (12,())):[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-RetList -}
+do pairs <- return (1,()):(2,()):(3,()):(12,()):[];
+do outs <- map pairs fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-DoRet -}
+do outs <- map (1,()):(2,()):(3,()):(12,()):[] fst;
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-Map -}
+do outs <- (fst (1,())):(fst (2,())):(fst (3,())):(fst (12,())):[];
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-ParList and [E-First, E-First, E-First, E-First] -}
+do outs <- (return 1):(return 2):(return 3):(return 12):[];
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-RetList -}
+do outs <- return 1:2:3:12:[];
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce outs (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-DoRet -}
+let rec reduce = l. f. mempty.
+    do n <- null l;
+    if n then return mempty else
+        do h <- head l;
+        do t <- tail l;
+        do y <- reduce t f mempty;
+        return (f h y) in
+            do out <- reduce 1:2:3:12:[] (+) 0;
+            (x. hAccum (+) 0 # return x) out
+
+{- E-LetRec -}
+do out <- (l. f. mempty.
+        do n <- null l;
+        if n 
+            then return mempty 
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- (let rec reduce = l. f. mempty.
+                    do n <- null l;
+                    if n then return mempty else
+                        do h <- head l;
+                        do t <- tail l;
+                        do y <- reduce t f mempty;
+                        return (f h y) in l. f. mempty.
+                    do n <- null l;
+                    if n then return mempty else
+                        do h <- head l;
+                        do t <- tail l;
+                        do y <- reduce t f mempty;
+                        return (f h y)) t f mempty;
+                return (f h y)) 1:2:3:12:[] (+) 0;
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-AppAbs -}
+{- E-Do and E-AppAbs -}
+{- E-Do and E-AppAbs -}
+do out <-   do n <- null 1:2:3:12:[];
+            if n 
+                then return 0
+                else
+                    do h <- head 1:2:3:12:[];
+                    do t <- tail 1:2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y)) t (+) 0;
+                    return ((+) h y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-NullFalse -}
+do out <-   do n <- return False;
+            if n 
+                then return 0
+                else
+                    do h <- head 1:2:3:12:[];
+                    do t <- tail 1:2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y)) t (+) 0;
+                    return ((+) h y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-DoRet-}
+do out <-   if False 
+                then return 0
+                else
+                    do h <- head 1:2:3:12:[];
+                    do t <- tail 1:2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y)) t (+) 0;
+                    return ((+) h y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-IfFalse-}
+do out <-   do h <- head 1:2:3:12:[];
+            do t <- tail 1:2:3:12:[];
+            do y <- (let rec reduce = l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y) in l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y)) t (+) 0;
+            return ((+) h y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Head-}
+do out <-   do h <- return 1;
+            do t <- tail 1:2:3:12:[];
+            do y <- (let rec reduce = l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y) in l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y)) t (+) 0;
+            return ((+) h y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-DoRet-}
+do out <-   do t <- tail 1:2:3:12:[];
+            do y <- (let rec reduce = l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y) in l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y)) t (+) 0;
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Tail -}
+do out <-   do t <- return 2:3:12:[];
+            do y <- (let rec reduce = l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y) in l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y)) t (+) 0;
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-DoRet -}
+do out <-   do y <- (let rec reduce = l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y) in l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- reduce t f mempty;
+                    return (f h y)) 2:3:12:[] (+) 0;
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-LetRec -}
+do out <-   do y <- (l. f. mempty.
+                do n <- null l;
+                if n then return mempty else
+                    do h <- head l;
+                    do t <- tail l;
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y)) t f mempty;
+                    return (f h y)) 2:3:12:[] (+) 0;
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-AppAbs -}
+do out <-   do y <- (
+                do n <- null 2:3:12:[];
+                if n then return 0 else
+                    do h <- head 2:3:12:[];
+                    do t <- tail 2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y)) t (+) 0;
+                    return ((+) h y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-NullFalse -}
+do out <- do y <- (
+                do n <- return False;
+                if n then return 0 else
+                    do h <- head 2:3:12:[];
+                    do t <- tail 2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y)) t (+) 0;
+                    return ((+) h y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-DoRet -}
+do out <- do y <- (
+                if False then return 0 else
+                    do h <- head 2:3:12:[];
+                    do t <- tail 2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y)) t (+) 0;
+                    return ((+) h y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-IfFalse -}
+do out <- do y <- ( do h <- head 2:3:12:[];
+                    do t <- tail 2:3:12:[];
+                    do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y)) t (+) 0;
+                    return ((+) h y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Head -}
+{- E-Do and E-Do and E-DoRet -}
+{- E-Do and E-Do and E-Do and E-Tail -}
+{- E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (let rec reduce = l. f. mempty.
+                        do n <- null l;
+                        if n then return mempty else
+                            do h <- head l;
+                            do t <- tail l;
+                            do y <- reduce t f mempty;
+                            return (f h y) in l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y)) 3:12:[] (+) 0;
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-LetRec -}
+do out <- do y <- ( do y <- (l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- (let rec reduce = l. f. mempty.
+                                        do n <- null l;
+                                        if n then return mempty else
+                                            do h <- head l;
+                                            do t <- tail l;
+                                            do y <- reduce t f mempty;
+                                            return (f h y) in l. f. mempty.
+                                                do n <- null l;
+                                                if n then return mempty else
+                                                    do h <- head l;
+                                                    do t <- tail l;
+                                                    do y <- reduce t f mempty;
+                                                    return (f h y)) t f mempty;
+                                    return (f h y)) 3:12:[] (+) 0;
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-Do and E-AppAbs -}
+do out <- do y <- ( do y <- (
+                            do n <- null 3:12:[];
+                            if n then return 0 else
+                                do h <- head 3:12:[];
+                                do t <- tail 3:12:[];
+                                do y <- (let rec reduce = l. f. mempty.
+                                    do n <- null l;
+                                    if n then return mempty else
+                                        do h <- head l;
+                                        do t <- tail l;
+                                        do y <- reduce t f mempty;
+                                        return (f h y) in l. f. mempty.
+                                            do n <- null l;
+                                            if n then return mempty else
+                                                do h <- head l;
+                                                do t <- tail l;
+                                                do y <- reduce t f mempty;
+                                                return (f h y)) t (+) 0;
+                                return ((+) h y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
+{- E-Do and E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (
+                            if False then return 0 else
+                                do h <- head 3:12:[];
+                                do t <- tail 3:12:[];
+                                do y <- (let rec reduce = l. f. mempty.
+                                    do n <- null l;
+                                    if n then return mempty else
+                                        do h <- head l;
+                                        do t <- tail l;
+                                        do y <- reduce t f mempty;
+                                        return (f h y) in l. f. mempty.
+                                            do n <- null l;
+                                            if n then return mempty else
+                                                do h <- head l;
+                                                do t <- tail l;
+                                                do y <- reduce t f mempty;
+                                                return (f h y)) t (+) 0;
+                                return ((+) h y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-IfFalse -}
+do out <- do y <- ( do y <- (
+                            do h <- head 3:12:[];
+                            do t <- tail 3:12:[];
+                            do y <- (let rec reduce = l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y) in l. f. mempty.
+                                        do n <- null l;
+                                        if n then return mempty else
+                                            do h <- head l;
+                                            do t <- tail l;
+                                            do y <- reduce t f mempty;
+                                            return (f h y)) t (+) 0;
+                            return ((+) h y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Head -}
+{- E-Do and E-Do and E-Do and E-DoRet -}
+{- E-Do and E-Do and E-Do and E-Do and E-Tail -}
+{- E-Do and E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (do y <- (let rec reduce = l. f. mempty.
+                                do n <- null l;
+                                if n then return mempty else
+                                    do h <- head l;
+                                    do t <- tail l;
+                                    do y <- reduce t f mempty;
+                                    return (f h y) in l. f. mempty.
+                                        do n <- null l;
+                                        if n then return mempty else
+                                            do h <- head l;
+                                            do t <- tail l;
+                                            do y <- reduce t f mempty;
+                                            return (f h y)) 12:[] (+) 0;
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-LetRec -}
+do out <- do y <- ( do y <- (do y <- (l. f. mempty.
+                                        do n <- null l;
+                                        if n then return mempty else
+                                            do h <- head l;
+                                            do t <- tail l;
+                                            do y <- (let rec reduce = l. f. mempty.
+                                                do n <- null l;
+                                                if n then return mempty else
+                                                    do h <- head l;
+                                                    do t <- tail l;
+                                                    do y <- reduce t f mempty;
+                                                    return (f h y) in l. f. mempty.
+                                                        do n <- null l;
+                                                        if n then return mempty else
+                                                            do h <- head l;
+                                                            do t <- tail l;
+                                                            do y <- reduce t f mempty;
+                                                            return (f h y)) t f mempty;
+                                            return (f h y)) 12:[] (+) 0;
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+do out <- do y <- ( do y <- (do y <- (
+                                    do n <- null 12:[];
+                                    if n then return 0 else
+                                        do h <- head 12:[];
+                                        do t <- tail 12:[];
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            do n <- null l;
+                                            if n then return mempty else
+                                                do h <- head l;
+                                                do t <- tail l;
+                                                do y <- reduce t f mempty;
+                                                return (f h y) in l. f. mempty.
+                                                    do n <- null l;
+                                                    if n then return mempty else
+                                                        do h <- head l;
+                                                        do t <- tail l;
+                                                        do y <- reduce t f mempty;
+                                                        return (f h y)) t (+) 0;
+                                        return ((+) h y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (do y <- (
+                                    if False then return 0 else
+                                        do h <- head 12:[];
+                                        do t <- tail 12:[];
+                                        do y <- (let rec reduce = l. f. mempty.
+                                            do n <- null l;
+                                            if n then return mempty else
+                                                do h <- head l;
+                                                do t <- tail l;
+                                                do y <- reduce t f mempty;
+                                                return (f h y) in l. f. mempty.
+                                                    do n <- null l;
+                                                    if n then return mempty else
+                                                        do h <- head l;
+                                                        do t <- tail l;
+                                                        do y <- reduce t f mempty;
+                                                        return (f h y)) t (+) 0;
+                                        return ((+) h y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-IfFalse-}
+do out <- do y <- ( do y <- (do y <- (
+                                    do h <- head 12:[];
+                                    do t <- tail 12:[];
+                                    do y <- (let rec reduce = l. f. mempty.
+                                        do n <- null l;
+                                        if n then return mempty else
+                                            do h <- head l;
+                                            do t <- tail l;
+                                            do y <- reduce t f mempty;
+                                            return (f h y) in l. f. mempty.
+                                                do n <- null l;
+                                                if n then return mempty else
+                                                    do h <- head l;
+                                                    do t <- tail l;
+                                                    do y <- reduce t f mempty;
+                                                    return (f h y)) t (+) 0;
+                                    return ((+) h y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (do y <- (do y <- (let rec reduce = l. f. mempty.
+                                    do n <- null l;
+                                    if n then return mempty else
+                                        do h <- head l;
+                                        do t <- tail l;
+                                        do y <- reduce t f mempty;
+                                        return (f h y) in l. f. mempty.
+                                            do n <- null l;
+                                            if n then return mempty else
+                                                do h <- head l;
+                                                do t <- tail l;
+                                                do y <- reduce t f mempty;
+                                                return (f h y)) [] (+) 0;
+                                    return ((+) 12 y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
+do out <- do y <- ( do y <- (do y <- (do y <- (l. f. mempty.
+                                            do n <- null l;
+                                            if n then return mempty else
+                                                do h <- head l;
+                                                do t <- tail l;
+                                                do y <- (let rec reduce = l. f. mempty.
+                                                    do n <- null l;
+                                                    if n then return mempty else
+                                                        do h <- head l;
+                                                        do t <- tail l;
+                                                        do y <- reduce t f mempty;
+                                                        return (f h y) in l. f. mempty.
+                                                            do n <- null l;
+                                                            if n then return mempty else
+                                                                do h <- head l;
+                                                                do t <- tail l;
+                                                                do y <- reduce t f mempty;
+                                                                return (f h y)) t f mempty;
+                                                return (f h y)) [] (+) 0;
+                                    return ((+) 12 y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+do out <- do y <- ( do y <- (do y <- (do y <- (
+                                            do n <- null [];
+                                            if n then return 0 else
+                                                do h <- head [];
+                                                do t <- tail [];
+                                                do y <- (let rec reduce = l. f. mempty.
+                                                    do n <- null l;
+                                                    if n then return mempty else
+                                                        do h <- head l;
+                                                        do t <- tail l;
+                                                        do y <- reduce t f mempty;
+                                                        return (f h y) in l. f. mempty.
+                                                            do n <- null l;
+                                                            if n then return mempty else
+                                                                do h <- head l;
+                                                                do t <- tail l;
+                                                                do y <- reduce t f mempty;
+                                                                return (f h y)) t (+) 0;
+                                                return ((+) h y));
+                                    return ((+) 12 y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullTrue -}
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet-}
+do out <- do y <- ( do y <- (do y <- (do y <- (
+                                            if True then return 0 else
+                                                do h <- head [];
+                                                do t <- tail [];
+                                                do y <- (let rec reduce = l. f. mempty.
+                                                    do n <- null l;
+                                                    if n then return mempty else
+                                                        do h <- head l;
+                                                        do t <- tail l;
+                                                        do y <- reduce t f mempty;
+                                                        return (f h y) in l. f. mempty.
+                                                            do n <- null l;
+                                                            if n then return mempty else
+                                                                do h <- head l;
+                                                                do t <- tail l;
+                                                                do y <- reduce t f mempty;
+                                                                return (f h y)) t (+) 0;
+                                                return ((+) h y));
+                                    return ((+) 12 y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue-}
+do out <- do y <- ( do y <- (do y <- (do y <- (return 0)
+                                    return ((+) 12 y));
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (do y <- (return 12);
+                            return ((+) 3 y));
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-Do and E-DoRet -}
+do out <- do y <- ( do y <- (return 15);
+                    return ((+) 2 y));
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-Do and E-DoRet -}
+do out <- do y <- (return 17);
+            return ((+) 1 y);
+(x. hAccum (+) 0 # return x) out
+
+{- E-Do and E-DoRet -}
+do out <- return 18;
+(x. hAccum (+) 0 # return x) out
+
+{- E-DoRet -}
+(x. hAccum (+) 0 # return x) 18
+
+{- E-AppAbs -}
+hAccum (+) 0 # return 18
+
+{- E-HandRet -}
+return (18, ())

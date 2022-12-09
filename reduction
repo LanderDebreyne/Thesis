@@ -7,7 +7,7 @@ hAccum (+) 0 = \(<>) mempty handler
         sc for l p k -> let rec map = l. f.
                             (do h <- head l):(do t <- tail l):(do n <- null l):[];
                             if n then return [] else 
-                                (do x <- (f h)):(do xs <- map t f):[]
+                                (do x <- (f h)):(do xs <- map t f):[];
                                 return (x:xs) in
                                     do pairs <- map l p; 
                                     do outs  <- map pairs fst;
