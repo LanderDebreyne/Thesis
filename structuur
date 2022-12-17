@@ -1,6 +1,15 @@
 1. Inleiding
-        Context
-        Probleemstelling
+        Context:
+        Programmeren
+        Effecten
+        Onderwerp: Industrie-relevante aanpak om in FP/Haskell met effecten om te gaan
+        Have: Monads, webassembly (als nieuwe and industrie-relevante aanpak ontworpen met formele semantiek) (Haas 2011, Haas 2017), literatuur (steeds mmeer) rond effect handlers, beperkingen algebraïsche effecten, scoped effecten
+        Want: Industrial strength language for dealing with effects via effect handlers that can compete with monads
+        Probleemstelling:
+                Basis: algebraïsche effecten
+                Uitbreiding voor expressiviteit: scoped effecten
+                Uitbreiding voor performantie: parallelle effecten
+                Resultaat: Performante, expressieve taal om effecten te modelleren
 2. Achtergrond
         Side-effects
             Monads

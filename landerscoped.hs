@@ -90,7 +90,7 @@ hAccum = fold AlgPar{
         (m', v) <- k ()
         return (m <> m', v), 
       hFor = \iters k -> do
-        res <- Pure iters
+        res <- return iters
         (m', b) <- k (fmap snd res)
         return (Fold.fold (fmap fst res) <> m', b),
       hScope = \i p k -> case i of {},
@@ -117,7 +117,7 @@ hWeak = fold AlgPar{
     gen = \x -> return (Right x),
     hPerform = \(Throw err) _ -> return (Left err),
     hFor = \iters k -> do
-       res <- Pure iters
+       res <- return iters
        case firstFailure res of
          Left err -> return (Left err)
          Right t  -> k t,
