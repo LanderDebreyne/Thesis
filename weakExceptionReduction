@@ -1,20 +1,17 @@
--- TODO: test if reductions with multiple handlers behave as expected with E-Map and E-ListRet
-op accum "start " (x. return x);
-map (x. if x == 2
+do _ <- op accum "start " (x. return x);
+do _ <- map 1:2:3:4:5:[] (x. if x == 2
     then
-    op accum "!" (x.return x);
-    op throw "error" (x. return x);
+    do _ <- op accum "!" (x.return x);
+    do _ <- op throw "error" (x. return x);
     op accum "unreachable" (x. return x)
-    else op accum x (x. return x)) 1:2:3:4:5:[];
-op accum " end" (x. return x);
+    else op accum x (x. return x)) ;
+do _ <- op accum " end" (x. return x);
 return "success"
-
-map 1:2:3:4:5:[] (x. if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) (x. return x)
 
 hAccum = handler 
     {
         return x -> return ("", x)
-        op accum m k -> do (m', v) <- k (); return (m' ++ m, v) 
+        op accum m k -> do (m', v) <- k (); return (m ++ m', v)  
         red l k ->  do first <- map fst l;
                     do second <- map snd l;
                     do (m', b) <- k second;
@@ -51,566 +48,137 @@ firstFailure lst = case map firstError lst of
   where firstError x = case x of Left e  -> Just e
                                  Right _ -> Nothing
 
-
--- parallel implementatie moet mogelijk zijn
--- Bijvoorbeeld door lijst te splitsen over threads en resultaten te reduceren zelfde reducerende functie
--- niet-parallelle implementatie 
-reduce :: (ReducingFunction (v->v->v)) => [v] -> (v->v->v) -> v 
-let rec reduce = l. f. mempty.
-    do n <- null l;
-    if n then return mempty else
-        do h <- head l;
-        do t <- tail l;
-        do y <- reduce t f mempty;
-        return (f h y) in
+hPure = handler 
+{
+    return x -> x
+    red l k -> hPure # (k (map (hPure #) l))
+}
 
 
-hAccum # hWeak # map 1:2:3:4:5:[] (x. if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) (x. return x)
+hPure # hAccum # hWeak # (do _ <- op accum "start " (x. return x);
+                        do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                            then
+                            do _ <- op accum "!" (x.return x);
+                            do _ <- op throw "error" (x. return x);
+                            op accum "unreachable" (x. return x)
+                            else op accum x (x. return x)) (x. return x);
+                        do _ <- op accum " end" (x. return x) (x. return x);
+                        return "success")
 
-{- E-Hand and E-HandMap -}
-hAccum # map 1:2:3:4:5:[] (x. hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) 
-(x. do res <- return x;
-case firstFailure res of
-    Left err -> return (Left err)
-    Right t  -> (x. hWeak # return x) t)
+hAccum # hWeak # (do _ <- op accum "start " (x. return x);
+                do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                    then
+                    do _ <- op accum "!" (x.return x);
+                    do _ <- op throw "error" (x. return x);
+                    op accum "unreachable" (x. return x)
+                    else op accum x (x. return x)) (x. return x);
+                do _ <- op accum " end" (x. return x) (x. return x);
+                return "success")
 
-{- E-HandMap -}
-map 1:2:3:4:5:[] (x. hAccum # hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x))
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)
+{- E-Hand and E-Hand and E-DoOp -}
+hAccum # hWeak # op accum "start " (x. 
+                                    do _ <- return x;
+                                    do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                                        then
+                                        do _ <- op accum "!" (x.return x);
+                                        do _ <- op throw "error" (x. return x);
+                                        op accum "unreachable" (x. return x)
+                                        else op accum x (x. return x)) (x. return x);
+                                    do _ <- op accum " end" (x. return x) (x. return x);
+                                    return "success")
 
-{- E-EffMap -}
-par ((x. hAccum # hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) 1):
-    ((x. hAccum # hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) 2):
-    ((x. hAccum # hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) 3):
-    ((x. hAccum # hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) 4):
-    ((x. hAccum # hWeak # if x == 2 then op throw "error" (x. return x) else op accum x (x. return x)) 5):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
+{- E-Hand and E-FwdOp -}
+hAccum # op accum "start " (x. hWeak # 
+                            do _ <- return x;
+                            do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                                then
+                                do _ <- op accum "!" (x.return x);
+                                do _ <- op throw "error" (x. return x);
+                                op accum "unreachable" (x. return x)
+                                else op accum x (x. return x)) (x. return x);
+                            do _ <- op accum " end" (x. return x) (x. return x);
+                            return "success")
 
-{- E-Par and [E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs] -}
-par (hAccum # hWeak # if 1 == 2 then op throw "error" (x. return x) else op accum 1 (x. return x)):
-    (hAccum # hWeak # if 2 == 2 then op throw "error" (x. return x) else op accum 2 (x. return x)):
-    (hAccum # hWeak # if 3 == 2 then op throw "error" (x. return x) else op accum 3 (x. return x)):
-    (hAccum # hWeak # if 4 == 2 then op throw "error" (x. return x) else op accum 4 (x. return x)):
-    (hAccum # hWeak # if 5 == 2 then op throw "error" (x. return x) else op accum 5 (x. return x)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
- 
-{- E-Par and [E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-IfTrue, E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-IfFalse] -}
-par (hAccum # hWeak # op accum 1 (x. return x)):
-    (hAccum # hWeak # op throw "error" (x. return x)):
-    (hAccum # hWeak # op accum 3 (x. return x)):
-    (hAccum # hWeak # op accum 4 (x. return x)):
-    (hAccum # hWeak # op accum 5 (x. return x)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
-
-{- E-Par and [E-Hand and E-FwdOp, E-Hand and E-HandOp, E-Hand and E-FwdOp, E-Hand and E-FwdOp, E-Hand and E-FwdOp] -}
-par (hAccum # op accum 1 (x. hWeak # return x)):
-    (hAccum # return (Left "error")):
-    (hAccum # op accum 3 (x. hWeak # return x)):
-    (hAccum # op accum 4 (x. hWeak # return x)):
-    (hAccum # op accum 5 (x. hWeak # return x)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
- 
-{- E-Par and [E-HandOp, E-HandRet, E-HandOp, E-HandOp, E-HandOp] -}
-par (do (m', v) <- (x. hAccum # hWeak # return x) (); return (m' ++ 1, v)):
-    (return ("",Left "error")):
-    (do (m', v) <- (x. hAccum # hWeak # return x) (); return (m' ++ 3, v)):
-    (do (m', v) <- (x. hAccum # hWeak # return x) (); return (m' ++ 4, v)):
-    (do (m', v) <- (x. hAccum # hWeak # return x) (); return (m' ++ 5, v)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
-
-{- E-Par and [E-Do and E-AppAbs, E-Do and E-AppAbs, E-Do and E-AppAbs, E-Do and E-AppAbs] -}
-par (do (m', v) <- hAccum # hWeak # return (); return (m' ++ 1, v)):
-    (return ("",Left "error")):
-    (do (m', v) <- hAccum # hWeak # return (); return (m' ++ 3, v)):
-    (do (m', v) <- hAccum # hWeak # return (); return (m' ++ 4, v)):
-    (do (m', v) <- hAccum # hWeak # return (); return (m' ++ 5, v)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
-
-{- E-Par and [E-Do and E-Hand and E-HandRet, E-Do and E-Hand and E-HandRet, E-Do and E-Hand and E-HandRet, E-Do and E-Hand and E-HandRet] -}
-par (do (m', v) <- hAccum # return (Right ()); return (m' ++ 1, v)):
-    (return ("",Left "error")):
-    (do (m', v) <- hAccum # return (Right ()); return (m' ++ 3, v)):
-    (do (m', v) <- hAccum # return (Right ()); return (m' ++ 4, v)):
-    (do (m', v) <- hAccum # return (Right ()); return (m' ++ 5, v)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
-
-{- E-Par and [E-Do and E-HandRet, E-Do and E-HandRet, E-Do and E-HandRet, E-Do and E-HandRet] -}
-par (do (m', v) <- return ("", Right ()); return (m' ++ 1, v)):
-    (return ("",Left "error")):
-    (do (m', v) <- return ("", Right ()); return (m' ++ 3, v)):
-    (do (m', v) <- return ("", Right ()); return (m' ++ 4, v)):
-    (do (m', v) <- return ("", Right ()); return (m' ++ 5, v)):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b))  
-
-{- E-Par and [E-DoRet, E-DoRet, E-DoRet, E-DoRet] -}
-par (return (1, Right ())):
-    (return ("",Left "error")):
-    (return (3, Right ())):
-    (return (4, Right ())):
-    (return (5, Right ())):[]
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
-
-{- E-ParNorRet -}
-(x. do first <- map fst x;
-do second <- map snd x;
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)) 
-
-(1, Right ()):
-("",Left "error"):
-(3, Right ()):
-(4, Right ()):
-(5, Right ()):[]
-
-{- E-AppAbs -}
-do first <- map fst ((1, Right ()):("",Left "error"):(3, Right ()):(4, Right ()):(5, Right ()):[]);
-do second <- map snd ((1, Right ()):("",Left "error"):(3, Right ()):(4, Right ()):(5, Right ()):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)
-
-{- E-Do and E-Map -}
-do first <- ((fst (1, Right ())):(fst ("", Left "error")):(fst (3, Right ())):(fst (4, Right ())):(fst (5, Right ())):[]);
-do second <- map snd ((1, Right ()):("", Left "error"):(3, Right ()):(4, Right ()):(5, Right ()):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)
-
-{- E-Do and E-ParList and [E-First, E-First, E-First, E-First, E-First] -}
-do first <- ((return 1):(return ""):(return 3):(return 4):(return 5):[]);
-do second <- map snd ((1, Right ()):("", Left "error"):(3, Right ()):(4, Right ()):(5, Right ()):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)
-
-{- E-Do and E-ListRet -}
-do first <- return ((1):(""):(3):(4):(5):[]);
-do second <- map snd ((1, Right ()):("", Left "error"):(3, Right ()):(4, Right ()):(5, Right ()):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce first;
-                return (m ++ m', b)
-
-{- E-DoRet -}
-do second <- map snd ((1, Right ()):("", Left "error"):(3, Right ()):(4, Right ()):(5, Right ()):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
-
-{- E-Do and E-Map -}
-do second <- ((snd (1, Right ())):(snd ("", Left "error")):(snd (3, Right ())):(snd (4, Right ())):(snd (5, Right ())):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
-
-{- E-Do and E-ParList and [E-Second, E-Second, E-Second, E-Second, E-Second] -}
-do second <- ((return (Right ())):(return (Left "error")):(return (Right ())):(return (Right ())):(return (Right ())):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
-
-{- E-Do and E-ListRet -}
-do second <- return ((Right ()):((Left "error")):((Right ())):((Right ())):((Right ())):[]);
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) second
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
-
-{- E-DoRet -}
-do (m', b) <- (x. hAccum # do res <- return x;
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) ((Right ()):((Left "error")):((Right ())):((Right ())):((Right ())):[])
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
+{- E-HandOp -}
+do (m', v) <- (x. hAccum # hWeak # 
+            do _ <- return x;
+            do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x)) (x. return x);
+            do _ <- op accum " end" (x. return x) (x. return x);
+            return "success") (); 
+return ("start " ++ m', v) 
 
 {- E-Do and E-AppAbs -}
-do (m', b) <- (hAccum # do res <- return ((Right ()):((Left "error")):((Right ())):((Right ())):((Right ())):[]);
-    case firstFailure res of
-        Left err -> return (Left err)
-        Right t  -> (x. hWeak # return x) t) 
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
+do (m', v) <- hAccum # hWeak # 
+            do _ <- return ();
+            do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x)) (x. return x);
+            do _ <- op accum " end" (x. return x) (x. return x);
+            return "success"; 
+return ("start " ++ m', v) 
 
-{- E-Do and E-Hand and E-DoRet -}
-do (m', b) <- (hAccum # case firstFailure ((Right ()):((Left "error")):((Right ())):((Right ())):((Right ())):[]) of
-                            Left err -> return (Left err)
-                            Right t  -> (x. hWeak # return x) t) 
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
+{- E-Do and E-Hand and E-Hand and E-DoRet -}
+do (m', v) <- hAccum # hWeak # 
+            do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x)) (x. return x);
+            do _ <- op accum " end" (x. return x) (x. return x);
+            return "success"; 
+return ("start " ++ m', v) 
 
--- TODO
-{- E-Do and E-CaseFirstFailLeft -}
-do (m', b) <- hAccum # return (Left "error")
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
+{- E-Do and E-Hand and E-Hand and E-DoMap -}
+do (m', v) <- hAccum # hWeak # 
+            map 1:2:3:4:5:[] (x. if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x)) (x. 
+                                                do _ <- return x;
+                                                do _ <- op accum " end" (x. return x) (x. return x);
+                                                return "success"; 
+                );
+return ("start " ++ m', v) 
 
-{- E-Do and E-HandRet -}
-do (m', b) <- return ("", Left "error")
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ m', b)
+{- E-Do and E-Hand and E-HandMap -}
+do (m', v) <- hAccum #
+            map 1:2:3:4:5:[] (x. hWeak #  if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x))
+                (x. do res <- return x;
+                case firstFailure res of
+                    Left err -> return (Left err)
+                    Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t);
+return ("start " ++ m', v) 
 
-{- E-DoRet -}
-let rec reduce = l.
-    do n <- null l;
-    if n
-        then 
-            return []
-        else
-            do h <- head l;
-            do t <- tail l;
-            do y <- reduce t;
-            return (h ++ y) in 
-                do m <- reduce ((1):(""):(3):(4):(5):[]);
-                return (m ++ "", Left "error")
-
-{- E-LetRec -}
- do m <- (let rec reduce = l.
-            do n <- null l;
-            if n
-                then 
-                    return []
-                else
-                    do h <- head l;
-                    do t <- tail l;
-                    do y <- reduce t;
-                    return (h ++ y) in l.
+{- E-Do and E-HandMap -}
+do (m', v) <- map 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x))
+                (do first <- map fst l;
+                    do second <- map snd l;
+                    do (m', b) <- (x. hAccum # do res <- return x;
+                                    case firstFailure res of
+                                        Left err -> return (Left err)
+                                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+                    let rec reduce = l.
                         do n <- null l;
                         if n
                             then 
@@ -619,11 +187,51 @@ let rec reduce = l.
                                 do h <- head l;
                                 do t <- tail l;
                                 do y <- reduce t;
-                                return (h ++ y)) ((1):(""):(3):(4):(5):[]);
-return (m ++ "", Left "error")
+                                return (h ++ y) in 
+                                    do m <- reduce first;
+                                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
-{- E-Do and E-LetRec -}
- do m <- (l.
+{- E-DoMap -}
+map 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
+                then
+                do _ <- op accum "!" (x.return x);
+                do _ <- op throw "error" (x. return x);
+                op accum "unreachable" (x. return x)
+                else op accum x (x. return x))
+                (x. do (m', v) <- (do first <- map fst x;
+                    do second <- map snd x;
+                    do (m', b) <- (x. hAccum #  do res <- return x;
+                                    case firstFailure res of
+                                        Left err -> return (Left err)
+                                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+                    let rec reduce = l.
+                        do n <- null l;
+                        if n
+                            then 
+                                return []
+                            else
+                                do h <- head l;
+                                do t <- tail l;
+                                do y <- reduce t;
+                                return (h ++ y) in 
+                                    do m <- reduce first;
+                                    return (m ++ m', b));
+                return ("start " ++ m', v))
+
+{- E-EffMap -}
+par (((x. hAccum # hWeak #  if x == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum x (x. return x)) 1):
+((x. hAccum # hWeak #  if x == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum x (x. return x)) 2):
+((x. hAccum # hWeak #  if x == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum x (x. return x)) 3):
+((x. hAccum # hWeak #  if x == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum x (x. return x)) 4):
+((x. hAccum # hWeak #  if x == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum x (x. return x)) 5):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
         do n <- null l;
         if n
             then 
@@ -631,490 +239,638 @@ return (m ++ "", Left "error")
             else
                 do h <- head l;
                 do t <- tail l;
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return (h ++ y)) ((1):(""):(3):(4):(5):[]);
-return (m ++ "", Left "error")
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
 
-{- E-Do and E-AppAbs -}
- do m <- do n <- null ((1):(""):(3):(4):(5):[]);
+{- E-Par and [E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs] -}
+par ((hAccum # hWeak #  if 1 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 1 (x. return x)):
+(hAccum # hWeak #  if 2 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 2 (x. return x)):
+(hAccum # hWeak #  if 3 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 3 (x. return x)):
+(hAccum # hWeak #  if 4 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 4 (x. return x)):
+(hAccum # hWeak #  if 5 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 5 (x. return x)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
         if n
             then 
                 return []
             else
-                do h <- head ((1):(""):(3):(4):(5):[]);
-                do t <- tail ((1):(""):(3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return (h ++ y);
-return (m ++ "", Left "error")
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
 
-{- E-Do and E-Do and E-NullFalse -}
- do m <- do n <- return False;
+{- E-Par and [E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-IfTrue, E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-IfFalse] -}
+par ((hAccum # hWeak # op accum 1 (x. return x)):
+(hAccum # hWeak #  do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)):
+(hAccum # hWeak # op accum 3 (x. return x)):
+(hAccum # hWeak # op accum 4 (x. return x)):
+(hAccum # hWeak # op accum 5 (x. return x)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
         if n
             then 
                 return []
             else
-                do h <- head ((1):(""):(3):(4):(5):[]);
-                do t <- tail ((1):(""):(3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return (h ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-DoRet -}
- do m <- if False
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+ 
+{- E-Par and [E-Hand and E-FwdOp, E-Hand and E-Hand and E-DoOp, E-Hand and E-FwdOp, E-Hand and E-FwdOp, E-Hand and E-FwdOp] -}
+par ((hAccum # op accum 1 (x. hWeak # return x)):
+(hAccum # hWeak #  op accum "!" (x. do _ <-  return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x));):
+(hAccum # op accum 3 (x. hWeak # return x)):
+(hAccum # op accum 4 (x. hWeak # return x)):
+(hAccum # op accum 5 (x. hWeak # return x)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
             then 
                 return []
             else
-                do h <- head ((1):(""):(3):(4):(5):[]);
-                do t <- tail ((1):(""):(3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return (h ++ y);
-return (m ++ "", Left "error")
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
 
-{- E-Do and E-IfFalse -}
- do m <- do h <- head ((1):(""):(3):(4):(5):[]);
-        do t <- tail ((1):(""):(3):(4):(5):[]);
-        do y <- (let rec reduce = l.
-            do n <- null l;
-            if n
-                then 
-                    return []
-                else
-                    do h <- head l;
-                    do t <- tail l;
-                    do y <- reduce t;
-                    return (h ++ y) in l.
-                        do n <- null l;
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head l;
-                                do t <- tail l;
-                                do y <- reduce t;
-                                return (h ++ y)) t;
-        return (h ++ y);
-return (m ++ "", Left "error")
+{- E-Par and [E-HandOp, E-Hand and E-FwdOp, E-HandOp, E-HandOp, E-HandOp] -}
+par ((do (m', v) <- (x. hAccum # hWeak # return x) (); return (1 ++ m', v)):
+(hAccum # hWeak #  op accum "!" (x. do _ <-  return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x));):
+(do (m', v) <- (x. hAccum # hWeak # return x) (); return (3 ++ m', v)):
+(do (m', v) <- (x. hAccum # hWeak # return x) (); return (4 ++ m', v)):
+(do (m', v) <- (x. hAccum # hWeak # return x) (); return (5 ++ m', v)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
 
-{- E-Do and E-Do and E-Head -}
- do m <- do h <- return 1;
-        do t <- tail ((1):(""):(3):(4):(5):[]);
-        do y <- (let rec reduce = l.
-            do n <- null l;
-            if n
-                then 
-                    return []
-                else
-                    do h <- head l;
-                    do t <- tail l;
-                    do y <- reduce t;
-                    return (h ++ y) in l.
-                        do n <- null l;
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head l;
-                                do t <- tail l;
-                                do y <- reduce t;
-                                return (h ++ y)) t;
-        return (h ++ y);
-return (m ++ "", Left "error")
+{- E-Par and [E-Do and E-AppAbs, E-Hand and E-HandOp, E-Do and E-AppAbs, E-Do and E-AppAbs, E-Do and E-AppAbs] -}
+par ((do (m', v) <- hAccum # hWeak # return (); return (1 ++ m', v)):
+(hAccum # op accum "!" (x. hWeak # do _ <-  return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x));):
+(do (m', v) <- hAccum # hWeak # return (); return (3 ++ m', v)):
+(do (m', v) <- hAccum # hWeak # return (); return (4 ++ m', v)):
+(do (m', v) <- hAccum # hWeak # return (); return (5 ++ m', v)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-Par and [E-Do and E-Hand and E-HandRet, E-HandOp, E-Do and E-Hand and E-HandRet, E-Do and E-Hand and E-HandRet, E-Do and E-Hand and E-HandRet] -}
+par ((do (m', v) <- hAccum # return (Right ()); return (1 ++ m', v)):
+(do (m', v) <- (x. hAccum # hWeak # do _ <-  return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)) (); return ("!" ++ m', v)):
+(do (m', v) <- hAccum # return (Right ()); return (3 ++ m', v)):
+(do (m', v) <- hAccum # return (Right ()); return (4 ++ m', v)):
+(do (m', v) <- hAccum # return (Right ()); return (5 ++ m', v)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-Par and [E-Do and E-HandRet, E-Do and E-AppAbs, E-Do and E-HandRet, E-Do and E-HandRet, E-Do and E-HandRet] -}
+par ((do (m', v) <- return ("", Right ()); return (1 ++ m', v)):
+(do (m', v) <- hAccum # hWeak # do _ <-  return (); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
+(do (m', v) <- return ("", Right ()); return (3 ++ m', v)):
+(do (m', v) <- return ("", Right ()); return (4 ++ m', v)):
+(do (m', v) <- return ("", Right ()); return (5 ++ m', v)):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+
+{- E-Par and [E-DoRet, E-Do and E-Hand and E-Hand and E-DoRet, E-DoRet, E-DoRet, E-DoRet] -}
+par ((return ("1", Right ())):
+(do (m', v) <- hAccum # hWeak # do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
+(return ("3", Right ())):
+(return ("4", Right ())):
+(return ("5", Right ())):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-Par and [E-Do and E-Hand and E-Hand and E-DoOp] -}
+par ((return ("1", Right ())):
+(do (m', v) <- hAccum # hWeak # op throw "error" (x. do _ <-  return x; op accum "unreachable" (x. return x)); return ("!" ++ m', v)):
+(return ("3", Right ())):
+(return ("4", Right ())):
+(return ("5", Right ())):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-Par and [E-Do and E-Hand and E-HandOp] -}
+par ((return ("1", Right ())):
+(do (m', v) <- hAccum # return (Left "error"); return ("!" ++ m', v)):
+(return ("3", Right ())):
+(return ("4", Right ())):
+(return ("5", Right ())):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-Par and [E-Do and E-HandRet] -}
+par ((return ("1", Right ())):
+(do (m', v) <- return ("", Left "error"); return ("!" ++ m', v)):
+(return ("3", Right ())):
+(return ("4", Right ())):
+(return ("5", Right ())):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-Par and [E-DoRet] -}
+par ((return ("1", Right ())):
+(return ("!", Left "error")):
+(return ("3", Right ())):
+(return ("4", Right ())):
+(return ("5", Right ())):[])
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v))
+
+{- E-ParNorRet -}
+(x. do (m', v) <- (do first <- map fst x;
+    do second <- map snd x;
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v)) (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[])
+
+{- E-AppAbs -}
+do (m', v) <- (do first <- map fst (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
+
+{- E-Do and E-Do and E-Map -}
+do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error")):(fst ("3", Right ())):(fst ("4", Right ())):(fst ("5", Right ())):[]);
+    do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
+
+{- E-Do and E-Do and E-Map -}
+do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error")):(fst ("3", Right ())):(fst ("4", Right ())):(fst ("5", Right ())):[]);
+    do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
+
+{- E-Do and E-Do and E-ParList and [E-First*5] -}
+do (m', v) <- (do first <- ((return "1"):(return "!"):(return "3"):(return "4"):(return "5"):[]);
+    do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
+
+{- E-Do and E-Do and E-ListRet -}
+do (m', v) <- (do first <- return ("1":"!":"3":"4":"5":[]);
+    do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce first;
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
 {- E-Do and E-DoRet -}
- do m <- do t <- tail ((1):(""):(3):(4):(5):[]);
-        do y <- (let rec reduce = l.
-            do n <- null l;
-            if n
-                then 
-                    return []
-                else
-                    do h <- head l;
-                    do t <- tail l;
-                    do y <- reduce t;
-                    return (h ++ y) in l.
-                        do n <- null l;
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head l;
-                                do t <- tail l;
-                                do y <- reduce t;
-                                return (h ++ y)) t;
-        return (1 ++ y);
-return (m ++ "", Left "error")
+do (m', v) <- (do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-Tail -}
- do m <- do t <- return ((""):(3):(4):(5):[]);
-        do y <- (let rec reduce = l.
-            do n <- null l;
-            if n
-                then 
-                    return []
-                else
-                    do h <- head l;
-                    do t <- tail l;
-                    do y <- reduce t;
-                    return (h ++ y) in l.
-                        do n <- null l;
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head l;
-                                do t <- tail l;
-                                do y <- reduce t;
-                                return (h ++ y)) t;
-        return (1 ++ y);
-return (m ++ "", Left "error")
+{- E-Do and E-Do and E-Map -}
+do (m', v) <- (do second <- ((snd ("1", Right ())):(snd ("!", Left "error")):(snd ("3", Right ())):(snd ("4", Right ())):(snd ("5", Right ())):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
+
+{- E-Do and E-Do and E-ParList and [E-Second*5] -}
+do (m', v) <- (do second <- ((return (Right ())):(return (Left "error")):(return (Right ())):(return (Right ())):(return (Right ())):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
+
+{- E-Do and E-Do and E-ListRet -}
+do (m', v) <- (do second <- return ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
+    do (m', b) <- (x. hAccum # do res <- return x;
+                    case firstFailure res of
+                        Left err -> return (Left err)
+                        Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) second;
+    let rec reduce = l.
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
 {- E-Do and E-DoRet -}
- do m <- do y <- (let rec reduce = l.
-            do n <- null l;
-            if n
-                then 
-                    return []
-                else
-                    do h <- head l;
-                    do t <- tail l;
-                    do y <- reduce t;
-                    return (h ++ y) in l.
-                        do n <- null l;
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head l;
-                                do t <- tail l;
-                                do y <- reduce t;
-                                return (h ++ y)) ((""):(3):(4):(5):[]);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+do (m', v) <- (do (m', b) <- (x. hAccum # do res <- return x;
+                                case firstFailure res of
+                                    Left err -> return (Left err)
+                                    Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
+    let rec reduce = l. 
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-LetRec -}
- do m <- do y <- (l.
-                do n <- null l;
-                if n
-                    then 
-                        return []
-                    else
-                        do h <- head l;
-                        do t <- tail l;
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y)) t;
-                        return (h ++ y)) ((""):(3):(4):(5):[]);
-        return (1 ++ y);
-return (m ++ "", Left "error")
 
 {- E-Do and E-Do and E-AppAbs -}
- do m <- do y <- do n <- null ((""):(3):(4):(5):[]);
-                if n
-                    then 
-                        return []
-                    else
-                        do h <- head ((""):(3):(4):(5):[]);
-                        do t <- tail ((""):(3):(4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y)) t;
-                        return (h ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+do (m', v) <- (do (m', b) <- hAccum # do res <- return ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
+                            case firstFailure res of
+                                Left err -> return (Left err)
+                                Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t);
+    let rec reduce = l. 
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-Do and E-NullFalse -}
- do m <- do y <- do n <- return False;
-                if n
-                    then 
-                        return []
-                    else
-                        do h <- head ((""):(3):(4):(5):[]);
-                        do t <- tail ((""):(3):(4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y)) t;
-                        return (h ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+{- E-Do and E-Do and E-Hand and E-DoRet -}
+do (m', v) <- (do (m', b) <- hAccum # case firstFailure ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]) of
+                                Left err -> return (Left err)
+                                Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t);
+    let rec reduce = l. 
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v)
 
-{- E-Do and E-Do and E-DoRet -}
- do m <- do y <- if False
-                    then 
-                        return []
-                    else
-                        do h <- head ((""):(3):(4):(5):[]);
-                        do t <- tail ((""):(3):(4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y)) t;
-                        return (h ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+--TODO 
+{- E-Do and E-Do E-Hand and E-FirstFailLeft -}
+do (m', v) <- (do (m', b) <- hAccum #  return (Left "error");
+    let rec reduce = l. 
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-IfFalse -}
- do m <- do y <- do h <- head ((""):(3):(4):(5):[]);
-                do t <- tail ((""):(3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return (h ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+{- E-Do and E-Do and E-HandRet -}
+do (m', v) <- (do (m', b) <- return ("", Left "error");
+    let rec reduce = l. 
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ m', b));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-Do and E-Head -}
- do m <- do y <- do h <- return "";
-                do t <- tail ((""):(3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return (h ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+{- E-Do and E-DoRet -}
+do (m', v) <- (let rec reduce = l. 
+        do n <- null l;
+        if n
+            then 
+                return []
+            else
+                do h <- head l;
+                do t <- tail l;
+                do y <- reduce t;
+                return (h ++ y) in 
+                    do m <- reduce ("1":"!":"3":"4":"5":[]);
+                    return (m ++ "", Left "error"));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-DoRet -}
- do m <- do y <- do t <- tail ((""):(3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Tail -}
- do m <- do y <- do t <- return ((3):(4):(5):[]);
-                do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) t;
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- (let rec reduce = l.
-                    do n <- null l;
-                    if n
-                        then 
-                            return []
-                        else
-                            do h <- head l;
-                            do t <- tail l;
-                            do y <- reduce t;
-                            return (h ++ y) in l.
-                                do n <- null l;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head l;
-                                        do t <- tail l;
-                                        do y <- reduce t;
-                                        return (h ++ y)) ((3):(4):(5):[]);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-LetRec -}
- do m <- do y <- do y <- (l.
+{- E-Do and E-LetRec -}
+do (m', v) <- (do m <- (let rec reduce = l. 
                         do n <- null l;
                         if n
                             then 
@@ -1122,258 +878,8 @@ return (m ++ "", Left "error")
                             else
                                 do h <- head l;
                                 do t <- tail l;
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y) ) t;
-                                return (h ++ y)) ((3):(4):(5):[]);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-AppAbs -}
- do m <- do y <- do y <- do n <- null ((3):(4):(5):[]);
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head ((3):(4):(5):[]);
-                                do t <- tail ((3):(4):(5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y) ) t;
-                                return (h ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
- do m <- do y <- do y <- do n <- return False;
-                        if n
-                            then 
-                                return []
-                            else
-                                do h <- head ((3):(4):(5):[]);
-                                do t <- tail ((3):(4):(5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y) ) t;
-                                return (h ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- if False
-                            then 
-                                return []
-                            else
-                                do h <- head ((3):(4):(5):[]);
-                                do t <- tail ((3):(4):(5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y) ) t;
-                                return (h ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-IfFalse -}
- do m <- do y <- do y <- do h <- head ((3):(4):(5):[]);
-                        do t <- tail ((3):(4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y) ) t;
-                        return (h ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Head -}
- do m <- do y <- do y <- do h <- return 3;
-                        do t <- tail ((3):(4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y) ) t;
-                        return (h ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do t <- tail ((3):(4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y) ) t;
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Tail -}
- do m <- do y <- do y <- do t <- return ((4):(5):[]);
-                        do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y) ) t;
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- (let rec reduce = l.
-                            do n <- null l;
-                            if n
-                                then 
-                                    return []
-                                else
-                                    do h <- head l;
-                                    do t <- tail l;
-                                    do y <- reduce t;
-                                    return (h ++ y) in l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- reduce t;
-                                                return (h ++ y) ) ((4):(5):[]);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-LetRec -}
- do m <- do y <- do y <- do y <- (l.
+                                do y <- reduce t;
+                                return (h ++ y) in l. 
                                 do n <- null l;
                                 if n
                                     then 
@@ -1381,720 +887,19 @@ return (m ++ "", Left "error")
                                     else
                                         do h <- head l;
                                         do t <- tail l;
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (h ++ y) ) ((4):(5):[]);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+                                        do y <- reduce t;
+                                        return (h ++ y)) ("1":"!":"3":"4":"5":[]);
+                return (m ++ "", Left "error"));
+return ("start " ++ m', v) 
 
-{- E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
- do m <- do y <- do y <- do y <- do n <- null ((4):(5):[]);
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head ((4):(5):[]);
-                                        do t <- tail ((4):(5):[]);
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (h ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
- do m <- do y <- do y <- do y <- do n <- return False;
-                                if n
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head ((4):(5):[]);
-                                        do t <- tail ((4):(5):[]);
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (h ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- if False
-                                    then 
-                                        return []
-                                    else
-                                        do h <- head ((4):(5):[]);
-                                        do t <- tail ((4):(5):[]);
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (h ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
- do m <- do y <- do y <- do y <- do h <- head ((4):(5):[]);
-                                do t <- tail ((4):(5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y)) t;
-                                return (h ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
- do m <- do y <- do y <- do y <- do h <- return 4;
-                                do t <- tail ((4):(5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y)) t;
-                                return (h ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do t <- tail ((4):(5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y)) t;
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
- do m <- do y <- do y <- do y <- do t <- return ((5):[]);
-                                do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y)) t;
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do y <- (let rec reduce = l.
-                                    do n <- null l;
-                                    if n
-                                        then 
-                                            return []
-                                        else
-                                            do h <- head l;
-                                            do t <- tail l;
-                                            do y <- reduce t;
-                                            return (h ++ y) in l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- reduce t;
-                                                        return (h ++ y)) ((5):[]);;
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
- do m <- do y <- do y <- do y <- do y <- (l.
-                                        do n <- null l;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head l;
-                                                do t <- tail l;
-                                                do y <- (let rec reduce = l.
-                                                    do n <- null l;
-                                                    if n
-                                                        then 
-                                                            return []
-                                                        else
-                                                            do h <- head l;
-                                                            do t <- tail l;
-                                                            do y <- reduce t;
-                                                            return (h ++ y) in l.
-                                                                do n <- null l;
-                                                                if n
-                                                                    then 
-                                                                        return []
-                                                                    else
-                                                                        do h <- head l;
-                                                                        do t <- tail l;
-                                                                        do y <- reduce t;
-                                                                        return (h ++ y)) t;
-                                                return (h ++ y)) ((5):[]);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
- do m <- do y <- do y <- do y <- do y <- do n <- null ((5):[]);
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head ((5):[]);
-                                                do t <- tail ((5):[]);
-                                                do y <- (let rec reduce = l.
-                                                    do n <- null l;
-                                                    if n
-                                                        then 
-                                                            return []
-                                                        else
-                                                            do h <- head l;
-                                                            do t <- tail l;
-                                                            do y <- reduce t;
-                                                            return (h ++ y) in l.
-                                                                do n <- null l;
-                                                                if n
-                                                                    then 
-                                                                        return []
-                                                                    else
-                                                                        do h <- head l;
-                                                                        do t <- tail l;
-                                                                        do y <- reduce t;
-                                                                        return (h ++ y)) t;
-                                                return (h ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
- do m <- do y <- do y <- do y <- do y <- do n <- return False;
-                                        if n
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head ((5):[]);
-                                                do t <- tail ((5):[]);
-                                                do y <- (let rec reduce = l.
-                                                    do n <- null l;
-                                                    if n
-                                                        then 
-                                                            return []
-                                                        else
-                                                            do h <- head l;
-                                                            do t <- tail l;
-                                                            do y <- reduce t;
-                                                            return (h ++ y) in l.
-                                                                do n <- null l;
-                                                                if n
-                                                                    then 
-                                                                        return []
-                                                                    else
-                                                                        do h <- head l;
-                                                                        do t <- tail l;
-                                                                        do y <- reduce t;
-                                                                        return (h ++ y)) t;
-                                                return (h ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do y <- if False
-                                            then 
-                                                return []
-                                            else
-                                                do h <- head ((5):[]);
-                                                do t <- tail ((5):[]);
-                                                do y <- (let rec reduce = l.
-                                                    do n <- null l;
-                                                    if n
-                                                        then 
-                                                            return []
-                                                        else
-                                                            do h <- head l;
-                                                            do t <- tail l;
-                                                            do y <- reduce t;
-                                                            return (h ++ y) in l.
-                                                                do n <- null l;
-                                                                if n
-                                                                    then 
-                                                                        return []
-                                                                    else
-                                                                        do h <- head l;
-                                                                        do t <- tail l;
-                                                                        do y <- reduce t;
-                                                                        return (h ++ y)) t;
-                                                return (h ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
- do m <- do y <- do y <- do y <- do y <- do h <- head ((5):[]);
-                                        do t <- tail ((5):[]);
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (h ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
- do m <- do y <- do y <- do y <- do y <- do h <- return 5;
-                                        do t <- tail ((5):[]);
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (h ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do y <- do t <- tail ((5):[]);
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
- do m <- do y <- do y <- do y <- do y <- do t <- return [];
-                                        do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) t;
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do y <- do y <- (let rec reduce = l.
-                                            do n <- null l;
-                                            if n
-                                                then 
-                                                    return []
-                                                else
-                                                    do h <- head l;
-                                                    do t <- tail l;
-                                                    do y <- reduce t;
-                                                    return (h ++ y) in l.
-                                                        do n <- null l;
-                                                        if n
-                                                            then 
-                                                                return []
-                                                            else
-                                                                do h <- head l;
-                                                                do t <- tail l;
-                                                                do y <- reduce t;
-                                                                return (h ++ y)) [];
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
- do m <- do y <- do y <- do y <- do y <- do y <- (l.
-                                                do n <- null l;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head l;
-                                                        do t <- tail l;
-                                                        do y <- (let rec reduce = l.
-                                                            do n <- null l;
-                                                            if n
-                                                                then 
-                                                                    return []
-                                                                else
-                                                                    do h <- head l;
-                                                                    do t <- tail l;
-                                                                    do y <- reduce t;
-                                                                    return (h ++ y) in l.
-                                                                        do n <- null l;
-                                                                        if n
-                                                                            then 
-                                                                                return []
-                                                                            else
-                                                                                do h <- head l;
-                                                                                do t <- tail l;
-                                                                                do y <- reduce t;
-                                                                                return (h ++ y)) t;
-                                                        return (h ++ y)) [];
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
- do m <- do y <- do y <- do y <- do y <- do y <- do n <- null [];
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head [];
-                                                        do t <- tail [];
-                                                        do y <- (let rec reduce = l.
-                                                            do n <- null l;
-                                                            if n
-                                                                then 
-                                                                    return []
-                                                                else
-                                                                    do h <- head l;
-                                                                    do t <- tail l;
-                                                                    do y <- reduce t;
-                                                                    return (h ++ y) in l.
-                                                                        do n <- null l;
-                                                                        if n
-                                                                            then 
-                                                                                return []
-                                                                            else
-                                                                                do h <- head l;
-                                                                                do t <- tail l;
-                                                                                do y <- reduce t;
-                                                                                return (h ++ y)) t;
-                                                        return (h ++ y);
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullTrue -}
- do m <- do y <- do y <- do y <- do y <- do y <- do n <- return True;
-                                                if n
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head [];
-                                                        do t <- tail [];
-                                                        do y <- (let rec reduce = l.
-                                                            do n <- null l;
-                                                            if n
-                                                                then 
-                                                                    return []
-                                                                else
-                                                                    do h <- head l;
-                                                                    do t <- tail l;
-                                                                    do y <- reduce t;
-                                                                    return (h ++ y) in l.
-                                                                        do n <- null l;
-                                                                        if n
-                                                                            then 
-                                                                                return []
-                                                                            else
-                                                                                do h <- head l;
-                                                                                do t <- tail l;
-                                                                                do y <- reduce t;
-                                                                                return (h ++ y)) t;
-                                                        return (h ++ y);
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do y <- do y <- if True
-                                                    then 
-                                                        return []
-                                                    else
-                                                        do h <- head [];
-                                                        do t <- tail [];
-                                                        do y <- (let rec reduce = l.
-                                                            do n <- null l;
-                                                            if n
-                                                                then 
-                                                                    return []
-                                                                else
-                                                                    do h <- head l;
-                                                                    do t <- tail l;
-                                                                    do y <- reduce t;
-                                                                    return (h ++ y) in l.
-                                                                        do n <- null l;
-                                                                        if n
-                                                                            then 
-                                                                                return []
-                                                                            else
-                                                                                do h <- head l;
-                                                                                do t <- tail l;
-                                                                                do y <- reduce t;
-                                                                                return (h ++ y)) t;
-                                                        return (h ++ y);
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue -}
- do m <- do y <- do y <- do y <- do y <- do y <- return []
-                                        return (5 ++ y);
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- do y <- return 5;
-                                return (4 ++ y);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- do y <- return (45);
-                        return (3 ++ y);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-Do and E-DoRet -}
- do m <- do y <- do y <- return (345);
-                return ("" ++ y);
-        return (1 ++ y);
-return (m ++ "", Left "error")
-
-{- E-Do and E-Do and E-DoRet -}
- do m <- do y <- return (345);
-        return (1 ++ y);
-return (m ++ "", Left "error")
+...
 
 {- E-Do and E-DoRet -}
- do m <- return (1345);
-return (m ++ "", Left "error")
+do (m', v) <- return ("1:345", Left "error");
+return ("start " ++ m', v) 
 
 {- E-DoRet -}
-return (1345, Left "error")
+do (m', v) <- return ("1:345", Left "error");
+return ("start 1:345", Left "error") 
+
+

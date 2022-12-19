@@ -22,6 +22,12 @@ hAccum = handler
         fwd f p k -> f (p, k) -- TODO
     }
 
+hPure = handler 
+{
+    return x -> x
+    red l k -> hPure # (k (map hVoid l))
+}
+
 -- parallel implementatie moet mogelijk zijn
 -- Bijvoorbeeld door lijst te splitsen over threads en resultaten te reduceren zelfde reducerende functie
 -- niet-parallelle implementatie 
@@ -34,10 +40,28 @@ let rec reduce = l. f. mempty.
         do y <- reduce t f mempty;
         return (f h y) in
 
-hAccum # map (1:2:3:4:5:[]) (i. op accum i (x. return x)) (x. return x)
+hPure # hAccum # map (1:2:3:4:5:[]) (i. op accum i (x. return x)) (x. return x)
 
 {- E-HandMap -}
 map (1:2:3:4:5:[]) (i. hAccum # op accum i (x. return x)) 
+(x. hPure # ((x. do first <- map fst x;
+do second <- map snd x;
+do (m', b) <- (x. hAccum # return x) second;
+let rec reduce = l.
+    do n <- null l;
+    if n
+        then 
+            return 0
+        else
+            do h <- head l;
+            do t <- tail l;
+            do y <- reduce t;
+            return (h + y) in 
+                do m <- reduce first;
+                return (m + m', b)) (map hVoid x)))
+
+{- E-HandMap -}
+map (1:2:3:4:5:[]) (i. hPure # hAccum # op accum i (x. return x)) 
 (x. do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
@@ -1876,3 +1900,5 @@ return (m + 0, (():():():():():[]))
 
 {- E-DoRet-}
 return (15, (():():():():():[]))
+
+-- Correct met parallel algebraic effects implementatie
