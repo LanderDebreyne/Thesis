@@ -3,7 +3,7 @@ map l (i. op accum i (x. return x)) (x. return x)
 hAccum = handler 
     {
         return x -> return (0, x)
-        op accum m k -> do (m', v) <- k (); return (m' + m, v)
+        op accum m k -> do (m', v) <- k (); return (m + m', v)
         red l k ->  do first <- map fst l;
                     do second <- map snd l;
                     do (m', b) <- k second;
@@ -22,11 +22,13 @@ hAccum = handler
         fwd f p k -> f (p, k) -- TODO
     }
 
-hPure = handler 
-{
-    return x -> x
-    red l k -> hPure # (k (map hVoid l))
-}
+hPar = handler
+    {
+        return x -> return x
+        map l p k -> do res <- map p l;
+                    k res
+        fwd f p k -> -- TODO
+    }
 
 -- parallel implementatie moet mogelijk zijn
 -- Bijvoorbeeld door lijst te splitsen over threads en resultaten te reduceren zelfde reducerende functie
@@ -40,11 +42,29 @@ let rec reduce = l. f. mempty.
         do y <- reduce t f mempty;
         return (f h y) in
 
-hPure # hAccum # map (1:2:3:4:5:[]) (i. op accum i (x. return x)) (x. return x)
+hPar # hAccum # map (1:2:3:4:5:[]) (i. op accum i (x. return x)) (x. return x)
+
+{- E-Hand and E-FwdMap -}
+hPar # map (1:2:3:4:5:[]) (i. hAccum # op accum i (x. return x)) 
+(x. do first <- map fst x;
+do second <- map snd x;
+do (m', b) <- (x. hAccum # return x) second;
+let rec reduce = l.
+    do n <- null l;
+    if n
+        then 
+            return 0
+        else
+            do h <- head l;
+            do t <- tail l;
+            do y <- reduce t;
+            return (h + y) in 
+                do m <- reduce first;
+                return (m + m', b))
 
 {- E-HandMap -}
-map (1:2:3:4:5:[]) (i. hAccum # op accum i (x. return x)) 
-(x. hPure # ((x. do first <- map fst x;
+do res <- map (i. hPar # hAccum # op accum i (x. return x)) (1:2:3:4:5:[]);
+ (x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -58,11 +78,15 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b)) (map hVoid x)))
+                return (m + m', b)) res
 
-{- E-HandMap -}
-map (1:2:3:4:5:[]) (i. hPure # hAccum # op accum i (x. return x)) 
-(x. do first <- map fst x;
+{- E-Do and E-Map -}
+do res <-   (((i. hPar # hAccum # op accum i (x. return x)) 1):
+            ((i. hAccum # op accum i (x. return x)) 2):
+            ((i. hAccum # op accum i (x. return x)) 3):
+            ((i. hAccum # op accum i (x. return x)) 4):
+            ((i. hAccum # op accum i (x. return x)) 5):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -76,15 +100,15 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-EffMap -}
-par (((i. hAccum # op accum i (x. return x)) 1):
-    ((i. hAccum # op accum i (x. return x)) 2):
-    ((i. hAccum # op accum i (x. return x)) 3):
-    ((i. hAccum # op accum i (x. return x)) 4):
-    ((i. hAccum # op accum i (x. return x)) 5):[])
-(x. do first <- map fst x;
+{- E-Do and E-ParList and [E-AppAbs*5] -}
+do res <-   ((hPar # hAccum # op accum 1 (x. return x)):
+            (hPar # hAccum # op accum 2 (x. return x)):
+            (hPar # hAccum # op accum 3 (x. return x)):
+            (hPar # hAccum # op accum 4 (x. return x)):
+            (hPar # hAccum # op accum 5 (x. return x)):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -98,15 +122,15 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-Par and [E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs, E-AppAbs] -}
-par ((hAccum # op accum 1 (x. return x)):
-    (hAccum # op accum 2 (x. return x)):
-    (hAccum # op accum 3 (x. return x)):
-    (hAccum # op accum 4 (x. return x)):
-    (hAccum # op accum 5 (x. return x)):[])
-(x. do first <- map fst x;
+{- E-Do and E-ParList and [E-Hand and E-HandOp*5] -}
+do res <-   (hPar # do (m', v) <- (x. hAccum # return x) (); return (m' + 1, v)):
+            (hPar # do (m', v) <- (x. hAccum # return x) (); return (m' + 2, v)):
+            (hPar # do (m', v) <- (x. hAccum # return x) (); return (m' + 3, v)):
+            (hPar # do (m', v) <- (x. hAccum # return x) (); return (m' + 4, v)):
+            (hPar # do (m', v) <- (x. hAccum # return x) (); return (m' + 5, v)):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -120,15 +144,15 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-Par and [E-HandOp, E-HandOp, E-HandOp, E-HandOp, E-HandOp] -}
-par ((do (m', v) <- (x. hAccum # return x) (); return (m' + 1, v)):
-    (do (m', v) <- (x. hAccum # return x) (); return (m' + 2, v)):
-    (do (m', v) <- (x. hAccum # return x) (); return (m' + 3, v)):
-    (do (m', v) <- (x. hAccum # return x) (); return (m' + 4, v)):
-    (do (m', v) <- (x. hAccum # return x) (); return (m' + 5, v)):[])
-(x. do first <- map fst x;
+{- E-Do and E-ParList and [E-Hand and E-Do and E-AppAbs*5] -}
+do res <-   ((hPar # do (m', v) <- hAccum # return (); return (m' + 1, v)):
+            (hPar # do (m', v) <- hAccum # return (); return (m' + 2, v)):
+            (hPar # do (m', v) <- hAccum # return (); return (m' + 3, v)):
+            (hPar # do (m', v) <- hAccum # return (); return (m' + 4, v)):
+            (hPar # do (m', v) <- hAccum # return (); return (m' + 5, v)):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -142,15 +166,15 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-Par and [E-Do and E-AppAbs, E-Do and E-AppAbs, E-Do and E-AppAbs, E-Do and E-AppAbs, E-Do and E-AppAbs] -}
-par ((do (m', v) <- hAccum # return (); return (m' + 1, v)):
-    (do (m', v) <- hAccum # return (); return (m' + 2, v)):
-    (do (m', v) <- hAccum # return (); return (m' + 3, v)):
-    (do (m', v) <- hAccum # return (); return (m' + 4, v)):
-    (do (m', v) <- hAccum # return (); return (m' + 5, v)):[])
-(x. do first <- map fst x;
+{- E-Do and E-ParList and [E-Hand and E-Do and E-HandRet*5] -}
+do res <-   ((hPar # do (m', v) <- return (0,()); return (m' + 1, v)):
+            (hPar # do (m', v) <- return (0,()); return (m' + 2, v)):
+            (hPar # do (m', v) <- return (0,()); return (m' + 3, v)):
+            (hPar # do (m', v) <- return (0,()); return (m' + 4, v)):
+            (hPar # do (m', v) <- return (0,()); return (m' + 5, v)):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -164,15 +188,15 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-Par and [E-Do and E-HandRet, E-Do and E-HandRet, E-Do and E-HandRet, E-Do and E-HandRet, E-Do and E-HandRet] -}
-par ((do (m', v) <- return (0, ()); return (m' + 1, v)):
-    (do (m', v) <- return (0, ()); return (m' + 2, v)):
-    (do (m', v) <- return (0, ()); return (m' + 3, v)):
-    (do (m', v) <- return (0, ()); return (m' + 4, v)):
-    (do (m', v) <- return (0, ()); return (m' + 5, v)):[])
-(x. do first <- map fst x;
+{- E-Do and E-ParList and [E-Hand and E-DoRet*5] -}
+do res <-   ((hPar # return (1, ())):
+            (hPar # return (2, ())):
+            (hPar # return (3, ())):
+            (hPar # return (4, ())):
+            (hPar # return (5, ())):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -186,11 +210,11 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-Par and [E-DoRet, E-DoRet, E-DoRet, E-DoRet, E-DoRet] -}
-par (return (1, ()):return (2, ()):return (3, ()):return (4, ()):return (5, ()):[])
-(x. do first <- map fst x;
+{- E-Do and E-ParList and [E-HandRet*5] -}
+do res <-   ((return (1, ())):(return (2, ())):(return (3, ())):(return (4, ())):(return (5, ())):[]);
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -204,10 +228,29 @@ let rec reduce = l.
             do y <- reduce t;
             return (h + y) in 
                 do m <- reduce first;
-                return (m + m', b))
+                return (m + m', b)) res
 
-{- E-ParNorRet -}
-(x. do first <- map fst x;
+
+{- E-Do and E-ListRet -}
+do res <- return ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
+(x. hPar # do first <- map fst x;
+do second <- map snd x;
+do (m', b) <- (x. hAccum # return x) second;
+let rec reduce = l.
+    do n <- null l;
+    if n
+        then 
+            return 0
+        else
+            do h <- head l;
+            do t <- tail l;
+            do y <- reduce t;
+            return (h + y) in 
+                do m <- reduce first;
+                return (m + m', b)) res
+
+{- E-DoRet -}
+(x. hPar # do first <- map fst x;
 do second <- map snd x;
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -224,7 +267,7 @@ let rec reduce = l.
                 return (m + m', b)) ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[])
 
 {- E-AppAbs -}
-do first <- map fst ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
+hPar # do first <- map fst ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
 do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -240,8 +283,8 @@ let rec reduce = l.
                 do m <- reduce first;
                 return (m + m', b)
 
-{- E-Do and E-Map -}
-do first <-((fst (1, ())):(fst (2, ())):(fst (3, ())):(fst (4, ())):(fst (5, ())):[]);
+{- E-Hand and E-Do and E-Map -}
+hPar # do first <-((fst (1, ())):(fst (2, ())):(fst (3, ())):(fst (4, ())):(fst (5, ())):[]);
 do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -257,8 +300,8 @@ let rec reduce = l.
                 do m <- reduce first;
                 return (m + m', b)
 
-{- E-Do and E-ParList and [E-First, E-First, E-First, E-First, E-First] -}
-do first <- ((return 1):(return 2):(return 3):(return 4):(return 5):[]);
+{- E-Hand and E-Do and E-ParList and [E-First, E-First, E-First, E-First, E-First] -}
+hPar # do first <- ((return 1):(return 2):(return 3):(return 4):(return 5):[]);
 do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
@@ -274,13 +317,13 @@ let rec reduce = l.
                 do m <- reduce first;
                 return (m + m', b)
 
-{- E-Do and E-ListRet -}
-do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
+{- E-Hand and E-Do and E-ListRet -}
+hPar # do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
 do (m', b) <- (x. hAccum # return x) second;
 return (first + m', b) 
 
-{- E-DoRet -}
-do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
+{- E-Hand and E-DoRet -}
+hPar # do second <- map snd ((1, ()):(2, ()):(3, ()):(4, ()):(5, ()):[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
     do n <- null l;
@@ -295,8 +338,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b)
 
-{- E-Do and E-Map -}
-do second <- ((snd (1, ())):(snd (2, ())):(snd (3, ())):(snd (4, ())):(snd (5, ())):[]);
+{- E-Hand and E-Do and E-Map -}
+hPar # do second <- ((snd (1, ())):(snd (2, ())):(snd (3, ())):(snd (4, ())):(snd (5, ())):[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
     do n <- null l;
@@ -311,8 +354,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b) 
 
-{- E-Do and E-ParList and [E-Second, E-Second, E-Second, E-Second, E-Second] -}
-do second <- ((return ()):(return ()):(return ()):(return  ()):(return ()):[]);
+{- E-Hand and E-Do and E-ParList and [E-Second, E-Second, E-Second, E-Second, E-Second] -}
+hPar # do second <- ((return ()):(return ()):(return ()):(return  ()):(return ()):[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
     do n <- null l;
@@ -327,8 +370,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b) 
 
-{- E-Do and E-ListRet -}
-do second <- return (():():():():():[]);
+{- E-Hand and E-Do and E-ListRet -}
+hPar # do second <- return (():():():():():[]);
 do (m', b) <- (x. hAccum # return x) second;
 let rec reduce = l.
     do n <- null l;
@@ -343,8 +386,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b) 
 
-{- E-DoRet -}
-do (m', b) <- (x. hAccum # return x) (():():():():():[]);
+{- E-Hand and E-DoRet -}
+hPar # do (m', b) <- (x. hAccum # return x) (():():():():():[]);
 let rec reduce = l.
     do n <- null l;
     if n
@@ -358,8 +401,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b) 
 
-{- E-Do and E-AppAbs -}
-do (m', b) <- hAccum # return (():():():():():[]);
+{- E-Hand and E-Do and E-AppAbs -}
+hPar # do (m', b) <- hAccum # return (():():():():():[]);
 let rec reduce = l.
     do n <- null l;
     if n
@@ -373,8 +416,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b) 
 
-{- E-Do and E-HandRet -}
-do (m', b) <- return (0, (():():():():():[]));
+{- E-Hand and E-Do and E-HandRet -}
+hPar # do (m', b) <- return (0, (():():():():():[]));
 let rec reduce = l.
     do n <- null l;
     if n
@@ -388,8 +431,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + m', b) 
 
-{- E-DoRet -}
-let rec reduce = l.
+{- E-Hand and E-DoRet -}
+hPar # let rec reduce = l.
     do n <- null l;
     if n
         then 
@@ -402,8 +445,8 @@ let rec reduce = l.
                 do m <- reduce (1:2:3:4:5:[]);
                 return (m + 0, (():():():():():[])) 
 
-{- E-LetRec -}
-do m <- (let rec reduce = l.
+{- E-Hand and E-LetRec -}
+hPar # do m <- (let rec reduce = l.
     do n <- null l;
     if n
         then 
@@ -424,8 +467,8 @@ do m <- (let rec reduce = l.
                         return (h + y)) (1:2:3:4:5:[]);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-LetRec -}
-do m <- (l.
+{- E-Hand and E-Do and E-LetRec -}
+hPar # do m <- (l.
         do n <- null l;
         if n
             then 
@@ -451,11 +494,11 @@ do m <- (l.
                                                 do h <- head l;
                                                 do t <- tail l;
                                                 do y <- reduce t;
-                                                return (h + y))(1:2:3:4:5:[]);
+                                                return (h + y))) (1:2:3:4:5:[]);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-AppAbs -}
-do m <- do n <- null (1:2:3:4:5:[]);
+{- E-Hand and E-Do and E-AppAbs -}
+hPar # do m <- do n <- null (1:2:3:4:5:[]);
         if n
             then 
                 return 0
@@ -484,8 +527,8 @@ do m <- do n <- null (1:2:3:4:5:[]);
                 return (h + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-NullFalse -}
-do m <- do n <- return False;
+{- E-hand and E-Do and E-Do and E-NullFalse -}
+hPar # do m <- do n <- return False;
         if n
             then 
                 return 0
@@ -514,8 +557,8 @@ do m <- do n <- return False;
                 return (h + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-DoRet -}
-do m <- if False
+{- E-Hand and E-Do and E-DoRet -}
+hPar # do m <- if False
             then 
                 return 0
             else
@@ -543,8 +586,8 @@ do m <- if False
                 return (h + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-IfFalse -}
-do m <- do h <- head (1:2:3:4:5:[]);
+{- E-Hand and E-Do and E-IfFalse -}
+hPar # do m <- do h <- head (1:2:3:4:5:[]);
         do t <- tail (1:2:3:4:5:[]);
         do y <- (let rec reduce = l.
             do n <- null l;
@@ -568,8 +611,8 @@ do m <- do h <- head (1:2:3:4:5:[]);
         return (h + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-Head -}
-do m <- do h <- return 1;
+{- E-Hand and E-Do and E-Do and E-Head -}
+hPar # do m <- do h <- return 1;
         do t <- tail (1:2:3:4:5:[]);
         do y <- (let rec reduce = l.
             do n <- null l;
@@ -593,8 +636,8 @@ do m <- do h <- return 1;
         return (h + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-DoRet -}
-do m <- do t <- tail (1:2:3:4:5:[]);
+{- E-Hand and E-Do and E-DoRet -}
+hPar # do m <- do t <- tail (1:2:3:4:5:[]);
         do y <- (let rec reduce = l.
             do n <- null l;
             if n
@@ -617,8 +660,8 @@ do m <- do t <- tail (1:2:3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-Tail -}
-do m <- do t <- return (2:3:4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Tail -}
+hPar # do m <- do t <- return (2:3:4:5:[]);
         do y <- (let rec reduce = l.
             do n <- null l;
             if n
@@ -641,8 +684,8 @@ do m <- do t <- return (2:3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-DoRet -}
-do m <- do y <- (let rec reduce = l.
+{- E-Hand and E-Do and E-DoRet -}
+hPar # do m <- do y <- (let rec reduce = l.
             do n <- null l;
             if n
                 then 
@@ -664,8 +707,8 @@ do m <- do y <- (let rec reduce = l.
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-LetRec -}
-do m <- do y <- (l.
+{- E-Hand and E-Do and E-Do and E-LetRec -}
+hPar # do m <- do y <- (l.
                 do n <- null l;
                 if n
                     then 
@@ -696,8 +739,8 @@ do m <- do y <- (l.
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-Do and E-AppAbs -}
-do m <- do y <- do n <- null (2:3:4:5:[]);
+{- E-Hand andE-Do and E-Do and E-Do and E-AppAbs -}
+hPar # do m <- do y <- do n <- null (2:3:4:5:[]);
                 if n
                     then 
                         return 0
@@ -727,8 +770,8 @@ do m <- do y <- do n <- null (2:3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-Do and E-NullFalse -}
-do m <- do y <- do n <- return False;
+{- E-Hand and E-Do and E-Do and E-Do and E-NullFalse -}
+hPar # do m <- do y <- do n <- return False;
                 if n
                     then 
                         return 0
@@ -758,8 +801,8 @@ do m <- do y <- do n <- return False;
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-DoRet -}
-do m <- do y <- if False
+{- E-Hand and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- if False
                     then 
                         return 0
                     else
@@ -788,8 +831,8 @@ do m <- do y <- if False
         return (1 + y);
 return (m + 0, (():():():():():[])) 
 
-{- E-Do and E-Do and E-IfFalse -}
-do m <- do y <- do h <- head (2:3:4:5:[]);
+{- E-Hand and E-Do and E-Do and E-IfFalse -}
+hPar # do m <- do y <- do h <- head (2:3:4:5:[]);
                 do t <- tail (2:3:4:5:[]);
                 do y <- (let rec reduce = l.
                     do n <- null l;
@@ -814,8 +857,8 @@ do m <- do y <- do h <- head (2:3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Head -}
-do m <- do y <- do h <- return 2;
+{- E-Hand and E-Do and E-Do and E-Do and E-Head -}
+hPar # do m <- do y <- do h <- return 2;
                 do t <- tail (2:3:4:5:[]);
                 do y <- (let rec reduce = l.
                     do n <- null l;
@@ -840,8 +883,8 @@ do m <- do y <- do h <- return 2;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-DoRet -}
-do m <- do y <- do t <- tail (2:3:4:5:[]);
+{- E-Hand E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do t <- tail (2:3:4:5:[]);
                 do y <- (let rec reduce = l.
                     do n <- null l;
                     if n
@@ -865,8 +908,8 @@ do m <- do y <- do t <- tail (2:3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Tail -}
-do m <- do y <- do t <- return (3:4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Tail -}
+hPar # do m <- do y <- do t <- return (3:4:5:[]);
                 do y <- (let rec reduce = l.
                     do n <- null l;
                     if n
@@ -890,8 +933,8 @@ do m <- do y <- do t <- return (3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- (let rec reduce = l.
+{- E-Hand and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- (let rec reduce = l.
                     do n <- null l;
                     if n
                         then 
@@ -914,8 +957,8 @@ do m <- do y <- do y <- (let rec reduce = l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-LetRec -}
-do m <- do y <- do y <- (l.
+{- E-Hand and E-Do and E-Do and E-Do and E-LetRec -}
+hPar # do m <- do y <- do y <- (l.
                         do n <- null l;
                         if n
                             then 
@@ -947,8 +990,8 @@ do m <- do y <- do y <- (l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-AppAbs -}
-do m <- do y <- do y <- do n <- null (3:4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-AppAbs -}
+hPar # do m <- do y <- do y <- do n <- null (3:4:5:[]);
                         if n
                             then 
                                 return 0
@@ -979,8 +1022,8 @@ do m <- do y <- do y <- do n <- null (3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
-do m <- do y <- do y <- do n <- return False;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
+hPar # do m <- do y <- do y <- do n <- return False;
                         if n
                             then 
                                 return 0
@@ -1011,8 +1054,8 @@ do m <- do y <- do y <- do n <- return False;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- if False
+{- E-Hand and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- if False
                             then 
                                 return 0
                             else
@@ -1042,8 +1085,8 @@ do m <- do y <- do y <- if False
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-IfFalse -}
-do m <- do y <- do y <- do h <- head (3:4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-IfFalse -}
+hPar # do m <- do y <- do y <- do h <- head (3:4:5:[]);
                         do t <- tail (3:4:5:[]);
                         do y <- (let rec reduce = l.
                             do n <- null l;
@@ -1069,8 +1112,8 @@ do m <- do y <- do y <- do h <- head (3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Head -}
-do m <- do y <- do y <- do h <- return 3;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Head -}
+hPar # do m <- do y <- do y <- do h <- return 3;
                         do t <- tail (3:4:5:[]);
                         do y <- (let rec reduce = l.
                             do n <- null l;
@@ -1096,8 +1139,8 @@ do m <- do y <- do y <- do h <- return 3;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do t <- tail (3:4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do t <- tail (3:4:5:[]);
                         do y <- (let rec reduce = l.
                             do n <- null l;
                             if n
@@ -1122,8 +1165,8 @@ do m <- do y <- do y <- do t <- tail (3:4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Tail -}
-do m <- do y <- do y <- do t <- return (4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Tail -}
+hPar # do m <- do y <- do y <- do t <- return (4:5:[]);
                         do y <- (let rec reduce = l.
                             do n <- null l;
                             if n
@@ -1148,8 +1191,8 @@ do m <- do y <- do y <- do t <- return (4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- (let rec reduce = l.
+{- E-Hand and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- (let rec reduce = l.
                             do n <- null l;
                             if n
                                 then 
@@ -1173,8 +1216,8 @@ do m <- do y <- do y <- do y <- (let rec reduce = l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-LetRec -}
-do m <- do y <- do y <- do y <- (l.
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
+hPar # do m <- do y <- do y <- do y <- (l.
                                 do n <- null l;
                                 if n
                                     then 
@@ -1208,8 +1251,8 @@ do m <- do y <- do y <- do y <- (l.
 return (m + 0, (():():():():():[]))
 
 
-{- E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
-do m <- do y <- do y <- do y <- do n <- null (4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+hPar # do m <- do y <- do y <- do y <- do n <- null (4:5:[]);
                                 if n
                                     then 
                                         return 0
@@ -1241,8 +1284,8 @@ do m <- do y <- do y <- do y <- do n <- null (4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
-do m <- do y <- do y <- do y <- do n <- return False;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
+hPar # do m <- do y <- do y <- do y <- do n <- return False;
                                 if n
                                     then 
                                         return 0
@@ -1274,8 +1317,8 @@ do m <- do y <- do y <- do y <- do n <- return False;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- if False
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- if False
                                     then 
                                         return 0
                                     else
@@ -1306,8 +1349,8 @@ do m <- do y <- do y <- do y <- if False
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
-do m <- do y <- do y <- do y <- do h <- head (4:5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
+hPar # do m <- do y <- do y <- do y <- do h <- head (4:5:[]);
                                 do t <- tail (4:5:[]);
                                 do y <- (let rec reduce = l.
                                     do n <- null l;
@@ -1334,8 +1377,8 @@ do m <- do y <- do y <- do y <- do h <- head (4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
-do m <- do y <- do y <- do y <- do h <- return 4;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
+hPar # do m <- do y <- do y <- do y <- do h <- return 4;
                                 do t <- tail (4:5:[]);
                                 do y <- (let rec reduce = l.
                                     do n <- null l;
@@ -1362,7 +1405,7 @@ do m <- do y <- do y <- do y <- do h <- return 4;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
 do m <- do y <- do y <- do y <- do t <- tail (4:5:[]);
                                 do y <- (let rec reduce = l.
                                     do n <- null l;
@@ -1389,8 +1432,8 @@ do m <- do y <- do y <- do y <- do t <- tail (4:5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
-do m <- do y <- do y <- do y <- do t <- return (5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
+hPar # do m <- do y <- do y <- do y <- do t <- return (5:[]);
                                 do y <- (let rec reduce = l.
                                     do n <- null l;
                                     if n
@@ -1416,8 +1459,8 @@ do m <- do y <- do y <- do y <- do t <- return (5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- do y <- (let rec reduce = l.
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- do y <- (let rec reduce = l.
                                     do n <- null l;
                                     if n
                                         then 
@@ -1442,8 +1485,8 @@ do m <- do y <- do y <- do y <- do y <- (let rec reduce = l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
-do m <- do y <- do y <- do y <- do y <- (l.
+{- E-Hand andE-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
+hPar # do m <- do y <- do y <- do y <- do y <- (l.
                                         do n <- null l;
                                         if n
                                             then 
@@ -1477,8 +1520,8 @@ do m <- do y <- do y <- do y <- do y <- (l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
-do m <- do y <- do y <- do y <- do y <- do n <- null (5:[]);
+{- E-Hand E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+hPar # do m <- do y <- do y <- do y <- do y <- do n <- null (5:[]);
                                         if n
                                             then 
                                                 return 0
@@ -1511,8 +1554,8 @@ do m <- do y <- do y <- do y <- do y <- do n <- null (5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
-do m <- do y <- do y <- do y <- do y <- do n <- return False;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullFalse -}
+hPar # do m <- do y <- do y <- do y <- do y <- do n <- return False;
                                         if n
                                             then 
                                                 return 0
@@ -1545,8 +1588,8 @@ do m <- do y <- do y <- do y <- do y <- do n <- return False;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- do y <- if False
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- do y <- if False
                                             then 
                                                 return 0
                                             else
@@ -1578,8 +1621,8 @@ do m <- do y <- do y <- do y <- do y <- if False
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
-do m <- do y <- do y <- do y <- do y <- do h <- head (5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-IfFalse -}
+hPar # do m <- do y <- do y <- do y <- do y <- do h <- head (5:[]);
                                         do t <- tail (5:[]);
                                         do y <- (let rec reduce = l.
                                             do n <- null l;
@@ -1607,8 +1650,8 @@ do m <- do y <- do y <- do y <- do y <- do h <- head (5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
-do m <- do y <- do y <- do y <- do y <- do h <- return 5;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Head -}
+hPar # do m <- do y <- do y <- do y <- do y <- do h <- return 5;
                                         do t <- tail (5:[]);
                                         do y <- (let rec reduce = l.
                                             do n <- null l;
@@ -1636,8 +1679,8 @@ do m <- do y <- do y <- do y <- do y <- do h <- return 5;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- do y <- do t <- tail (5:[]);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- do y <- do t <- tail (5:[]);
                                         do y <- (let rec reduce = l.
                                             do n <- null l;
                                             if n
@@ -1664,8 +1707,8 @@ do m <- do y <- do y <- do y <- do y <- do t <- tail (5:[]);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
-do m <- do y <- do y <- do y <- do y <- do t <- return [];
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Tail -}
+hPar # do m <- do y <- do y <- do y <- do y <- do t <- return [];
                                         do y <- (let rec reduce = l.
                                             do n <- null l;
                                             if n
@@ -1692,8 +1735,8 @@ do m <- do y <- do y <- do y <- do y <- do t <- return [];
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- do y <- do y <- (let rec reduce = l.
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- do y <- do y <- (let rec reduce = l.
                                             do n <- null l;
                                             if n
                                                 then 
@@ -1719,8 +1762,8 @@ do m <- do y <- do y <- do y <- do y <- do y <- (let rec reduce = l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
-do m <- do y <- do y <- do y <- do y <- do y <- (l.
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-LetRec -}
+hPar # do m <- do y <- do y <- do y <- do y <- do y <- (l.
                                                 do n <- null l;
                                                 if n
                                                     then 
@@ -1755,8 +1798,8 @@ do m <- do y <- do y <- do y <- do y <- do y <- (l.
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
-do m <- do y <- do y <- do y <- do y <- do y <- (do n <- null [];
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs -}
+hPar # do m <- do y <- do y <- do y <- do y <- do y <- (do n <- null [];
                                                 if n
                                                     then 
                                                         return 0
@@ -1790,8 +1833,8 @@ do m <- do y <- do y <- do y <- do y <- do y <- (do n <- null [];
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullTrue -}
-do m <- do y <- do y <- do y <- do y <- do y <- (do n <- return True;
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-NullTrue -}
+hPar # do m <- do y <- do y <- do y <- do y <- do y <- (do n <- return True;
                                                 if n
                                                     then 
                                                         return 0
@@ -1825,8 +1868,8 @@ do m <- do y <- do y <- do y <- do y <- do y <- (do n <- return True;
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
-do m <- do y <- do y <- do y <- do y <- do y <- (if True
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet -}
+hPar # do m <- do y <- do y <- do y <- do y <- do y <- (if True
                                                     then 
                                                         return 0
                                                     else
@@ -1859,8 +1902,8 @@ do m <- do y <- do y <- do y <- do y <- do y <- (if True
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue -}
-do m <- do y <- do y <- do y <- do y <- do y <- return 0
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue -}
+hPar # do m <- do y <- do y <- do y <- do y <- do y <- return 0
                                                 return (5 + y);
                                         return (4 + y);
                                 return (3 + y);
@@ -1868,37 +1911,40 @@ do m <- do y <- do y <- do y <- do y <- do y <- return 0
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet-}
-do m <- do y <- do y <- do y <- do y <- return (5);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet-}
+hPar # do m <- do y <- do y <- do y <- do y <- return (5);
                                         return (4 + y);
                                 return (3 + y);
                 return (2 + y);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-Do and E-DoRet-}
-do m <- do y <- do y <- do y <- return (9);
+{- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet-}
+hPar # do m <- do y <- do y <- do y <- return (9);
                                 return (3 + y);
                 return (2 + y);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-Do and E-DoRet-}
-do m <- do y <- do y <- return (12);
+{- E-Hand and E-Do and E-Do and E-Do and E-DoRet-}
+hPar # do m <- do y <- do y <- return (12);
                 return (2 + y);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-Do and E-DoRet-}
-do m <- do y <- return (14);
+{- E-Hand and E-Do and E-Do and E-DoRet-}
+hPar # do m <- do y <- return (14);
         return (1 + y);
 return (m + 0, (():():():():():[]))
 
-{- E-Do and E-DoRet-}
-do m <- return (15);
+{- E-Hand and E-Do and E-DoRet-}
+hPar # do m <- return (15);
 return (m + 0, (():():():():():[]))
 
-{- E-DoRet-}
+{- E-Hand and E-DoRet-}
+hPar # return (15, (():():():():():[]))
+
+{- E-HandRet-}
 return (15, (():():():():():[]))
 
 -- Correct met parallel algebraic effects implementatie
