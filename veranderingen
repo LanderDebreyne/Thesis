@@ -18,7 +18,7 @@ Semantiek
     E-FwdMap
         (map l2 (y. c1) (l3.c2)) not element of h    (red l1 k -> c) element of h
     -----------------------------------------------------------------------------------
-        h # map l2 (y. c1) (l3. c2) -> map l (y. h # c1) (l4. c[l3/l1, (l3. h # c2)/k])
+        h # map l2 (y. c1) (l3. c2) -> map l (y. h # c1) (l4. c[l4/l1, (l3. h # c2)/k])
 
     E-HandMap
                 (map l1 p k)  element of h

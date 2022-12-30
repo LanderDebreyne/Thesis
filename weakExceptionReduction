@@ -237,7 +237,7 @@ do res <- map (x. hPar # hAccum # hWeak #  if x == 2
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
  
-{- E-Do and and E-Map -}
+{- E-Do and E-Map -}
 do res <- (((x. hPar # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
@@ -288,7 +288,7 @@ do res <- (((x. hPar # hAccum # hWeak #  if x == 2
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-AppAbs*5] -}
+{- E-Do and E-ParList and [E-AppAbs*5] -}
 do res <- ((hPar # hAccum # hWeak #  if 1 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 1 (x. return x)):
             (hPar # hAccum # hWeak #  if 2 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 2 (x. return x)):
             (hPar # hAccum # hWeak #  if 3 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 3 (x. return x)):
@@ -314,7 +314,7 @@ do res <- ((hPar # hAccum # hWeak #  if 1 == 2 then do _ <- op accum "!" (x.retu
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfTrue, E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfFalse] -}
+{- E-Do and E-ParList and [E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfTrue, E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfFalse] -}
 do res <- ((hPar # hAccum # hWeak # op accum 1 (x. return x)):
             (hPar # hAccum # hWeak #  do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)):
             (hPar # hAccum # hWeak # op accum 3 (x. return x)):
@@ -340,7 +340,7 @@ do res <- ((hPar # hAccum # hWeak # op accum 1 (x. return x)):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-Hand and E-DoOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-FwdOp] -}
+{- E-Do and E-ParList and [E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-Hand and E-DoOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-FwdOp] -}
 do res <- ((hPar # hAccum # op accum 1 (x. hWeak # return x)):
             (hPar # hAccum # hWeak # op accum "!" (x. do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x))):
             (hPar # hAccum # op accum 3 (x. hWeak # return x)):
@@ -366,7 +366,7 @@ do res <- ((hPar # hAccum # op accum 1 (x. hWeak # return x)):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-HandOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-HandOp, E-Hand and E-HandOp, E-Hand and E-HandOp] -}
+{- E-Do and E-ParList and [E-Hand and E-HandOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-HandOp, E-Hand and E-HandOp, E-Hand and E-HandOp] -}
 do res <- ((hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (1 ++ m', v)):
             (hPar # hAccum # op accum "!" (x. hWeak # do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x))):
             (hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (3 ++ m', v)):
@@ -392,7 +392,7 @@ do res <- ((hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (1 ++
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-Do and E-AppAbs, E-Hand and E-HandOp, E-Hand and E-Do and E-AppAbs, E-Hand and E-Do and E-AppAbs,E-Hand and E-Do and E-AppAbs] -}
+{- E-Do and E-ParList and [E-Hand and E-Do and E-AppAbs, E-Hand and E-HandOp, E-Hand and E-Do and E-AppAbs, E-Hand and E-Do and E-AppAbs,E-Hand and E-Do and E-AppAbs] -}
 do res <- ((hPar # do (m', v) <- hAccum # hWeak # return (); return (1 ++ m', v)):
             (hPar # do (m', v) <- (x. hAccum # hWeak # do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)) (); return ("!" ++ m', v)):
             (hPar # do (m', v) <- hAccum # hWeak # return (); return (3 ++ m', v)):
@@ -418,7 +418,7 @@ do res <- ((hPar # do (m', v) <- hAccum # hWeak # return (); return (1 ++ m', v)
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do And E-AppAbs, E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do and E-Hand and E-HandRet] -}
+{- E-Do and E-ParList and [E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do And E-AppAbs, E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do and E-Hand and E-HandRet] -}
 do res <- ((hPar # do (m', v) <- hAccum # return (Right ()); return (1 ++ m', v)):
             (hPar # do (m', v) <- hAccum # hWeak # do _ <- return (); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
             (hPar # do (m', v) <- hAccum # return (Right ()); return (3 ++ m', v)):
@@ -444,7 +444,7 @@ do res <- ((hPar # do (m', v) <- hAccum # return (Right ()); return (1 ++ m', v)
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-Do and E-HandRet, E-Hand and E-Do And E-Hand and E-Hand and E-DoRet, E-Hand and E-Do and E-HandRet, E-Hand and E-Do and E-HandRet, E-Hand and E-Do and E-HandRet] -}
+{- E-Do and E-ParList and [E-Hand and E-Do and E-HandRet, E-Hand and E-Do And E-Hand and E-Hand and E-DoRet, E-Hand and E-Do and E-HandRet, E-Hand and E-Do and E-HandRet, E-Hand and E-Do and E-HandRet] -}
 do res <- ((hPar # do (m', v) <- return ("", Right ()); return (1 ++ m', v)):
             (hPar # do (m', v) <- hAccum # hWeak # do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
             (hPar # do (m', v) <- return ("", Right ()); return (3 ++ m', v)):
@@ -470,7 +470,7 @@ do res <- ((hPar # do (m', v) <- return ("", Right ()); return (1 ++ m', v)):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-DoRet, E-Hand and E-Do And E-Hand and E-Hand and E-DoOp, E-Hand and E-DoRet, E-Hand and E-DoRet, E-Hand and E-DoRet] -}
+{- E-Do and E-ParList and [E-Hand and E-DoRet, E-Hand and E-Do And E-Hand and E-Hand and E-DoOp, E-Hand and E-DoRet, E-Hand and E-DoRet, E-Hand and E-DoRet] -}
 do res <- ((hPar # return ("1", Right ())):
             (hPar # do (m', v) <- hAccum # hWeak # op throw "error" (x. do _ <-  return x; op accum "unreachable" (x. return x)); return ("!" ++ m', v)):
             (hPar # return ("3", Right ())):
@@ -496,7 +496,7 @@ do res <- ((hPar # return ("1", Right ())):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-HandRet, E-Hand and E-Do And E-Hand and E-HandOp, E-HandRet, E-HandRet, E-HandRet] -}
+{- E-Do and E-ParList and [E-HandRet, E-Hand and E-Do And E-Hand and E-HandOp, E-HandRet, E-HandRet, E-HandRet] -}
 do res <- ((return ("1", Right ())):
             (hPar # do (m', v) <- hAccum # return (Left "error"); return ("!" ++ m', v)):
             (return ("3", Right ())):
@@ -522,7 +522,7 @@ do res <- ((return ("1", Right ())):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-Do And E-HandRet] -}
+{- E-Do and E-ParList and [E-Hand and E-Do And E-HandRet] -}
 do res <- ((return ("1", Right ())):
             (hPar # do (m', v) <- return ("", Left "error"); return ("!" ++ m', v)):
             (return ("3", Right ())):
@@ -548,7 +548,7 @@ do res <- ((return ("1", Right ())):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ParList and [E-Hand and E-DoRet] -}
+{- E-Do and E-ParList and [E-Hand and E-DoRet] -}
 do res <- ((return ("1", Right ())):
             (hPar # return ("!", Left "Error")):
             (return ("3", Right ())):
@@ -600,7 +600,7 @@ do res <- ((return ("1", Right ())):
                     return (m ++ m', b));
 return ("start " ++ m', v)) res
 
-{- E-Do and and E-ListRet -}
+{- E-Do and E-ListRet -}
 do res <- return (("1", Right ()):("!", Left "Error"):("3", Right ()):("4", Right ()):("5", Right ()):[]); 
 (x. hPar # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
