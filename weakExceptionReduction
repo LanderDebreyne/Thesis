@@ -1,5 +1,13 @@
+#######
+
+Updated: 02/01/2023
+
+#######
+
+
+
 do _ <- op accum "start " (x. return x);
-do _ <- map 1:2:3:4:5:[] (x. if x == 2
+do _ <- for 1:2:3:4:5:[] (x. if x == 2
     then
     do _ <- op accum "!" (x.return x);
     do _ <- op throw "error" (x. return x);
@@ -12,7 +20,7 @@ hAccum = handler
     {
         return x -> return ("", x)
         op accum m k -> do (m', v) <- k (); return (m ++ m', v)  
-        red l k ->  do first <- map fst l;
+        reduce l k ->  do first <- map fst l;
                     do second <- map snd l;
                     do (m', b) <- k second;
                     let rec reduce = l.
@@ -35,7 +43,7 @@ hWeak = handler
     {
         return x -> return (Right x)
         op throw m _ -> return (Left m)
-        red l k ->  do res <- return l;
+        reduce l k ->  do res <- return l;
                     case firstFailure res of
                         Left err -> return (Left err)
                         Right t  -> k t
@@ -48,16 +56,17 @@ firstFailure lst = case map firstError lst of
   where firstError x = case x of Left e  -> Just e
                                  Right _ -> Nothing
 
-hPar = handler 
+hFor = handler 
 {
     return x -> return x
-    map l p k -> do res <- map p l;
+    for l p k -> do res <- map p l;
                  k res
+    reduce _ _ -> ()
     fwd f p k -> -- TODO 
 }
 
-hPar # hAccum # hWeak # (do _ <- op accum "start " (x. return x);
-                        do _ <- map 1:2:3:4:5:[] (x. if x == 2
+hFor # hAccum # hWeak # (do _ <- op accum "start " (x. return x);
+                        do _ <- for 1:2:3:4:5:[] (x. if x == 2
                             then
                             do _ <- op accum "!" (x.return x);
                             do _ <- op throw "error" (x. return x);
@@ -67,9 +76,9 @@ hPar # hAccum # hWeak # (do _ <- op accum "start " (x. return x);
                         return "success")
 
 {- E-Hand and E-hand and E-Hand and E-DoOp -}
-hPar # hAccum # hWeak # op accum "start " (x. 
+hFor # hAccum # hWeak # op accum "start " (x. 
                                     do _ <- return x;
-                                    do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                                    do _ <- for 1:2:3:4:5:[] (x. if x == 2
                                         then
                                         do _ <- op accum "!" (x.return x);
                                         do _ <- op throw "error" (x. return x);
@@ -79,9 +88,9 @@ hPar # hAccum # hWeak # op accum "start " (x.
                                     return "success")
 
 {- E-Hand and E-Hand and E-FwdOp -}
-hPar # hAccum # op accum "start " (x. hWeak # 
+hFor # hAccum # op accum "start " (x. hWeak # 
                             do _ <- return x;
-                            do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                            do _ <- for 1:2:3:4:5:[] (x. if x == 2
                                 then
                                 do _ <- op accum "!" (x.return x);
                                 do _ <- op throw "error" (x. return x);
@@ -91,9 +100,9 @@ hPar # hAccum # op accum "start " (x. hWeak #
                             return "success")
 
 {- E-Hand and E-HandOp -}
-hPar # do (m', v) <- (x. hAccum # hWeak # 
+hFor # do (m', v) <- (x. hAccum # hWeak # 
                 do _ <- return x;
-                do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                do _ <- for 1:2:3:4:5:[] (x. if x == 2
                     then
                     do _ <- op accum "!" (x.return x);
                     do _ <- op throw "error" (x. return x);
@@ -104,9 +113,9 @@ hPar # do (m', v) <- (x. hAccum # hWeak #
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-AppAbs -}
-hPar # do (m', v) <- hAccum # hWeak # 
+hFor # do (m', v) <- hAccum # hWeak # 
                 do _ <- return ();
-                do _ <- map 1:2:3:4:5:[] (x. if x == 2
+                do _ <- for 1:2:3:4:5:[] (x. if x == 2
                     then
                     do _ <- op accum "!" (x.return x);
                     do _ <- op throw "error" (x. return x);
@@ -117,8 +126,8 @@ hPar # do (m', v) <- hAccum # hWeak #
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Hand and E-Hand and E-DoRet -}
-hPar # do (m', v) <- hAccum # hWeak # 
-                do _ <- map 1:2:3:4:5:[] (x. if x == 2
+hFor # do (m', v) <- hAccum # hWeak # 
+                do _ <- for 1:2:3:4:5:[] (x. if x == 2
                     then
                     do _ <- op accum "!" (x.return x);
                     do _ <- op throw "error" (x. return x);
@@ -128,9 +137,9 @@ hPar # do (m', v) <- hAccum # hWeak #
                 return "success"; 
 return ("start " ++ m', v) 
 
-{- E-Hand and E-Do and E-Hand and E-Hand and E-DoMap -}
-hPar # do (m', v) <- hAccum # hWeak # 
-            map 1:2:3:4:5:[] (x. if x == 2
+{- E-Hand and E-Do and E-Hand and E-Hand and E-DoFor -}
+hFor # do (m', v) <- hAccum # hWeak # 
+            for 1:2:3:4:5:[] (x. if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
@@ -142,9 +151,9 @@ hPar # do (m', v) <- hAccum # hWeak #
                 );
 return ("start " ++ m', v) 
 
-{- E-Hand and E-Do and E-Hand and E-FwdMap -}
-hPar # do (m', v) <- hAccum #
-            map 1:2:3:4:5:[] (x. hWeak #  if x == 2
+{- E-Hand and E-Do and E-Hand and E-FwdFor -}
+hFor # do (m', v) <- hAccum #
+            for 1:2:3:4:5:[] (x. hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
@@ -156,8 +165,8 @@ hPar # do (m', v) <- hAccum #
                     Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t);
 return ("start " ++ m', v) 
 
-{- E-Hand and E-Do and E-FwdMap -}
-hPar # do (m', v) <- map 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
+{- E-Hand and E-Do and E-FwdFor -}
+hFor # do (m', v) <- for 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
@@ -183,8 +192,8 @@ hPar # do (m', v) <- map 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
                                     return (m ++ m', b));
 return ("start " ++ m', v) 
 
-{- E-Hand and E-DoMap -}
-hPar # map 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
+{- E-Hand and E-DoFor -}
+hFor # for 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
@@ -210,14 +219,14 @@ hPar # map 1:2:3:4:5:[] (x. hAccum # hWeak #  if x == 2
                                     return (m ++ m', b));
                 return ("start " ++ m', v))
 
-{- E-HandMap -}
-do res <- map (x. hPar # hAccum # hWeak #  if x == 2
+{- E-HandFor -}
+do res <- for (x. hFor # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
                 op accum "unreachable" (x. return x)
                 else op accum x (x. return x)) (1:2:3:4:5:[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -238,37 +247,37 @@ do res <- map (x. hPar # hAccum # hWeak #  if x == 2
 return ("start " ++ m', v)) res
  
 {- E-Do and E-Map -}
-do res <- (((x. hPar # hAccum # hWeak #  if x == 2
+do res <- (((x. hFor # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
                 op accum "unreachable" (x. return x)
                 else op accum x (x. return x)) 1):
-                ((x. hPar # hAccum # hWeak #  if x == 2
+                ((x. hFor # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
                 op accum "unreachable" (x. return x)
                 else op accum x (x. return x)) 2):
-                ((x. hPar # hAccum # hWeak #  if x == 2
+                ((x. hFor # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
                 op accum "unreachable" (x. return x)
                 else op accum x (x. return x)) 3):
-                ((x. hPar # hAccum # hWeak #  if x == 2
+                ((x. hFor # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
                 op accum "unreachable" (x. return x)
                 else op accum x (x. return x)) 4):
-                ((x. hPar # hAccum # hWeak #  if x == 2
+                ((x. hFor # hAccum # hWeak #  if x == 2
                 then
                 do _ <- op accum "!" (x.return x);
                 do _ <- op throw "error" (x. return x);
                 op accum "unreachable" (x. return x)
                 else op accum x (x. return x)) 5):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -289,12 +298,12 @@ do res <- (((x. hPar # hAccum # hWeak #  if x == 2
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-AppAbs*5] -}
-do res <- ((hPar # hAccum # hWeak #  if 1 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 1 (x. return x)):
-            (hPar # hAccum # hWeak #  if 2 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 2 (x. return x)):
-            (hPar # hAccum # hWeak #  if 3 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 3 (x. return x)):
-            (hPar # hAccum # hWeak #  if 4 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 4 (x. return x)):
-            (hPar # hAccum # hWeak #  if 5 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 5 (x. return x)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # hAccum # hWeak #  if 1 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 1 (x. return x)):
+            (hFor # hAccum # hWeak #  if 2 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 2 (x. return x)):
+            (hFor # hAccum # hWeak #  if 3 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 3 (x. return x)):
+            (hFor # hAccum # hWeak #  if 4 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 4 (x. return x)):
+            (hFor # hAccum # hWeak #  if 5 == 2 then do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x) else op accum 5 (x. return x)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -315,12 +324,12 @@ do res <- ((hPar # hAccum # hWeak #  if 1 == 2 then do _ <- op accum "!" (x.retu
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfTrue, E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfFalse, E-Hand and E-Hand and E-Hand and E-IfFalse] -}
-do res <- ((hPar # hAccum # hWeak # op accum 1 (x. return x)):
-            (hPar # hAccum # hWeak #  do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)):
-            (hPar # hAccum # hWeak # op accum 3 (x. return x)):
-            (hPar # hAccum # hWeak # op accum 4 (x. return x)):
-            (hPar # hAccum # hWeak # op accum 5 (x. return x)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # hAccum # hWeak # op accum 1 (x. return x)):
+            (hFor # hAccum # hWeak #  do _ <- op accum "!" (x.return x); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)):
+            (hFor # hAccum # hWeak # op accum 3 (x. return x)):
+            (hFor # hAccum # hWeak # op accum 4 (x. return x)):
+            (hFor # hAccum # hWeak # op accum 5 (x. return x)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -341,12 +350,12 @@ do res <- ((hPar # hAccum # hWeak # op accum 1 (x. return x)):
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-Hand and E-DoOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-Hand and E-FwdOp] -}
-do res <- ((hPar # hAccum # op accum 1 (x. hWeak # return x)):
-            (hPar # hAccum # hWeak # op accum "!" (x. do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x))):
-            (hPar # hAccum # op accum 3 (x. hWeak # return x)):
-            (hPar # hAccum # op accum 4 (x. hWeak # return x)):
-            (hPar # hAccum # op accum 5 (x. hWeak # return x)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # hAccum # op accum 1 (x. hWeak # return x)):
+            (hFor # hAccum # hWeak # op accum "!" (x. do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x))):
+            (hFor # hAccum # op accum 3 (x. hWeak # return x)):
+            (hFor # hAccum # op accum 4 (x. hWeak # return x)):
+            (hFor # hAccum # op accum 5 (x. hWeak # return x)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -367,12 +376,12 @@ do res <- ((hPar # hAccum # op accum 1 (x. hWeak # return x)):
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-HandOp, E-Hand and E-Hand and E-FwdOp, E-Hand and E-HandOp, E-Hand and E-HandOp, E-Hand and E-HandOp] -}
-do res <- ((hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (1 ++ m', v)):
-            (hPar # hAccum # op accum "!" (x. hWeak # do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x))):
-            (hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (3 ++ m', v)):
-            (hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (4 ++ m', v)):
-            (hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (5 ++ m', v)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # do (m', v) <- (x. hAccum # hWeak # return x) (); return (1 ++ m', v)):
+            (hFor # hAccum # op accum "!" (x. hWeak # do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x))):
+            (hFor # do (m', v) <- (x. hAccum # hWeak # return x) (); return (3 ++ m', v)):
+            (hFor # do (m', v) <- (x. hAccum # hWeak # return x) (); return (4 ++ m', v)):
+            (hFor # do (m', v) <- (x. hAccum # hWeak # return x) (); return (5 ++ m', v)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -393,12 +402,12 @@ do res <- ((hPar # do (m', v) <- (x. hAccum # hWeak # return x) (); return (1 ++
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-Do and E-AppAbs, E-Hand and E-HandOp, E-Hand and E-Do and E-AppAbs, E-Hand and E-Do and E-AppAbs,E-Hand and E-Do and E-AppAbs] -}
-do res <- ((hPar # do (m', v) <- hAccum # hWeak # return (); return (1 ++ m', v)):
-            (hPar # do (m', v) <- (x. hAccum # hWeak # do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)) (); return ("!" ++ m', v)):
-            (hPar # do (m', v) <- hAccum # hWeak # return (); return (3 ++ m', v)):
-            (hPar # do (m', v) <- hAccum # hWeak # return (); return (4 ++ m', v)):
-            (hPar # do (m', v) <- hAccum # hWeak # return (); return (5 ++ m', v)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # do (m', v) <- hAccum # hWeak # return (); return (1 ++ m', v)):
+            (hFor # do (m', v) <- (x. hAccum # hWeak # do _ <- return x; do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x)) (); return ("!" ++ m', v)):
+            (hFor # do (m', v) <- hAccum # hWeak # return (); return (3 ++ m', v)):
+            (hFor # do (m', v) <- hAccum # hWeak # return (); return (4 ++ m', v)):
+            (hFor # do (m', v) <- hAccum # hWeak # return (); return (5 ++ m', v)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -419,12 +428,12 @@ do res <- ((hPar # do (m', v) <- hAccum # hWeak # return (); return (1 ++ m', v)
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do And E-AppAbs, E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do and E-Hand and E-HandRet, E-Hand and E-Do and E-Hand and E-HandRet] -}
-do res <- ((hPar # do (m', v) <- hAccum # return (Right ()); return (1 ++ m', v)):
-            (hPar # do (m', v) <- hAccum # hWeak # do _ <- return (); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
-            (hPar # do (m', v) <- hAccum # return (Right ()); return (3 ++ m', v)):
-            (hPar # do (m', v) <- hAccum # return (Right ()); return (4 ++ m', v)):
-            (hPar # do (m', v) <- hAccum # return (Right ()); return (5 ++ m', v)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # do (m', v) <- hAccum # return (Right ()); return (1 ++ m', v)):
+            (hFor # do (m', v) <- hAccum # hWeak # do _ <- return (); do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
+            (hFor # do (m', v) <- hAccum # return (Right ()); return (3 ++ m', v)):
+            (hFor # do (m', v) <- hAccum # return (Right ()); return (4 ++ m', v)):
+            (hFor # do (m', v) <- hAccum # return (Right ()); return (5 ++ m', v)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -445,12 +454,12 @@ do res <- ((hPar # do (m', v) <- hAccum # return (Right ()); return (1 ++ m', v)
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-Do and E-HandRet, E-Hand and E-Do And E-Hand and E-Hand and E-DoRet, E-Hand and E-Do and E-HandRet, E-Hand and E-Do and E-HandRet, E-Hand and E-Do and E-HandRet] -}
-do res <- ((hPar # do (m', v) <- return ("", Right ()); return (1 ++ m', v)):
-            (hPar # do (m', v) <- hAccum # hWeak # do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
-            (hPar # do (m', v) <- return ("", Right ()); return (3 ++ m', v)):
-            (hPar # do (m', v) <- return ("", Right ()); return (4 ++ m', v)):
-            (hPar # do (m', v) <- return ("", Right ()); return (5 ++ m', v)):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # do (m', v) <- return ("", Right ()); return (1 ++ m', v)):
+            (hFor # do (m', v) <- hAccum # hWeak # do _ <- op throw "error" (x. return x); op accum "unreachable" (x. return x); return ("!" ++ m', v)):
+            (hFor # do (m', v) <- return ("", Right ()); return (3 ++ m', v)):
+            (hFor # do (m', v) <- return ("", Right ()); return (4 ++ m', v)):
+            (hFor # do (m', v) <- return ("", Right ()); return (5 ++ m', v)):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -471,12 +480,12 @@ do res <- ((hPar # do (m', v) <- return ("", Right ()); return (1 ++ m', v)):
 return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-DoRet, E-Hand and E-Do And E-Hand and E-Hand and E-DoOp, E-Hand and E-DoRet, E-Hand and E-DoRet, E-Hand and E-DoRet] -}
-do res <- ((hPar # return ("1", Right ())):
-            (hPar # do (m', v) <- hAccum # hWeak # op throw "error" (x. do _ <-  return x; op accum "unreachable" (x. return x)); return ("!" ++ m', v)):
-            (hPar # return ("3", Right ())):
-            (hPar # return ("4", Right ())):
-            (hPar # return ("5", Right ())):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+do res <- ((hFor # return ("1", Right ())):
+            (hFor # do (m', v) <- hAccum # hWeak # op throw "error" (x. do _ <-  return x; op accum "unreachable" (x. return x)); return ("!" ++ m', v)):
+            (hFor # return ("3", Right ())):
+            (hFor # return ("4", Right ())):
+            (hFor # return ("5", Right ())):[]); 
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -498,11 +507,11 @@ return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-HandRet, E-Hand and E-Do And E-Hand and E-HandOp, E-HandRet, E-HandRet, E-HandRet] -}
 do res <- ((return ("1", Right ())):
-            (hPar # do (m', v) <- hAccum # return (Left "error"); return ("!" ++ m', v)):
+            (hFor # do (m', v) <- hAccum # return (Left "error"); return ("!" ++ m', v)):
             (return ("3", Right ())):
             (return ("4", Right ())):
             (return ("5", Right ())):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -524,11 +533,11 @@ return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-Do And E-HandRet] -}
 do res <- ((return ("1", Right ())):
-            (hPar # do (m', v) <- return ("", Left "error"); return ("!" ++ m', v)):
+            (hFor # do (m', v) <- return ("", Left "error"); return ("!" ++ m', v)):
             (return ("3", Right ())):
             (return ("4", Right ())):
             (return ("5", Right ())):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -550,11 +559,11 @@ return ("start " ++ m', v)) res
 
 {- E-Do and E-ParList and [E-Hand and E-DoRet] -}
 do res <- ((return ("1", Right ())):
-            (hPar # return ("!", Left "Error")):
+            (hFor # return ("!", Left "Error")):
             (return ("3", Right ())):
             (return ("4", Right ())):
             (return ("5", Right ())):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -580,7 +589,7 @@ do res <- ((return ("1", Right ())):
             (return ("3", Right ())):
             (return ("4", Right ())):
             (return ("5", Right ())):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -602,7 +611,7 @@ return ("start " ++ m', v)) res
 
 {- E-Do and E-ListRet -}
 do res <- return (("1", Right ()):("!", Left "Error"):("3", Right ()):("4", Right ()):("5", Right ()):[]); 
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -623,7 +632,7 @@ do res <- return (("1", Right ()):("!", Left "Error"):("3", Right ()):("4", Righ
 return ("start " ++ m', v)) res
 
 {- E-DoRet -}
-(x. hPar # do (m', v) <- (do first <- map fst x;
+(x. hFor # do (m', v) <- (do first <- map fst x;
     do second <- map snd x;
     do (m', b) <- (x. hAccum #  do res <- return x;
                     case firstFailure res of
@@ -644,7 +653,7 @@ return ("start " ++ m', v)) res
 return ("start " ++ m', v)) (("1", Right ()):("!", Left "Error"):("3", Right ()):("4", Right ()):("5", Right ()):[])
 
 {- E-AppAbs -}
-hPar # do (m', v) <- (do first <- map fst (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+hFor # do (m', v) <- (do first <- map fst (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
@@ -665,7 +674,7 @@ hPar # do (m', v) <- (do first <- map fst (("1", Right ()):("!", Left "error"):(
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-Map -}
-hPar # do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error")):(fst ("3", Right ())):(fst ("4", Right ())):(fst ("5", Right ())):[]);
+hFor # do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error")):(fst ("3", Right ())):(fst ("4", Right ())):(fst ("5", Right ())):[]);
     do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
@@ -686,7 +695,7 @@ hPar # do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error"
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-Map -}
-hPar # do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error")):(fst ("3", Right ())):(fst ("4", Right ())):(fst ("5", Right ())):[]);
+hFor # do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error")):(fst ("3", Right ())):(fst ("4", Right ())):(fst ("5", Right ())):[]);
     do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
@@ -707,7 +716,7 @@ hPar # do (m', v) <- (do first <- ((fst ("1", Right ())):(fst ("!", Left "error"
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-ParList and [E-First*5] -}
-hPar # do (m', v) <- (do first <- ((return "1"):(return "!"):(return "3"):(return "4"):(return "5"):[]);
+hFor # do (m', v) <- (do first <- ((return "1"):(return "!"):(return "3"):(return "4"):(return "5"):[]);
     do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
@@ -728,7 +737,7 @@ hPar # do (m', v) <- (do first <- ((return "1"):(return "!"):(return "3"):(retur
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-ListRet -}
-hPar # do (m', v) <- (do first <- return ("1":"!":"3":"4":"5":[]);
+hFor # do (m', v) <- (do first <- return ("1":"!":"3":"4":"5":[]);
     do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
@@ -749,7 +758,7 @@ hPar # do (m', v) <- (do first <- return ("1":"!":"3":"4":"5":[]);
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-DoRet -}
-hPar # do (m', v) <- (do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
+hFor # do (m', v) <- (do second <- map snd (("1", Right ()):("!", Left "error"):("3", Right ()):("4", Right ()):("5", Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
                         Left err -> return (Left err)
@@ -769,7 +778,7 @@ hPar # do (m', v) <- (do second <- map snd (("1", Right ()):("!", Left "error"):
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-Map -}
-hPar # do (m', v) <- (do second <- ((snd ("1", Right ())):(snd ("!", Left "error")):(snd ("3", Right ())):(snd ("4", Right ())):(snd ("5", Right ())):[]);
+hFor # do (m', v) <- (do second <- ((snd ("1", Right ())):(snd ("!", Left "error")):(snd ("3", Right ())):(snd ("4", Right ())):(snd ("5", Right ())):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
                         Left err -> return (Left err)
@@ -789,7 +798,7 @@ hPar # do (m', v) <- (do second <- ((snd ("1", Right ())):(snd ("!", Left "error
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-ParList and [E-Second*5] -}
-hPar # do (m', v) <- (do second <- ((return (Right ())):(return (Left "error")):(return (Right ())):(return (Right ())):(return (Right ())):[]);
+hFor # do (m', v) <- (do second <- ((return (Right ())):(return (Left "error")):(return (Right ())):(return (Right ())):(return (Right ())):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
                         Left err -> return (Left err)
@@ -809,7 +818,7 @@ hPar # do (m', v) <- (do second <- ((return (Right ())):(return (Left "error")):
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-ListRet -}
-hPar # do (m', v) <- (do second <- return ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
+hFor # do (m', v) <- (do second <- return ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
     do (m', b) <- (x. hAccum # do res <- return x;
                     case firstFailure res of
                         Left err -> return (Left err)
@@ -829,7 +838,7 @@ hPar # do (m', v) <- (do second <- return ((Right ()):(Left "error"):(Right ()):
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-DoRet -}
-hPar # do (m', v) <- (do (m', b) <- (x. hAccum # do res <- return x;
+hFor # do (m', v) <- (do (m', b) <- (x. hAccum # do res <- return x;
                                 case firstFailure res of
                                     Left err -> return (Left err)
                                     Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t) ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
@@ -849,7 +858,7 @@ return ("start " ++ m', v)
 
 
 {- E-Hand and E-Do and E-Do and E-AppAbs -}
-hPar # do (m', v) <- (do (m', b) <- hAccum # do res <- return ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
+hFor # do (m', v) <- (do (m', b) <- hAccum # do res <- return ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]);
                             case firstFailure res of
                                 Left err -> return (Left err)
                                 Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t);
@@ -868,7 +877,7 @@ hPar # do (m', v) <- (do (m', b) <- hAccum # do res <- return ((Right ()):(Left 
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-Hand and E-DoRet -}
-hPar # do (m', v) <- (do (m', b) <- hAccum # case firstFailure ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]) of
+hFor # do (m', v) <- (do (m', b) <- hAccum # case firstFailure ((Right ()):(Left "error"):(Right ()):(Right ()):(Right ()):[]) of
                                 Left err -> return (Left err)
                                 Right t  -> (x. hWeak # do _ <- return x; do _ <- op accum " end" (x. return x) (x. return x); return "success") t);
     let rec reduce = l. 
@@ -882,12 +891,12 @@ hPar # do (m', v) <- (do (m', b) <- hAccum # case firstFailure ((Right ()):(Left
                 do y <- reduce t;
                 return (h ++ y) in 
                     do m <- reduce ("1":"!":"3":"4":"5":[]);
-                    return (m ++ m', b));
+                    return (m ++ m', b);
 return ("start " ++ m', v)
 
 --TODO 
 {- E-Hand and E-Do and E-Do E-Hand and E-FirstFailLeft -}
-hPar # do (m', v) <- (do (m', b) <- hAccum #  return (Left "error");
+hFor # do (m', v) <- (do (m', b) <- hAccum #  return (Left "error");
     let rec reduce = l. 
         do n <- null l;
         if n
@@ -903,7 +912,7 @@ hPar # do (m', v) <- (do (m', b) <- hAccum #  return (Left "error");
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-Do and E-HandRet -}
-hPar # do (m', v) <- (do (m', b) <- return ("", Left "error");
+hFor # do (m', v) <- (do (m', b) <- return ("", Left "error");
     let rec reduce = l. 
         do n <- null l;
         if n
@@ -919,7 +928,7 @@ hPar # do (m', v) <- (do (m', b) <- return ("", Left "error");
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-DoRet -}
-hPar # do (m', v) <- (let rec reduce = l. 
+hFor # do (m', v) <- (let rec reduce = l. 
         do n <- null l;
         if n
             then 
@@ -934,7 +943,7 @@ hPar # do (m', v) <- (let rec reduce = l.
 return ("start " ++ m', v) 
 
 {- E-Hand and E-Do and E-LetRec -}
-hPar # do (m', v) <- (do m <- (let rec reduce = l. 
+hFor # do (m', v) <- (do m <- (let rec reduce = l. 
                         do n <- null l;
                         if n
                             then 
@@ -960,11 +969,11 @@ return ("start " ++ m', v)
 {- analogous to let rec reduction in "reductionMap" -}
 
 {- E-Hand and E-Do and E-DoRet -}
-hPar # do (m', v) <- return ("1:345", Left "error");
+hFor # do (m', v) <- return ("1:345", Left "error");
 return ("start " ++ m', v) 
 
 {- E-Hand and E-DoRet -}
-hPar # return ("start 1:345", Left "error") 
+hFor # return ("start 1:345", Left "error") 
 
 {- E-HandRet -}
 return ("start 1:345", Left "error") 

@@ -1,3 +1,9 @@
+#######
+
+old
+
+#######
+
 sc for l (i. op accum i (x. return x)) (x. return x)
 
 hAccum (+) 0 = \(<>) mempty handler 
