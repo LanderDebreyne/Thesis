@@ -144,17 +144,17 @@ firstFailure lst = case Fold.fold (fmap firstError lst) of
   where firstError x = case x of Left e  -> Just e
                                  Right _ -> Nothing
 
-prog :: Comp (Except String :+: (Accum String :+: Empty)) (ForSc Int :+: sc) ()
+prog :: Comp (Except String :+: (Accum String :+: Empty)) (ForSc Int :+: sc) String
 prog = do    
     perform $ Acc "start "
     for 5 (\x -> if x == 2
       then do
         perform $ Acc "!"
-        --perform $ Throw "error"
+        perform $ Throw "error"
         perform $ Acc "unreachable"
       else perform $ Acc (show x))
     perform $ Acc " end"
-    --return "success"
+    return "success"
 
 prog2 :: Comp (Except String :+: (Accum String :+: Empty)) (ForSc Int :+: sc) String
 prog2 = do
@@ -163,7 +163,7 @@ prog2 = do
     else perform $ Acc (show x))
   return "succes"
 
-testExcept :: ([Char], Either String ())
+testExcept :: ([Char], Either String String)
 testExcept = hVoid $ hAccum @String $ hWeak @String prog
 
 -- Nondeterminism with once

@@ -9,8 +9,7 @@ Syntax
         https://www.cs.swarthmore.edu/~zpalmer/cs73/s18/book.pdf
         Mike Grant Zachary Palmer Scott Smith, Principles of Programming Languages, Chapter 2
         letrec f x = c1 in c2
-    reduce clausule
-    for clausule
+    for clausule 
     head v 
     head c
     tail v
@@ -27,14 +26,19 @@ Semantiek
     --------------------------------------------------------------------------------
         let rec f = c1 In c2 -> c2[c1[(let rec f = c1 in f)/f]/f]
 
+    --E-FwdFor
+    --    (for _ _ _) not element of h    (reduce lstv k -> c) element of h
+    -------------------------------------------------------------------------------------
+    --    h # for lstv1 (y. c1) (lstv2. c2) -> for lstv1 (y. h # c1) (lstv3. c[lstv3/lstv, (lstv2. h # c2)/k])
+
     E-FwdFor
-        (for _ _ _) not element of h    (reduce lstv k -> c) element of h
-    -----------------------------------------------------------------------------------
-        h # for lstv1 (y. c1) (lstv2. c2) -> for lstv1 (y. h # c1) (lstv3. c[lstv3/lstv, (lstv2. h # c2)/k])
+                            (for _ _ _) not element of h
+    -------------------------------------------------------------------------------------
+        h # for lstv1 (y. c1) (z. c2) -> for lstv1 (y. h # c1) (z. h # c2)
 
     E-HandFor
-            (for lstv1 p k)  element of h
-    -----------------------------------------------------------------------
+                            (for lstv1 p k)  element of h
+    --------------------------------------------------------------------------------------
         h # map lstv2 (y. c1) (lstv3. c2) -> c[lstv1/x, (y. h # c1)/p, (lstv3. h # c2)/k]
 
     E-DoFor
