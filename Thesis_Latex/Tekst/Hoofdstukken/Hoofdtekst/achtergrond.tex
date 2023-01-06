@@ -1,0 +1,276 @@
+\chapter{Achtergrond}
+\label{hoofdstuk:achtergrond}
+
+\section{Effecten en handlers} \label{sec:achtergrondAlgEff}
+Effecten en handlers \cite{Bauer2015} zijn een mechanisme om effecten gestructureerd te behandelen in een programmeertaal. Ze stellen de programmeur in staat om de pure, functionele code in het programma te scheiden van de impure, effectvolle code. Dit gebeurt door effect-operaties te introduceren die effectvolle primitieven zijn. Vervolgens definieert de aanpak specifieke functies, effect handlers, voor het afhandelen van de effect-operaties. Effecten en handlers maken het makkelijker over de logica van de code te redeneren en effecten te coderen en te manipuleren op een modulair componeerbare manier, waardoor meer modulaire en herbruikbare programma's kunnen worden gemaakt. Dit is bijzonder interessant wanneer complexe effecten moeten worden gecontroleerd, zoals in parallelle of gedistribueerde systemen. \newline
+
+Handlers worden gebruikt om de instructies te beschrijven die moeten uitgevoerd worden wanneer een effect optreedt in de controlestroom van het programma. Doordat de semantiek van het effect in de handler zit, maakt dit de scheiding mogelijk tussen het voorkomen van het effect en de afhandeling, waardoor het gemakkelijker wordt te redeneren over de effecten in een programma en deze te beheren. \newline
+
+De belangrijkste eigenschap van programmeren met effect handlers is de hoge mate van modulariteit en diversiteit van semantiek die de programmeur kan bereiken met dezelfde bouwstenen. Dit vloeit voort uit overloading van effecten via verschillende handlers, modulaire compositie van effecten en scheiding van syntax en semantiek bij de afhandeling van effecten. Deze eigenschappen maken dit een veelbelovende aanpak voor het programmeren met effecten. 
+
+\section{Algebraïsche operaties}
+Zoals vermeld in Sectie \ref{sec:achtergrondAlgEff} zijn de operaties effectvolle primitieven. Deze primitieven hebben een type-signatuur $A \rightarrowtriangle B$, wat aanduidt dat het effect een term van type A omvormt naar type B. Het $choose:() \rightarrowtriangle Bool$ effect is een voorbeeld van een algebraïsch effect dat een eenheids-waarde neemt als input en op willekeurige of niet-deterministische manier een boolean waarde teruggeeft. De syntaxis hiervoor in deze masterproef is als volgt:
+
+\begin{equation}
+    \textbf{op} \: choose \: (\:) \: (y. \: c)
+\end{equation}
+
+Hier geeft het sleutelwoord \textbf{op} aan dat het om een algebraïsch effect gaat, gevolgd door het label \textit{choose}, gevolgd door de input parameter $(\:)$, gevolgd door de resumptie $(y. \: c)$. De resumptie is de computatie die de rest van het programma bevat gegeven de resulterende waarde van het effect. Een voorbeeld programma met het \textit{choose} effect is een programma dat ''pasta'' of ''pizza'' teruggeeft afhankelijk van het resultaat:
+
+\begin{equation}
+    c_{ND}\:=\:\textbf{op}\:choose\:()\:(x.\:then\:return\:"pasta"\:else\:return\:"pizza"\:)
+\end{equation}
+
+Algebraïsche effecten worden gekenmerkt doordat ze aan elkaar gerijgd kunnen worden door gebruik te maken van de algebraïciteits-eigenschap als volgt:
+
+\begin{equation} \label{eq:algFood}
+    \begin{split}
+        \textbf{do}\:food \leftarrow \textbf{op}\:choose\:()\:(x. \: if \: x \:then\:return\:"pasta"\:else\:return\:"pizza"\:) \: ; \\ \: \textbf{return}\: "We \: are \: eating \: " \concat  food \concat " \: tonight!"  \leadsto \\
+        \textbf{op}\:choose\:()\:(x.\: \textbf{do}\:food \leftarrow  if \: x \:then\:return\:"pasta"\:else\:return\:"pizza"\:; \\ \: \textbf{return} "We \: are \: eating \: " \concat  food \concat " \: tonight!" )
+    \end{split}
+\end{equation}
+
+Algemeen opgesteld, ziet deze eigenschap er zo uit:
+
+\begin{equation}
+    \textbf{do}\:x \leftarrow \textbf{op}\:l\:v\:(y.\:c_{1})\:;\:c_{2} \leadsto  \textbf{op}\:l\:v\:(y.\: \textbf{do}\:x \leftarrow c_{1}\:;\:c_{2})
+\end{equation}
+
+Het effect van deze eigenschap is enerzijds dat de \textbf{do} clausule wordt doorgeschoven naar de continuatie en anderzijds dat de computatie na de het \textbf{do} statement (de $c_2$ computatie) in de continuatie wordt geduwd.
+
+\section{Algebraïsche effect handlers}
+De effect handlers geven semantiek aan de algebraïsche operaties door te definiëren hoe de operaties te interpreteren. Effect handlers hebben drie interessante eigenschappen, overloading van effecten, functie compositie en effectinteracties.
+
+\subsection{Overloading van effecten}
+Overloading van effecten is simpel te demonstreren door twee verschillende handlers te definiëren en deze hetzelfde programma te laten behandelen. Het resultaat zal in beide gevallen anders zijn, wat aangeeft dat handlers een interessante invloed hebben op de semantiek van het programma. \newline 
+De handler $h_{True}$ selecteert de $true$ tak van de computatie voor het \textit{choose} effect:
+\begin{equation}
+    \begin{split}
+        h_{True} = \textbf{handler} \: & \{ \: \textbf{return}\:x \mapsto \textbf{return}\:x \\
+         & , \: \textbf{op}\:choose\:\_\:k \mapsto k \: true\}
+    \end{split}
+\end{equation}
+Deze handler toegepast op het programma uit Eq. \ref{eq:algFood} heeft als resultaat
+\begin{equation}
+    "We\:are\:eating\:pasta\:tonight!"
+\end{equation} 
+De handler $h_{Max}$ selecteert beide takken en combineert het resultaat:
+\begin{equation}
+    \begin{split}
+        h_{True} = \textbf{handler} \: & \{ \: \textbf{return}\:x \mapsto \textbf{return}\:[x] \\
+        & , \: \textbf{op}\:choose\:\_\:k \mapsto \textbf{do}\:t \leftarrow k \: true\;;\: \textbf{do}\:f \leftarrow k\:false\;\:t \concat f \}
+    \end{split}
+\end{equation}
+
+Deze handler toegepast op het programma uit Eq. \ref{eq:algFood} zal als resultaat
+\begin{equation}
+    ["We\:are\:eating\:pasta\:tonight!",\:"We\:are\:eating\:pizza\:tonight!"]
+\end{equation} 
+hebben. Deze twee resultaten zijn een interessante toepassing van overloading van effecten door verschillende handlers te definiëren voor hetzelfde effect.
+
+\subsection{Functie compositie}
+Functie compositie betekent dat het mogelijk moet zijn om programma's te schrijven die verschillende effecten bevatten. 
+
+\subsection{Effect-interacties}
+% Voorbeeldgedreven
+...
+
+\section{Beperkingen algebraïsche effecten en handlers}
+Algebraïsche effecten en handlers zijn beperkt in hun vermogen om bepaalde soorten effecten te modelleren. Ze kunnen effecten modelleren zoals onder andere I/O, het veranderen van de staat van variabelen en niet-determinisme. Algebraïsche effecten kunnen echter geen effecten voorstellen die de controlestroom van een programma veranderen, zoals uitzonderingen (geen catch functionaliteit mogelijk). Deze beperking vloeit voort uit de aard van algebraïsche effecten, die gericht zijn op het modelleren van effecten die abstract kunnen worden voorgesteld als algebraïsche bewerkingen en compositioneel kunnen worden gecombineerd met andere effecten. Controlestroom-veranderende effecten daarentegen vereisen meer verfijnde mechanismen voor hun behandeling, die buiten de mogelijkheden van algebraïsche effecten vallen.
+
+\section{Effecten met scope} \label{hoofdstuk:AchteffScope}
+Scoped effecten \cite{Bosman2022}, \cite{Wu2014}, \cite{Yang2022}, \cite{Pirog2018} zijn effecten waarbij het gedrag in scope beperkt is tot een deel van de totale berekening. Dit type effect verdeelt het programma in een computatie die binnen het bereik van het effect valt en een deel dat buiten het bereik valt. De $\lambda_{sc}$ calculus \cite{Bosman2022} beschrijft een calculus voor algebraïsche en scoped effecten. De syntaxis en semantiek van deze calculus wordt beschreven in Sectie \ref{hoofdstuk:startpuntScoped}. De syntaxis van scoped operaties ziet er als volgt uit:
+\begin{equation}
+    \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2})
+\end{equation}
+
+Hier geeft het sleutelwoord \textbf{sc} aan dat het om een scoped effect gaat, gevolgd door een label $l$, een input parameter $v$, een berekening in scope $(y.\:c_{1})$ en een resumptie $(z.\:c_{2})$. Het verschil met de algebraïsche effecten is de toevoeging van een berekening in scope. Deze toevoeging laat de handler toe om de bereking in scope anders te interpreteren dan de resumptie. Door deze toevoeging kan ook geen generieke forwarding van effecten door verschillende handlers meer gebeuren en moet de handler een expliciete forwarding clausule hebben van de volgende vorm:
+\begin{equation}
+    \textbf{fwd}\:f\:p\:k \mapsto c_{f}
+\end{equation}
+Deze clausule wordt meer in detail besproken in Sectie \ref{hoofdstuk:startpuntScoped} en \cite{Bosman2022}.
+
+
+\section{Parallelle algebraïsche effecten}
+Effect handlers behandelen effecten standaard sequentieel. De $\lambda^{p}$ calculus \cite{Xie2021} maakt parallelle afhandeling van algebraïsche effecten mogelijk. Deze calculus wordt behandeld in Sectie \ref{hoofdstuk:startpuntParallel}. De $\lambda^{p}$-calculus maakt gebruikt van een constructie 
+\begin{equation}
+    \textbf{for}\:x\::\:n.\:e
+\end{equation}
+
+Waarbij \textbf{for} het sleutelwoord is, en de expressie $e$ in parallel wordt uitgevoerd voor elke $x$ in $n$. Gelijkaardig aan de expliciete forwarding clausule voor scoped effecten zoals besproken in Sectie \ref{hoofdstuk:AchteffScope}, heeft deze calculus een \textbf{traverse} clausule in de vorm
+\begin{equation}
+    \textbf{traverse}\:n\:l\:k
+\end{equation}
+Deze \textbf{traverse} clausule is handler specifiek en verandert de resumptie.
+
+\section{Calculi}
+Om een ontwerp voor een programmeertaal met bepaalde eigenschappen of mogelijkheden formeel voor te stellen, kan gebruikt worden gemaakt van een wiskundig kader zoals een calculus. Een calculus stelt een vereenvoudigde versie van een taal voor in abstracte wiskundige notatie en is een elegante manier om programmeertalen te modelleren omdat ook metatheoretische bewijzen van gewenste eigenschappen geleverd kunnen worden. Deze sectie zal een overzicht geven van een simpele calculus, de pure simpel getypeerde lambda-calculus met als doel de verschillende onderdelen van een calculus uiteen te zetten. De calculus is een licht aangepaste versie van de calculus in Hoofdstuk 9 van TAPL \cite{Pierce2002}.
+
+\subsection{Termen, waarden, computaties en operaties}
+De kleinste bouwblokken voor programma's in calculi zijn termen. Termen zijn opgesplitst in waarden en computaties waarbij een term bij een van beide hoort. Een waarde is een term die niet kan evalueren of reduceren. Een computatie is in tegenstelling tot een waarde een term die wel kan evalueren of reduceren. Effect handlers introduceren operaties die in deze context duiden op syntax-constructies die de oproep van een effect symboliseren.
+
+\subsection{Syntaxis}
+\begin{table}
+    \centering
+    \begin{tabular}{|r c l r|}
+    \hline 
+         waarden $v$ & $::=$ & $x$ & variabele \\
+         & $|$ & $\lambda\:x:A.\:c$ & abstractie \\
+         & & & \\
+         computaties $c$ & $::=$ & $v\:v$ & applicatie \\
+         & & & \\
+        types $A, B$ & $::=$ & $A \rightarrow B$ & type van functies \\
+         & & & \\
+         \\
+         contexten $\Gamma$ & $::=$ & $.$ & Lege context \\
+         & $|$ & $\Gamma,\:x:A$ & term variabele binding \\
+    \\
+    \hline
+    \end{tabular}
+    \caption{Pure, simpel getypeeerde $\lambda$-calculus syntaxis}
+    \label{fig:syntaxisSTLC}
+\end{table}
+
+De syntaxis geeft een abstract overzicht van de verschillende bouwstenen waaruit een correct programma kan bestaan. Tabel \ref{fig:syntaxisSTLC} geeft de syntaxis voor de pure, simpel getypeerde $\lambda$-calculus. De syntaxis maakt een onderscheid tussen waarden, computaties, types en contexten en definieert voor elk van deze welke vormen ze kunnen aannemen. Waarden en computaties hebben types. De typering van waarden en computaties is vastgelegd in de type-context. Het verschil tussen waarden en computaties is dat waarden zich in een irreduceerbare, normaalvorm bevinden en computaties kunnen reduceren. De operationele semantiek legt de regels voor reductie vast.
+
+\subsection{Semantiek}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $c \leadsto c'$ \\
+                \hline
+              \end{tabular} & Computatie reductie \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{c_1 \leadsto c_1'}{c_1\:c_2 \leadsto c_1'\:c_2}[E-App1]$ \\
+            \\
+            $\inference{c \leadsto c'}{v\:c \leadsto v\:c'}[E-App2]$ \\
+            \\
+            $\inference{}{(\lambda x:A.\:c)\:v \leadsto [x \mapsto v]\:c}[E-AppAbs]$
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Operationele semantiek van pure, simpel getypeerde $\lambda$-calculus}
+    \label{fig:semantiekSTLC}
+\end{table}
+
+Tabel \ref{fig:semantiekSTLC} toont de operationele semantiek voor de simpel, getypeerde $\lambda$-calculus. Dit zijn semantische regels die gevolgd kunnen worden om berekeningen te reduceren tot normaalvormen. De relatie $c \leadsto c'$ betekent dat de computatie kan reduceren.
+
+\subsection{Type-systeem}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash v\::\:A$ \\
+                \hline
+              \end{tabular} & waarde typering \\
+         \end{tabular} 
+         \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{x:A \in \Gamma}{\Gamma \vdash x\::\:A}[T-Var]$ \\
+            \\
+            $\inference{\Gamma,\:x:A \vdash c\::\:B}{\Gamma \vdash \lambda x:A.\:c\::\:A \rightarrow B}[T-Abs]$ \\
+            \end{tabular} \\
+            \\
+            \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash c\::\:A$ \\
+                \hline
+              \end{tabular} & computatie typering \\
+         \end{tabular} \\
+         \\
+            \begin{tabular}{c}
+            $\inference{\Gamma \vdash v_1 \::\:A \rightarrow B \qquad \Gamma \vdash v_2 \::\:A}{\Gamma \vdash v_1\:v_2\::\:B}[T-App]$
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Typesysteem van pure, simpel getypeerde $\lambda$-calculus}
+    \label{tab:semantiekSTLC}
+\end{table}
+
+Tabel \ref{tab:semantiekSTLC} toont het typesysteem voor de pure, simpel getypeerde $\lambda$-calculus. Het typesysteem bevat typeregels voor de verschillende mogelijke termen. Dit typesysteem bevat regels voor variabelen (\textbf{T-Var}), abstractie (\textbf{T-Abs}) en applicatie (\textbf{T-App}).
+
+\subsection{Metatheorie}
+% TODO: 
+Voor deze calculus kan een bewijs van vooruitgang gemaakt worden wat inhoudt dat bewezen kan worden dat elke gesloten, getypeerde term $t$ ofwel een waarde is, of een computatie $c$ en een computatie $c'$ bestaat zodat $c \leadsto c'$ en voor $c'$ hetzelfde geldt. \newline
+
+Voor deze calculus kan eveneens een bewijs van preservatie geleverd worden wat inhoudt dat voor als voor termen $c$ en $c'$ geldt: $\Gamma \vdash c\::\:A$ en $c \leadsto c'$ dan geldt $\Gamma \vdash c' \::\:A$. Dit betekent dat als een term goed getypeerd is, elke geldige reductie van de term ook goed getypeerd is.
+
+\section{Andere computationele effecten}
+Deze masterproef focust op de algebraïsche en scoped effecten en de parallelle behandeling van effecten. Dit zijn niet de enige types computationele effecten. Deze sectie bespreekt enkele andere soorten effecten die verder niet behandeld worden in de calculus. 
+
+\subsection{Latente effecten}
+Latente effecten \cite{vandenBerg2021} zijn een generieke klasse van effecten waarbij de uitvoer van een computatie uitgesteld wordt. Dit is controle-stroom controlerend mechanisme dat verschilt van de mogelijkheden van algebraïsche en scoped effecten.
+
+\subsection{Asynchrone effecten}
+De paper \emph{Asynchronous Effects} \cite{Ahman2020} introduceert een calculus om algebraïsche effecten asynchroon te behandelen. % TODO: langer
+
+%Een hoofdstuk behandelt een samenhangend geheel dat min of meer op zichzelf
+%staat. Het is dan ook logisch dat het begint met een inleiding, namelijk
+%het gedeelte van de tekst dat je nu aan het lezen bent.
+
+%\section{Eerste onderwerp in dit hoofdstuk}
+%De inleidende informatie van dit onderwerp.
+
+%\subsection{Een item}
+%De bijbehorende tekst. Denk eraan om de paragrafen lang genoeg te maken en
+%de zinnen niet te lang.
+
+%Een paragraaf omvat een gedachtengang en bevat dus steeds een paar zinnen.
+%Een paragraaf die maar \'e\'en lijn lang is, is dus uit den boze.
+
+%\section{Tweede onderwerp in dit hoofdstuk}
+%Er zijn in een hoofdstuk verschillende onderwerpen. We zullen nu
+%veronderstellen dat dit het laatste onderwerp is.
+
+%\subsection{Een item}
+%Maak ook geen misbruik van opsommingen. Voor korte opsommingen gebruik je
+%geen ``\verb|itemize|'' of ``\texttt{enumerate}'' commando's. Doe dus
+%\emph{niet} het volgende:
+%\begin{quote}
+%  De Eiffeltoren bevat drie verdiepingen:
+%  \begin{itemize}
+%  \item de eerste;
+%  \item de tweede;
+%  \item de derde.
+%  \end{itemize}
+%\end{quote}
+%Maar doe:
+%\begin{quote}
+%  De Eiffeltoren bevat drie verdiepingen: de eerste, de tweede en de derde.
+%\end{quote}
+
+%\section{Besluit van dit hoofdstuk}
+%Als je in dit hoofdstuk tot belangrijke resultaten of besluiten gekomen
+%bent, dan is het ook logisch om het hoofdstuk af te ronden met een
+%overzicht ervan. Voor hoofdstukken zoals de inleiding en het
+%literatuuroverzicht is dit niet strikt nodig.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "masterproef"
+%%% End: 

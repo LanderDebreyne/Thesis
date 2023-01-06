@@ -1,0 +1,509 @@
+\chapter{Startpunt}
+
+% TODO: meer voorbeeldgedreven
+
+\label{hoofdstuk:startpunt}
+Deze masterproef heeft als doel een calculus voor te stellen die algebraïsche en scoped effecten en effect handlers als \texttt{first-class citizens} beschouwt met sequentiële en parallelle behandeling voor deze effecten. Het startpunt voor deze calculus is $\lambda_{sc}$\cite{Bosman2022}, een calculus die sequentiële behandeling van scoped en algebraïsche effecten ondersteunt. Het startpunt voor de parallelle behandeling van effecten is $\lambda^{p}$\cite{Xie2021}, een calculus die parallelle algebraïsche effecten ondersteunt.
+
+\section{\texorpdfstring{$\lambda_{sc}$ :}{} Scoped Effecten} \label{hoofdstuk:startpuntScoped}
+Deze sectie stelt de calculus voor algebraïsche en scoped effecten \cite{Bosman2022} die als startpunt dient voor deze masterproef. 
+\begin{table}
+    \centering
+    \begin{tabular}{|r c l r|}
+    \hline
+         & & & \\ 
+         waarden $v$ & $::=$ & $() \: \: | \: \: (v_{1}, \: v_{2} ) \: \: | \: \: x \: \: | \: \: \lambda x . \: c \: \: | \: \: h$ & \\
+         handlers $h$ & $::=$ & $\textbf{handler} \: \{ \: \: \textbf{return} \: x \mapsto c_{r}$ & return clausule\\
+         & & $\qquad \qquad \quad , \: oprs$ & effect  clausules \\
+         & & $\qquad \qquad \quad , \: \textbf{fwd} \: f \: p \: k \mapsto c_{f} \: \} $ & forwarding clausule \\
+         & & & \\
+          effect clausules $oprs$ & $::=$ & . & \\ 
+          & $|$ & $\textbf{op} \: l \: x \: k \mapsto c, \: oprs$ & algebraïsche effect clausules \\
+           & $|$ & $\textbf{sc} \: l \: x \: p \: k \mapsto c, \: oprs$ & scoped effect clausules \\
+        & & & \\
+         computaties $c$ & $::=$ & $\textbf{return} \: v$ & return waarde \\
+          & $|$ & $\textbf{op} \: l \: v \: (y. \: c)$ & algebraïsch effect \\
+          & $|$ & $\textbf{sc} \: l \: v \: (y. \: c_{1}) \: (z. \: c_{2})$ & scoped effect \\
+          & $|$ & $v \star c$ & behandeling \\
+          & $|$ & $\textbf{do} \: x \leftarrow c_{1}\:; \: c_{2}$ & do clausule \\
+          & $|$ & $v_{1} \: v_{2}$ & applicatie \\
+          & $|$ & $\textbf{let} \: x = v \: \textbf{in} \: c$ & let \\
+         & & & \\
+         waarde types $A, \: B, \: M$ & $::=$ & $() \: \: | \: \: (A, \:B) \: \: | \: \: A \rightarrow \underline{C} \: \: | \: \: \underline{C} \Rightarrow \underline{D}$ & \\
+         & $|$ & $\alpha$ & type variabele \\
+         & $|$ & $\lambda \: \alpha . \: A$ & type operator abstractie \\
+         & $|$ & $M \: A$ & type applicatie \\
+         type schemas $\sigma$ & $::=$ & $A \: \: | \: \: \forall \: \mu . \: \sigma \: \: | \: \: \forall \: \alpha. \: \sigma $ & \\
+         computatie types $\underline{C}, \: \underline{D}$ & $::=$ & $A ! \langle E \rangle $ & \\
+         effect type rows $E, \: F$ & $::=$ & $. \: \: | \: \: \mu \: \: | \: \: l; \: E $ & \\
+         & & & \\
+         kinds $K$ & $::=$ & $* \: \: | \: \: K \rightarrow K$ & \\
+         & & & \\
+         signatuur contexten $\Sigma$ & $::=$ & $. \: \: | \: \: \Sigma , \: l \: : \: A \rightarrowtriangle B$ & \\
+         type contexten $\Gamma$ & $::=$ & $. \: \: | \:\: \Gamma, \: x \: : \: A \: \: | \: \: \Gamma , \: \mu \: \: | \: \: \Gamma, \: \alpha $ & \\
+         & & & \\
+    \hline
+    \end{tabular}
+    \caption{Syntaxis voor $\lambda_{sc}$}
+    \label{fig:syntaxisScoped}
+\end{table}
+
+\subsection{Syntaxis}
+Tabel \ref{fig:syntaxisScoped} beeldt de syntaxis voor de $\lambda_{sc}$-calculus af. \\
+
+De syntaxis onderscheidt termen en types. De termen zijn gesplitst in waarden $v$ en computaties $c$ waarbij waarden verschillen van computaties in dat enkel op de computaties reducties toegepast kunnen worden.
+
+\subsubsection{Waarden}
+Een waarde is ofwel de eenheids-waarde $()$, een paar van twee waarden $(v_{1}, v_{2})$, een variabele $x$, een functie $\lambda x.\:c$ of een handler $h$. Een handler bestaat uit een return clausule, geen of meerdere effect clausules en een forwarding clausule. De return clausule $\textbf{return}\:x \mapsto c_{r}$ duidt erop dat het resultaat x door de handler wordt behandeld door de computatie $c_{r}$. Een algebraïsche effect clausule $\textbf{op}\:l\:x\:k \mapsto c$ wordt gekenmerkt door het sleutelwoord \textbf{op} gevolgd door een label $l$, een input parameter $x$ en een resumptie k. $\mapsto c$ duidt aan dat een handler deze clausule verwerkt door de computatie $c$ toe te passen. Een scoped effect clausule $\textbf{sc}\:l\:x\:p\:k \mapsto c$ is gelijkaardig aan een algebraïsche effect clausule met een verschillend sleutelwoord \textbf{sc} en bijkomende een bewerking in scope $p$. De forwarding clausule $\textbf{fwd}\:f\:p\:k \mapsto c_{f}$, die elke handler moet implementeren, zorgt voor expliciete forwarding wanneer de te behandelen scoped effect clausule niet geïmplementeerd wordt door de handler. De computatie $c_{f}$ specifieert hoe de onbekende scoped effect clausule moet aangepast worden en kan hiervoor gebruik maken van $f$, dat het onbekende scoped effect bevat, de computatie in scope $p$ en de resumptie $k$.
+
+\subsubsection{Computaties}
+Computaties kunnen een waarde uitkomen door middel van de return clausule $\textbf{return}\:v$. Een algebraïsch effect $\textbf{op}\:l\:v\:(y.\:c)$ bestaat uit het sleutelwoord \textbf{op}, een label $l$, een input parameter waarde $v$ en een resumptie in de vorm $(y.\:c)$. Een scoped effect $\textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2})$ bestaat uit het sleutelwoord \textbf{sc}, een label $l$, een input parameter waarde $v$, een scoped berekening $(y.\:c_{1})$ en een resumptie $(z.\:c_{2})$. In beide soorten effecten is de resumptie de computatie die gegeven de resulterende waarde van het effect, de rest van het programma bevat. De behandeling $v \star c$ drukt de behandeling van een computatie $c$ door een waarde $v$, die een handler is, door middel van de $\star$-operator. Computaties worden aan elkaar gerijgd doormiddel van do clausules in de vorm $\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2}$ waarbij het resultaat van $c_{1}$ in $c_{2}$ beschikbaar is als $x$. De syntax van applicatie in de calculus is door $v_{1}\:v_{2}$. Let-polymorfisme is beschikbaar in de calculus als $\textbf{let}\:x\:=\:v\:\textbf{in}\:c$.
+
+\subsubsection{Types}
+Zoals de termen zijn ook de types opgesplitst in waarde types $A,\:B,\:M$ en computatie types $\underline{C},\:\underline{D}$. Waarde types zijn ofwel een eenheids-type $()$, een paar-type $(A,\:B)$, een functie type $A \rightarrow \underline{C}$, een handler type $\underline{C} \Rightarrow \underline{D}$, een type variabele $\alpha$, type operator abstractie $\lambda \: \alpha. \: A$ of type applicatie $M\:A$. Een computatie type $A!\langle E \rangle$ bestaat uit een waarde type $A$, het type van de resulterende waarde van de computatie, en een effect type $E$, het effect type van de effecten die tijdens de computatie kunnen opgeroepen worden. Een Effect type bestaat uit een mogelijke lege collectie atomische labels $l$, mogelijk met een row-variabele $\mu$ als laatste element.
+Deze calculus ondersteunt verder type schemas $\sigma$ en kinds $K$. De calculus houdt een gespecialiseerde signatuur context $\Sigma$ bij om via hun labels de signatuur van gebruikte effecten te typeren. De calculus heeft ook een type context die de variabelen bijhoudt.  
+
+\subsection{Operationele semantiek}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $c \leadsto c'$ \\
+                \hline
+              \end{tabular} & Reductie van computaties \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+            $\inference{}{(\lambda x.\:c)\:v \leadsto c\:[\:v\:/\:x\:]}[E-AppAbs] \qquad \inference{}{\textbf{let}\:x\: = \: v \: \textbf{in} \:c \leadsto c\:[\:v\:/\:x\:]}[E-Let]$ \\ 
+            \\
+            $\inference{c_{1} \leadsto c_{1}'}{\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2} \leadsto \textbf{do}\:x \leadsto c_{1}'\:;\:c_{2}}[E-Do] \qquad \inference{}{\textbf{do}\:x \leftarrow \textbf{return}\:v\:;\:c_{2} \leadsto c_{2}\:[\:v\:/\:x\:]}[E-DoRet]$ \\
+            \\
+            $\inference{}{\textbf{do}\:x \leftarrow \textbf{op}\:l\:v\:(y.\:c_{1})\:;\:c_{2} \leadsto \textbf{op}\:l\:v\:(y.\: \textbf{do} \: x \leftarrow c_{1}\:;\:c_{2})}[E-DoOp]$ \\
+            \\
+            $\inference{}{\textbf{do}\:x \leftarrow \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \: ;\: c_{3} \leadsto \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\: \textbf{do} \: x \leftarrow c_{2} \: ;\: c_{3})}[E-DoSc]$ \\
+            \\
+            $\inference{c \leadsto c'}{h \star c \leadsto h \star c'}[E-Hand] \qquad \inference{(\textbf{return}\:x \mapsto c_{r}) \in h}{h \star \textbf{return} \: v \leadsto c_{r} \:[\:v\:/\:x\:]}[E-HandRet]$ \\
+            \\
+            $\inference{(\textbf{op}\:l\:x\:k \mapsto c) \in h}{h \star \textbf{op}\:l\:v\:(y.\:c_{1}) \leadsto c\:[\:v\:/\:x,\:(\lambda y.\:h \star c_{1}) \: / \: k]}[E-HandOp]$ \\
+            \\
+            $\inference{(\textbf{op}\:l\:\_\:\_) \notin h}{h \star \textbf{op}\:l\:v\:(y.\:c_{1}) \leadsto \textbf{op}\:l\:v\:(y.\: h \star c_{1})}[E-FwdOp]$ \\
+            \\
+            $\inference{(\textbf{sc}\:l\:x\:p\:k \mapsto c) \in h}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c\:[\:v\:/\:x,\:(\lambda \: y. \: h \star\:c_{1}) \: / \: p, (\lambda z. \: h \star c_{2}) \:/\:k\:]}[E-HandSc]$ \\
+            \\
+            $\inference{(\textbf{sc}\:l\:\_\:\_\:\_) \notin h \\ (\textbf{fwd}\:f\:p\:k \mapsto c_{f}) \in h \qquad g\:=\:\lambda(p',\:k')\:.\:\textbf{sc}\:l\:v\:(y.\:p'\:y)\:(z.\:k'\:z)}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{f}\:[\:(\lambda\:y.\:h \star c_{1})\:/\:p,\:(\lambda z.\: h \star c_{2})\:/\:k,\:g\:/\:f]}[E-FwdSc]$\\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Operationele semantiek van $\lambda_{sc}$}
+    \label{fig:semantiekScoped}
+\end{table}
+
+Tabel \ref{fig:semantiekScoped} toont de kleine-staps operationele semantiek van de $\lambda_{sc}$-calculus. De relatie $c \leadsto c'$ duidt aan dat $c$ naar $c'$ stapt of reduceert. \\
+
+De regels \textbf{E-AppAbs} en \textbf{E-Let} behandelen functie applicatie en let-binding. De andere regels zijn op te delen in twee domeinen: computaties aan elkaar rijgen en computaties behandelen met handlers.
+
+\subsubsection{Computaties aan elkaar rijgen}
+Om computaties aan elkaar te rijgen van de vorm $\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2}$ is een onderscheid te maken tussen het geval waarbij $c_{1}$ een stap kan zetten naar $c_{1}'$ (\textbf{E-Do}) of waarbij $c_{1}$ in normale vorm is (\textbf{return}, \textbf{op \textellipsis}, of \textbf{sc \textellipsis}). In het laatste geval, hangt de regel af van de normale vorm die zich presenteert in $c_{1}$. In het geval dat de computatie een resultaat is met een waarde, $\textbf{do}\:x \leftarrow \textbf{return}\:v\:;\:c_{2}$, wordt $x$ vervangen door $v$ in $c_{2}$ of $\leadsto c_{2}\:[\:v\:/\:x\:]$ (\textbf{E-DoRet}). Is de computatie een algebraïsche effect, $\textbf{do}\:x \leftarrow \textbf{op}\:l\:v\:(y.\:c_{1})\:;\:c_{2}$, dan kan de computatie herschreven worden met behulp van de algebraïciteits-eigenschap $\leadsto \textbf{op}\:l\:v\:(y.\: \textbf{do} \: x \leftarrow c_{1}\:;\:c_{2})$ (\textbf{E-DoOp}). Bij een scoped effect, $\textbf{do}\:x \leftarrow \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \: ;\: c_{3}$, wordt een generalisatie van de algebraïciteits-eigenschap gebruikt $\leadsto \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\: \textbf{do} \: x \leftarrow c_{2} \: ;\: c_{3})$ (\textbf{E-DoSc}).
+
+\subsubsection{Computaties behandelen met handlers}
+Om computaties te behandelen met handlers, $h \star c$, is er opnieuw onderscheid te maken tussen het geval waar $c$ kan reduceren $c \leadsto c'$ en waar $c$ in normale vorm is (\textbf{return} v, \textbf{op \textellipsis}, \textbf{sc \textellipsis}). In het eerste geval wordt de mogelijke stap genomen, $h \star c \leadsto h \star c'$ (\textbf{E-Hand}). Geeft $c$ een waarde terug, $h \star \textbf{return} \: v$, dan wordt de return clausule van de handler opgeroepen, $\leadsto c_{r} \:[\:v\:/\:x\:]$ (\textbf{E-HandRet}). Komt een handler een algebraïsch effect tegen, $h \star \textbf{op}\:l\:v\:(y.\:c_{1})$, dan wordt onderscheid gemaakt tussen het geval waar de handler een clausule heeft voor de algebraïsche operatie of niet. Is dat zo, $(\textbf{op}\:l\:x\:k \mapsto c) \in h$, dan is de volgende stap geldig $\leadsto c\:[\:v\:/\:x,\:(\lambda y.\:h \star c_{1}) \: / \: k]$ (\textbf{E-HandOp}). Is dat niet zo, $(\textbf{op}\:l\:\_\:\_) \notin h$, dan wordt de volgende stap gemaakt $\leadsto \textbf{op}\:l\:v\:(y.\: h \star c_{1})$ (\textbf{E-FwdOp}). Deze laatste stap is een generische forwarding voor algebraïsche effecten. Is de te behandelen computatie een scoped effect, $h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2})$, dan wordt hetzelfde onderscheid gemaakt. Geldt $(\textbf{sc}\:l\:x\:p\:k \mapsto c) \in h$ dan is het resultaat $\leadsto c\:[\:v\:/\:x,\:(\lambda \: y. \: h \star\:c_{1}) \: / \: p, (\lambda z. \: h \star c_{2}) \:/\:k\:]$ (\textbf{E-HandSc}). Anders, wanneer $(\textbf{sc}\:l\:\_\:\_\:\_) \notin h \qquad (\textbf{fwd}\:f\:p\:k \mapsto c_{f}) \in h \qquad g\:=\:\lambda(p',\:k')\:.\:\textbf{sc}\:l\:v\:(y.\:p'\:y)\:(z.\:k'\:z)$ geldt, is het resultaat $\leadsto c_{f}\:[\:(\lambda\:y.\:h \star c_{1})\:/\:p,\:(\lambda z.\: h \star c_{2})\:/\:k,\:g\:/\:f]$ (\textbf{E-FwdSc}). Dit is een expliciete forwarding regel die nodig is om de correcte werking van scoped effecten te bekomen.
+
+\subsection{Type- en effect-systeem}
+De $\lambda_{sc}$-calculus heeft een typesysteem voor de termen en een type-systeem voor de effecten. Het effect-systeem maakt gebruikt van effect rows. De volgende subsectie behandelen dit systeem, met in Tabel \ref{fig:typeWaarde} de waarde typering, in Tabel \ref{fig:typeComp} de computatie typering en in Tabel \ref{fig:typeHand} de handler typering.
+\subsubsection{Waarde typering}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash v\::\:\sigma$ \\
+                \hline
+              \end{tabular} & Waarde typering \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{(x\::\:\sigma) \in \Gamma}{\Gamma \vdash x\::\:\sigma}[T-Var] \qquad \inference{}{\Gamma \vdash (\:) \::\:(\:)}[T-Unit]$ \\ 
+            \\
+            $\inference{\Gamma \vdash v_1\::\:A \qquad \Gamma \vdash v_2 \::\:B}{\Gamma \vdash (v_1,\:v_2)\::\:(A,\:B)}[T-Pair]$\\
+            \\
+            $\inference{\Gamma,\:x\::\:A \vdash c\::\:\underline{C}}{\Gamma \vdash \lambda \: x.\:c\::\:A \rightarrow \underline{C}}[T-Abs] \qquad \inference{\Gamma \vdash v\::\:A \qquad A \equiv B}{\Gamma \vdash v\::\:B}[T-Eqv]$\\
+            \\
+            $\inference{\Gamma \vdash A \::\: * \qquad \Gamma \vdash v\::\: \forall \: \alpha.\:\sigma}{\Gamma \vdash v\::\:\sigma\:[\:A\:/\:\alpha\:]}[T-Inst] \qquad \inference{\Gamma,\:\alpha \vdash v\::\:\sigma \qquad \alpha \notin \Gamma}{\Gamma \vdash v\::\:\forall\:\mu.\:\sigma}[T-Gen]$\\
+            \\
+            $\inference{\Gamma \vdash v\::\:\forall\:\mu.\:\sigma}{\Gamma \vdash b \::\:\sigma\:[\:E\:/\:\mu\:]}[T-InstEff] \qquad \inference{\Gamma,\:\mu \vdash v\::\:\sigma \qquad \mu \notin \Gamma}{\Gamma \vdash v\::\:\forall \mu.\:\sigma}[T-GenEff]$\\
+            \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Waarde typering van $\lambda_{sc}$}
+    \label{fig:typeWaarde}
+\end{table}
+
+Tabel \ref{fig:typeWaarde} toont de waarde typeringsregels voor $\lambda_{sc}$. \textbf{T-Var}, \textbf{T-Unit} en \textbf{T-Pair} behandelen de typering van respectievelijk variabelen, de eenheidswaarde en paren. De volledige type equivalentie is hier achterwege gelaten maar te vinden in de appendix van de originele paper \cite{Bosman2022}. \textbf{T-Inst} en \textbf{T-InstEff} behandelen de instantie van respectievelijk type- en row-variabelen. \textbf{T-Gen} en \textbf{T-GenEff} behandelen de generalisatie van respectievelijk type- en row-variabelen.
+
+\subsubsection{Computatie typering}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash c\::\:\underline{C}$ \\
+                \hline
+              \end{tabular} & Computatie typering \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{\Gamma \vdash v_1 \::\:A \rightarrow \underline{C} \qquad \Gamma \vdash v_2 \::\:A}{\Gamma \vdash v_1\:v_2\::\:\underline{C}}[T-App]$ \\
+            \\
+            $\inference{\Gamma \vdash c_1\::\:A!\langle E \rangle \qquad \Gamma,\:x\::\:A \vdash c_2 \::\:B! \langle E \rangle}{\Gamma \vdash \textbf{do}\:x \leftarrow c_1;c_2\::\:B!\langle E \rangle}[T-Do]$\\
+            \\
+            $\inference{\Gamma \vdash c\::\:\underline{C} \qquad \underline{C} \equiv \underline{D}}{\Gamma \vdash c\::\:\underline{D}}[T-EqC]$ \\
+            \\
+            $\inference{\Gamma \vdash v\::\:\sigma \qquad \Gamma,\:x\::\:\sigma \vdash c\::\:\underline{C}}{\Gamma \vdash \textbf{let}\:x = v\:\textbf{in}\:c\::\:\underline{C}}[T-Let]$\\
+            \\
+            $\inference{\Gamma \vdash v\::\:A}{\Gamma \vdash \textbf{return}\:v\::\:A!\langle E \rangle}[T-Ret]$\\
+            \\
+            $\inference{\Gamma \vdash v\::\:\forall \:\alpha.\:\alpha!\langle E \rangle \Rightarrow M\:\alpha!\langle F \rangle \qquad \Gamma \vdash c\::\:A!\langle E \rangle}{\Gamma \vdash v \star c\::\:M\:A!\langle F \rangle}[T-Hand]$\\
+            \\
+            $\inference{(l\::\:A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma \vdash v\::\:A_l \qquad \Gamma,\:y\::\:B_l \vdash c\::\:A!\langle l;E \rangle}{\Gamma \vdash \textbf{op}\:l\:v\:(y.\:c)\::\:A!\langle l;E \rangle}[T-Op]$\\
+            \\
+            $\inference{(l\::\:A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma \vdash v\::\:A_l \\ \Gamma,\:y\::\:B_l\vdash c_1 \::\: B!\langle l;E \rangle \qquad \Gamma,\:z\::\:B \vdash c_2 \::\:A!\langle l;E \rangle}{\Gamma \vdash \textbf{sc}\:l\:v\:(y.\:c_1)\:(z.\:c_2)\::\:A!\langle l;E \rangle}[T-Sc]$\\
+            \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Computatie typering van $\lambda_{sc}$}
+    \label{fig:typeComp}
+\end{table}
+Tabel \ref{fig:typeComp} toont de computatie typeringsregels voor $\lambda_{sc}$. Dezelfde opmerking rond type equivalentie als gemaakt voor typering van waarden geldt hier.  
+
+\subsubsection{Handler typering}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l l l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash oprs\::\:\underline{C}$ \\
+                \hline
+              \end{tabular} & \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash \textbf{fwd}\:f\:p\:k \mapsto c\::\:\underline{C}$ \\
+                \hline
+              \end{tabular} & \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash h\::\:\underline{C} \Rightarrow \underline{D}$ \\
+                \hline
+              \end{tabular} & Handler typering \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{}{\Gamma \vdash .\::\:\underline{C}}[T-Empty]$ \\ 
+            \\
+            $\inference{\Gamma \vdash oprs \::\: \underline{C} \qquad (l\::\: A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma,\:x\::\:A_l,\:k\::\:B_l \rightarrow \underline{C} \vdash c \::\: \underline{C}}{\Gamma \vdash \textbf{op}\:l\:x\:k \mapsto c,\:oprs\::\: \underline{C}}[T-OprOp]$\\
+            \\
+            $\inference{\Gamma \vdash oprs\::\:M\:A!\langle E \rangle \qquad (l\::\:A_l \rightarrowtriangle b_l) \in  \Sigma) \\
+            \Gamma, \: \beta ,\:x\::\:A_l , \:p\::\:B_l \rightarrow M\: \beta ! \langle E \rangle ,\:k\::\: \beta \rightarrow M\:A! \langle E \rangle \vdash c \::\: M\:A! \langle E \rangle}{\Gamma \vdash \textbf{sc}\:l\:v\:p\:k \mapsto c,\:oprs\::\:M\:A! \langle E \rangle}[T-OprSc]$\\
+            \\
+            $\inference{A_p = \alpha \rightarrow M\: \beta ! \langle E \rangle \qquad A_k = \beta \rightarrow M \: A!\langle E \rangle \qquad A_k' = M\: \beta \rightarrow M\:A!\langle E \rangle \\
+            \Gamma,\: \alpha,\:\beta,\:p\::\:A_p,\:k\::\:A_k,\:f\::\:(A_p,\:A_k') \rightarrow M\:A!\langle E \rangle \vdash c_f \::\: M\:A!\langle E \rangle}{\Gamma \vdash \textbf{fwd}\:f\:p\:k \mapsto c_f \::\: M\:A!\langle E \rangle}[T-Fwd]$\\
+            \\
+            $\inference{\langle E \rangle = \langle labels \: (oprs);\:F \rangle \qquad \Gamma, \: \alpha \vdash \textbf{return} x \mapsto c_r \::\: M\:\alpha ! \langle F \rangle \\ \Gamma,\:\alpha \vdash oprs\::\: M \: \alpha !\langle F \rangle \qquad \Gamma,\: \alpha \vdash \textbf{fwd}\:f\:p\:k \mapsto c_f\::\:M\:\alpha ! \langle F \rangle}{\Gamma \vdash \textbf{handler}\:\{\:\textbf{return},\:oprs,\:\textbf{fwd}\:\}\::\:\forall\:\alpha.\:\alpha!\langle E \rangle \Rightarrow M\:\alpha ! \langle F \rangle}[T-Handler]$\\
+            \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Handler typering van $\lambda_{sc}$}
+    \label{fig:typeHand}
+\end{table}
+
+Tabel \ref{fig:typeHand} toont de typeringsregels voor handlers in $\lambda_{sc}$. De typering bevat een regel voor elk type clausule dat in een handler kan voorkomen, inclusief de lege handler, namelijk \textbf{T-Empty} voor de lege handler, \textbf{T-OprOp} voor de algebraïsche effecten, \textbf{T-OprSc} voor de scoped effecten, \textbf{T-Fwd} voor de forwarding clausules en \textbf{T-Handler} voor de handler als verzameling van deze clausules.
+
+\subsection{Metatheorie}
+De $\lambda_{sc}$-calculus heeft een type veilig type-en-effect-systeem. 
+
+\subsection{Observaties over de calculus}
+De grootste veranderingen van de $\lambda_{sc}$-calculus tegenover een calculus voor algebraïsche effecten zijn enerzijds de introductie van de \textbf{sc} clausule voor scoped effecten en de syntaxis en semantiek hierrond, inclusief de nood voor niet-generieke forwarding doormiddel van de \textbf{fwd} clausule. Anderzijds is er de introductie van let-polymorfisme door het \textbf{let} sleutelwoord. Het \textbf{let} sleutelwoord is nodig om polymorfe handlers te introduceren, welke nodig zijn om scoped effect clausules te typeren, specifiek de scoped computatie binnen de clausule.
+
+\section{\texorpdfstring{$\lambda^{p}:$}{} Parallelle algebraïsche effect handlers} \label{hoofdstuk:startpuntParallel}
+Deze sectie presenteert een calculus voor de parallelle behandeling van algebraïsche effecten. De calculus hieronder gepresenteerd is een lichte aangepaste versie van de calculus beschreven in "Parallel Algebraic Effect Handlers" \cite{Xie2021}, aangepast om dichter aan te leunen bij de vorm van calculi gepresenteerd in deze thesis. De calculus modelleert een grote-staps operationele semantiek. 
+
+\subsection{Syntaxis}
+\begin{table}
+    \centering
+    \begin{tabular}{|r c l r|}
+    \hline
+         & & & \\ 
+         waarden $v,\:f,\:n$ & $::=$ & $i \: \: | \: \: x \: \: | \: \: \lambda \:x.\:c \: \:$ & \\
+         & $|$ & $\langle v_{0},\: ... , \: v_{n} \rangle \: \: | \: \: \textbf{perform}\:op$ & \\
+         & & & \\
+         handlers $h$ & $::=$ & $\{ \: \: \textbf{return} \mapsto f_{r}$ & return clausule\\
+         & & $, \: \textbf{op} \mapsto f_{p}$ & algebraïsche effect  clausule \\
+         & & $, \: \textbf{traverse} \mapsto f_{t} \: \} $ & traverse clausule \\
+         & & & \\
+         computaties $c$ & $::=$ & $v$ & waarde \\
+          & $|$ & $c\:c$ & applicatie \\
+          & $|$ & $\textbf{for}\:x\::\:n.\:c$ & for constructie \\
+          & $|$ & $\textbf{handle}\:h\:c$ & behandel frame \\
+         & & & \\
+         evaluatie context $F$ & $::=$ & $. \: \: | \: \: F \: c \: \: | \: \: v\:F$ & parallelle context \\
+         $E$ & $::=$ & $. \: \: | \:\: E\:c \: \: | \: \: v\:E \:\: | \:\: \textbf{handle}\:h\:c$ & sequentiële context\\
+         & & & \\
+    \hline
+    \end{tabular}
+    \caption{Syntaxis voor $\lambda^{p}$}
+    \label{fig:syntaxisPar}
+\end{table}
+
+Tabel \ref{fig:syntaxisPar} geeft de syntaxis voor de $\lambda^{p}$-calculus weer. De waarden zijn ofwel een literal $i$, een variabele $x$, een lambda-functie $\lambda\:x.\:c$, een lijst van waarden $\langle v_{0},\: ...,\: v_{n} \rangle$ of $\textbf{perform}\:op$ die een algebraïsche effect uitvoert. Voor waarden wordt $f$ gebruikt voor lambda-functies, $n$ voor literals. Handlers hebben steeds 3 clausules, namelijk een return clausule $\textbf{return} \mapsto f_{r}$, een algebraïsche effect clausule $\textbf{op} \mapsto f_{p}$ en een traverse clause $\textbf{traverse} \mapsto f_{t}$. De \textbf{traverse} clausule is essentieel in de parallelle behandeling.  Computaties zijn ofwel een waarde $v$, een applicatie $c\:c$, een for constructie $\textbf{for}\:x\:\:n.\:c$ om een lijst te maken van lengte $n$ of een behandel frame $\textbf{handle}\:h\:c$. \newline
+
+Een opvallende verschil tussen deze syntaxis en de syntaxis voor de $\lambda_{sc}$-calculus in Tabel \ref{fig:syntaxisScoped} is dat in tegenstelling tot $\lambda_{sc}$ in de $\lambda^{p}$-calculus waarden computaties zijn, er is dus geen strikt onderscheid. Verder kan een handler slechts 1 effect behandelen en hebben effecten geen label.
+
+\subsection{Operationele semantiek}
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $c \leadsto c'$ \\
+                \hline
+              \end{tabular} & Reductie van computaties \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+            $\inference{}{(\lambda\:x.\:c)\:v \leadsto c\:[\:v\:/\:x\:]}[E-App]$ \\ 
+            \\
+            $\inference{}{\langle v_{0},\: ... ,\: v_{n} \rangle \: i \leadsto v_{i}}[E-Index]$ \\
+            \\
+            $\inference{(\textbf{return} \mapsto f_{r}) \in h}{\textbf{handle}\:h\:v \leadsto f_{r}\:v}[E-Return]$ \\
+            \\
+            $\inference{\textbf{op} \notin bop(E) \wedge (\textbf{op} \mapsto f_{p}) \in h \\ where\:k=\:\lambda\:x.\:\textbf{handle}\:h\:E[x]}{\textbf{handle}\:h\:E[\textbf{perform}\:op\:v] \leadsto f_{p}\:v\:k}[E-Perform]$ \\
+            \\
+            $\inference{(\textbf{traverse} \mapsto f_{t}) \in h \\
+            where\:l\:=\:\textbf{for}\:x\::\:n.\:\textbf{handle}\:h\:c \\
+            k\:=\:\lambda\:xs.\:\textbf{handle}\:h\:F[xs]}{\textbf{handle}\:h\:F[\textbf{for}\:x\::\:n.\:c] \leadsto f_{t}\:n\:l\:k}[E-Traverse]$ \\
+            \\
+            $\inference{c \leadsto c'}{E[c] \leadsto E[c']}[E-Step]$ \\
+            \\
+            $\inference{\forall \: 0 \: \leq \: i < n.\:c[x\:::=\:i] \mapsto v_{i}}{F[\textbf{for}\:x\::\:n.\:c] \mapsto F[\langle v_{0},\:...,\:v_{n-1}\rangle]}[E-Parallel]$ \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Operationele semantiek van $\lambda^{p}$}
+    \label{fig:semantiekPar}
+\end{table}
+
+De operationele semantiek in deze calculus is een grote-stap semantiek en is afgebeeld in Tabel \ref{fig:semantiekPar}. De regels \textbf{E-App}, \textbf{E-Index} zijn standaard. De \textbf{E-Step} is een standaard evaluatie regel voor evaluatie binnen de sequentiële evaluatie context $E$. \textbf{E-Return} past de return clausule $(\textbf{return} \mapsto f_{r}) \in h$ in de handler toe wanneer de handler een waarde tegenkomt $\textbf{handle}\:h\:v \leadsto f_{r}\:v$. \textbf{E-Perform} past een algebraïsche operatie clausule toe wanneer deze in de handler zit $(\textbf{op} \mapsto f_{p}) \in h$ en de handler een effect tegenkomt: $\textbf{handle}\:h\:E[\textbf{perform}\:op\:v] \leadsto f_{p}\:v\:k$. \textbf{E-Parallel} is de regel waarin een \textbf{for}-constructie in parallel naar een lijst van waarden wordt geëvalueerd, de computatie $c$ wordt hierbij in parallel toegepast voor elke $x$ in $n$. De meest essentiële regel voor de $\lambda^{p}$-calculus is \textbf{E-Traverse}. Deze regel behandelt de \textbf{for}-constructie die geïntroduceerd wordt door de paper. In essentie vervangt deze regel een \textbf{for}-constructie in het programma door een handler-specifieke computatie $f_t$ die geen, een of meerdere nieuwe \textbf{for}-constructies introduceert. Essentieel wordt bij deze behandeling de handler doorgeschoven in de continuatie en de computatie die in parallel wordt behandeld. \newline
+
+\subsection{Observaties over de calculus}
+De $\lambda^p$-calculus modelleert geen type- en effect-systeem. 
+In de semantiek definieert deze calculus enkele regels niet expliciet zoals een forwarding regel voor operaties en aangezien de semantiek grote stappen neemt, evalueert een \textbf{for} constructie in een enkele stap naar een lijst van waarden. Het resultaat hiervan is dat bijkomende syntaxis en semantiek nodig zijn om deze calculus te vertalen naar een kleine-staps semantiek variant. Doordat elke handler in de \textbf{E-Traverse} clausule nieuwe \textbf{for} constructies kan introduceren is het nodig om als buitenste handler het programma te evalueren met een handler die de resterende pure \textbf{for}-constructies puur behandelt.
+
+\section{Gecombineerde calculus}
+De $\lambda_{sc}$-calculus ondersteunt de sequentiële behandeling van algebraïsche en scoped effecten. De $\lambda^{p}$-calculus ondersteunt de parallelle afhandeling van algebraïsche effecten. Hoofdstukken \ref{hoofdstuk:syntaxis} en \ref{hoofdstuk:semantiek} behandelen de syntaxis en semantiek voor de gecombineerde calculus $\lambda_{sc}^{p}$ die sequentiële en parallelle behandeling van algebraïsche en scoped effecten ondersteunt. 
+%Een hoofdstuk behandelt een samenhangend geheel dat min of meer op zichzelf
+%staat. Het is dan ook logisch dat het begint met een inleiding, namelijk
+%het gedeelte van de tekst dat je nu aan het lezen bent.
+
+%\section{Eerste onderwerp in dit hoofdstuk}
+%De inleidende informatie van dit onderwerp.
+
+%\subsection{Een item}
+%Een tekst staat nooit alleen. Dit wil zeggen dat er zeker ook referenties
+%nodig zijn. Dit kan zowel naar on-line documenten\cite{wiki} als naar
+%boeken\cite{pratchett06:_good_omens}.
+
+%\section{Figuren}
+%Figuren worden gebruikt om illustraties toe te voegen. Dit is dan ook de
+%manier om beeldmateriaal toe te voegen zoals getoond wordt in
+%figuur~\ref{fig:logo}.
+
+%\begin{figure}
+%  \centering
+%  \includegraphics{logokul}
+%  \caption{Het KU~Leuven logo.}
+%  \label{fig:logo}
+%\end{figure}
+
+%\section{Tabellen}
+%Tabellen kunnen gebruikt worden om informatie op een overzichtelijke te
+%groeperen. Een tabel is echter geen rekenblad! Vergelijk maar eens
+%tabel~\ref{tab:verkeerd} en tabel~\ref{tab:juist}. Welke tabel vind jij het
+%duidelijkst?
+
+%\begin{table}
+%  \centering
+%  \begin{tabular}{||l|lr||} \hline
+%    gnats     & gram      & \$13.65 \\ \cline{2-3}
+%              & each      & .01 \\ \hline
+%    gnu       & stuffed   & 92.50 \\ \cline{1-1} \cline{3-3}
+%    emu       &           & 33.33 \\ \hline
+%    armadillo & frozen    & 8.99 \\ \hline
+%  \end{tabular}
+%  \caption{Een tabel zoals het niet moet.}
+%  \label{tab:verkeerd}
+%\end{table}
+
+%\begin{table}
+%  \centering
+%  \begin{tabular}{@{}llr@{}} \toprule
+%    \multicolumn{2}{c}{Item} \\ \cmidrule(r){1-2}
+%    Animal    & Description & Price (\$)\\ \midrule
+%    Gnat      & per gram    & 13.65 \\
+%              & each        & 0.01 \\
+%    Gnu       & stuffed     & 92.50 \\
+%    Emu       & stuffed     & 33.33 \\
+%    Armadillo & frozen      & 8.99 \\ \bottomrule
+%  \end{tabular}
+%  \caption{Een tabel zoals het beter is.}
+%  \label{tab:juist}
+%\end{table}
+
+%\section{Lorem ipsum}
+%Tenslotte gaan we hier nog wat tekst voorzien zodat er minstens een
+%bijkomende bladzijde aangemaakt wordt. Dat geeft de gelegenheid om eens te
+%zien hoe de koptekst en de voettekst zich gedragen.
+
+%\subsection{Lorem ipsum dolor sit amet, consectetur adipiscing elit}
+%Sed nec tortor id felis tristique sodales. Nulla nec massa eu dui fermentum
+%tincidunt. Integer ullamcorper ante eget eros posuere faucibus. Nam id
+%ligula ut augue pulvinar vulputate id at purus. Aenean condimentum tortor
+%eu mi placerat eget eleifend massa mollis. Nam est mi, sagittis quis
+%euismod eget, sagittis in nibh. Proin elit turpis, aliquam et imperdiet
+%sed, volutpat eu turpis.
+
+%Pellentesque vel enim tellus, vitae egestas turpis. Praesent malesuada elit
+%non nisi sollicitudin non blandit lacus tincidunt. Morbi blandit urna at
+%lectus ornare laoreet. Suspendisse turpis diam, lobortis dictum luctus
+%quis, commodo at lorem. Integer lacinia convallis ultricies. Sed quis augue
+%neque, eu malesuada arcu. Nullam vehicula, purus vitae sagittis pulvinar,
+%erat eros semper massa, eu egestas nibh erat quis magna. Cras pellentesque,
+%nisl eu dapibus volutpat, urna augue ornare quam, quis egestas lectus nulla
+%a lectus.
+
+%Vivamus dictum libero in massa cursus sed vulputate eros imperdiet. Donec
+%lacinia, libero ac lobortis egestas, nibh dui ornare arcu, luctus porttitor
+%velit massa sit amet quam. Maecenas scelerisque laoreet diam, vitae congue
+%quam adipiscing vitae. Aliquam cursus nisl a leo convallis eleifend
+%fermentum massa porta. Nunc libero quam, dapibus dapibus molestie sit amet,
+%faucibus vel nunc.
+
+%\subsection{Praesent auctor venenatis posuere}
+%Sed tellus augue, molestie in pulvinar lacinia, dapibus non ipsum. Fusce
+%vitae mi vitae enim ullamcorper hendrerit eu malesuada est. Proin iaculis
+%ante sed nibh tincidunt vel interdum libero posuere. Vivamus accumsan metus
+%quis felis congue suscipit dapibus enim mattis. Fusce mattis tortor eget
+%ipsum interdum sagittis auctor id metus.
+
+%Integer diam lacus, pharetra sit amet tempor et, tristique non lorem.
+%Aenean auctor, nisi eu interdum fermentum, lectus massa adipiscing elit,
+%sed facilisis orci odio a lectus. Proin mi nibh, tempus quis porta a,
+%viverra quis enim. In sollicitudin egestas libero, quis viverra velit
+%molestie eget. Nulla rhoncus, dolor a mollis vestibulum, lacus elit semper
+%nisi, nec sollicitudin sem urna eu magna. Nunc sed est urna, euismod congue
+%mi.
+
+%\subsection{Cras vulputate ultricies venenatis}
+%Vivamus eros urna, sodales accumsan semper vel, lobortis sit amet mauris.
+%Etiam condimentum eleifend lorem, ullamcorper ornare lectus aliquet vitae.
+%Praesent massa enim, interdum sit amet semper et, venenatis ut elit.
+%Quisque faucibus, quam ac lacinia imperdiet, nulla neque elementum purus,
+%tempus rutrum justo massa porta sapien. Vestibulum ante ipsum primis in
+%faucibus orci luctus et ultrices posuere cubilia Curae; Sed ultrices
+%interdum mi, et rhoncus sapien rutrum sed.
+
+%Duis elit orci, molestie quis sollicitudin sed, convallis non ante.
+%Maecenas tincidunt condimentum justo, et ultricies leo tristique vitae.
+%Vestibulum quis quam non lectus dapibus eleifend a vitae nibh. Nam nibh
+%justo, pharetra quis iaculis consequat, elementum quis justo. Etiam mollis
+%lacinia lacus, nec sollicitudin urna lobortis ac. Nulla facilisi.
+
+%Proin placerat risus eleifend erat ultricies placerat. Etiam rutrum magna
+%nec turpis euismod consectetur. Phasellus tortor odio, lacinia imperdiet
+%condimentum sed, faucibus commodo erat. Phasellus sed felis id ante
+%placerat ultrices. Aenean tempor justo in tortor volutpat eu auctor dolor
+%mollis. Aenean sit amet risus urna. Morbi viverra vehicula cursus.
+
+%\subsection{Donec nibh ante, consectetur et posuere id, tempus nec arcu}
+%Curabitur a tellus aliquet ipsum pellentesque scelerisque. Etiam congue,
+%risus et volutpat rutrum, est purus dapibus leo, non cursus metus felis
+%eget ligula. Vivamus facilisis tristique turpis, ut pretium lectus luctus
+%eleifend. Fusce magna sapien, ullamcorper vitae fringilla id, euismod quis
+%ante.
+
+%Phasellus volutpat, nunc et pharetra semper, sem justo adipiscing mauris,
+%id blandit magna quam et orci. Vestibulum a erat purus, ut molestie ante.
+%Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
+%cubilia Curae; Proin turpis diam, consequat ut ullamcorper ut, consequat eu
+%orci. Sed metus risus, fringilla nec interdum vel, interdum eu nunc.
+%Suspendisse vel sapien orci.
+
+%\subsection{Morbi et mauris tempus purus ornare vehicula}
+%Mauris sit amet diam quam, eget luctus purus. Sed faucibus, risus semper
+%eleifend iaculis, mi turpis bibendum nisl, quis cursus nibh nisl sit amet
+%ipsum. Vestibulum tempor urna vitae mi auctor malesuada eget non ligula.
+%Nullam convallis, diam vel ultrices auctor, eros eros egestas elit, sed
+%accumsan arcu tortor eget leo. Vestibulum orci purus, porttitor in pharetra
+%eget, tincidunt eget nisl. Nullam sit amet nulla dui, facilisis vestibulum
+%dui.
+
+%Donec faucibus facilisis mauris ac cursus. Duis rhoncus quam sed nisi
+%laoreet eu scelerisque massa tincidunt. Vivamus sit amet libero nec arcu
+%imperdiet tempor quis non libero. Sed consequat dignissim justo. Phasellus
+%ullamcorper, velit quis posuere vulputate, felis erat tincidunt mauris, at
+%vestibulum justo lectus et turpis. Maecenas lacinia convallis euismod.
+%Quisque egestas fermentum sapien eu dictum. Sed nec lacus in purus dictum
+%consequat quis vel nisl. Fusce non urna sem. Curabitur eu diam vitae elit
+%accumsan blandit. Nullam fermentum nunc et leo dictum laoreet. Donec semper
+%varius velit vel fringilla. Vivamus eu orci nunc.
+
+%\section{Besluit van dit hoofdstuk}
+%Als je in dit hoofdstuk tot belangrijke resultaten of besluiten gekomen
+%bent, dan is het ook logisch om het hoofdstuk af te ronden met een
+%overzicht ervan. Voor hoofdstukken zoals de inleiding en het
+%literatuuroverzicht is dit niet strikt nodig.
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "masterproef"
+%%% End: 

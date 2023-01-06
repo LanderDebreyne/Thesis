@@ -1,0 +1,123 @@
+\documentclass[master=cws,masteroption=ai]{kulemt}
+\setup{% Verwijder de "%" op de volgende lijn bij UTF-8 karakterencodering
+  inputenc=utf8,
+  title={Een gecombineerde calculus voor algebraïsche, scoped en parallelle effecten},
+  author={Lander Debreyne},
+  promotor={Prof.\,dr.\,ir.\ T. Schrijvers},
+  assessor={%TODO
+  },
+  assistant={Ir. B. van den Berg}}
+% Verwijder de "%" op de volgende lijn als je de kaft wil afdrukken
+%\setup{coverpageonly}
+% Verwijder de "%" op de volgende lijn als je enkel de eerste pagina's wil
+% afdrukken en de rest bv. via Word aanmaken.
+%\setup{frontpagesonly}
+
+% Kies de fonts voor de gewone tekst, bv. Latin Modern
+\setup{font=lm}
+
+% Hier kun je dan nog andere pakketten laden of eigen definities voorzien
+
+% Tenslotte wordt hyperref gebruikt voor pdf bestanden.
+% Dit mag verwijderd worden voor de af te drukken versie.
+\usepackage[pdfusetitle,colorlinks,plainpages=false]{hyperref}
+
+
+% Voor wiskundige formules
+\usepackage{amsmath}
+% pijlen
+\usepackage{stmaryrd}
+% meer pijlen 
+\usepackage{latexsym}
+%\includeonly{hfdst-n}
+\usepackage{semantic}
+\usepackage{soul}
+\newcommand{\concat}{\mathbin{{+}\mspace{-8mu}{+}}}
+\begin{document}
+
+%TODO
+\begin{preface}
+  ...
+  %Dit is mijn dankwoord om iedereen te danken die mij bezig gehouden heeft.
+  %Hierbij dank ik mijn promotor, mijn begeleider en de voltallige jury.
+  %Ook mijn familie heeft mij erg gesteund natuurlijk.
+\end{preface}
+
+\tableofcontents*
+
+\begin{abstract}
+% TODO: schrijf abstract
+...
+%  In dit \texttt{abstract} wordt een al dan niet uitgebreide
+%  samenvatting van het werk gegeven. De bedoeling is wel dat dit tot
+%  1~bladzijde beperkt blijft.
+
+\end{abstract}
+
+% Een lijst van figuren en tabellen is optioneel
+%\listoffigures
+%\listoftables
+% Bij een beperkt aantal figuren en tabellen gebruik je liever het volgende:
+\listoffiguresandtables
+% De lijst van symbolen is eveneens optioneel.
+% Deze lijst moet wel manueel aangemaakt worden, bv. als volgt:
+% TODO: 
+%\chapter{Lijst van afkortingen en symbolen}
+%\section*{Afkortingen}
+%\begin{flushleft}
+%  \renewcommand{\arraystretch}{1.1}
+%  \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+%    LoG   & Laplacian-of-Gaussian \\
+%    MSE   & Mean Square error \\
+%    PSNR  & Peak Signal-to-Noise ratio \\
+%  \end{tabularx}
+%\end{flushleft}
+%\section*{Symbolen}
+%\begin{flushleft}
+%  \renewcommand{\arraystretch}{1.1}
+%  \begin{tabularx}{\textwidth}{@{}p{12mm}X@{}}
+%    42    & ``The Answer to the Ultimate Question of Life, the Universe,
+%            and Everything'' volgens de \cite{h2g2} \\
+%    $c$   & Lichtsnelheid \\
+%    $E$   & Energie \\
+%    $m$   & Massa \\
+%    $\pi$ & Het getal pi \\
+%  \end{tabularx}
+%\end{flushleft}
+
+% Nu begint de eigenlijke tekst
+\mainmatter
+
+\include{Tekst/Hoofdstukken/inleiding.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/achtergrond.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/startpunt.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/motivatie.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/Calculus/syntaxis.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/Calculus/semantiek.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/Calculus/typesysteem.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/Calculus/voorbeelden.tex}
+\include{Tekst/Hoofdstukken/Hoofdtekst/Calculus/metatheorie.tex}
+\include{Tekst/Hoofdstukken/evaluatie.tex}
+\include{Tekst/Hoofdstukken/gerelateerd.tex}
+\include{Tekst/Hoofdstukken/besluit.tex}
+
+% Indien er bijlagen zijn:
+\appendixpage*          % indien gewenst
+\appendix
+%TODO
+%\include{app-A}
+% ... en zo verder tot
+%\include{app-n}
+
+\backmatter
+% Na de bijlagen plaatst men nog de bibliografie.
+% Je kan de  standaard "abbrv" bibliografiestijl vervangen door een andere.
+\bibliographystyle{abbrv}
+\bibliography{referenties}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
