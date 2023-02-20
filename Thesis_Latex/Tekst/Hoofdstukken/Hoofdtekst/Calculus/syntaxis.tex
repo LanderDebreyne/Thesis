@@ -1,41 +1,36 @@
 \chapter{Syntaxis}
 \label{hoofdstuk:syntaxis}
-% TODO: scheiding van NODIGE uitbreidingen en HANDIGE uitbreidingen
-
-Tabel \ref{fig:syntaxis} toont de syntaxis voor de termen en types in de $\lambda_{sc}^{p}$ calculus. De uitbreidingen op de $\lambda_{sc}$ calculus zijn gemarkeerd. De syntaxis is uitgebreid met een lijst-structuur voor waarden, een lijst-structuur voor computaties en handler clausules om de parallelle afhandeling van effecten mogelijk te maken. Verder is ook een \textbf{let rec} constructie toegevoegd om recursieve functies mogelijk te maken, een \textbf{if} constructie en enkele hulp-functies voor paar- en lijst-manipulatie.
-
+% TODO: andere syntaxis voor lege lijst waarden en computaties
 \begin{table}
     \centering
     \begin{tabular}{|r c l r|}
     \hline 
-         waarden $v$ & $::=$ & $() \: \: | \: \: (v_{1}, \: v_{2} ) \: \: | \: \: x \: \: | \: \: \lambda x . \: c \: \: | \: \: h \:\: | lstv$ & \\
+    & & & \\
+         waarden $v$ & $::=$ & $() \: \: | \: \: (v_{1}, \: v_{2} ) \: \: | \: \: x \: \: | \: \: \lambda x . \: c \: \: | \: \: h$ & \\
+         & $|$ & \hl{lstv} & \\
          handlers $h$ & $::=$ & $\textbf{handler} \: \{ \: \: \textbf{return} \: x \mapsto c_{r}$ & return clausule\\
          & & $\qquad \qquad \quad , \: oprs$ & effect  clausules \\
-         & & $\qquad \qquad \quad , \: \textbf{fwd} \: f \: p \: k \mapsto c_{f} \: $ & forwarding clausule \\
-        & & \qquad \qquad \quad \hl{$, \:\textbf{for}\:lstv\:p\:k \mapsto c\}$} & \hl{for clausule} \\
+         & & $\qquad \qquad \quad , \: \textbf{fwd} \: f \: p \: k \mapsto c_{f} \}$ & forwarding clausule \\
          \hl{lijst waarden $lstv$} & $::=$ & \hl{$[\:\:]\:\:|\:\:v:lstv$} & \hl{lijst van waarden}\\
           effect clausules $oprs$ & $::=$ & . & \\ 
-          & $|$ & $\textbf{op} \: l \: x \: k \mapsto c, \: oprs$ & algebraïsch effect \\
-           & $|$ & $\textbf{sc} \: l \: x \: p \: k \mapsto c, \: oprs$ & scoped effect\\
+          & $|$ & $\textbf{op} \: l \: x \: k \mapsto c, \: oprs$ & algebraïsch effect clausule\\
+           & $|$ & $\textbf{sc} \: l \: x \: p \: k \mapsto c, \: oprs$ & scoped effect clausule\\
+        & $|$ & \hl{$\textbf{for}\:l\:lstv\:p\:k \mapsto c, \  oprs$} & \hl{for effect clausule} \\
         & & & \\
          computaties $c$ & $::=$ & $\textbf{return} \: v$ & return waarde \\
           & $|$ & $\textbf{op} \: l \: v \: (y. \: c)$ & algebraïsch effect \\
           & $|$ & $\textbf{sc} \: l \: v \: (y. \: c_{1}) \: (z. \: c_{2})$ & scoped effect \\
-          & $|$ & \hl{$\textbf{for} \: v \: (y. \: c_{1}) \: (z. \: c_{2})$} & \hl{for effect} \\
+          & $|$ & \hl{$\textbf{for} \  l \: v \: (y. \: c_{1}) \: (z. \: c_{2})$} & \hl{for effect} \\
           & $|$ & $v \star c$ & behandeling \\
           & $|$ & $\textbf{do} \: x \leftarrow c_{1}\:; \: c_{2}$ & do clausule \\
           & $|$ & $v_{1} \: v_{2}$ & applicatie \\
           & $|$ & $\textbf{let} \: x = v \: \textbf{in} \: c$ & let \\
-          & $|$ & \hl{$\textbf{let rec} \: f \: = \: c_{1} \: \textbf{in} \: c_{2}$} & \hl{let rec} \\
           & $|$ & \hl{\textbf{head}\:v} & \hl{head lstv} \\
           & $|$ & \hl{\textbf{tail}\:v} & \hl{tail lstv} \\
           & $|$ & \hl{\textbf{empty}\:v} & \hl{test lege lstv} \\
           & $|$ & \hl{\textbf{head}\:c} & \hl{head lstc} \\
           & $|$ & \hl{\textbf{tail}\:c} & \hl{tail lstc} \\
           & $|$ & \hl{\textbf{empty}\:c} & \hl{test lege lstc} \\
-          & $|$ & \hl{\textbf{fst}\:v} & \hl{first paar} \\
-          & $|$ & \hl{\textbf{snd}\:v} & \hl{second paar} \\
-          & $|$ & \hl{\textbf{map}\:f\:v} & \hl{map over lstv} \\
           & $|$ & \hl{$lstc$} & \hl{lijst computaties} \\
           \hl{lijst computaties $lstc$} & $::=$ & \hl{$[\:\:]\:\:|\:\:c\::\:lstc$} & \hl{lijst computaties}\\
          & & & \\
@@ -49,31 +44,80 @@ Tabel \ref{fig:syntaxis} toont de syntaxis voor de termen en types in de $\lambd
          kinds $K$ & $::=$ & $* \: \: | \: \: K \rightarrow K$ & \\
          signatuur contexten $\Sigma$ & $::=$ & $. \: \: | \: \: \Sigma , \: l \: : \: A \rightarrowtriangle B$ & \\
          type contexten $\Gamma$ & $::=$ & $. \: \: | \:\: \Gamma, \: x \: : \: A \: \: | \: \: \Gamma , \: \mu \: \: | \: \: \Gamma, \: \alpha $ & \\
+         & & & \\
     \hline
     \end{tabular}
-    \caption{$\lambda_{sc}^{p}$ Syntaxis}
-    \label{fig:syntaxis}
+    \caption{$\lambda_{sc}^{p}$ Syntaxis met uitbreidingen gemarkeerd}
+    \label{fig:syntaxisNodig}
 \end{table}
 
+
+\begin{table}
+    \centering
+    \begin{tabular}{|r c l r|}
+    \hline 
+        & & & \\
+        waarden $v$ & $::=$ & \hl{true | false} & \hl{booleans} \\
+        & & & \\
+         computaties $c$ & $::=$ & \hl{$\textbf{let rec} \: f \: = \: c_{1} \: \textbf{in} \: c_{2}$} & \hl{let rec} \\
+         & $|$ & \hl{\textbf{if} v \textbf{then} $c_1$ \textbf{else} $c_2$} & \hl {conditie} \\
+          & $|$ & \hl{\textbf{fst}\:v} & \hl{first paar} \\
+          & $|$ & \hl{\textbf{snd}\:v} & \hl{second paar} \\
+          & $|$ & \hl{\textbf{map}\:f\:v} & \hl{map over lstv} \\
+          \\
+    \hline
+    \end{tabular}
+    \caption{Uitbreidingen op de $\lambda_{sc}^{p}$ Syntaxis om de calculus meer bruikbaar te maken}
+    \label{fig:syntaxisHandig}
+\end{table}
+
+Dit hoofdstuk bespreekt de syntaxis voor de gecombineerde $\lambda_{sc}^p$-calculus. Tabel \ref{fig:syntaxisNodig} stelt de syntaxis voor met de \emph{nodige uitbreidingen} op de $\lambda_{sc}$-calculus gemarkeerd. De belangrijkste toevoeging is de \textbf{for} clausule in de handler. Bijhorend is een lijst-structuur voor waarden en een lijst-structuur voor computaties. Tabel \ref{fig:syntaxisHandig} toont \emph{handige uitbreidingen} om de evaluatie van meer programma's mogelijk te maken. Deze tabel beschrijft een \textbf{let rec} constructie om recursieve functie evaluatie mogelijk te maken, een \textbf{if} conditionele constructie en enkele hulp-functies om paar- en lijst-manipulatie toe te laten. Deze toevoegingen zijn niet essentieel om een minimaal werkende calculus te bekomen maar wel nodig om de voorbeelden te kunnen evalueren. De volgende secties bespreken de verschillende toegevoegde syntactische elementen.
+
+\section{For clausule}
+De \textbf{for} clausule modelleert parallelle behandeling in de calculus. Het doel is om zoals in de $\lambda^p$-calculus uitgaande van een parallelle pure \emph{for each} functie een parallelle, gebruiker-gedefenieerde parallelle effecten te modelleren\cite{Xie2021}. \newline 
+De \textbf{for} clausule die deze syntaxis aanlevert, bestaat uit het sleutelwoord \textbf{for}, gevolgd door een label,  een lijst van waarden, gevolgd door een functie $(y. \ 
+ c_{1})$, gevolgd door de resumptie $(z. \  c_{2})$ die de continuatie van het programma bevat. Merk op dat hoewel de syntaxis van de \textbf{for} clausule sterk gelijkt op die van de \textbf{sc} clausule, deze niet als \'e\'en clausule kan beschouwd worden omdat de semantiek zal verschillen. De syntaxis lijkt sterk op de syntaxis uit de $\lambda^p$-calculus met de uitzondering van het toegevoegde label. Dit laat toe om meerdere verschillende parallelle effecten binnen hetzelfde programma te evalueren. \newline 
+ %De standaard \textbf{for} behandeling (om een parallelle \emph{for each} constructie te benaderen) zou zijn om de functie, in parallel, op elke waarde in de lijst toe te passen en het resultaat als input van de continuatie te gebruiken. Aangezien de calculus een effect handler aanpak voorstelt, is dat slechts een mogelijke implementatie van de handler. De handler bepaalt hoe de \textbf{for} constructie te behandelen. Aangezien deze computatie nieuwe \textbf{for} constructies kan introduceren, is het raadzaam om elk programma met \textbf{for} constructies als buitenste handler te behandelen door een pure handler om eventuele overgebleven \textbf{for} constructies puur af te handelen.
+ %De \textbf{for} clausule heeft in tegenstelling tot de \textbf{op} of \textbf{sc} clausule geen label omdat deze clausule geen specifiek effect voorsteld maar een generieke \textbf{for-each} constructie over een lijst. 
+
+%\begin{equation}
+%    \textbf{for}\quad (input_1:input_2:input_3:[\:\:]) \quad (input.\:\textbf{effect}\:input) \quad(result.\:\textbf{rest})
+%\end{equation}
+
+
+%\begin{equation}
+%    \begin{split}
+%    & \textbf{hPure} = \textbf{handler} \\
+%    & \{ \\
+%    & \qquad ... \\
+%    & \qquad    \textbf{for}\:lst\:p\:k \rightarrow \textbf{do}\:res \leftarrow map\:p\:lst \\
+%    &  \qquad \qquad \qquad \qquad k\:res \\
+%    & \} 
+%\end{split}  
+%\end{equation}
+
+
 \section{Lijst-structuur}
-Een mogelijke manier om parallelle afhandeling van effecten mogelijk te maken is functionaliteit toe te voegen waardoor een lijst van computaties die mogelijk effecten bevatten parallel behandeld kunnen worden. Daarvoor is het essentieel om datastructuren te hebben die meerdere computaties kunnen opslaan om zo de verschillende computaties die parallel moeten reduceren te groeperen. Een lijst-structuur is een datastructuur die relatief eenvoudig te implementeren is, weinig eigen complexe functies met zich meebrengt en bijgevolg relatief eenvoudig te vervangen door een andere datastructuur indien nodig. Een voorbeeld van een lijst van computaties is: 
-
-\begin{equation} \label{eq:listEx}
-    \begin{split}
-    (39 + 49):(29 + 74):(100 + 61):(41 + 56):(97 + 67):[\:\:] \\
-    \leadsto 88:103:161:97:164:[\:\:]
-    \end{split}
-\end{equation} 
-
-De reductie in dit voorbeeld kan parallel gebeuren voor elk element in de lijst. \newline
-
-Aangezien de $\lambda_{sc}$-calculus syntaxis een strikte scheiding heeft tussen waarden en termen ligt het voor de hand dat dit onderscheid er ook zou zijn voor lijsten in de $\lambda_{sc}^{p}$-calculus.
+De minimale vereiste om computaties in parallel uit te voeren is een datastructuur waarop een parallelle iterator kan gedefenieerd worden om de verschillende inputwaarden te extraheren.
+%samengestelde data-structuur in de calculus die de verschillende computaties die de machine parallel uitvoert bijhoudt. 
+Deze calculus gebruikt een lijst-structuur maar in principe is dit mogelijk op elke lineaire datastructuur. \newline
+%aangezien op elk van deze het mogelijk is (maar niet noodzakelijk efficiënt) een head, tail en empty functie te implementeren. 
+%Een voorbeeld van een lijst van computaties is: 
+%\begin{equation} \label{eq:listEx}
+%    \begin{split}
+%    (39 + 49):(29 + 74):(100 + 61):(41 + 56):(97 + 67):[\:\:] \\
+%    \leadsto 88:103:161:97:164:[\:\:]
+%    \end{split}
+%\end{equation} 
+%De reductie in dit voorbeeld kan parallel gebeuren voor elk element in de lijst. \newline
+Aangezien de $\lambda_{sc}$-calculus syntaxis een strikte scheiding hanteert tussen waarden en termen ligt het voor de hand dat de $\lambda_{sc}^{p}$-calculus eveneens strikt onderscheid maakt tussen \emph{lijsten van waarden} en \emph{lijsten van computaties}.
 
 \subsection{Lijst van waarden}
 Een lijst van waarden is zelf een waarde. De syntaxis is intuïtief, de lijst eindigt op een lege lijst $[\:\:]$ en wordt voorgegaan door één of meerdere waarden.
 
 \subsection{Lijst van computaties}
-Een lijst van compuaties is een computatie, dit omdat de elementen in de lijst kunnen reduceren en semantische regels geïntroduceerd worden in Sectie \ref{hoofdstuk:semantiek} om een lijst te reduceren naar een lijst van normaalwaarden. Hiervoor moet de lijst zelf een computatie zijn omdat een reductie in de $\lambda_{sc}^{p}$-calculus een computatie naar een andere computatie mapt. De syntaxis voor de lijst is intuïtief en analoog aan de lijst van waarden, de lijst eindigt op een lege lijst $[\:\:]$ en wordt voorgegaan door één of meerdere computaties.
+%Een lijst van compuaties is een computatie, dit omdat de elementen in de lijst kunnen reduceren en semantische regels geïntroduceerd worden in Sectie \ref{hoofdstuk:semantiek} om een lijst te reduceren naar een lijst van normaalwaarden. Hiervoor moet de lijst zelf een computatie zijn omdat een reductie in de $\lambda_{sc}^{p}$-calculus een computatie naar een andere computatie mapt. 
+De syntaxis voor een lijst van computaties is intuïtief en analoog aan de lijst van waarden, de lijst eindigt op een lege lijst $[\:\:]$ en wordt voorgegaan door één of meerdere computaties.
 
 \subsection{Lijst-manipulatie functies}
 De lijst heeft minimaal een \textbf{head}, \textbf{tail} en \textbf{empty} functie nodig om elementen uit de lijst te halen en na te kijken of de lijst leeg is. Deze minimale implementatie is aanwezig in de syntaxis.
@@ -115,7 +159,7 @@ De lijst heeft minimaal een \textbf{head}, \textbf{tail} en \textbf{empty} funct
 
 \begin{equation}
     \begin{split}
-        & \textbf{emmpty}\:((\textbf{double}\:5):(\textbf{double}\:3):(\textbf{double}\:8):(\textbf{double}\:4):[\:\:]) \\
+        & \textbf{empty}\:((\textbf{double}\:5):(\textbf{double}\:3):(\textbf{double}\:8):(\textbf{double}\:4):[\:\:]) \\
         & \leadsto \textbf{return}\:false
     \end{split}
 \end{equation}
@@ -157,37 +201,23 @@ Een map functie die een lijst van waarden omvormt naar een lijst van computaties
 
 Dit voorbeeld programma telt de waarden in de lijst (1:2:5:6:[ ]) op tot 14.
 
-\section{Handler clausules}
-Deze sectie behandelt de clausules die moeten toegevoegd worden aan de handlers om parallelle behandeling van effecten mogelijk te maken. Het doel is om effecten parallel te behandelen in een lijst, maar enkel dit doen is niet voldoende.
+\section{Conditie}
+Een simpele conditie om de controlestroom van programma's te bepalen op basis van een test.
 
 \begin{equation}
     \begin{split}
-    & ((\textbf{effect}\:input_1):(\textbf{effect}\:input_2):(\textbf{effect}\:input_3):[\:\:]); \\
-    & \textbf{rest van het programma} \\
-    &\leadsto ((output_1):(output_2):(output_3):[\:\:]); \\
-    & \textbf{rest van het programma} \\
-    &\leadsto ?
+        & \textbf{if}\  true \  \textbf{then} \  \textbf{return} \  0 \  \textbf{else} \  \textbf{return} \  1 \\
+        & \leadsto \textbf{return}\  0
     \end{split}
 \end{equation}
 
-De lijst van effecten moet linken aan de rest van het programma. Hiervoor is een nieuwe clausule nodig. De \textbf{for} clausule bestaat uit het sleutelwoord \textbf{for}, gevolgd door een lijst van waarden, gevolgd door een mapping-functie $(y.\:c_{1})$ die op alle waarden in de gegeven lijst wordt uitgevoerd, gevolgd door de resumptie $(z.\:c_{2})$ die de continuatie van het programma bevat gegeven de resulterende lijst van waarden na toepassing van de mapping-functie. De \textbf{for} clausule heeft in tegenstelling tot de \textbf{op} of \textbf{sc} clausule geen label omdat deze clausule geen specifiek effect voorsteld maar een generieke \textbf{for-each} constructie over een lijst. 
-
-\begin{equation}
-    \textbf{for}\quad (input_1:input_2:input_3:[\:\:]) \quad (input.\:\textbf{effect}\:input) \quad(result.\:\textbf{rest})
-\end{equation}
-
-Een handler heeft de vrije keuze over hoe een \textbf{for} constructie te behandelen. De standaard benadering voor handlers die geen specifieke \textbf{for} clausule implementeren is om de \textbf{for} clausule terug te geven, waarbij de handler binnen de mapping-functie en de resumptie geschoven worden, zie \textbf{E-FwdFor} in Tabel \ref{fig:semantiek}. Het is raadzaam dat elk programma met \textbf{for} constructies ls buitenste handler een \textbf{hPure} handler heeft om eventuele overgebleven pure \textbf{for} constructies af te handelen.
-
 \begin{equation}
     \begin{split}
-    & \textbf{hPure} = \textbf{handler} \\
-    & \{ \\
-    & \qquad ... \\
-    & \qquad    \textbf{for}\:lst\:p\:k \rightarrow \textbf{do}\:res \leftarrow map\:p\:lst \\
-    &  \qquad \qquad \qquad \qquad k\:res \\
-    & \} 
-\end{split}  
+        & \textbf{if}\  false \  \textbf{then} \  \textbf{return} \  0 \  \textbf{else} \  \textbf{return} \  1 \\
+        & \leadsto \textbf{return}\  1
+    \end{split}
 \end{equation}
+
 
 
 

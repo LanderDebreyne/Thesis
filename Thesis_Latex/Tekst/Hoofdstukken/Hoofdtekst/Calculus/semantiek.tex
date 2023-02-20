@@ -1,4 +1,5 @@
 \chapter{Operationele Semantiek}
+% TODO: for met label
 \label{hoofdstuk:semantiek}
 \begin{table}
     \centering
@@ -18,8 +19,6 @@
           \begin{tabular}{c}
             $\inference{}{(\lambda x.\:c)\:v \leadsto c\:[\:v\:/\:x\:]}[E-AppAbs] \qquad \inference{}{\textbf{let}\:x\: = \: v \: \textbf{in} \:c \leadsto c\:[\:v\:/\:x\:]}[E-Let]$ \\ 
             \\
-            $\inference{}{\textbf{let\:rec}\:f\:=\:c_{1}\:\textbf{in}\:c_{2} \leadsto c_{2}\:[c_{1}\:[(\textbf{let\:rec}\:f\:=\:c_{1}\:\textbf{in}\:f)\:/\:f]\:/\:f]}[\hl{E-Letrec}]$ \\
-            \\
             $\inference{c_{1} \leadsto c_{1}'}{\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2} \leadsto \textbf{do}\:x \leadsto c_{1}'\:;\:c_{2}}[E-Do] \qquad \inference{}{\textbf{do}\:x \leftarrow \textbf{return}\:v\:;\:c_{2} \leadsto c_{2}\:[\:v\:/\:x\:]}[E-DoRet]$ \\
             \\
             $\inference{}{\textbf{do}\:x \leftarrow \textbf{op}\:l\:v\:(y.\:c_{1})\:;\:c_{2} \leadsto \textbf{op}\:l\:v\:(y.\: \textbf{do} \: x \leftarrow c_{1}\:;\:c_{2})}[E-DoOp]$ \\
@@ -38,7 +37,7 @@
             \\
             $\inference{(\textbf{sc}\:l\:\_\:\_\:\_) \notin h \\ (\textbf{fwd}\:f\:p\:k \mapsto c_{f}) \in h \qquad g\:=\:\lambda(p',\:k')\:.\:\textbf{sc}\:l\:v\:(y.\:p'\:y)\:(z.\:k'\:z)}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{f}\:[\:(\lambda\:y.\:h \star c_{1})\:/\:p,\:(\lambda z.\: h \star c_{2})\:/\:k,\:g\:/\:f]}[E-FwdSc]$\\
             \\
-            $\inference{(\textbf{for}\:lstv_{1}\:p\:k \mapsto c_{for}) \in h}{h \star \textbf{for}\:lstv_{2}\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{for}[lstv_{2}\:/\:lstv_{1},\:(y.\:h \star c_{1})\:/\:p, (z.\:h \star c_{2})\:/\:k]}[\hl{E-HandFor}]$\\
+            $\inference{(\textbf{for}\:lstv_{1}\:p\:k \mapsto c_{for}) \in h}{h \star \textbf{for}\:lstv_{2}\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{for}[lstv_{2}\:/\:lstv_{1},\:(\lambda y.\:h \star c_{1})\:/\:p, (\lambda z.\:h \star c_{2})\:/\:k]}[\hl{E-HandFor}]$\\
             \\
             $\inference{(\textbf{for}\:\_\:\_\:\_ \notin h)}{h \star \textbf{for}\:lstv\:(y.\:c_1)\:(z.\:c_2) \leadsto \textbf{for}\:lstv\:(y.\:h \star c_1)\:(z.\: h \star c_2)}[\hl{E-FwdFor}]$ 
           \end{tabular} \\
@@ -63,6 +62,8 @@
               \end{tabular} & Computatie reductie \\
          \end{tabular} \\
          \begin{tabular}{c}
+        $\inference{}{\textbf{let\:rec}\:f\:=\:c_{1}\:\textbf{in}\:c_{2} \leadsto c_{2}\:[c_{1}\:[(\textbf{let\:rec}\:f\:=\:c_{1}\:\textbf{in}\:f)\:/\:f]\:/\:f]}[\hl{E-Letrec}]$ \\
+        \\
           $\inference{}{\textbf{map}\:f\:(v_{1}:v_{2}:\:...\::v_{n}:[\:\:]) \leadsto
           ((f\:v_{1}):(f\:v_{2}):\:...\::(f\:v_{n}):[\:\:])}[\hl{E-Map}]$\\
           \\
@@ -82,8 +83,6 @@
         \\
         $\inference{}{\textbf{fst}\:(v_1,\:v_2) \leadsto \textbf{return}\:v_1}[\hl{E-First}] \qquad \inference{}{\textbf{snd}\:(v_1,\:v_2) \leadsto \textbf{return}\:v_2}[\hl{E-Second}]$ \\
         \\
-        $\inference{c_1 \leadsto c_1'}{\textbf{if}\:c_1\:\textbf{then}\:c_2\:\textbf{else}\:c_3 \leadsto \textbf{if}\:c_1'\:\textbf{then}\:c_2\:\textbf{else}\:c_3}[\hl{E-If}]$\\
-        \\
         $\inference{}{\textbf{if}\:true\:\textbf{then}\:c_1\:\textbf{else}\:c_2 \leadsto c_1}[\hl{E-IfTrue}]$\\
         \\
         $\inference{}{\textbf{if}\:false\:\textbf{then}\:c_1\:\textbf{else}\:c_2 \leadsto c_2}[\hl{E-IfFalse}]$\\
@@ -97,9 +96,6 @@
 \end{table}
 
 Tabellen \ref{fig:semantiek} en \ref{tab:opSemLst} toont de operationele semantiek voor de $\lambda_{sc}^{p}$-calculus. De toegevoegde regels zijn gemarkeerd. De meest cruciale toevoegingen zijn de regels rond de toevoeging van het nieuwe sleutelwoord \textbf{for}, namelijk \textbf{E-DoFor} voor het aaneenrijgen van computaties, \textbf{E-HandFor} voor het behandelen van de \textbf{for}-constructie door de handler die dit behandelt en \textbf{E-FwdFor} voor het forwarden van \textbf{for}. Het inzicht dat dit niet generiek kan gebeuren, is hierbij belangrijk. Gelijkaardige regels waren nodig voor de \textbf{sc} en \textbf{op} sleutelwoorden met dezelfde functies. Verder zijn enkele toevoegingen gedaan om recursieve functie-behandeling mogelijk te maken (\textbf{E-Letrec}) en lijst- en andere hulp-functies (Tabel \ref{tab:opSemLst}) expliciet toe te voegen. De bestaande regels uit de $\lambda_sc$-calculus \cite{Bosman2022} blijven onveranderd.
-
-\section{Letrec: Recursieve functies}
-De \textbf{let rec} constructie biedt de mogelijk om recursieve functies te definiëren in de calculus. De clausule bestaat uit het \textbf{let rec} sleutelwoord gevolgd door een variabele-naam $f$ gevolgd door een computatie $c_{1}$ waar de variabele $f$ in kan voorkomen gevolgd door het sleutelwoord \textbf{in} gevolgd door de computatie waarin de variable $f$ kan voorkomen. Deze clausule wordt gereduceerd naar $c_{2}$ met f in $c_{2}$ vervangen door $c_{1}$ met $f$ vervangen door $\textbf{let\:rec}\:=\:c_{1}\:\textbf{in}\:f$. \textbf{E-Letrec} is een aangepaste versie van de regel beschreven in hoofdstuk twee van het boek "Principles of Programming Languages" \cite{Palmer2009}.
 
 \section{For clausule}
 Het \textbf{for} sleutelwoord laat toe om een computatie te mappen over een lijst van waarden. De gewenste semantiek om computaties met eventueel effecten te mappen over een lijst van waarden is niet mogelijk via een klassieke map functie omdat de computatie in dit geval niet puur is en alle relevante handlers niet noodzakelijk binnen de computatie zitten. Het gevolg is dat een klassieke map aanpak vastloopt op een normaalvorm (\textbf{return, op} of \textbf{sc}). Om een correcte semantiek voor het \textbf{for} sleutelwoord te bekomen zijn drie semantische regels nodig.
@@ -115,6 +111,8 @@ Het \textbf{for} sleutelwoord laat toe om een computatie te mappen over een lijs
 
 \section{Lijst- en hulp-functies}
 Deze sectie behandelt toevoegingen aan de calculus die nodig zijn voor lijst-manipulatie en hulp-functies die de implementatie van de semantiek van de \textbf{for} clausule vergemakkelijken. 
+\subsection{Letrec: Recursieve functies}
+De \textbf{let rec} constructie biedt de mogelijk om recursieve functies te definiëren in de calculus. De clausule bestaat uit het \textbf{let rec} sleutelwoord gevolgd door een variabele-naam $f$ gevolgd door een computatie $c_{1}$ waar de variabele $f$ in kan voorkomen gevolgd door het sleutelwoord \textbf{in} gevolgd door de computatie waarin de variable $f$ kan voorkomen. Deze clausule wordt gereduceerd naar $c_{2}$ met f in $c_{2}$ vervangen door $c_{1}$ met $f$ vervangen door $\textbf{let\:rec}\:=\:c_{1}\:\textbf{in}\:f$. \textbf{E-Letrec} is een aangepaste versie van de regel beschreven in hoofdstuk twee van het boek "Principles of Programming Languages" \cite{Palmer2009}.
 \subsection{E-Map}
 Via deze regel kan in de calculus een lijst van waarden worden omgevormd naar een lijst van computaties met behulp van een computatie $f$. Deze regel is essentieel om deze omvorming te maken. De \textbf{E-ListRet}-regel helpt bij de omvorming in de andere richting. 
 \subsection{E-ParList}

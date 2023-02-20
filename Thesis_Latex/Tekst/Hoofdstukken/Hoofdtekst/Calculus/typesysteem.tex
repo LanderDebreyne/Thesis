@@ -1,9 +1,147 @@
 \chapter{Type- en Effect-Systeem}
+% TODO: for in computatie typering en handler typering
+% TODO: wat met lijsten?
 \label{hoofdstuk:typesysteem}
-... 
+Dit hoofdstuk behandelt het type- en effect-systeem van de $\lambda^{p}_{sc}$-calculus. In bijzonder focust dit hoofdstuk zich op de toevoegingen aan het type-systeem van de $\lambda_{sc}$-calculus waar dit systeem op gebaseerd is. In het bijzonder behandelt dit typesysteem de syntaxis zoals beschreven in Figuur \ref{fig:syntaxisNodig}.
 
-\section{Lijsten}
-...
+\section{Waarde typering}
+Figuur \ref{fig:typeW} toont de typering voor waarden in de calculus. Deze figuur is identiek aan Figuur \ref{fig:syntaxisScoped} aangezien de nieuwe syntaxis geen waarden toevoegt.
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash v\::\:\sigma$ \\
+                \hline
+              \end{tabular} & Waarde typering \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{(x\::\:\sigma) \in \Gamma}{\Gamma \vdash x\::\:\sigma}[T-Var] \qquad \inference{}{\Gamma \vdash (\:) \::\:(\:)}[T-Unit]$ \\ 
+            \\
+            $\inference{\Gamma \vdash v_1\::\:A \qquad \Gamma \vdash v_2 \::\:B}{\Gamma \vdash (v_1,\:v_2)\::\:(A,\:B)}[T-Pair]$\\
+            \\
+            $\inference{\Gamma,\:x\::\:A \vdash c\::\:\underline{C}}{\Gamma \vdash \lambda \: x.\:c\::\:A \rightarrow \underline{C}}[T-Abs] \qquad \inference{\Gamma \vdash v\::\:A \qquad A \equiv B}{\Gamma \vdash v\::\:B}[T-Eqv]$\\
+            \\
+            $\inference{\Gamma \vdash A \::\: * \qquad \Gamma \vdash v\::\: \forall \: \alpha.\:\sigma}{\Gamma \vdash v\::\:\sigma\:[\:A\:/\:\alpha\:]}[T-Inst] \qquad \inference{\Gamma,\:\alpha \vdash v\::\:\sigma \qquad \alpha \notin \Gamma}{\Gamma \vdash v\::\:\forall\:\mu.\:\sigma}[T-Gen]$\\
+            \\
+            $\inference{\Gamma \vdash v\::\:\forall\:\mu.\:\sigma}{\Gamma \vdash b \::\:\sigma\:[\:E\:/\:\mu\:]}[T-InstEff] \qquad \inference{\Gamma,\:\mu \vdash v\::\:\sigma \qquad \mu \notin \Gamma}{\Gamma \vdash v\::\:\forall \mu.\:\sigma}[T-GenEff]$\\
+            \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Waarde typering van $\lambda_{sc}^{p}$}
+    \label{fig:typeW}
+\end{table}
+
+\section{Computatie typering}
+Figuur \ref{fig:typeC} toont de typering voor computaties in de calculus. 
+
+\subsubsection{Computatie typering}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash c\::\:\underline{C}$ \\
+                \hline
+              \end{tabular} & Computatie typering \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{\Gamma \vdash v_1 \::\:A \rightarrow \underline{C} \qquad \Gamma \vdash v_2 \::\:A}{\Gamma \vdash v_1\:v_2\::\:\underline{C}}[T-App]$ \\
+            \\
+            $\inference{\Gamma \vdash c_1\::\:A!\langle E \rangle \qquad \Gamma,\:x\::\:A \vdash c_2 \::\:B! \langle E \rangle}{\Gamma \vdash \textbf{do}\:x \leftarrow c_1;c_2\::\:B!\langle E \rangle}[T-Do]$\\
+            \\
+            $\inference{\Gamma \vdash c\::\:\underline{C} \qquad \underline{C} \equiv \underline{D}}{\Gamma \vdash c\::\:\underline{D}}[T-EqC]$ \\
+            \\
+            $\inference{\Gamma \vdash v\::\:\sigma \qquad \Gamma,\:x\::\:\sigma \vdash c\::\:\underline{C}}{\Gamma \vdash \textbf{let}\:x = v\:\textbf{in}\:c\::\:\underline{C}}[T-Let]$\\
+            \\
+            $\inference{\Gamma \vdash v\::\:A}{\Gamma \vdash \textbf{return}\:v\::\:A!\langle E \rangle}[T-Ret]$\\
+            \\
+            $\inference{\Gamma \vdash v\::\:\forall \:\alpha.\:\alpha!\langle E \rangle \Rightarrow M\:\alpha!\langle F \rangle \qquad \Gamma \vdash c\::\:A!\langle E \rangle}{\Gamma \vdash v \star c\::\:M\:A!\langle F \rangle}[T-Hand]$\\
+            \\
+            $\inference{(l\::\:A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma \vdash v\::\:A_l \qquad \Gamma,\:y\::\:B_l \vdash c\::\:A!\langle l;E \rangle}{\Gamma \vdash \textbf{op}\:l\:v\:(y.\:c)\::\:A!\langle l;E \rangle}[T-Op]$\\
+            \\
+            $\inference{(l\::\:A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma \vdash v\::\:A_l \\ \Gamma,\:y\::\:B_l\vdash c_1 \::\: B!\langle l;E \rangle \qquad \Gamma,\:z\::\:B \vdash c_2 \::\:A!\langle l;E \rangle}{\Gamma \vdash \textbf{sc}\:l\:v\:(y.\:c_1)\:(z.\:c_2)\::\:A!\langle l;E \rangle}[T-Sc]$\\
+            \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Computatie typering van $\lambda_{sc}$}
+    \label{fig:typeC}
+\end{table}
+
+\subsection{T-For}
+
+\section{Handler typering}
+Figuur \ref{fig:typeH} toont de typering voor handlers in de calculus. 
+
+\begin{table}
+    \centering
+    \begin{tabular}{|l|}
+        \hline
+        % top
+        \\
+        % header
+         \begin{tabular} {l l l r}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash oprs\::\:\underline{C}$ \\
+                \hline
+              \end{tabular} & \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash \textbf{fwd}\:f\:p\:k \mapsto c\::\:\underline{C}$ \\
+                \hline
+              \end{tabular} & \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash h\::\:\underline{C} \Rightarrow \underline{D}$ \\
+                \hline
+              \end{tabular} & Handler typering \\
+         \end{tabular} \\
+         % rules
+          \begin{tabular}{c}
+          \\
+            $\inference{}{\Gamma \vdash .\::\:\underline{C}}[T-Empty]$ \\ 
+            \\
+            $\inference{\Gamma \vdash oprs \::\: \underline{C} \qquad (l\::\: A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma,\:x\::\:A_l,\:k\::\:B_l \rightarrow \underline{C} \vdash c \::\: \underline{C}}{\Gamma \vdash \textbf{op}\:l\:x\:k \mapsto c,\:oprs\::\: \underline{C}}[T-OprOp]$\\
+            \\
+            $\inference{\Gamma \vdash oprs\::\:M\:A!\langle E \rangle \qquad (l\::\:A_l \rightarrowtriangle b_l) \in  \Sigma) \\
+            \Gamma, \: \beta ,\:x\::\:A_l , \:p\::\:B_l \rightarrow M\: \beta ! \langle E \rangle ,\:k\::\: \beta \rightarrow M\:A! \langle E \rangle \vdash c \::\: M\:A! \langle E \rangle}{\Gamma \vdash \textbf{sc}\:l\:v\:p\:k \mapsto c,\:oprs\::\:M\:A! \langle E \rangle}[T-OprSc]$\\
+            \\
+            $\inference{A_p = \alpha \rightarrow M\: \beta ! \langle E \rangle \qquad A_k = \beta \rightarrow M \: A!\langle E \rangle \qquad A_k' = M\: \beta \rightarrow M\:A!\langle E \rangle \\
+            \Gamma,\: \alpha,\:\beta,\:p\::\:A_p,\:k\::\:A_k,\:f\::\:(A_p,\:A_k') \rightarrow M\:A!\langle E \rangle \vdash c_f \::\: M\:A!\langle E \rangle}{\Gamma \vdash \textbf{fwd}\:f\:p\:k \mapsto c_f \::\: M\:A!\langle E \rangle}[T-Fwd]$\\
+            \\
+            $\inference{\langle E \rangle = \langle labels \: (oprs);\:F \rangle \qquad \Gamma, \: \alpha \vdash \textbf{return} x \mapsto c_r \::\: M\:\alpha ! \langle F \rangle \\ \Gamma,\:\alpha \vdash oprs\::\: M \: \alpha !\langle F \rangle \qquad \Gamma,\: \alpha \vdash \textbf{fwd}\:f\:p\:k \mapsto c_f\::\:M\:\alpha ! \langle F \rangle}{\Gamma \vdash \textbf{handler}\:\{\:\textbf{return},\:oprs,\:\textbf{fwd}\:\}\::\:\forall\:\alpha.\:\alpha!\langle E \rangle \Rightarrow M\:\alpha ! \langle F \rangle}[T-Handler]$\\
+            \\
+          \end{tabular} \\
+          % bottom
+          \\
+        \hline
+    \end{tabular}
+    \caption{Handler typering van $\lambda_{sc}$}
+    \label{fig:typeH}
+\end{table}
+
+\subsection{T-OprFor}
+
 
 %%% Local Variables: 
 %%% mode: latex
