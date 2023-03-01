@@ -1,12 +1,11 @@
 \chapter{Operationele Semantiek}
-% TODO: for met label
+
 \label{hoofdstuk:semantiek}
 \begin{table}
     \centering
     \begin{tabular}{|l|}
         \hline
         % top
-        \\
         % header
          \begin{tabular} {l r}
               \begin{tabular}{|l|}
@@ -17,29 +16,45 @@
          \end{tabular} \\
          % rules
           \begin{tabular}{c}
-            $\inference{}{(\lambda x.\:c)\:v \leadsto c\:[\:v\:/\:x\:]}[E-AppAbs] \qquad \inference{}{\textbf{let}\:x\: = \: v \: \textbf{in} \:c \leadsto c\:[\:v\:/\:x\:]}[E-Let]$ \\ 
+            $\inference{}{(\lambda x . \ c) \ v \leadsto c \ [ \ v \ / \ x \ ]}[E-AppAbs] \qquad \inference{}{\textbf{let} \ x = v \ \textbf{in} \ c \leadsto c \ [ \ v \ / \ x \ ]}[E-Let]$ \\ 
             \\
-            $\inference{c_{1} \leadsto c_{1}'}{\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2} \leadsto \textbf{do}\:x \leadsto c_{1}'\:;\:c_{2}}[E-Do] \qquad \inference{}{\textbf{do}\:x \leftarrow \textbf{return}\:v\:;\:c_{2} \leadsto c_{2}\:[\:v\:/\:x\:]}[E-DoRet]$ \\
+            $\inference{c_{1} \leadsto c_{1}'}{\textbf{do} \ x \leftarrow c_{1}; \ c_{2} \leadsto \textbf{do} \ x \leadsto c_{1}'; \ c_{2}}[E-Do] \qquad \inference{}{\textbf{do} \ x \leftarrow \textbf{return} \ v; \ c_{2} \leadsto c_{2} \ [ \ v \ / \ x \ ]}[E-DoRet]$ \\
             \\
-            $\inference{}{\textbf{do}\:x \leftarrow \textbf{op}\:l\:v\:(y.\:c_{1})\:;\:c_{2} \leadsto \textbf{op}\:l\:v\:(y.\: \textbf{do} \: x \leftarrow c_{1}\:;\:c_{2})}[E-DoOp]$ \\
+            $\inference{}{\textbf{do} \ x \leftarrow \textbf{op} \ l^{op} \ v \ (y. \ c_{1}); \ c_{2} \leadsto \textbf{op} \ l^{op} \ v \ (y. \  \textbf{do} \ x \leftarrow c_{1}; \ c_{2})}[E-DoOp]$ \\
             \\
-            $\inference{}{\textbf{do}\:x \leftarrow \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \: ;\: c_{3} \leadsto \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\: \textbf{do} \: x \leftarrow c_{2} \: ;\: c_{3})}[E-DoSc]$ \\
+            $\inference{}{\textbf{do} \ x \leftarrow \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}); \ c_{3} \leadsto \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ \textbf{do} \ x \leftarrow c_{2}; \ c_{3})}[E-DoSc]$ \\
             \\
-            $\inference{}{\textbf{do}\:x \leftarrow \textbf{for}\:lstv\:(y.\:c_{1}) (z.\:c{2});\:c_{3} \leadsto \textbf{for}\:lstv\:(y.\:c_{1})\:(z.\:\textbf{do}\:x \leftarrow c_{2};\:c_{3})}[\hl{E-DoFor}]$ \\
+            %$\inference{}{\textbf{do} \ x \leftarrow \textbf{for} \ l^{for} \ v \ (y. \ c_{1}) (z. \ c{2}); \ c_{3} \leadsto \textbf{for} \ l^{for} \ v \ (y. \ c_{1}) \ (z. \ \textbf{do} \ x \leftarrow c_{2}; \ c_{3})}[\hl{E-DoFor}]$ \\
+            %\\
+            $\inference{c \leadsto c'}{h \star c \leadsto h \star c'}[E-Hand] \qquad \inference{(\textbf{return} \ x \mapsto c_{r}) \in h}{h \star \textbf{return} \ v \leadsto c_{r} \ [ \ v \ / \ x \ ]}[E-HandRet]$ \\
             \\
-            $\inference{c \leadsto c'}{h \star c \leadsto h \star c'}[E-Hand] \qquad \inference{(\textbf{return}\:x \mapsto c_{r}) \in h}{h \star \textbf{return} \: v \leadsto c_{r} \:[\:v\:/\:x\:]}[E-HandRet]$ \\
+            $\inference{(\textbf{op} \ l^{op} \ x \ k \mapsto c) \in h}{h \star \textbf{op} \ l^{op} \ v \ (y. \ c_{1}) \leadsto c \ [ \ v \ / \ x , \ (\lambda y. \ h \star c_{1}) \ / \ k]}[E-HandOp]$ \\
             \\
-            $\inference{(\textbf{op}\:l\:x\:k \mapsto c) \in h}{h \star \textbf{op}\:l\:v\:(y.\:c_{1}) \leadsto c\:[\:v\:/\:x,\:(\lambda y.\:h \star c_{1}) \: / \: k]}[E-HandOp]$ \\
+            $\inference{(\textbf{op} \ l \ \_ \ \_) \notin h}{h \star \textbf{op} \ l^{op} \ v \ (y. \ c_{1}) \leadsto \textbf{op} \ l^{op} \ v \ (y. \ h \star c_{1})}[E-FwdOp]$ \\
             \\
-            $\inference{(\textbf{op}\:l\:\_\:\_) \notin h}{h \star \textbf{op}\:l\:v\:(y.\:c_{1}) \leadsto \textbf{op}\:l\:v\:(y.\: h \star c_{1})}[E-FwdOp]$ \\
+            $\inference{(\textbf{sc} \ l^{sc} \ x \ p \ k \mapsto c) \in h}{h \star \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}) \leadsto c \ [ \ v \ / \ x , \ (\lambda \ y. \ h \star c_{1}) \ / \ p, ( \lambda z . \ h \star c_{2}) \ / \ k \ ]}[E-HandSc]$ \\
             \\
-            $\inference{(\textbf{sc}\:l\:x\:p\:k \mapsto c) \in h}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c\:[\:v\:/\:x,\:(\lambda \: y. \: h \star\:c_{1}) \: / \: p, (\lambda z. \: h \star c_{2}) \:/\:k\:]}[E-HandSc]$ \\
-            \\
-            $\inference{(\textbf{sc}\:l\:\_\:\_\:\_) \notin h \\ (\textbf{fwd}\:f\:p\:k \mapsto c_{f}) \in h \qquad g\:=\:\lambda(p',\:k')\:.\:\textbf{sc}\:l\:v\:(y.\:p'\:y)\:(z.\:k'\:z)}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{f}\:[\:(\lambda\:y.\:h \star c_{1})\:/\:p,\:(\lambda z.\: h \star c_{2})\:/\:k,\:g\:/\:f]}[E-FwdSc]$\\
-            \\
-            $\inference{(\textbf{for}\:lstv_{1}\:p\:k \mapsto c_{for}) \in h}{h \star \textbf{for}\:lstv_{2}\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{for}[lstv_{2}\:/\:lstv_{1},\:(\lambda y.\:h \star c_{1})\:/\:p, (\lambda z.\:h \star c_{2})\:/\:k]}[\hl{E-HandFor}]$\\
-            \\
-            $\inference{(\textbf{for}\:\_\:\_\:\_ \notin h)}{h \star \textbf{for}\:lstv\:(y.\:c_1)\:(z.\:c_2) \leadsto \textbf{for}\:lstv\:(y.\:h \star c_1)\:(z.\: h \star c_2)}[\hl{E-FwdFor}]$ 
+            $\inference{(\textbf{sc} \ l \ \_ \ \_ \ \_) \notin h \\ (\textbf{fwd} \ f \ p \ k \mapsto c_{f}) \in h \qquad g = \lambda(p' , \ k') \ . \ \textbf{sc} \ l^{sc} \ v \ (y. \ p' \ y) \ (z . \ k' \ z)}{h \star \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}) \leadsto c_{f} \ [ \ (\lambda \ y. \ h \star c_{1}) \ / \ p, \ (\lambda z. \ h \star c_{2}) \ / \ k, \ g \ / \ f]}[E-FwdSc]$\\
+            %\\
+            %$\inference{(\textbf{for} \  l^{for} \  x \  p \  k \mapsto c_{for}) \in h}{h \star \textbf{for} \ l^{for} \ v \ (y. \ c_{1}) \ (z. \ c_{2}) \leadsto c_{for}[ \ v \ / \ x , \ (\lambda y. \ h \star c_{1}) \ / \ p, (\lambda z. \ h \star c_{2}) \ / \ k]}[\hl{E-HandFor}]$\\
+            %\\
+            %$\inference{(\textbf{for} \ l^{for} \  \_ \  \_ \  \_ \notin h)}{h \star \textbf{for} \ l^{for } \ v \ (y. \ c_1) \ (z. \ c_2) \leadsto \textbf{for} \ l^{for} \ v \ (y. \ h \star c_1) \ (z. \ h \star c_2)}[\hl{E-FwdFor}]$ 
+                      $\inference{lstV = consV[A] \ v_1 \ consV[A] \ v_2 \ ... \ consV[A] \ v_n \ nilV[A] \\
+          lstC = consC[\underline{C}] \ (v_f \ v_1) \ consC[\underline{C}] \ (v_f \ v_2) \ ... \ consC[\underline{C}] \ (v_f \ v_n) \ nilC[\underline{C}] }{
+              \textbf{map} \ v_f \ lstV \leadsto lstC}[\hl{E-Map}]$\\
+          \\
+          %$\inference{1 \leq i \leq n \qquad c_i \leadsto c_i'}{(c_1:...:c_i:...:c_{n}:[\:\:]) \leadsto (c_1:...:c_i':...:c_{n}:[\:\:])}[\hl{E-ParList}]$\\
+          $lstC_1 = consC[\underline{C}] \ c_1 \ ... \ consC[\underline{C}] \ c_i \ ... \ consC[\underline{C}] \ c_n \ nilC[\underline{C}]$ \\
+          $\exists i \in lstC_1: c_i \leadsto c_i'$ \\
+          $\forall j \in [0...(\textbf{length} \  lstC_1)[ \ : \ lstC_2[j] = \begin{cases}
+          c_j, \ lstC_1[j] \ in \ normal \ form \\
+          c_j', \ lstC_1[j] \leadsto lstC_1[j]'
+          \end{cases}$ \\
+          $\inference{\textbf{length} \ lstC_1 = \textbf{length} \ lstC_2 \\ \textbf{with} \ lstC_2[j] \ the \ jth \ element \ in \ lstC_2 \ and \ lstC_1[j] \ the \ jth \ element \ in \ lstC_1 \\
+          \textbf{with length} \ the \ number \ of \ elements \ in \ a \ list} {lstC_1 \leadsto lstC_2}[\hl{E-ParList}]$\\
+          \\
+          $\inference{lstC = consC[\underline{C}] \ (\textbf{return} \ v_1) \ consC[\underline{C}] \ ... \ consC[\underline{C}] \ (\textbf{return} \ v_n) \ nilC[\underline{C}] \\
+          lstV = consV[A] \ v_1 \ ConsV[A] \ ... \ consV[A] \ v_n \ nilV[A] \\}{lstC \leadsto \textbf{return} \ lstV}[\hl{E-ListRet}]$ \\
           \end{tabular} \\
           % bottom
           \\
@@ -48,6 +63,44 @@
     \caption{Operationele semantiek van $\lambda_{sc}^{p}$}
     \label{fig:semantiek}
 \end{table}
+
+%\begin{table}
+%    \centering
+%    \begin{tabular}{|l|}
+%        \hline
+%        \\
+%        \begin{tabular} {l r}
+%              \begin{tabular}{|l|}
+%              \hline
+%                     $c \leadsto c'$ \\
+%                \hline
+%              \end{tabular} & Computatie reductie \\
+%         \end{tabular} \\
+%         \begin{tabular}{c}
+%          $\inference{lstV = consV[A] \ v_1 \ consV[A] \ v_2 \ ... \ consV[A] \ v_n \ nilV[A] \\
+%          lstC = consC[\underline{C}] \ (v_f \ v_1) \ consC[\underline{C}] \ (v_f \ v_2) \ ... \ consC[\underline{C}] \ (v_f \ v_n) \ nilC[\underline{C}] }{
+%              \textbf{map} \ v_f \ lstV \leadsto lstC}[\hl{E-Map}]$\\
+%          \\
+%          %$\inference{1 \leq i \leq n \qquad c_i \leadsto c_i'}{(c_1:...:c_i:...:c_{n}:[\:\:]) \leadsto (c_1:...:c_i':...:c_{n}:[\:\:])}[\hl{E-ParList}]$\\
+%          $lstC_1 = consC[\underline{C}] \ c_1 \ ... \ consC[\underline{C}] \ c_i \ ... \ consC[\underline{C}] \ c_n \ nilC[\underline{C}]$ \\
+%          $\exists i \in lstC_1: c_i \leadsto c_i'$ \\
+%          $\forall j \in [0...(\textbf{length} \  lstC_1)[ \ : \ lstC_2[j] = \begin{cases}
+%          c_j, \ lstC_1[j] \ in \ normal \ form \\
+%          c_j', \ lstC_1[j] \leadsto lstC_1[j]'
+%          \end{cases}$ \\
+%          $\inference{\textbf{length} \ lstC_1 = \textbf{length} \ lstC_2 \\ \textbf{with} \ lstC_2[j] \ the \ jth \ element \ in \ lstC_2 \ and \ lstC_1[j] \ the \ jth \ element \ in \ lstC_1 \\
+%          \textbf{with length} \ the \ number \ of \ elements \ in \ a \ list} {lstC_1 \leadsto lstC_2}[\hl{E-ParList}]$\\
+%          \\
+%          $\inference{lstC = consC[\underline{C}] \ (\textbf{return} \ v_1) \ consC[\underline{C}] \ (\textbf{return} \ v_2) \ ... \ consC[\underline{C}] \ (\textbf{return} \ v_n) \ nilC[\underline{C}] \\
+%          lstV = consV[A] \ v_1 \ consV[A] \ v_2 \ ... \ consV[A] \ v_n \ nilV[A] \\}{lstC \leadsto \textbf{return} \ lstV}[\hl{E-ListRet}]$ \\
+%          \\
+%         \end{tabular}
+%         \\
+%          \hline
+%    \end{tabular}
+%    \caption{Operationele semantiek van $\lambda_{sc}^{p}$, essentiële uitbreidingen}
+%    \label{tab:opSemLst}
+%\end{table}
 
 \begin{table}
     \centering
@@ -63,75 +116,188 @@
          \end{tabular} \\
          \begin{tabular}{c}
         $\inference{}{\textbf{let\:rec}\:f\:=\:c_{1}\:\textbf{in}\:c_{2} \leadsto c_{2}\:[c_{1}\:[(\textbf{let\:rec}\:f\:=\:c_{1}\:\textbf{in}\:f)\:/\:f]\:/\:f]}[\hl{E-Letrec}]$ \\
-        \\
-          $\inference{}{\textbf{map}\:f\:(v_{1}:v_{2}:\:...\::v_{n}:[\:\:]) \leadsto
-          ((f\:v_{1}):(f\:v_{2}):\:...\::(f\:v_{n}):[\:\:])}[\hl{E-Map}]$\\
           \\
-          $\inference{1 \leq i \leq n \qquad c_i \leadsto c_i'}{(c_1:...:c_i:...:c_{n}:[\:\:]) \leadsto (c_1:...:c_i':...:c_{n}:[\:\:])}[\hl{E-ParList}]$\\
-          \\
-          $\inference{}{((\textbf{return}\:v_1):(\textbf{return}\:v_2):...:(\textbf{return}\:v_n):[\:\:]) \leadsto \textbf{return}\:(v_1:v_2:...:v_n:[\:\:])}[\hl{E-ListRet}]$ \\
-          \\
-          $\inference{}{\textbf{head}\:(v_1:lstv) \leadsto \textbf{return}\:v_1}[\hl{E-HeadLstv}] \qquad \inference{}{\textbf{head}\:(c_1:lstc) \leadsto \textbf{return}\:c_1}[\hl{E-HeadLstc}]$ \\
-          \\
-        $\inference{}{\textbf{tail}\:(v_1:lstv) \leadsto \textbf{return}\:lstv}[\hl{E-TailLstv}] \qquad \inference{}{\textbf{tail}\:(c_1:lstc) \leadsto \textbf{return}\:lstc}[\hl{E-TailLstc}]$ \\
-        \\
-        $\inference{}{\textbf{empty}\:[\:\:] \leadsto \textbf{return}\:true}[\hl{E-EmptyTrue}]$ \\
-        \\
-        $\inference{}{\textbf{empty}\:(v:lstv) \leadsto \textbf{return}\:false}[\hl{E-EmptyLstvFalse}]$\\ 
-        \\
-        $\inference{}{\textbf{empty}\:(c:lstc) \leadsto \textbf{return}\:false}[\hl{E-EmptyLstcFalse}]$ \\
-        \\
         $\inference{}{\textbf{fst}\:(v_1,\:v_2) \leadsto \textbf{return}\:v_1}[\hl{E-First}] \qquad \inference{}{\textbf{snd}\:(v_1,\:v_2) \leadsto \textbf{return}\:v_2}[\hl{E-Second}]$ \\
         \\
         $\inference{}{\textbf{if}\:true\:\textbf{then}\:c_1\:\textbf{else}\:c_2 \leadsto c_1}[\hl{E-IfTrue}]$\\
         \\
         $\inference{}{\textbf{if}\:false\:\textbf{then}\:c_1\:\textbf{else}\:c_2 \leadsto c_2}[\hl{E-IfFalse}]$\\
         \\
+                  $\inference{}{\textbf{headV[A]} \ (consV[A] \ v_1 \ v_2) \leadsto \textbf{return} \ v_1}[\hl{E-HeadConsV}]$\\
+          \\
+          $\inference{}{\textbf{headC[A]}\:(consC[\underline{C}] \ c_1 \ c_2) \leadsto c_1}[\hl{E-HeadConsC}]$ \\
+          \\
+        $\inference{}{\textbf{tailV[A]} \ (consV[A] \ v_1 \ v_2) \leadsto \textbf{return} \ v_2}[\hl{E-TailConsV}] $\\
+        \\
+        $\inference{}{\textbf{tailC[\underline{C}]} \ (consC[\underline{C}] \ c_1 \ c_2) \leadsto c_2}[\hl{E-TailConsC}]$\\
+        \\
+        $\inference{}{\textbf{emptyV[A]} \ nilV[A] \leadsto \textbf{return} \ true}[\hl{E-EmptyVTrue}]$ \\
+        \\
+        $\inference{}{\textbf{emptyC[\underline{C}]} \ nilC[\underline{C}] \leadsto \textbf{return} \ true}[\hl{E-EmptyCTrue}]$ \\
+        \\
+        $\inference{}{\textbf{emptyV[A]} \ (consV[A] \ v_1 \ v_2) \leadsto \textbf{return} \ false}[\hl{E-EmptyLstvFalse}]$\\ 
+        \\
+        $\inference{}{\textbf{emptyC[\underline{C}]} \ (consC[\underline{C}] \  c_1 \ c_2) \leadsto \textbf{return} \ false}[\hl{E-EmptyLstcFalse}]$ \\
+        \\ 
          \end{tabular}
          \\
           \hline
     \end{tabular}
-    \caption{Operationele semantiek van $\lambda_{sc}^{p}$, lijst- en hulp-functies}
-    \label{tab:opSemLst}
+    \caption{Operationele semantiek van $\lambda_{sc}^{p}$, hulp-functies}
+    \label{tab:opSemHulp}
 \end{table}
 
-Tabellen \ref{fig:semantiek} en \ref{tab:opSemLst} toont de operationele semantiek voor de $\lambda_{sc}^{p}$-calculus. De toegevoegde regels zijn gemarkeerd. De meest cruciale toevoegingen zijn de regels rond de toevoeging van het nieuwe sleutelwoord \textbf{for}, namelijk \textbf{E-DoFor} voor het aaneenrijgen van computaties, \textbf{E-HandFor} voor het behandelen van de \textbf{for}-constructie door de handler die dit behandelt en \textbf{E-FwdFor} voor het forwarden van \textbf{for}. Het inzicht dat dit niet generiek kan gebeuren, is hierbij belangrijk. Gelijkaardige regels waren nodig voor de \textbf{sc} en \textbf{op} sleutelwoorden met dezelfde functies. Verder zijn enkele toevoegingen gedaan om recursieve functie-behandeling mogelijk te maken (\textbf{E-Letrec}) en lijst- en andere hulp-functies (Tabel \ref{tab:opSemLst}) expliciet toe te voegen. De bestaande regels uit de $\lambda_sc$-calculus \cite{Bosman2022} blijven onveranderd.
+Tabel \ref{fig:semantiek} toont de operationele semantiek voor de $\lambda_{sc}^{p}$-calculus. De \emph{toegevoegde regels zijn gemarkeerd}. 
+%De toevoegingen zijn de regels rond de toevoeging van het nieuwe sleutelwoord \textbf{for}, namelijk \textbf{E-DoFor} voor het \emph{aaneenrijgen van computaties}, \textbf{E-HandFor} voor het \emph{behandelen van de \textbf{for}-constructie door de handler} die dit behandelt en \textbf{E-FwdFor} voor \emph{het forwarden van \textbf{for} constructies}. %Het inzicht dat dit niet generiek kan gebeuren, is hierbij belangrijk. 
+%Gelijkaardige regels waren nodig voor de \textbf{sc} en \textbf{op} sleutelwoorden. \newline 
+De nodige uitbreidingen op de operationele semantiek hebben betrekking hebben tot het \emph{introduceren van een parallelle for each functie} door de \textbf{map} constructie. %Lijsten zijn nodig voor de correcte werking van de \textbf{for} clausule. 
+\textbf{E-Map} en \textbf{E-ParList} vormen samen voor de implementatie van deze functie. 
+%van een \emph{parallelle for each} constructie. Deze is nodig om de parallelle behandeling te modelleren. \newline
+Tabel \ref{tab:opSemHulp} voegt functionaliteit toe om recursieve functie-behandeling mogelijk te maken (\textbf{E-Letrec}) en andere hulp-functies. Deze laatste tabel bevat regels die niet essentieel zijn voor een minimaal werkende calculus en louter zijn toegevoegd om meer expressie te bieden om meer voorbeelden uit te werken.\newline 
+De bestaande regels uit de $\lambda_{sc}$-calculus \cite{Bosman2022} blijven onveranderd. De volgende secties bespreken de uitbreidingen in meer detail en grijpen terug naar de calculi die het startpunt van deze calculus vormen. Specifiek trachten de secties argumentatie te leveren \emph{hoe deze calculus de semantiek van parallelle effecten modelleert via scoped effecten}.
 
-\section{For clausule}
-Het \textbf{for} sleutelwoord laat toe om een computatie te mappen over een lijst van waarden. De gewenste semantiek om computaties met eventueel effecten te mappen over een lijst van waarden is niet mogelijk via een klassieke map functie omdat de computatie in dit geval niet puur is en alle relevante handlers niet noodzakelijk binnen de computatie zitten. Het gevolg is dat een klassieke map aanpak vastloopt op een normaalvorm (\textbf{return, op} of \textbf{sc}). Om een correcte semantiek voor het \textbf{for} sleutelwoord te bekomen zijn drie semantische regels nodig.
+\section{Parallelle effecten via de sc-clausule}
+Deze sectie argumenteert dat de \textbf{sc}-operatie en bijhorende operationele semantiek voldoende expressief is om de semantiek van de $\lambda^p$-calculus volledig te bevatten. Het doel is om aan te tonen dat de $\lambda_{sc}$-calculus aangevuld met lijsten en de \textbf{map} constructie in staat is om gebruiker gedefinieerde parallelle effecten te modelleren. De volgende subsecties bespreken de operationele semantiek waar de \textbf{sc}-operatie in voorkomt en refereren terug naar de $\lambda^p$-calculus.
+%Het \textbf{for} sleutelwoord laat toe om gebruiker-gedefinieerde parallelle effecten te formuleren die andere effecten kunnen aanroepen. Deze clausule heeft enkele specifieke semantische regels nodig om op de correcte manier te interageren met computaties die zelf arbitraire effecten kunnen introduceren. Het opzet is om in deze calculus dezelfde functionaliteit te modelleren als de $\lambda^p$-calculus biedt maar in een volledig uitgewerkte kleine-stap semantiek. De volgend subsecties bespreken de regels die deze calculus gebruikt om dit te bekomen.
+%De gewenste semantiek om computaties met eventueel effecten te mappen over een lijst van waarden is niet mogelijk via een klassieke map functie omdat de computatie in dit geval niet puur is en alle relevante handlers niet noodzakelijk binnen de computatie zitten. Het gevolg is dat een klassieke map aanpak vastloopt op een normaalvorm (\textbf{return, op} of \textbf{sc}). Om een correcte semantiek voor het \textbf{for} sleutelwoord te bekomen zijn drie semantische regels nodig.
 
-\subsection{E-DoFor}
-\textbf{E-DoFor} laat toe om een \textbf{do} statement door te schuiven naar de continuatie van de \textbf{for} constructie en tegelijk de computatie na de \textbf{for} constructie binnen de continuatie te brengen. Deze regel is nodig om programma's correct aan elkaar te rijgen rond het gebruik van \textbf{for} constructies en is zeer gelijkaardig aan \textbf{E-DoRet}, \textbf{E-DoOp} en \textbf{E-DoSc}.
+%TODO: cite haskell implementatie?
+\subsection{E-DoSc}
+\textbf{E-DoSc} laat toe om een \textbf{do} statement door te schuiven naar de continuatie van de \textbf{for} constructie en de computatie na de \textbf{for} constructie binnen de continuatie te brengen. Deze regel is \emph{nodig om programma's correct aan elkaar te rijgen} rond het gebruik van \textbf{sc} constructies. De regel is een generalisatie van de algebraciteits-eigenschap. In de $\lambda^p$-calculus is sequencing niet expliciet gemodelleerd. De paper stelt enkel dat $x \leftarrow e1; \ e2$ syntactisch gelijk is aan $(\lambda x. \ e2 ) \ e1$ wat neerkomt op de \textbf{E-DoRet} regel. De Haskell-implementatie van $\lambda^p$ volgt een semantiek die equivalent is aan de \textbf{E-DoSc} regel. De conclusie is dat het gebruik van sequencing door de \textbf{E-DoSc} regel niet problematisch is voor het argument. 
 
-\subsection{E-HandFor}
-\textbf{E-HandFor} laat toe om een \textbf{for} constructie te behandelen door een handler. De \textbf{for} constructie wordt hierbij vervangen door de $c_{for}$ computatie in de handler waarbij de handler eveneens naar binnen geschoven wordt in de te mappen functie en de continuatie. Elke handler kan de clausule implementeren of laten forwarden (\textbf{E-FwdFor}, \Cref{sec:fwdfor}). Aangezien deze behandeling nieuwe \textbf{for} constructies kan introduceren is het raadzaam om vooraan het programma een handler te implementeren die overgebleven pure \textbf{for} constructies afhandelt. De implementatie van deze clausule specifieert of de handler de constructie in parallel of sequentieel afhandelt.
+\subsection{E-HandSc}
+\textbf{E-HandSc} modelleert behandeling van een \textbf{sc} constructie door een handler. Indien de handler een \textbf{sc} constructie met dat label definieert, wordt de \emph{operatie vervangen door de $c_{sc}$ computatie in de handler}. De handler schuift eveneens naar binnen in de te mappen functie en de continuatie. De overeenkomst tussen deze operationele regel en de \emph{\textbf{E-Traverse}-regel} uit de $\lambda^p$-calculus is sterk. Tabel \ref{tab:semHandTraverse} lijst de gelijkenissen en verschillen op.
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|l|}
+    \hline
+    \\
+        \begin{tabular}{c}
+        $\inference{(\textbf{sc} \ l^{sc} \ x \ p \ k \mapsto c) \in h}{h \star \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}) \leadsto c \ [ \ v \ / \ x , \ (\lambda \ y. \ h \star c_{1}) \ / \ p, ( \lambda z . \ h \star c_{2}) \ / \ k \ ]}[E-HandSc]$ \\
+        \\
+        $\inference{(\textbf{traverse} \mapsto f_{t}) \in h \\
+            where\:l\:=\:\textbf{for}\:x\::\:n.\:\textbf{handle}\:h\:e \\
+            k\:=\:\lambda\:xs.\:\textbf{handle}\:h\:F[xs]}{\textbf{handle}\:h\:F[\textbf{for}\:x\::\:n.\:e] \leadsto f_{t}\:n\:l\:k}[E-Traverse]$\\
+        \\ 
+        \end{tabular}\\
+        \\
+        \textbf{Gelijkenissen:} \\
+        1. Regel geldt enkel als clausule in handler is: \\
+        \qquad $(\textbf{sc} \ l^{sc} \ x \ p \ k \mapsto c) \in h$ \\
+        \qquad $(\textbf{traverse} \mapsto f_t) \in h$ \\
+        2. Clausule $\leadsto$ computatie uit de handler: c | $f_t$ \\
+        3. Computatie met drie argumenten; $c \ x \ p \ k$ | $f_t \ n \ l \ k$ \\
+        4. Handler doorgeschoven in tweede argument: $(\lambda y. \ h \star c_1) / p$ | $l = \textbf{for} \ x : n. \ \textbf{handle} \ h \ e $ \\
+        5. Handler doorgeschoven in derde argument: $(\lambda z. \ h \star c_2) / k$ | $k = \lambda xs. \ \textbf{handle} \ h \ F[xs]$ \\
+        \\
+        \textbf{Verschillen:}\\
+        1. De parameter: een waarde v | de lengte van een lijst n\\
+        \textbf{Mogelijke oplossing:} v kan een lijst van waarden zijn \\
+        2. Het tweede argument: een lambda-functie ($y. \ c_1$) | een nieuwe \textbf{for} clausule \\
+        \textbf{Mogelijke oplossing:} $c_1$ kan een nieuwe \textbf{sc}-clausule bevatten \\
+        \\
+        \hline
+    \end{tabular}
+    \caption{Vergelijking tussen de \textbf{E-HandSc} regel in $\lambda_{sc}$ en de \textbf{E-Traverse} regel in de $\lambda^p$-calculus}
+    \label{tab:semHandTraverse}
+\end{table}
+De conclusie is dat \textbf{E-HandSc} expressief genoeg is om de semantiek van \textbf{E-Parallel} te modelleren en het argument tot zo ver nog opgaat. \\
+Een verschil is dat de $\lambda_{sc}$-calculus die polymorfe handlers modelleert in tegenstelling tot $\lambda^p$ toelaat om door de \textbf{sc}-labels meerdere verschillende parallelle/scoped effecten te modelleren. Elke handler kan een specifiek effect implementeren of forwarden (\textbf{E-FwdSc}, \Cref{sec:fwdsc}). 
 
-\subsection{E-FwdFor} \label{sec:fwdfor}
-\textbf{E-FwdFor} behandelt de forwarding voor het geval dat de \textbf{for} clausule niet door de handler geïmplementeerd wordt. De functie van de forwarding is tweevoudig. Deze regel schuift de handler binnen de computatie die te mappen is en de resumptie.
 
-\section{Lijst- en hulp-functies}
-Deze sectie behandelt toevoegingen aan de calculus die nodig zijn voor lijst-manipulatie en hulp-functies die de implementatie van de semantiek van de \textbf{for} clausule vergemakkelijken. 
-\subsection{Letrec: Recursieve functies}
-De \textbf{let rec} constructie biedt de mogelijk om recursieve functies te definiëren in de calculus. De clausule bestaat uit het \textbf{let rec} sleutelwoord gevolgd door een variabele-naam $f$ gevolgd door een computatie $c_{1}$ waar de variabele $f$ in kan voorkomen gevolgd door het sleutelwoord \textbf{in} gevolgd door de computatie waarin de variable $f$ kan voorkomen. Deze clausule wordt gereduceerd naar $c_{2}$ met f in $c_{2}$ vervangen door $c_{1}$ met $f$ vervangen door $\textbf{let\:rec}\:=\:c_{1}\:\textbf{in}\:f$. \textbf{E-Letrec} is een aangepaste versie van de regel beschreven in hoofdstuk twee van het boek "Principles of Programming Languages" \cite{Palmer2009}.
-\subsection{E-Map}
-Via deze regel kan in de calculus een lijst van waarden worden omgevormd naar een lijst van computaties met behulp van een computatie $f$. Deze regel is essentieel om deze omvorming te maken. De \textbf{E-ListRet}-regel helpt bij de omvorming in de andere richting. 
-\subsection{E-ParList}
-\textbf{E-ParList} laat parallelle reductie van elementen in een lijst van computaties toe. De regel stelt dat een element in de lijst dat een stap kan maken, deze stap zet. Merk op dat dit een niet-deterministisch regel is. De voorwaarde om nog een stap te kunnen zetten is dat de computatie niet in normaalvorm is, met andere woorden niet in de vorm:
+\subsection{E-Parallel}
+De $\lambda^p$-calculus heeft de \textbf{E-Parallel} regel die toelaat om pure \textbf{for} clausules te reduceren naar een lijst van waarden. Het is echter zeer moeilijk om deze regel te strikt vertalen naar een kleine-staps semantiek. De aanpak die deze calculus neemt is te veronderstellen dat vooraan het programma een handler staat die overgebleven pure \textbf{for} constructies afhandelt (Zoals Eq. \ref{eq:pureFor}) \emph{als parallelle for each} constructies door gebruik te maken van de \textbf{map} constructie. In een correct type-systeem komt deze buitenste handler enkel \textbf{for} constructies tegen die geen effecten meer bevatten als het programma goed getypeerd is. Het concept van een buitenste pure handler te gebruiken is ook te vinden in de haskell-implementatie van de paper\cite{Xie2021} over de $\lambda^p$-calculus. Het behandelen van een \textbf{for} clausule als parallelle for each, gebeurt door de introductie van de \textbf{E-Map} en \textbf{E-ParList} regels.
+% Typering? een goed-getypeerde term...
+%De implementatie van deze clausule specifieert of de handler de constructie in parallel of sequentieel afhandelt.
 \begin{equation}
-    \textbf{return}\:\_ \:\:|\:\:\textbf{op}\:\:\_\:\_\:\_\:\:|\:\:\textbf{sc}\:\_\:\_\:\_\:\_\:\:|\:\:\textbf{for}\:\_\:\_\:\_\:\_
+\label{eq:pureFor}
+    \begin{split}
+        & hPure \{ \textbf{return} \ ... \\
+        & \qquad \qquad \textbf{sc} \ forLabel \ v \ p \ k \mapsto \textbf{do} \ r \leftarrow \textbf{map} \ p \ v; \ k \ r \\
+        & \qquad \qquad ... \ \} \\
+    \end{split}
+\end{equation}
+
+% TODO
+\subsection{E-Fwd} \label{sec:fwdsc}
+\textbf{E-Fwd} beschrijft de \emph{forwarding} voor het geval dat de \textbf{sc} clausule niet door de handler geïmplementeerd wordt. 
+%Deze regel laat de \textbf{for} clausule staan en \emph{schuift de handler binnen zowel de parallelle computatie als de resumptie}.
+
+\section{Lijst-functies}
+Deze sectie behandelt toevoegingen aan de calculus om het werken met lijsten te vergemakkelijken en om een parallelle for each functionaliteit over lijsten te modelleren. 
+
+\subsection{E-Map}
+Via deze regel kan in de calculus een lijst van waarden worden omgevormd naar een lijst van computaties met behulp van een lambda-functie. Deze regel is in de calculus de enige manier om de omvorming in deze richting te maken. De \textbf{E-ListRet}-regel maakt de omvorming van lijst van computaties naar lijst van waarden mogelijk. \newline 
+\emph{De functie van deze regel is om in combinatie met \textbf{E-ParList} een parallelle for each te vormen}. Deze regel vormt de lijst van waarden om naar een lijst van computaties waarvan elk element elementsgewijs kan reduceren tot alle elementen naar een normaalvorm gereduceerd zijn. \textbf{E-ParList} behandelt het parallel elementsgewijs reduceren van de computaties in de lijst. \newline
+\emph{Het bijhorende voorbeeld (Eq. \ref{eq:eMap}) illustreert de werking van de regel kort}. Veronderstel hierbij dat het basis-type Int gedefinieerd is en \textbf{double} een computatie is die een Int als argument neemt en een Int teruggeeft.
+
+\begin{equation}
+\label{eq:eMap}
+    \begin{split}
+        & \textbf{map} \ (\textbf{double}) \ (consV[Int] \ 3 \ consV[Int] \ 6 \ consV[Int] \  7 \ nilV[Int]) \leadsto (\textbf{E-Map})\\
+        & (consC[Int] \ (\textbf{double} \ 3) \ consC[Int] \ (\textbf{double} \ 6) \ consC[Int] \ (\textbf{double} \ 7) \ nilC[Int])
+    \end{split}
+\end{equation}
+
+\subsection{E-ParList}
+\textbf{E-ParList} laat parallelle reductie van elementen in een lijst van computaties toe. De regel stelt dat elk element in een lijst van computaties dat een stap kan maken, deze stap zet. 
+%Merk op dat dit een niet-deterministisch regel is. 
+De voorwaarde om nog een stap te kunnen zetten is dat de computatie niet in normaalvorm is, met andere woorden niet in de vorm:
+\begin{equation}
+    \textbf{return}\:\_ \:\:|\:\:\textbf{op}\:\:\_\:\_\:\_\:\:|\:\:\textbf{sc}\:\_\:\_\:\_\:\_\:\:%|\:\:\textbf{for}\:\_\:\_\:\_\:\_
+\end{equation}
+Het bijhorende voorbeeld (Eq. \ref{eq:eParList}) illustreert de werking van de regel kort.
+% Misschien iets over dat een goed getypeerde term hier altijd naar een lijst van return zou moeten evalueren?
+
+\begin{equation}
+\label{eq:eParList}
+    \begin{split}
+        & (consC[Int] \ (\textbf{double} \ 3) \ consC[Int] \ (\textbf{double} \ 6) \ consC[Int] \ (\textbf{double} \ 7) \ nilC[Int]) \\
+        & \leadsto (\textbf{E-ParList}) \\
+        & (consC[Int] \ (\textbf{return} \ 6) \ consC[Int] \ (\textbf{return} \ 12) \ consC[Int] \ (\textbf{return} \ 14) \ nilC[Int]) \\
+    \end{split}
 \end{equation}
 
 \subsection{E-ListRet}
-Als een lijst van computaties gereduceerd kan worden naar een lijst van \textbf{return} clausules van waarden, dan kan de lijst vervangen worden door een \textbf{return} clausule van de lijst van waarden. Deze clausule laat, in combinatie met \textbf{E-DoRet}, toe om een lijst van computaties om te vormen naar een lijst van waarden.
+Een goed-getypeerde lijst van computaties zou via \textbf{E-ParList} moeten reduceren naar een lijst van \textbf{return} clausules van waarden. In dit geval kan de lijst vervangen worden door een \textbf{return} clausule van de lijst van waarden. Deze clausule laat toe om een lijst van computaties om te vormen naar een lijst van waarden. In combinatie met \textbf{E-DoRet} kan het programma deze lijst van waarden vervolgens elders gebruiken.\newline
+Het bijhorende voorbeeld (Eq. \ref{eq:eListRet}) illustreert de werking van de regel kort.
+
+\begin{equation}
+\label{eq:eListRet}
+    \begin{split}
+        & (consC[Int] \ (\textbf{return} \ 6) \ consC[Int] \ (\textbf{return} \ 12) \ consC[Int] \ (\textbf{return} \ 14) \ nilC[Int]) \\ 
+        & \leadsto (\textbf{E-ListRet}) \ \textbf{return} \ (consV[Int] \ 6 \ consV[Int] \ 12 \ consV[Int] \ 14 \ nilV[Int]) \\
+    \end{split}
+\end{equation}
+
+\section{Hulp-functies}
+Deze sectie behandelt toevoegingen aan de calculus die het implementeren van voorbeelden mogelijk maken of vergemakkelijken. Deze vormen een constructie om recursieve functies mogelijk te maken (\textbf{E-Letrec}), een conditie en functies om lijst- en paar-manipulatie te doen.
 
 \subsection{Lijst-manipulatie}
-\textbf{E-HeadLstv}, \textbf{E-HeadLstc}, \textbf{E-TailLstv}, \textbf{E-TailLstc}, \textbf{E-EmptyTrue}, \textbf{E-EmptyLstvFalse} en \textbf{E-EmptyLstcFalse} zijn eenvoudige functies die lijst-manipulatie van lijsten van waarden en lijsten van computaties vergemakkelijken.
+\textbf{E-HeadLstv}, \textbf{E-HeadLstc}, \textbf{E-TailLstv}, \textbf{E-TailLstc}, \textbf{E-EmptyTrue}, \textbf{E-EmptyLstvFalse} en \textbf{E-EmptyLstcFalse} zijn eenvoudige functies die lijst-manipulatie van lijsten van waarden en lijsten van computaties vergemakkelijken. De regels modelleren functies het eerste element isoleren (\emph{head}), alle elementen buiten het eerste element isoleren (\emph{tail}) en die testen of de lijst leeg is (\emph{empty}) voor lijsten van waarden en lijsten van computaties.
+
+\subsection{Letrec: Recursieve functies}
+De \textbf{let rec} constructie biedt de mogelijk om recursieve functies te definiëren in de calculus. De clausule bestaat uit het \textbf{let rec} sleutelwoord gevolgd door een variabele-naam $f$ gevolgd door een computatie $c_{1}$ waar de variabele $f$ in kan voorkomen gevolgd door het sleutelwoord \textbf{in} gevolgd door de computatie waarin de variable $f$ kan voorkomen. Deze clausule wordt gereduceerd naar $c_{2}$ met f in $c_{2}$ vervangen door $c_{1}$ met $f$ vervangen door $\textbf{let\:rec}\:=\:c_{1}\:\textbf{in}\:f$. \textbf{E-Letrec} is een aangepaste versie van de regel beschreven in hoofdstuk twee van het boek "Principles of Programming Languages" \cite{Palmer2009}.
 
 \subsection{Paar-manipulatie}
-\textbf{E-First} en \textbf{E-Second} laten manipulatie van paren van waarden toe.
+\textbf{E-First} en \textbf{E-Second} laten manipulatie van paren van waarden toe door respectievelijk de eerste en tweede waarde te isoleren uit het paar.
 
 \subsection{If constructie}
-\textbf{E-If}, \textbf{E-IfTrue} en \textbf{E-IfFalse} implementeren op standaardwijze een \textbf{if} clausule.
+Een conditie is nodig om veel voorbeelden te implementeren.
+\textbf{E-IfTrue} en \textbf{E-IfFalse} implementeren op standaardwijze een \textbf{if} clausule. Zoals het voorbeeld (Eq. \ref{eq:ifCond}) illustreert, is het niet nodig om een \textbf{if} clausule in de vorm $\textbf{if} \  c_1 \  \textbf{then} \  c_2 \  \textbf{else} \  c_3$ te modelleren maar kan $c_1$ een waarde zijn. Dit bespaart een congruentie-regel op $c_1$.
+
+\begin{equation}
+\label{eq:ifCond}
+    \begin{split}
+        & \textbf{do} \  b \leftarrow c_1 \  \textbf{in} \\
+        & \textbf{if} \  b \  \textbf{then} \  c_2 \  \textbf{else} \  c_3 \\
+        & \leadsto * \\
+        & \textbf{do} \  b \leftarrow \textbf{return} \  true \  \textbf{in} \\
+        & \textbf{if} \  b \  \textbf{then} \  c_2 \  \textbf{else} \  c_3 \\
+        & \leadsto \textbf{if} \  true \  \textbf{then} \  c_2 \  \textbf{else} \  c_3 \\
+        & \leadsto c_2
+\end{split}
+\end{equation}
 
 
 %%% Local Variables: 

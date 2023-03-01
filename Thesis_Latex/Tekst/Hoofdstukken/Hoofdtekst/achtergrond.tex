@@ -1,6 +1,8 @@
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
 
+% syntaxis van Eff hier?
+
 \chapter{Achtergrond}
 \label{hoofdstuk:achtergrond}
 Het doel van dit hoofdstuk is om de lezer een introductie te bieden aan enkele onderwerpen die essentieel zijn als achtergrondinformatie om de rest van de masterproef te begrijpen.
@@ -195,22 +197,15 @@ De syntaxis geeft een abstract overzicht van de verschillende bouwstenen waaruit
             \\
             $\inference{}{if \ return \ false \ then \ c_1 \ else \ c_2 \leadsto c_1}[E-IfFalse]$ \\
             \\
-            $\inference{c_1 \leadsto c_1'}{if \ c_1 \ then \ c_2 \ else \ c_3 \leadsto if \ c_1' \ then \ c_2 \ else \ c_3}[E-If]$ \\
+            $\inference{c_1 \leadsto c_1'}{if \ c_1 \ then \ c_2 \ else \ c_3 \leadsto if \ c_1' \ then \ c_2 \ else \ c_3}[E-If] \qquad \inference{c \leadsto c'}{succ \ c \leadsto succ \ c'}[E-Succ]$ \\
             \\
-            $\inference{c \leadsto c'}{succ \ c \leadsto succ \ c'}[E-Succ]$ \\
+            $\inference{}{succ \ (return \  nv) \leadsto return \ (succ \ nv) }[E-SuccRet] \qquad \inference{}{pred \  (return \ 0) \leadsto return \  0}[E-PredZero]$\\
             \\
-            $\inference{}{succ \ (return \  nv) \leadsto return \ (succ \ nv) }[E-SuccRet]$\\ 
-            \\
-            $\inference{}{pred \  (return \ 0) \leadsto return \  0}[E-PredZero]$\\
-            \\
-            $\inference{}{pred \ (return \ (succ \ nv)) \leadsto return \ nv}[E-PredSucc]$\\ \\
-            $\inference{c \leadsto c'}{pred \  c \leadsto pred \  c'}[E-Pred]$\\
+            $\inference{}{pred \ (return \ (succ \ nv)) \leadsto return \ nv}[E-PredSucc] \qquad \inference{c \leadsto c'}{pred \  c \leadsto pred \  c'}[E-Pred]$\\
             \\
             $\inference{}{iszero \ (return \ 0) \leadsto return \ true}[E-IsZeroZero]$\\
             \\
-            $\inference{}{iszero \ (return \ (succ \ nv)) \leadsto return \ false}[E-IsZeroSucc]$ \\
-            \\
-            $\inference{c_1 \leadsto c_1'}{iszero \ c_1 \leadsto iszero \  c_1'}[E-IsZero]$\\
+            $\inference{}{iszero \ (return \ (succ \ nv)) \leadsto return \ false}[E-IsZeroSucc] \qquad \inference{c_1 \leadsto c_1'}{iszero \ c_1 \leadsto iszero \  c_1'}[E-IsZero]$\\
           \end{tabular} \\
           % bottom
           \\
@@ -242,11 +237,7 @@ Tabel \ref{fig:semantiekSTLC} toont de operationele semantiek voor de calculus v
          % rules
           \begin{tabular}{c}
           \\
-            $\inference{}{0 : Nat}[T-Zero]$ \\
-            \\
-            $\inference{}{true : Bool}[T-True]$ \\
-            \\
-            $\inference{}{false : Bool}[T-False]$\\
+            $\inference{}{0 : Nat}[T-Zero] \qquad \inference{}{true : Bool}[T-True] \qquad \inference{}{false : Bool}[T-False]$\\
             \end{tabular} \\
             \\
             \begin{tabular} {l r}
@@ -258,15 +249,9 @@ Tabel \ref{fig:semantiekSTLC} toont de operationele semantiek voor de calculus v
          \end{tabular} \\
          \\
             \begin{tabular}{c}
-            $\inference{v : T}{return \  v : T}[T-Return]$\\
+            $\inference{v : T}{return \  v : T}[T-Return] \qquad \inference{c_1: Bool \quad c_2: T \quad c_3: T}{if \  c_1 \  then \  c_2 \  else \  c_3 : T}[T-If]$\\
             \\
-            $\inference{c_1: Bool \quad c_2: T \quad c_3: T}{if \  c_1 \  then \  c_2 \  else \  c_3 : T}[T-If]$\\
-            \\
-            $\inference{c : Nat}{succ \  c : Nat}[T-Succ]$\\
-            \\
-            $\inference{c : Nat}{pred \  c : Nat}[T-Pred]$\\
-            \\
-            $\inference{c : Nat}{iszero \  c : Bool}[T-IsZero]$\\
+            $\inference{c : Nat}{succ \  c : Nat}[T-Succ] \qquad \inference{c : Nat}{pred \  c : Nat}[T-Pred] \qquad \inference{c : Nat}{iszero \  c : Bool}[T-IsZero]$\\
           \end{tabular} \\
           % bottom
           \\

@@ -1,8 +1,9 @@
 \chapter{Startpunt}\label{hoofdstuk:startpunt}
-Deze masterproef heeft als doel een calculus voor te stellen die algebraïsche en scoped effecten en effect handlers als \texttt{first-class citizens} beschouwt met sequentiële en parallelle behandeling voor deze effecten. Het startpunt voor deze calculus is $\lambda_{sc}$\cite{Bosman2022}, een calculus die sequentiële behandeling van scoped en algebraïsche effecten ondersteunt. Voor parallelle behandeling van effecten bestaat de $\lambda^{p}$-calculus\cite{Xie2021}, een calculus die parallelle algebraïsche effecten ondersteunt. Het doel van de thesis is de concepten uit deze laatste calculus te vertalen naar een vorm gelijkaardig aan de eerste calculus en aan deze toe te voegen. Dit hoofdstuk bespreekt beide calculi om de lezer een idee te geven van de bestaande lectuur en wat als eigen contributie nodig is om het doel te bereiken.
+% TODO: tekst aanpassen ivm aangepaste syntaxis
+Deze masterproef heeft als doel een calculus voor te stellen die algebraïsche en scoped effecten en effect handlers als \texttt{first-class citizens} beschouwt met sequentiële en parallelle behandeling voor deze effecten. Het startpunt voor deze calculus is $\lambda_{sc}$\cite{Bosman2022}, een calculus die sequentiële behandeling van scoped en algebraïsche effecten ondersteunt. Voor parallelle behandeling van effecten bestaat de $\lambda^{p}$-calculus\cite{Xie2021}, een calculus die parallelle algebraïsche effecten ondersteunt. Het doel van de thesis is de concepten uit de laatstgenoemde calculus te vertalen naar een vorm compatibel met de eerstgenoemde calculus en aan deze toe te voegen. Dit hoofdstuk bespreekt beide calculi om de lezer een idee te geven van de bestaande lectuur en wat als eigen contributie nodig is om het doel te bereiken.
 
 \section{\texorpdfstring{$\lambda_{sc}$ :}{} Scoped Effecten} \label{hoofdstuk:startpuntScoped}
-Deze sectie stelt de calculus voor algebraïsche en scoped effecten \cite{Bosman2022} die als startpunt dient voor deze masterproef. Deze calculus is gebaseerd op Eff \cite{Bauer2015}. De calculus gebruikt een effect systeem zoals Koka \cite{Leijen2017} om effecten te typeren. De hoofdcontributie van de calculus over Eff is de capaciteit om scoped effecten te modelleren.
+Deze sectie stelt de calculus voor algebraïsche en scoped effecten uitgewerkt in de paper ''A Calculus for Scoped Effects \& Handlers'' \cite{Bosman2022} die als startpunt dient voor deze masterproef. Deze calculus is gebaseerd op Eff \cite{Bauer2015}. De calculus gebruikt een effect systeem zoals Koka \cite{Leijen2017} om effecten te typeren. De belangrijkste contributie van de calculus tegenover Eff is de capaciteit om scoped effecten te modelleren.
 \begin{table}
     \centering
     \begin{tabular}{|r c l r|}
@@ -14,12 +15,12 @@ Deze sectie stelt de calculus voor algebraïsche en scoped effecten \cite{Bosman
          & & $\qquad \qquad \quad , \: \textbf{fwd} \: f \: p \: k \mapsto c_{f} \: \} $ & forwarding clausule \\
          & & & \\
           effect clausules $oprs$ & $::=$ & . & \\ 
-          & $|$ & $\textbf{op} \: l \: x \: k \mapsto c, \: oprs$ & algebraïsche effect clausules \\
-           & $|$ & $\textbf{sc} \: l \: x \: p \: k \mapsto c, \: oprs$ & scoped effect clausules \\
+          & $|$ & $\textbf{op} \ l^{op} \ x \ k \mapsto c, \ oprs$ & algebraïsche effect clausules \\
+           & $|$ & $\textbf{sc} \ l^{sc} \ x \ p \ k \mapsto c, \ oprs$ & scoped effect clausules \\
         & & & \\
-         computaties $c$ & $::=$ & $\textbf{return} \: v$ & return waarde \\
-          & $|$ & $\textbf{op} \: l \: v \: (y. \: c)$ & algebraïsch effect \\
-          & $|$ & $\textbf{sc} \: l \: v \: (y. \: c_{1}) \: (z. \: c_{2})$ & scoped effect \\
+         computaties $c$ & $::=$ & $\textbf{return} \ v$ & return waarde \\
+          & $|$ & $\textbf{op} \ l^{op} \ v \ (y. \ c)$ & algebraïsche effect operatie \\
+          & $|$ & $\textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2})$ & scoped effect operatie \\
           & $|$ & $v \star c$ & behandeling \\
           & $|$ & $\textbf{do} \: x \leftarrow c_{1}\:; \: c_{2}$ & do clausule \\
           & $|$ & $v_{1} \: v_{2}$ & applicatie \\
@@ -33,9 +34,9 @@ Deze sectie stelt de calculus voor algebraïsche en scoped effecten \cite{Bosman
          computatie types $\underline{C}, \: \underline{D}$ & $::=$ & $A ! \langle E \rangle $ & \\
          effect type rows $E, \: F$ & $::=$ & $. \: \: | \: \: \mu \: \: | \: \: l; \: E $ & \\
          & & & \\
-         kinds $K$ & $::=$ & $* \: \: | \: \: K \rightarrow K$ & \\
-         & & & \\
-         signatuur contexten $\Sigma$ & $::=$ & $. \: \: | \: \: \Sigma , \: l \: : \: A \rightarrowtriangle B$ & \\
+         % kinds $K$ & $::=$ & $* \: \: | \: \: K \rightarrow K$ & \\
+     signatuur contexten $\Sigma$ & $::=$ & $. \ \ | \ \ \Sigma , \ l^{op} : A_{op} \rightarrowtriangle B_{op}$ & \\
+     & $|$ & $\Sigma , \ l^{sc} : A_{sc} \rightarrowtriangle B_{sc}$ & \\
          type contexten $\Gamma$ & $::=$ & $. \: \: | \:\: \Gamma, \: x \: : \: A \: \: | \: \: \Gamma , \: \mu \: \: | \: \: \Gamma, \: \alpha $ & \\
          & & & \\
     \hline
@@ -46,7 +47,7 @@ Deze sectie stelt de calculus voor algebraïsche en scoped effecten \cite{Bosman
 
 \subsection{Lopend voorbeeld}
 Om de syntaxis en de operationele semantiek van deze calculus te illustreren gebruikt deze sectie een lopend voorbeeld. 
-Het lopend voorbeeld, voorgesteld in Eq. \ref{eq:runEx}, is gebaseerd op het \emph{Forwarding} voorbeeld uit \cite{Bosman2022}. In dit voorbeeld komen alle relevante reductieregels aan bod. Het voorbeeld is een programma dat het \textbf{once} effect, dat van een computatie met het \textbf{choose} (non-determinisme) effect enkel het eerste resultaat teruggeeft, combineert met het \textbf{inc} effect, dat een teller bijhoudt. Het \textbf{inc} effect transformeert een computatie in een functie die een staat doorgeeft. Dit voorbeeld is gelijkaardig aan het voorbeeld beschreven in Sectie \ref{subsec:effInter}. Om dit voorbeeld te bespreken is het nodig eerst de syntaxis van de calculus te introduceren.
+Het lopend voorbeeld, voorgesteld in Eq. \ref{eq:runEx}, is gebaseerd op het \emph{Forwarding} voorbeeld uit ''A Calculus for Scoped Effects \& Handlers'' \cite{Bosman2022}. In dit voorbeeld komen alle relevante reductieregels aan bod. Het voorbeeld is een programma dat het \textbf{once} effect, dat van een computatie met het \textbf{choose} (non-determinisme) effect enkel het eerste resultaat teruggeeft, combineert met het \textbf{inc} effect, dat een teller bijhoudt. Het \textbf{inc} effect transformeert een computatie in een functie die een staat doorgeeft. Dit voorbeeld is gelijkaardig aan het voorbeeld beschreven in Sectie \ref{subsec:effInter}. Om dit voorbeeld te bespreken is het nodig eerst de syntaxis van de calculus te introduceren.
 
 \begin{equation} \label{eq:runEx}
     h_{once} \star (run_{inc} \: 0 \star c_{fwd})
@@ -63,17 +64,19 @@ Een waarde is ofwel de \emph{eenheids-waarde} $()$ (unit-waarde), een \emph{paar
 De belangrijkste soort waarden in een calculus voor effect handlers zijn de \emph{handlers}. Een handler bestaat uit een \emph{return} clausule, geen tot meerdere \emph{effect} clausules en een \emph{forwarding} clausule. In vergelijking met Eff merken we de toevoeging van de forwarding clausule op die specifiek is voor de scoped effecten. \newline 
 De forwarding clausule $\textbf{fwd}\:f\:p\:k \mapsto c_{f}$, die elke handler moet implementeren, zorgt voor expliciete forwarding wanneer de te behandelen scoped effect clausule niet geïmplementeerd wordt door de handler. De computatie $c_{f}$ specifieert hoe de onbekende scoped effect clausule moet aangepast worden en kan hiervoor gebruik maken van $f$, dat het onbekende scoped effect bevat, de computatie in scope $p$ en de resumptie $k$. \newline
 De return clausule $\textbf{return}\:x \mapsto c_{r}$ duidt aan dat de behandeling van een \textbf{return} computatie met resultaat x door de handler deze computatie vervangt door de handler-bepaalde computatie $c_{r}$. \newline
-Zoals aangehaald bestaat een handler uit geen tot meerdere effect clausules. In het geval van deze kunnen deze effect clausule algebraïsche operaties of scoped operaties zijn, waarbij de scoped operaties aan uitbreiding vormen aan de Eff calculus. Een \emph{algebraïsche} effect clausule ($\textbf{op}\:l\:x\:k \mapsto c$) wordt gekenmerkt door het sleutelwoord \textbf{op} gevolgd door een label $l$, een input parameter $x$ en een resumptie k. $\mapsto c$ duidt aan dat een handler deze clausule verwerkt door de computatie $c$ toe te passen. Een \emph{scoped} effect clausule ($\textbf{sc}\:l\:x\:p\:k \mapsto c$) is gelijkaardig aan een algebraïsche effect clausule met een verschillend sleutelwoord \textbf{sc} en bijkomende een bewerking in scope $p$.
+Zoals eerder aangehaald bestaat een handler uit geen tot meerdere effect clausules. In het geval van deze kunnen deze effect clausule algebraïsche operaties of scoped operaties zijn, waarbij de scoped operaties aan uitbreiding vormen aan de Eff calculus. Een \emph{algebraïsche} effect clausule ($\textbf{op} \ l^{op} 
+ \ x \ k \mapsto c$) wordt gekenmerkt door het sleutelwoord \textbf{op} gevolgd door een operatie-label $l^{op}$, een input parameter $x$ en een resumptie k. $\mapsto c$ duidt aan dat een handler deze clausule verwerkt door de computatie $c$ toe te passen. Een \emph{scoped} effect clausule ($\textbf{sc} \ l^{sc} \ x \ p \ k \mapsto c$) is gelijkaardig aan een algebraïsche effect clausule met een verschillend sleutelwoord \textbf{sc}, een scoped-label $l^{sc}$ en bijkomende een bewerking in scope $p$. \newline 
+ De labels van de effect clausules verschillen om een strikte disjunctie te bekomen tussen de labels voor beide effecten. Een label hoort bij een specifiek soort effect.
 
 \subsubsection{Computaties}
-Deze paragraaf bespreekt de zeven computaties die syntactisch mogelijk zijn in de calculus. De effect operaties en behandeling van computaties zijn hierbij het interessantst voor de effect handler aanpak. \newline
-De twee operaties die in de calculus gedefinieerd zijn, zijn de operatie voor het algebraïsch effect en die voor het scoped effect. Een \emph{algebraïsche effect operatie} ($\textbf{op}\:l\:v\:(y.\:c)$) bestaat uit het sleutelwoord \textbf{op}, een label $l$, een input parameter waarde $v$ en een resumptie in de vorm $(y.\:c)$. Een \emph{scoped effect operatie} ($\textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2})$) bestaat uit het sleutelwoord \textbf{sc}, een label $l$, een input parameter waarde $v$, een scoped berekening $(y.\:c_{1})$ en een resumptie $(z.\:c_{2})$. In beide soorten effecten is de resumptie de computatie die gegeven de resulterende waarde van het effect, de rest van het programma bevat. \newline  
+Deze paragraaf bespreekt de zeven computaties die syntactisch geldig zijn in de calculus. De effect operaties en behandeling van computaties zijn hierbij het interessantst voor de effect handler aanpak. \newline
+De twee operaties die in de calculus gedefinieerd zijn, zijn de operatie voor het algebraïsch effect en die voor het scoped effect. Een \emph{algebraïsche effect operatie} ($\textbf{op} \ l^{op} \ v \ (y. \ c)$) bestaat uit het sleutelwoord \textbf{op}, een operatie-label $l^{op}$, een input parameter waarde $v$ en een resumptie in de vorm $(y. \ c)$. Een \emph{scoped effect operatie} ($\textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2})$) bestaat uit het sleutelwoord \textbf{sc}, een scoped-label $l^{sc}$, een input parameter waarde $v$, een scoped berekening $(y. \ c_{1})$ en een resumptie $(z. \ c_{2})$. In beide soorten effecten is de resumptie de computatie die gegeven de resulterende waarde van het effect, de rest van het programma bevat. \newline  
 De behandeling ($v \star c$) drukt de behandeling van een computatie $c$ door een waarde $v$ door middel van de $\star$-operator. Deze waarde is in de praktijk altijd een handler, anders is het programma niet goed getypeerd. \newline 
-Computaties kunnen een waarde teruggeven en in normaalvorm belanden door middel van de \emph{return clausule} ($\textbf{return}\:v$). \newline  
-Computaties worden aan elkaar gerijgd doormiddel van do clausules in de vorm $\textbf{do}\:x \leftarrow c_{1};\:c_{2}$ waarbij het resultaat van $c_{1}$ in $c_{2}$ beschikbaar is als $x$. \newline 
+Computaties kunnen een waarde teruggeven en in normaalvorm belanden door middel van de \emph{return clausule} ($\textbf{return} \ v$). \newline  
+Computaties worden aan elkaar gerijgd doormiddel van do clausules in de vorm $\textbf{do} \ x \leftarrow c_{1}; \ c_{2}$ waarbij het resultaat van $c_{1}$ in $c_{2}$ beschikbaar is als $x$. \newline 
 De syntax van applicatie in de calculus is door $v_{1}\:v_{2}$. \newline
-Let-polymorfisme is beschikbaar in de calculus als $\textbf{let}\ 
- x \  = \  v \  \textbf{in} \  c$. Dit is een uitbreiding op Eff.
+Let-polymorfisme bestaat in de calculus als de syntactische vorm $\textbf{let}\ 
+ x = v \  \textbf{in} \  c$. Dit laatste vormt een uitbreiding op Eff.
 
 \subsubsection{Lopend voorbeeld}
 Het lopend voorbeeld (Eq. \ref{eq:runEx}) introduceert de handlers $h_{once}$ en $h_{inc}$. $c_{fwd}$ is de te behandelen computatie en bestaat uit een scoped effect operatie met in de continuatie een algebraïsch effect operatie. De volgende vergelijkingen stellen deze computaties, handlers en operaties voor in de syntaxis van de calculus.
@@ -131,23 +134,24 @@ Deze calculus ondersteunt verder \emph{type schemas} $\sigma$, waarbij applicati
          \end{tabular} \\
          % rules
           \begin{tabular}{c}
-            $\inference{}{(\lambda x.\:c)\:v \leadsto c\:[\:v\:/\:x\:]}[E-AppAbs] \qquad \inference{}{\textbf{let}\:x\: = \: v \: \textbf{in} \:c \leadsto c\:[\:v\:/\:x\:]}[E-Let]$ \\ 
+            $\inference{}{(\lambda x. \ c) \ v \leadsto c \ [ \ v \ / \ x \ ]}[E-AppAbs] \qquad \inference{}{\textbf{let} \ x = v \ \textbf{in} \ c \leadsto c \ [ \ v \ / \ x \ ]}[E-Let]$ \\ 
             \\
-            $\inference{c_{1} \leadsto c_{1}'}{\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2} \leadsto \textbf{do}\:x \leadsto c_{1}'\:;\:c_{2}}[E-Do] \qquad \inference{}{\textbf{do}\:x \leftarrow \textbf{return}\:v\:;\:c_{2} \leadsto c_{2}\:[\:v\:/\:x\:]}[E-DoRet]$ \\
+            $\inference{c_{1} \leadsto c_{1}'}{\textbf{do} \ x \leftarrow c_{1}; \ c_{2} \leadsto \textbf{do} \ x \leadsto c_{1}'; \ c_{2}}[E-Do] \qquad \inference{}{\textbf{do} \ x \leftarrow \textbf{return} \ v; \ c_{2} \leadsto c_{2} \ [ \ v \ / \ x \ ]}[E-DoRet]$ \\
             \\
-            $\inference{}{\textbf{do}\:x \leftarrow \textbf{op}\:l\:v\:(y.\:c_{1})\:;\:c_{2} \leadsto \textbf{op}\:l\:v\:(y.\: \textbf{do} \: x \leftarrow c_{1}\:;\:c_{2})}[E-DoOp]$ \\
+            $\inference{}{\textbf{do} \ x \leftarrow \textbf{op} \ l^{op} \ v \ (y. \ c_{1}); \ c_{2} \leadsto \textbf{op} \ l^{op} \ v \ (y. \  \textbf{do} \ x \leftarrow c_{1}; \ c_{2})}[E-DoOp]$ \\
             \\
-            $\inference{}{\textbf{do}\:x \leftarrow \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \: ;\: c_{3} \leadsto \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\: \textbf{do} \: x \leftarrow c_{2} \: ;\: c_{3})}[E-DoSc]$ \\
+            $\inference{}{\textbf{do} \ x \leftarrow \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}); \ c_{3} \leadsto \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ \textbf{do} \ x \leftarrow c_{2}; \ c_{3})}[E-DoSc]$ \\
             \\
-            $\inference{c \leadsto c'}{h \star c \leadsto h \star c'}[E-Hand] \qquad \inference{(\textbf{return}\:x \mapsto c_{r}) \in h}{h \star \textbf{return} \: v \leadsto c_{r} \:[\:v\:/\:x\:]}[E-HandRet]$ \\
+            $\inference{c \leadsto c'}{h \star c \leadsto h \star c'}[E-Hand] \qquad \inference{(\textbf{return} \ x \mapsto c_{r}) \in h}{h \star \textbf{return} \ v \leadsto c_{r} \ [ \ v \ / \ x \ ]}[E-HandRet]$ \\
             \\
-            $\inference{(\textbf{op}\:l\:x\:k \mapsto c) \in h}{h \star \textbf{op}\:l\:v\:(y.\:c_{1}) \leadsto c\:[\:v\:/\:x,\:(\lambda y.\:h \star c_{1}) \: / \: k]}[E-HandOp]$ \\
+            $\inference{(\textbf{op} \ l^{op} \ x \ k \mapsto c) \in h}{h \star \textbf{op} \ l^{op} \ v \ (y. \ c_{1}) \leadsto c \ [ \ v \ / \ x , \ (\lambda y. \ h \star c_{1}) \ / \ k]}[E-HandOp]$ \\
             \\
-            $\inference{(\textbf{op}\:l\:\_\:\_) \notin h}{h \star \textbf{op}\:l\:v\:(y.\:c_{1}) \leadsto \textbf{op}\:l\:v\:(y.\: h \star c_{1})}[E-FwdOp]$ \\
+            $\inference{(\textbf{op} \ l^{op} \ \_ \ \_) \notin h}{h \star \textbf{op} \ l^{op} \ v \ (y. \ c_{1}) \leadsto \textbf{op} \ l^{op} \ v \ (y. \ h \star c_{1})}[E-FwdOp]$ \\
             \\
-            $\inference{(\textbf{sc}\:l\:x\:p\:k \mapsto c) \in h}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c\:[\:v\:/\:x,\:(\lambda \: y. \: h \star\:c_{1}) \: / \: p, (\lambda z. \: h \star c_{2}) \:/\:k\:]}[E-HandSc]$ \\
+            $\inference{(\textbf{sc} \ l^{sc} \ x \ p \ k \mapsto c) \in h}{h \star \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}) \leadsto c \ [ \ v \ / \ x , \ (\lambda \ y. \ h \star \ c_{1}) \ / \ p, (\lambda z. \ 
+ h \star c_{2}) \ / \ k \ ]}[E-HandSc]$ \\
             \\
-            $\inference{(\textbf{sc}\:l\:\_\:\_\:\_) \notin h \\ (\textbf{fwd}\:f\:p\:k \mapsto c_{f}) \in h \qquad g\:=\:\lambda(p',\:k')\:.\:\textbf{sc}\:l\:v\:(y.\:p'\:y)\:(z.\:k'\:z)}{h \star \textbf{sc}\:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \leadsto c_{f}\:[\:(\lambda\:y.\:h \star c_{1})\:/\:p,\:(\lambda z.\: h \star c_{2})\:/\:k,\:g\:/\:f]}[E-FwdSc]$\\
+            $\inference{(\textbf{sc} \ l^{sc} \ \_ \ \_ \ \_) \notin h \\ (\textbf{fwd} \ f \ p \ k \mapsto c_{f}) \in h \qquad g \ = \ \lambda(p',\:k') \ . \ \textbf{sc} \ l^{sc} \ v \ (y. \ p' \ y) \ (z. \ k' \ z)}{h \star \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}) \leadsto c_{f} \ [ \ (\lambda \ y. \ h \star c_{1}) \ / \ p , \ ( \lambda \ z. \ h \star c_{2}) \ / \ k, \ g \ / \ f ]}[E-FwdSc]$\\
           \end{tabular} \\
           % bottom
           \\
@@ -158,19 +162,19 @@ Deze calculus ondersteunt verder \emph{type schemas} $\sigma$, waarbij applicati
 \end{table}
 Tabel \ref{fig:semantiekScoped} toont de kleine-staps operationele semantiek van de $\lambda_{sc}$-calculus. De relatie $c \leadsto c'$ duidt aan dat $c$ naar $c'$ stapt of reduceert. Dat dit een computatie reductie relatie is, betekent dat de calculus enkel termen die computaties zijn, kan reduceren. \newline
 De regels \textbf{E-AppAbs} en \textbf{E-Let} behandelen functie applicatie en let-binding. De andere regels zijn op te delen in twee domeinen: computaties aan elkaar rijgen en computaties behandelen met handlers.
+
 \subsubsection{Computaties aan elkaar rijgen}
-Om computaties aan elkaar te rijgen van de vorm $\textbf{do}\:x \leftarrow c_{1}\:;\:c_{2}$ is een onderscheid te maken tussen het geval waarbij \emph{$c_{1}$ een stap kan zetten} naar $c_{1}'$ (\textbf{E-Do}) of waarbij \emph{$c_{1}$ in normale vorm is} (\textbf{return}, \textbf{op \textellipsis}, of \textbf{sc \textellipsis}). \newline 
+Om computaties aan elkaar te rijgen van de vorm $\textbf{do} \ x \leftarrow c_{1}; \ c_{2}$ is een onderscheid te maken tussen het geval waarbij \emph{$c_{1}$ een stap kan zetten} naar $c_{1}'$ (\textbf{E-Do}) of waarbij \emph{$c_{1}$ in normale vorm is} (\textbf{return}, \textbf{op \textellipsis}, of \textbf{sc \textellipsis}). \newline 
 In het laatste geval, hangt de regel af van de normale vorm die zich presenteert in $c_{1}$. \newline 
-In het geval dat de computatie \emph{een resultaat is} met een waarde, $\textbf{do}\:x \leftarrow \textbf{return}\:v\:;\:c_{2}$, wordt $x$ vervangen door $v$ in $c_{2}$ of $\leadsto c_{2}\:[\:v\:/\:x\:]$ (\textbf{E-DoRet}). \newline
-Is de computatie \emph{een algebraïsche effect} ($\textbf{do} \  x \leftarrow \textbf{op} \  l \  v \  (y. \  c_{1}) \  ; \  c_{2}$) dan kan de computatie herschreven worden met behulp van de algebraïciteits-eigenschap $\leadsto \textbf{op} \  l \  v \  (y. \   \textbf{do} \   x \leftarrow c_{1} \  ; \  c_{2})$ (\textbf{E-DoOp}). \newline
-Bij \emph{een scoped effect} ($\textbf{do}\:x \leftarrow \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\:c_{2}) \: ;\: c_{3}$) wordt een generalisatie van de algebraïciteits-eigenschap gebruikt $\leadsto \textbf{sc} \:l\:v\:(y.\:c_{1})\:(z.\: \textbf{do} \: x \leftarrow c_{2} \: ;\: c_{3})$ (\textbf{E-DoSc}).
+In het geval dat de computatie \emph{een resultaat is} met een waarde, $\textbf{do} \ x \leftarrow \textbf{return} \ v ; \ c_{2}$, wordt $x$ vervangen door $v$ in $c_{2}$ of $\leadsto c_{2}\:[\:v\:/\:x\:]$ (\textbf{E-DoRet}). \newline
+Is de computatie \emph{een algebraïsche effect} ($\textbf{do} \  x \leftarrow \textbf{op} \  l^{op} \  v \  (y. \  c_{1}); \  c_{2}$) dan kan de computatie herschreven worden met behulp van de algebraïciteits-eigenschap $\leadsto \textbf{op} \  l^{op} \  v \  (y. \   \textbf{do} \   x \leftarrow c_{1}; \  c_{2})$ (\textbf{E-DoOp}). \newline
+Bij \emph{een scoped effect} ($\textbf{do} \ x \leftarrow \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ c_{2}); \ c_{3}$) wordt een generalisatie van de algebraïciteits-eigenschap gebruikt $\leadsto \textbf{sc} \ l^{sc} \ v \ (y. \ c_{1}) \ (z. \ \textbf{do} \ x \leftarrow c_{2}; \ c_{3})$ (\textbf{E-DoSc}).
 
 \subsubsection{Computaties behandelen met handlers}
 Om computaties te behandelen met handlers, $h \star c$, is er opnieuw onderscheid te maken tussen het geval waar \emph{$c$ kan reduceren} ($c \leadsto c'$) en waar \emph{$c$ in normale vorm is} (\textbf{return} v, \textbf{op \textellipsis}, \textbf{sc \textellipsis}). \newline 
 In het eerste geval wordt de mogelijke stap genomen ($h \star c \leadsto h \star c'$) (\textbf{E-Hand}). In het andere geval wordt de clausule die geldt uit de handler toegepast (\textbf{E-HandRet}, \textbf{E-HandOp}, \textbf{E-FwdOp}, \textbf{E-HandSc}, \textbf{E-FwdSc}).
 
 \subsubsection{Lopend voorbeeld}
-% TODO: beter?
 Dit deel van het lopend voorbeeld illustreert de toepassing van de inferentie regels uit de operationele semantiek om de reductie van het voorbeeld tot de uiteindelijk resulterende waarde te doen. De uitgelichte stappen gebruiken enkele van de regels die uniek zijn aan deze calculi of meer algemeen calculi van effect handlers. De hele reductie is hier niet gegeven.\newline
 Door $run_{inc}$ te substitueren door de definitie herschrijft het voorbeeld zich als:
 \begin{equation} 
@@ -200,6 +204,7 @@ Verder in de reductie behandelt de $h_{once}$ handler scoped operatie
 \end{equation}
 
 \subsection{Type- en effect-systeem}
+\label{sec:typeScCalc}
 De $\lambda_{sc}$-calculus heeft een apart type-systeem voor de termen en de effecten. Het effect-systeem maakt gebruikt van \emph{effect rows} volgens de stijl van Koka\cite{Leijen2017}. De volgende paragrafen behandelen het type-systeem, met in Tabel \ref{fig:typeWaarde} de waarde typering, in Tabel \ref{fig:typeComp} de computatie typering en in Tabel \ref{fig:typeHand} de handler typering.
 \subsubsection{Waarde typering}
 \begin{table}
@@ -212,22 +217,22 @@ De $\lambda_{sc}$-calculus heeft een apart type-systeem voor de termen en de eff
          \begin{tabular} {l r}
               \begin{tabular}{|l|}
               \hline
-                     $\Gamma \vdash v\::\:\sigma$ \\
+                     $\Gamma \vdash v : \sigma$ \\
                 \hline
               \end{tabular} & Waarde typering \\
          \end{tabular} \\
          % rules
           \begin{tabular}{c}
           \\
-            $\inference{(x\::\:\sigma) \in \Gamma}{\Gamma \vdash x\::\:\sigma}[T-Var] \qquad \inference{}{\Gamma \vdash (\:) \::\:(\:)}[T-Unit]$ \\ 
+            $\inference{(x : \sigma) \in \Gamma}{\Gamma \vdash x : \sigma}[T-Var] \qquad \inference{}{\Gamma \vdash ( \ ) : ( \ )}[T-Unit]$ \\ 
             \\
-            $\inference{\Gamma \vdash v_1\::\:A \qquad \Gamma \vdash v_2 \::\:B}{\Gamma \vdash (v_1,\:v_2)\::\:(A,\:B)}[T-Pair]$\\
+            $\inference{\Gamma \vdash v_1 : A \qquad \Gamma \vdash v_2 : B}{\Gamma \vdash (v_1, \ v_2) : (A, \ B)}[T-Pair]$\\
             \\
-            $\inference{\Gamma,\:x\::\:A \vdash c\::\:\underline{C}}{\Gamma \vdash \lambda \: x.\:c\::\:A \rightarrow \underline{C}}[T-Abs] \qquad \inference{\Gamma \vdash v\::\:A \qquad A \equiv B}{\Gamma \vdash v\::\:B}[T-EqV]$\\
+            $\inference{\Gamma, \ x : A \vdash c : \underline{C}}{\Gamma \vdash \lambda \ x. \ c : A \rightarrow \underline{C}}[T-Abs] \qquad \inference{\Gamma \vdash v : A \qquad A \equiv B}{\Gamma \vdash v : B}[T-EqV]$\\
             \\
-            $\inference{\Gamma \vdash A \::\: * \qquad \Gamma \vdash v\::\: \forall \: \alpha.\:\sigma}{\Gamma \vdash v\::\:\sigma\:[\:A\:/\:\alpha\:]}[T-Inst] \qquad \inference{\Gamma,\:\alpha \vdash v\::\:\sigma \qquad \alpha \notin \Gamma}{\Gamma \vdash v\::\:\forall\:\mu.\:\sigma}[T-Gen]$\\
+            $\inference{\Gamma \vdash v : \forall \ \alpha \ . \ \sigma \qquad \Gamma \vdash A }{\Gamma \vdash v : \sigma \ [ \ A \ / \ \alpha \ ]}[T-Inst] \qquad \inference{\Gamma, \ \alpha \vdash v : \sigma \qquad \alpha \notin \Gamma}{\Gamma \vdash v : \forall \ \alpha . \ \sigma}[T-Gen]$\\
             \\
-            $\inference{\Gamma \vdash v\::\:\forall\:\mu.\:\sigma}{\Gamma \vdash b \::\:\sigma\:[\:E\:/\:\mu\:]}[T-InstEff] \qquad \inference{\Gamma,\:\mu \vdash v\::\:\sigma \qquad \mu \notin \Gamma}{\Gamma \vdash v\::\:\forall \mu.\:\sigma}[T-GenEff]$\\
+            $\inference{\Gamma \vdash v : \forall \ \mu . \ \sigma \qquad \Gamma \vdash E}{\Gamma \vdash v : [ \ E \  / \ \mu \ ] \ \sigma}[T-InstEff] \qquad \inference{\Gamma, \ \mu \vdash v : \sigma \qquad \mu \notin \Gamma}{\Gamma \vdash v : \forall \ \mu. \ \sigma}[T-GenEff]$\\
             \\
           \end{tabular} \\
           % bottom
@@ -263,21 +268,17 @@ De resterende vier type-regels zijn minder standaard en nieuw voor de calculus t
          % rules
           \begin{tabular}{c}
           \\
-            $\inference{\Gamma \vdash v_1 \::\:A \rightarrow \underline{C} \qquad \Gamma \vdash v_2 \::\:A}{\Gamma \vdash v_1\:v_2\::\:\underline{C}}[T-App]$ \\
+            $\inference{\Gamma \vdash v_1 : A \rightarrow \underline{C} \qquad \Gamma \vdash v_2 : A}{\Gamma \vdash v_1 \ v_2 : \underline{C}}[T-App]$\\
             \\
-            $\inference{\Gamma \vdash c_1\::\:A!\langle E \rangle \qquad \Gamma,\:x\::\:A \vdash c_2 \::\:B! \langle E \rangle}{\Gamma \vdash \textbf{do}\:x \leftarrow c_1;c_2\::\:B!\langle E \rangle}[T-Do]$\\
+            $\inference{\Gamma \vdash c_1 : A! \langle E \rangle \qquad \Gamma, \ x : A \vdash c_2 : B! \langle E \rangle}{\Gamma \vdash \textbf{do} \ x \leftarrow c_1; \ c_2 : B! \langle E \rangle}[T-Do]$\\
             \\
-            $\inference{\Gamma \vdash c\::\:\underline{C} \qquad \underline{C} \equiv \underline{D}}{\Gamma \vdash c\::\:\underline{D}}[T-EqC]$ \\
+            $\inference{\Gamma \vdash c : \underline{C} \qquad \underline{C} \equiv \underline{D}}{\Gamma \vdash c : \underline{D}}[T-EqC] \qquad \inference{\Gamma \vdash v : \sigma \qquad \Gamma, \ x : \sigma \vdash c : \underline{C}}{\Gamma \vdash \textbf{let} \ x = v \ \textbf{in} \ c : \underline{C}}[T-Let]$ \\
             \\
-            $\inference{\Gamma \vdash v\::\:\sigma \qquad \Gamma,\:x\::\:\sigma \vdash c\::\:\underline{C}}{\Gamma \vdash \textbf{let}\:x = v\:\textbf{in}\:c\::\:\underline{C}}[T-Let]$\\
+            $\inference{\Gamma \vdash v : A \qquad \Gamma \vdash E}{\Gamma \vdash \textbf{return} \ v : A! \langle E \rangle}[T-Ret] \qquad \inference{\Gamma \vdash v : \forall \ \alpha . \ \alpha! \langle E \rangle \Rightarrow M \ \alpha! \langle F \rangle \\ \Gamma \vdash c : A! \langle E \rangle}{\Gamma \vdash v \star c : M \ A!\langle F \rangle}[T-Hand]$\\
             \\
-            $\inference{\Gamma \vdash v\::\:A}{\Gamma \vdash \textbf{return}\:v\::\:A!\langle E \rangle}[T-Ret]$\\
+            $\inference{(l^{op} : A_{op} \rightarrowtriangle B_{op}) \in \Sigma \qquad \Gamma \vdash v : A_{op} \\ \Gamma , \ y : B_{op} \vdash c : A! \langle E \rangle \qquad l^{op} \in E}{\Gamma \vdash \textbf{op} \ l^{op} \ v \ (y. \ c) : A! \langle E \rangle}[T-Op]$\\
             \\
-            $\inference{\Gamma \vdash v\::\:\forall \:\alpha.\:\alpha!\langle E \rangle \Rightarrow M\:\alpha!\langle F \rangle \qquad \Gamma \vdash c\::\:A!\langle E \rangle}{\Gamma \vdash v \star c\::\:M\:A!\langle F \rangle}[T-Hand]$\\
-            \\
-            $\inference{(l\::\:A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma \vdash v\::\:A_l \qquad \Gamma,\:y\::\:B_l \vdash c\::\:A!\langle l;E \rangle}{\Gamma \vdash \textbf{op}\:l\:v\:(y.\:c)\::\:A!\langle l;E \rangle}[T-Op]$\\
-            \\
-            $\inference{(l\::\:A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma \vdash v\::\:A_l \\ \Gamma,\:y\::\:B_l\vdash c_1 \::\: B!\langle l;E \rangle \qquad \Gamma,\:z\::\:B \vdash c_2 \::\:A!\langle l;E \rangle}{\Gamma \vdash \textbf{sc}\:l\:v\:(y.\:c_1)\:(z.\:c_2)\::\:A!\langle l;E \rangle}[T-Sc]$\\
+            $\inference{(l^{sc} : A_{sc} \rightarrowtriangle B_{sc}) \in \Sigma \qquad \Gamma \vdash v : A_{sc} \\ \Gamma, \ y : B_{sc} \vdash c_1 : B! \langle E \rangle \qquad \Gamma, \ z : B \vdash c_2  : A!\langle E \rangle \qquad l^{sc} \in E}{\Gamma \vdash \textbf{sc} \ l^{sc} \ v \ (y. \ c_1) \ (z. \ c_2) : A! \langle E \rangle}[T-Sc]$\\
             \\
           \end{tabular} \\
           % bottom
@@ -302,37 +303,51 @@ Voor de \textbf{T-EqC} regel die \emph{type-equivalentie voor computaties} behan
         % top
         \\
         % header
-         \begin{tabular} {l l l r}
+         \begin{tabular} {l l}
               \begin{tabular}{|l|}
               \hline
-                     $\Gamma \vdash oprs\::\:\underline{C}$ \\
+                     $\Gamma \vdash \textbf{return} \ x \mapsto c_r : M \ A ! \langle E \rangle$ \\
                 \hline
               \end{tabular} & \begin{tabular}{|l|}
               \hline
-                     $\Gamma \vdash \textbf{fwd}\:f\:p\:k \mapsto c\::\:\underline{C}$ \\
+                     $\Gamma \vdash oprs : M \ A ! \langle E \rangle$ \\
                 \hline
-              \end{tabular} & \begin{tabular}{|l|}
+              \end{tabular} \\ 
+              \begin{tabular}{|l|}
               \hline
-                     $\Gamma \vdash h\::\:\underline{C} \Rightarrow \underline{D}$ \\
+                     $\Gamma \vdash \textbf{fwd} \ f \ p \ k \mapsto c_f : M \ A ! \langle E \rangle$ \\
                 \hline
-              \end{tabular} & Handler typering \\
+              \end{tabular} & return-, operatie- en forwarding-typering \\
          \end{tabular} \\
          % rules
           \begin{tabular}{c}
           \\
-            $\inference{}{\Gamma \vdash .\::\:\underline{C}}[T-Empty]$ \\ 
+            $\inference{\Gamma , \ x : A \mapsto c_r : M \ A ! \langle E \rangle}{\Gamma \vdash \textbf{return} \ x \mapsto c_r : M \ A ! \langle E \rangle}[T-Return] \qquad \inference{}{\Gamma \vdash .\::\:\underline{C}}[T-Empty]$\\
             \\
-            $\inference{\Gamma \vdash oprs \::\: \underline{C} \qquad (l\::\: A_l \rightarrowtriangle B_l) \in \Sigma \qquad \Gamma,\:x\::\:A_l,\:k\::\:B_l \rightarrow \underline{C} \vdash c \::\: \underline{C}}{\Gamma \vdash \textbf{op}\:l\:x\:k \mapsto c,\:oprs\::\: \underline{C}}[T-OprOp]$\\
+            $\inference{\Gamma \vdash oprs : M \ A ! \langle E \rangle \qquad (l^{op} : A_{op} \rightarrowtriangle B_{op}) \in \Sigma  \\ \Gamma , \ x : A_{op} , \ k : B_{op} \rightarrow M \ A ! \langle E \rangle \vdash c : M \ A ! \langle E \rangle}{\Gamma \vdash \textbf{op} \ l^{op} \ x \ k \mapsto c, \ oprs : M \ A ! \langle E \rangle}[T-OprOp]$\\
             \\
-            $\inference{\Gamma \vdash oprs\::\:M\:A!\langle E \rangle \qquad (l\::\:A_l \rightarrowtriangle b_l) \in  \Sigma) \\
-            \Gamma, \: \beta ,\:x\::\:A_l , \:p\::\:B_l \rightarrow M\: \beta ! \langle E \rangle ,\:k\::\: \beta \rightarrow M\:A! \langle E \rangle \vdash c \::\: M\:A! \langle E \rangle}{\Gamma \vdash \textbf{sc}\:l\:v\:p\:k \mapsto c,\:oprs\::\:M\:A! \langle E \rangle}[T-OprSc]$\\
+            $\inference{\Gamma \vdash oprs : M \ A ! \langle E \rangle \qquad (l^{sc} : A_{sc} \rightarrowtriangle B_{sc}) \in  \Sigma) \\
+            \Gamma, \ \beta , \ x : A_{sc} , \ p : B_{sc} \rightarrow M \ \beta ! \langle E \rangle , \ k : \beta \rightarrow M \ A ! \langle E \rangle \vdash c : M \ A ! \langle E \rangle}{\Gamma \vdash \textbf{sc} \ l^{sc} \ v \ p \ k \mapsto c, \ oprs : M \ A ! \langle E \rangle}[T-OprSc]$\\
             \\
-            $\inference{A_p = \alpha \rightarrow M\: \beta ! \langle E \rangle \qquad A_k = \beta \rightarrow M \: A!\langle E \rangle \qquad A_k' = M\: \beta \rightarrow M\:A!\langle E \rangle \\
-            \Gamma,\: \alpha,\:\beta,\:p\::\:A_p,\:k\::\:A_k,\:f\::\:(A_p,\:A_k') \rightarrow M\:A!\langle E \rangle \vdash c_f \::\: M\:A!\langle E \rangle}{\Gamma \vdash \textbf{fwd}\:f\:p\:k \mapsto c_f \::\: M\:A!\langle E \rangle}[T-Fwd]$\\
+            $\inference{A_p = \alpha \rightarrow M \ \beta ! \langle E \rangle \qquad A_p' = \alpha \rightarrow \gamma ! \langle E \rangle \\
+            A_k = \beta \rightarrow M \ A ! \langle E \rangle \qquad A_k' = \gamma \rightarrow \delta ! \langle E \rangle \\
+            \Gamma , \ \alpha , \ \beta , \ p : A_p , \ k : A_k , \ f : \forall \ \gamma \ \delta . \ (A_p, \ A_k') \rightarrow \delta ! \langle E \rangle \vdash c_f  : M \ A ! \langle E \rangle}{\Gamma \vdash \textbf{fwd} \ f \ p \ k \mapsto c_f : M \ A ! \langle E \rangle}[T-Fwd]$\\
             \\
-            $\inference{\langle E \rangle = \langle labels \: (oprs);\:F \rangle \qquad \Gamma, \: \alpha \vdash \textbf{return} \   x \mapsto c_r \::\: M\:\alpha ! \langle F \rangle \\ \Gamma,\:\alpha \vdash oprs\::\: M \: \alpha !\langle F \rangle \qquad \Gamma,\: \alpha \vdash \textbf{fwd}\:f\:p\:k \mapsto c_f\::\:M\:\alpha ! \langle F \rangle}{\Gamma \vdash \textbf{handler}\:\{\:\textbf{return},\:oprs,\:\textbf{fwd}\:\}\::\:\forall\:\alpha.\:\alpha!\langle E \rangle \Rightarrow M\:\alpha ! \langle F \rangle}[T-Handler]$\\
+            \end{tabular}
             \\
-          \end{tabular} \\
+            \begin{tabular} {l l}
+              \begin{tabular}{|l|}
+              \hline
+                     $\Gamma \vdash h : \forall \ \alpha . \ \alpha ! \langle E \rangle \Rightarrow M \ \alpha ! \langle F \rangle$ \\
+                \hline
+              \end{tabular} & handler-typering \\
+         \end{tabular} \\
+         \begin{tabular}{c}
+         \\
+            $\inference{\langle F \rangle \equiv_{\langle \rangle} \langle labels \ (oprs); \ E \rangle \qquad \Gamma , \ \alpha \vdash \textbf{return} \   x \mapsto c_r : M \ \alpha ! \langle E \rangle \\ \Gamma , \ \alpha \vdash oprs : M \ \alpha ! \langle E \rangle \qquad \Gamma , \ \alpha \vdash \textbf{fwd} \ f \ p \ k \mapsto c_f : M \ \alpha ! \langle E \rangle}{\Gamma \vdash \textbf{handler} \ \{ \textbf{return} \ x \mapsto c_r , \ oprs , \ \textbf{fwd} \ f \ p \ k \mapsto c_f \} : \forall \ \alpha . \ \alpha ! \langle F \rangle \Rightarrow M \ \alpha ! \langle E \rangle}[T-Handler]$\\
+            \\
+         \end{tabular}
+         \\
           % bottom
           \\
         \hline
@@ -354,7 +369,6 @@ Een typerend kenmerk van de calculus is dat de calculus een \emph{fine-grained c
 Binnen het effect handler paradigma zijn de grootste veranderingen van de $\lambda_{sc}$-calculus tegenover een calculus voor algebraïsche effecten zoals Eff \cite{Bauer2015} enerzijds de introductie van de \textbf{sc} operatie voor scoped effecten en de syntaxis en semantiek hierrond, inclusief de nood voor niet-generieke forwarding doormiddel van de \textbf{fwd} clausule. Om dit te bereiken is de introductie van let-polymorfisme nodig die de syntactische toevoeging van het \textbf{let} sleutelwoord noodzaakt. Het \textbf{let} sleutelwoord laat toe om polymorfe handlers te introduceren, welke nodig zijn om scoped operaties te typeren, specifiek de scoped computatie binnen de scoped effect clausule.
 
 \section{\texorpdfstring{$\lambda^{p}:$}{} Parallelle algebraïsche effect handlers} \label{hoofdstuk:startpuntParallel}
-% TODO: grote en kleine stappen op juiste manier presenteren
 Deze sectie presenteert een calculus voor de \emph{parallelle behandeling van algebraïsche effecten}. De calculus hieronder gepresenteerd is een lichte aangepaste versie van de calculus beschreven in "Parallel Algebraic Effect Handlers" \cite{Xie2021}. De aanpassingen aan de calculus zijn bedoeld als \emph{refactoring} zodat de vorm dichter aanleunt bij de vorm van de andere calculi gepresenteerd in deze thesis maar de \emph{functie bewaard blijft} zoals in de paper. Merk op dat de calculus een grote-staps operationele semantiek modelleert in tegenstelling tot de andere calculi in deze thesis en dat de calculus ongetypeerd is.
 
 \subsection{Syntaxis}
@@ -409,19 +423,14 @@ Opvallend aan de syntaxis van handlers is dat elke handler precies \'{e}\'{e}n c
          \end{tabular} \\
          % rules
           \begin{tabular}{c}
-            $\inference{}{(\lambda\:x.\:e)\:v \leadsto e\:[\:v\:/\:x\:]}[E-App]$ \\ 
+          \\
+            $\inference{}{(\lambda\:x.\:e)\:v \leadsto e\:[\:v\:/\:x\:]}[E-App] \qquad \inference{}{\langle v_{0},\: ... ,\: v_{n} \rangle \: i \leadsto v_{i}}[E-Index]$ \\
             \\
-            $\inference{}{\langle v_{0},\: ... ,\: v_{n} \rangle \: i \leadsto v_{i}}[E-Index]$ \\
-            \\
-            $\inference{(\textbf{return} \mapsto f_{r}) \in h}{\textbf{handle}\:h\:v \leadsto f_{r}\:v}[E-Return]$ \\
-            \\
-            $\inference{\textbf{op} \notin bop(E) \wedge (\textbf{op} \mapsto f_{p}) \in h \\ where\:k=\:\lambda\:x.\:\textbf{handle}\:h\:E[x]}{\textbf{handle}\:h\:E[\textbf{perform}\:op\:v] \leadsto f_{p}\:v\:k}[E-Perform]$ \\
+            $\inference{(\textbf{return} \mapsto f_{r}) \in h}{\textbf{handle}\:h\:v \leadsto f_{r}\:v}[E-Return] \qquad \inference{\textbf{op} \notin bop(E) \wedge (\textbf{op} \mapsto f_{p}) \in h \\ where\:k=\:\lambda\:x.\:\textbf{handle}\:h\:E[x]}{\textbf{handle}\:h\:E[\textbf{perform}\:op\:v] \leadsto f_{p}\:v\:k}[E-Perform]$ \\
             \\
             $\inference{(\textbf{traverse} \mapsto f_{t}) \in h \\
             where\:l\:=\:\textbf{for}\:x\::\:n.\:\textbf{handle}\:h\:e \\
-            k\:=\:\lambda\:xs.\:\textbf{handle}\:h\:F[xs]}{\textbf{handle}\:h\:F[\textbf{for}\:x\::\:n.\:e] \leadsto f_{t}\:n\:l\:k}[E-Traverse]$ \\
-            \\
-            $\inference{e \leadsto e'}{E[e] \mapsto E[e']}[E-Step]$ \\
+            k\:=\:\lambda\:xs.\:\textbf{handle}\:h\:F[xs]}{\textbf{handle}\:h\:F[\textbf{for}\:x\::\:n.\:e] \leadsto f_{t}\:n\:l\:k}[E-Traverse] \qquad \inference{e \leadsto e'}{E[e] \mapsto E[e']}[E-Step]$ \\
             \\
             $\inference{\forall \: 0 \: \leq \: i < n. \  e[x\:::=\:i] \mapsto v_{i}}{F[\textbf{for}\:x\::\:n. \  e] \mapsto F[\langle v_{0},\:...,\:v_{n-1}\rangle]}[E-Parallel]$ \\
           \end{tabular} \\
@@ -448,7 +457,6 @@ De E-Parallel is mogelijk uitdagend te implementeren in een interpreter. Hoe kan
 %Doordat elke handler in de \textbf{E-Traverse} clausule nieuwe \textbf{for} constructies kan introduceren is het nodig om als buitenste handler het programma te evalueren met een handler die de resterende \textbf{for}-constructies puur behandelt. 
 
 \section{Gecombineerde calculus}
-% TODO: 
 De $\lambda_{sc}$-calculus ondersteunt de sequentiële behandeling van algebraïsche en scoped effecten. De $\lambda^{p}$-calculus ondersteunt de parallelle afhandeling van algebraïsche effecten. Het doel van de masterproef is een gecombineerde calculus te bekomen die de combinatie van beide ondersteunt. Uit dit hoofdstuk blijkt dat er significante verschillen zijn in het ontwerp van beide calculi. \newline 
 Hoofdstuk \ref{hoofdstuk:motivatie} bespreekt wat het plan van aanpak is om beide calculi samen te voegen en wat de uitdagingen zijn. De gecombineerde calculus bouwt verder op de $\lambda_{sc}$-calculus en probeert de bevindingen uit de $\lambda^p$-calculus hierin in te passen. \newline
 Hoofdstukken \ref{hoofdstuk:syntaxis} en \ref{hoofdstuk:semantiek} behandelen de syntaxis en semantiek voor de gecombineerde calculus $\lambda_{sc}^{p}$. \newline
