@@ -669,3 +669,55 @@ exWeak = hPure # hAccumS # hWeak # cWeak
 -- Usage:
 -- >>> evalFile $ exWeak
 -- Return ("start 1!345", Left "error")
+
+
+----------------------------------------------------------
+-- PRNG example
+
+-- (skipped for now), needs splitkey and genUniform
+
+----------------------------------------------------------
+-- Amb example
+
+hAmb :: Handler
+hAmb = Handler
+  "hAmb" ["amb"][]
+  ("x", Return (Var "x" 0))
+  (\ oplabel -> case oplabel of
+    "amb" -> Just ("x", "k",
+      For (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
+  ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
+  , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+              Do "s'" (Unop Snd (Var "zs" 1)) $
+              Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+              App (Var "k'" 0) (Var "s'" 1)
+  )))
+  (Just ("list", "l", "k",
+    Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
+    Do "productElts" (Unop CartesianProd (Var "results" 0)) $
+    For (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))
+  ))
+
+cAmb :: Comp
+cAmb = 
+  Do "d1" (Op "amb" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
+  Do "d2" (Op "amb" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
+  Do "res" (Binop Add (Var "d1" 1) (Var "d2" 0)) $
+  Do "eq" (Binop Eq (Var "res" 0) (Vint 13)) $
+  If (Var "eq" 0) (Op "accum" (Vint 1) ("y" :. Return Vunit)) (Return Vunit)
+
+
+exAmb :: Comp
+exAmb = hPure # hAccum # hAmb # cAmb
+
+-- Usage:
+-- >>> evalFile $ exAmb
+-- Return (6, [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
+
+-- Finds [(4,9),(5,8),(6,7),(7,6),(8,5),(9,4)]
+
+----------------------------------------------------------

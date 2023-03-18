@@ -1,6 +1,7 @@
 module Evaluation where
 
 import Syntax
+import Data.List
 
 type Step = String
 
@@ -110,8 +111,8 @@ evalUnop Empty _ = return . Return . Vbool $ False
 evalUnop Read (Vstr xs) = return . Return . Vint $ read xs
 evalUnop Close (Vret (Vlist xs))  = return . Return . Vflag . Vlist $ xs
 evalUnop Close (Vflag (Vlist xs)) = return . Return . Vflag . Vlist $ xs
-evalUnop Open  (Vret (Vlist xs))  = return . Return . Vret  . Vlist $ xs
-evalUnop Open  (Vflag (Vlist xs)) = return . Return . Vret  . Vlist $ xs
+evalUnop Open  (Vret (Vlist xs))  = return . Return . Vret . Vlist $ xs
+evalUnop Open  (Vflag (Vlist xs)) = return . Return . Vret . Vlist $ xs
 evalUnop Newmem Vunit = return . Return $ Vmem emptymem
 evalUnop FirstFail (Vlist lst) = return $ case sequence (map firstError lst) of
     Left e  -> Return $ Vsum (Left e)
@@ -119,7 +120,9 @@ evalUnop FirstFail (Vlist lst) = return $ case sequence (map firstError lst) of
   where firstError x = case x of Vsum (Left e)  -> Left e
                                  Vsum (Right x) -> Right x
                                  _             -> error "firstError: not a sum"
-evalUnop _ _ = Nothing
+evalUnop CartesianProd (Vlist lst) = 
+  let list = map (\l -> Vlist l) (subsequences lst) in
+    return . Return . Vlist $ list
 
 evalBinop :: Op2 -> Value -> Value -> Maybe Comp
 evalBinop Add (Vint x) (Vint y) = return . Return . Vint $ x + y

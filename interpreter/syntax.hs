@@ -129,6 +129,7 @@ data Op1
     | Read
     | Newmem
     | FirstFail
+    | CartesianProd
     deriving (Show, Eq)
 
 data Op2
