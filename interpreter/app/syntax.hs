@@ -1,4 +1,7 @@
+{-# LANGUAGE FlexibleInstances    #-}
 module Syntax where
+
+import System.Random
 
 type Name = String
 
@@ -20,6 +23,7 @@ data Value
   | Vret Value 
   | Vflag Value
   | Vmem (Memory Value)
+  | Vkey (StdGen)
   deriving (Eq)
 
 instance Show Value where
@@ -39,6 +43,7 @@ instance Show Value where
   show (Vret v) = "Vreturn " ++ show v
   show (Vflag v) = "flag " ++ show v
   show (Vmem m) = show m
+  show (Vkey k) = show k
 
 
 
@@ -130,6 +135,8 @@ data Op1
     | Newmem
     | FirstFail
     | CartesianProd
+    | Rand
+    | SplitKeyPair
     deriving (Show, Eq)
 
 data Op2
@@ -148,6 +155,7 @@ data Op2
     | Eq
     | Larger
     | Map
+    | SplitKey
     deriving (Show, Eq)
 
 -- | Memory datatype

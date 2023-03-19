@@ -2,6 +2,7 @@ module Evaluation where
 
 import Syntax
 import Data.List
+import System.Random
 
 type Step = String
 
@@ -123,6 +124,10 @@ evalUnop FirstFail (Vlist lst) = return $ case sequence (map firstError lst) of
 evalUnop CartesianProd (Vlist lst) = 
   let list = map (\l -> Vlist l) (subsequences lst) in
     return . Return . Vlist $ list
+evalUnop Rand (Vkey g) = let (val, key) = randomR (0, 100) g in
+  return . Return . Vpair $ (Vint val, Vkey key)
+evalUnop SplitKeyPair (Vkey g) = let (key1, key2) = split g in
+  return . Return . Vpair $ (Vkey key1, Vkey key2)
 
 evalBinop :: Op2 -> Value -> Value -> Maybe Comp
 evalBinop Add (Vint x) (Vint y) = return . Return . Vint $ x + y
@@ -160,6 +165,11 @@ evalBinop Map (Vlist xs) f = return $ case xs of
   (x:xs) -> Do "y" (App f x) $ -- E-Map
             Do "ys'" (Binop Map (shiftV 1 $ Vlist xs) (shiftV 1 f)) $
             Binop Append (Vlist [Var "y" 1]) (Var "ys" 0)
+evalBinop SplitKey (Vkey g) (Vlist list) = let n = length list in
+  return . Return $ Vlist $ map (\x -> Vkey x) (splitTo g n) where
+    splitTo g 0 = []
+    splitTo g 1 = [g]
+    splitTo g n = let (g1, g2) = split g in g1 : splitTo g2 (n-1)
 evalBinop _ _ _ = Nothing
 
 
@@ -278,6 +288,7 @@ mapV fc fv v = case v of
   Vstr s -> Vstr s
   Vchar c -> Vchar c
   Vrec x v1 v2 -> Vrec x (fv v1) (fv v2)
+  Vkey v -> Vkey v
   -- oth -> oth
 
 varmapC :: (Int -> (Name, Int) -> Value) -> Int -> Comp -> Comp

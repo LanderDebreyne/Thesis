@@ -4,6 +4,7 @@ import Syntax
 import Evaluation
 import Prelude hiding ((<>))
 import Data.Text.IO
+import System.Random
 
 ----------------------------------------------------------------
 -- * Some Auxiliary Functions :
@@ -674,7 +675,45 @@ exWeak = hPure # hAccumS # hWeak # cWeak
 ----------------------------------------------------------
 -- PRNG example
 
--- (skipped for now), needs splitkey and genUniform
+hPRNG :: Handler
+hPRNG = Handler
+  "hPRNG" ["sampleUniform"] []
+  ("x", Return . Lam "key" $ Return (Var "x" 1))
+  (\ oplabel -> case oplabel of
+    "sampleUniform" -> Just ("x", "k", Return . Lam "key" $ 
+      Do "pair" (Unop Rand (Var "key" 0)) $
+      Do "val" (Unop Fst (Var "pair" 0)) $
+      Do "key" (Unop Snd (Var "pair" 1)) $
+      Do "cont" (App (Var "k" 4) (Var "key" 0)) $ 
+      App (Var "cont" 0) (Var "val" 2))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
+  ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
+  , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+              Do "s'" (Unop Snd (Var "zs" 1)) $
+              Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+              App (Var "k'" 0) (Var "s'" 1)
+  )))
+  (Just ("list", "l", "k", Return . Lam "key" $ 
+    Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
+    Do "key1" (Unop Fst (Var "keys" 0)) $
+    Do "key2" (Unop Snd (Var "keys" 1)) $
+    Do "key1s" (Binop SplitKey (Var "key1" 0) (Var "list" 6)) $
+    Do "results" (App (Var "l" 6) (Var "key1s" 0)) $
+    Do "cont" (App (Var "k" 6) (Var "key2" 2)) $
+    App (Var "cont" 0) (Var "results" 1)))
+
+
+-- TODO: example of using PRNG
+cPRNG :: Comp
+cPRNG = For (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
+
+-- TODO: example of using PRNG and giving initial key
+exPRNG = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
+         Do "ex" (hPure # hPRNG # cPRNG) $
+        (App (Var "ex" 0) (Var "key" 1)))
 
 ----------------------------------------------------------
 -- Amb example
