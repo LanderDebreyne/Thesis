@@ -684,8 +684,8 @@ hPRNG = Handler
       Do "pair" (Unop Rand (Var "key" 0)) $
       Do "val" (Unop Fst (Var "pair" 0)) $
       Do "key" (Unop Snd (Var "pair" 1)) $
-      Do "cont" (App (Var "k" 4) (Var "key" 0)) $ 
-      App (Var "cont" 0) (Var "val" 2))
+      Do "cont" (App (Var "k" 4) (Var "val" 1)) $ 
+      App (Var "cont" 0) (Var "key" 1))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
@@ -700,20 +700,51 @@ hPRNG = Handler
     Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
     Do "key1" (Unop Fst (Var "keys" 0)) $
     Do "key2" (Unop Snd (Var "keys" 1)) $
-    Do "key1s" (Binop SplitKey (Var "key1" 0) (Var "list" 6)) $
-    Do "results" (App (Var "l" 6) (Var "key1s" 0)) $
-    Do "cont" (App (Var "k" 6) (Var "key2" 2)) $
-    App (Var "cont" 0) (Var "results" 1)))
+    Do "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) $
+    Do "for" (App (Var "l" 6) (Var "list" 7)) $
+    Do "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) $
+    Do "cont" (App (Var "k" 7) (Var "results" 0)) $
+    App (Var "cont" 0) (Var "key2" 4)))
 
 
--- TODO: example of using PRNG
 cPRNG :: Comp
-cPRNG = For (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
+cPRNG = For (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
 
--- TODO: example of using PRNG and giving initial key
-exPRNG = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
-         Do "ex" (hPure # hPRNG # cPRNG) $
+cPRNGseq :: Comp
+cPRNGseq =  Do "1" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
+            Do "2" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
+            Do "3" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
+            Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
+
+-- Needs new parallel handler to thread keys through correctly
+hPureK :: Handler
+hPureK = Parallel
+  (("list", "p", "k", Return . Lam "keys" $
+      Do "results" (Binop Map (Var "list" 2) (Var "p" 1)) $
+      Do "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) $
+      App (Var "k" 3) (Var "resultskeys" 0)))
+  (("x", Return (Var "x" 0)))
+
+exPRNGpar :: Comp
+exPRNGpar = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
+         Do "ex" (hPureK # hPRNG # cPRNG) $
         (App (Var "ex" 0) (Var "key" 1)))
+
+exPRNGseq :: Comp
+exPRNGseq = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
+         Do "ex" (hPure # hPRNG # cPRNGseq) $
+        (App (Var "ex" 0) (Var "key" 1)))
+
+
+-- Usage:
+-- Parallel version
+-- >>> evalFile $ exPRNGpar
+-- Return [80, 38, 7]
+-- Sequential version
+-- >>> evalFile $ exPRNGseq
+-- Return [48, 23, 95]
+
+-- Notice different values, because the keys split in the parallel version
 
 ----------------------------------------------------------
 -- Amb example

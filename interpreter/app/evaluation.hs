@@ -170,6 +170,13 @@ evalBinop SplitKey (Vkey g) (Vlist list) = let n = length list in
     splitTo g 0 = []
     splitTo g 1 = [g]
     splitTo g n = let (g1, g2) = split g in g1 : splitTo g2 (n-1)
+evalBinop Zip (Vlist xs) (Vlist ys) =  return $ case xs of
+  [] -> Return . Vlist $ []
+  (x:xs) -> case ys of
+    [] -> Return . Vlist $ []
+    (y:ys) -> Do "z" (App x y) $
+              Do "zs" (Binop Zip (shiftV 1 $ Vlist xs) (shiftV 1 $ Vlist ys)) $
+              Binop Append (Vlist [Var "z" 1]) (Var "zs" 0)
 evalBinop _ _ _ = Nothing
 
 

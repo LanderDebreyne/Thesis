@@ -156,6 +156,7 @@ data Op2
     | Larger
     | Map
     | SplitKey
+    | Zip
     deriving (Show, Eq)
 
 -- | Memory datatype
