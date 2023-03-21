@@ -581,13 +581,52 @@ hPure = Parallel
       App (Var "k" 1) (Var "result" 0)))
   (("x", Return (Var "x" 0)))
 
+cAccum :: Comp
 cAccum = For (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
+exFor :: Comp
 exFor = hPure # hAccum # cAccum
 
 -- Usage:
 -- >>> evalFile $ exFor
 -- Return (VPair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit]))
+
+
+-- Example without traverse clausule
+
+hAccumNoFor :: Handler
+hAccumNoFor = Handler
+  "hAccum" ["accum"] []
+  ("x", Return (Vpair (Vint 0, Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      Do "k'" (App (Var "k" 0) (Vunit)) $
+      Do "m'" (Unop Fst (Var "k'" 0)) $
+      Do "s" (Unop Snd (Var "k'" 1)) $
+      Do "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
+    ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
+    , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+                Do "s'" (Unop Snd (Var "zs" 1)) $
+                Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+                App (Var "k'" 0) (Var "s'" 1)
+    )))
+    Nothing
+
+exNoFor :: Comp
+exNoFor = hPure # hAccumNoFor # cAccum
+
+-- Each element of the list is treated as a separate computation
+-- The result is a list of results of each computation
+-- The results are not accumulated
+
+-- Usage:
+-- >>> evalFile $ exNoFor
+-- Return (0, [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())])
 
 ----------------------------------------------------------------
 -- Weak exceptions example
@@ -789,5 +828,21 @@ exAmb = hPure # hAccum # hAmb # cAmb
 -- Return (6, [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
 
 -- Finds [(4,9),(5,8),(6,7),(7,6),(8,5),(9,4)]
+
+
+cComb :: Comp
+cComb = 
+  Do "d1" (Op "amb" (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
+  Do "d2" (Op "amb" (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
+  Do "d3" (Op "amb" (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
+  Do "l1" (Binop AppendS (Var "d1" 2) (Var "d2" 1)) $ 
+  Binop AppendS (Var "l1" 0) (Var "d3" 1)
+
+exComb :: Comp
+exComb = hPure # hAmb # cComb
+
+-- Usage:
+-- >>> evalFile $ exComb
+-- Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
 
 ----------------------------------------------------------
