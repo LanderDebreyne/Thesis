@@ -970,7 +970,35 @@ exForSc2 = hPure # hAccumSc2 # cAccumSc
 -- evalFile exForSc2
 -- Return (15, [(),(),(),(),()])
 
--- Remark that all cAccum examples find the same solution
+hAccumScNoFor :: Handler
+hAccumScNoFor = Handler
+  "hAccumSc" ["accum"] []
+  ("x", Return (Vpair (Vint 0, Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      Do "k'" (App (Var "k" 0) (Vunit)) $
+      Do "m'" (Unop Fst (Var "k'" 0)) $
+      Do "s" (Unop Snd (Var "k'" 1)) $
+      Do "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+    Nothing
+
+
+exNoForSc :: Comp
+exNoForSc = hPureSc # hAccumScNoFor # cAccumSc
+
+-- Usage:
+-- evalFile exNoForSc
+-- Return (0, [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())])
+
+-- Remark that all cAccum examples find the same solution as their parallel effect counterparts
 
 ----------------------------------------------------------------------------------------------------------------------------
 
@@ -1057,3 +1085,138 @@ exWeakSc = hPureSc # hAccumSSc # hWeakSc # cWeakSc
 -- Usage:
 -- >>> evalFile exWeakSc
 -- Return ("start 1!345", Left "error")
+
+----------------------------------------------------------------------------------------------------------------------------
+
+-- PRNG example as scoped effect
+
+hPRNGSc :: Handler
+hPRNGSc = Handler
+  "hPRNGSc" ["sampleUniform"] ["for"]
+  ("x", Return . Lam "key" $ Return (Var "x" 1))
+  (\ oplabel -> case oplabel of
+    "sampleUniform" -> Just ("x", "k", Return . Lam "key" $ 
+      Do "pair" (Unop Rand (Var "key" 0)) $
+      Do "val" (Unop Fst (Var "pair" 0)) $
+      Do "key" (Unop Snd (Var "pair" 1)) $
+      Do "cont" (App (Var "k" 4) (Var "val" 1)) $ 
+      App (Var "cont" 0) (Var "key" 1))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", Return . Lam "key" $ 
+        Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
+        Do "key1" (Unop Fst (Var "keys" 0)) $
+        Do "key2" (Unop Snd (Var "keys" 1)) $
+        Do "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) $
+        Do "for" (Sc "for" (Var "x" 7) ("y" :. App (Var "p" 7) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+        Do "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) $
+        Do "cont" (App (Var "k" 7) (Var "results" 0)) $
+        App (Var "cont" 0) (Var "key2" 4))
+    _ -> Nothing)
+  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
+  ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
+  , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+              Do "s'" (Unop Snd (Var "zs" 1)) $
+              Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+              App (Var "k'" 0) (Var "s'" 1)
+  )))
+  Nothing
+
+
+cPRNGSc :: Comp
+cPRNGSc = Sc "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
+
+cPRNGseqSc :: Comp
+cPRNGseqSc =  Do "1" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
+            Do "2" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
+            Do "3" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
+            Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
+
+-- Needs new parallel handler to thread keys through correctly
+hPureKSc :: Handler
+hPureKSc = Handler
+  "hPureSc" [] ["for"]
+  ("x", Return (Var "x" 0))
+  (\ oplabel -> case oplabel of
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", Return . Lam "keys" $
+                Do "results" (Binop Map (Var "x" 3) (Var "p" 2)) $
+                Do "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) $
+                App (Var "k" 3) (Var "resultskeys" 0))
+    _ -> Nothing)
+  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
+    ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
+    , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+                Do "s'" (Unop Snd (Var "zs" 1)) $
+                Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+                App (Var "k'" 0) (Var "s'" 1)
+    )))
+    Nothing
+
+
+exPRNGparSc :: Comp
+exPRNGparSc = hPureSc # (Do "key" (Return (Vkey (mkStdGen 42))) $
+         Do "ex" (hPureKSc # hPRNGSc # cPRNGSc) $
+        (App (Var "ex" 0) (Var "key" 1)))
+
+
+-- Usage:
+-- >>> evalFile exPRNGparSc
+-- Return [80,38,7]
+
+exPRNGseqSc :: Comp
+exPRNGseqSc = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
+         Do "ex" (hPureSc # hPRNGSc # cPRNGseqSc) $
+        (App (Var "ex" 0) (Var "key" 1)))
+
+-- Usage:
+-- >>> evalFile exPRNGseqSc
+-- Return [48,23,95]
+
+-- Remark that these results are the same as the examples as parallel effects
+
+----------------------------------------------------------------------------------------------------------------------------
+
+-- Amb example as scoped effect
+
+hAmbSc :: Handler
+hAmbSc = Handler
+  "hAmbSc" ["amb"]["for"]
+  ("x", Return (Var "x" 0))
+  (\ oplabel -> case oplabel of
+    "amb" -> Just ("x", "k",
+      Sc "for" (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", 
+              Do "results" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $ 
+              Do "productElts" (Unop CartesianProd (Var "results" 0)) $
+              For (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+    _ -> Nothing)
+  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
+  ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
+  , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+              Do "s'" (Unop Snd (Var "zs" 1)) $
+              Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+              App (Var "k'" 0) (Var "s'" 1)
+  )))
+  Nothing
+
+exAmbSc :: Comp
+exAmbSc = hPureSc # hAccumSc1 # hAmbSc # cAmb
+
+-- Usage:
+-- >>> evalFile $ exAmbSc
+-- Return (6, [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
+
+-- Finds [(4,9),(5,8),(6,7),(7,6),(8,5),(9,4)]
+
+exCombSc :: Comp
+exCombSc = hPureSc # hAmbSc # cComb
+
+-- Usage:
+-- >>> evalFile $ exComb
+-- Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
+
+-- Remark that these results are the same as the examples using parallel effects
