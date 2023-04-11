@@ -57,12 +57,12 @@ eval1 (App (Vrec x v1 v2) v) = return . shiftC (-1) $ subst (App v2 v) [(shiftV 
 eval1 (Do x (Return v) c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
 eval1 (Do x (Op l v (y :. c1)) c2) = return $ Op l v (y :. Do x c1 c2) -- E-DoOp
 eval1 (Do x (Sc l v (y :. c1) (z :. c2)) c3) = return $ Sc l v (y :. c1) (z :. Do x c2 c3) -- E-DoSc
-eval1 (Do x (For v (y :. c1) (z :. c2)) c3) = return $ For v (y :. c1) (z :. Do x c2 c3) -- E-DoFor
+eval1 (Do x (For l v (y :. c1) (z :. c2)) c3) = return $ For l v (y :. c1) (z :. Do x c2 c3) -- E-DoFor
 eval1 (Do x c1 c2) = do c1' <- eval1 c1; return $ Do x c1' c2 -- E-Do
 
-eval1 (Handle (Parallel (x, p, k, c) r) (For v (y :. c1) (z :. c2))) = Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
-                         (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r) c1), 1),
-                         (shiftV 3 $ Lam z (Handle (Parallel (x, p, k, c) r) c2), 0)])
+eval1 (Handle (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
+                         (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r fwd) c1), 1),
+                         (shiftV 3 $ Lam z (Handle (Parallel (x, p, k, c) r fwd) c2), 0)])
 
 eval1 (Handle h (Return v)) = return $ let (x, cr) = hreturn h in -- E-HandRet
   shiftC (-1) $ subst cr [(shiftV 1 v, 0)]
@@ -83,11 +83,19 @@ eval1 (Handle h (Sc l v (y :. c1) (z :. c2))) = return $ case hsc h l of -- E-Ha
           Do "k" (Unop Snd (Var "pk" 1)) $
           Sc l (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
       ]
-eval1 (Handle h (For v (y :. c1) (z :. c2))) = return $ case hfor h of -- E-HandFor
+eval1 (Handle h (For label v (y :. c1) (z :. c2))) = return $ case hfor h label of -- E-HandFor
     Just (x, l, k, c) -> shiftC (-3) $ subst c [ (shiftV 3 v, 2)
-                                                 , (shiftV 3 $ Lam l (For (Var l 0) (y :. Handle h c1) (z :.Return (Var z 0))), 1)
+                                                 , (shiftV 3 $ Lam l (For label (Var l 0) (y :. Handle h c1) (z :. Return (Var z 0))), 1)
                                                  , (shiftV 3 $ Lam z (Handle h c2), 0) ]
-    Nothing -> For v (y :. Handle h c1) (z :. Handle h c2) -- E-FwdFor
+    Nothing -> case hfwd h of -- E-FwdSc
+      (f, p, k, c) -> shiftC (-3) $ subst c
+        [ (shiftV 3 $ Lam y (Handle h c1), 1)
+        , (shiftV 3 $ Lam z (Handle h c2), 0)
+        , (Lam "pk" $ 
+            Do "p" (Unop Fst (Var "pk" 0)) $
+            Do "k" (Unop Snd (Var "pk" 1)) $
+            For label (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
+        ]
 eval1 (Handle h c) = do c' <- eval1 c; return $ Handle h c' -- E-Hand 
 eval1 (If (Vbool True) c1 c2) = return c1 -- E-IfTrue
 eval1 (If (Vbool False) c1 c2) = return c2 -- E-IfFalse
@@ -120,7 +128,7 @@ evalUnop FirstFail (Vlist lst) = return $ case sequence (map firstError lst) of
     Right x -> Return $ Vsum (Right $ Vlist (fmap (\(Vsum (Right x)) -> x) lst))
   where firstError x = case x of Vsum (Left e)  -> Left e
                                  Vsum (Right x) -> Right x
-                                 _             -> error "firstError: not a sum"
+                                 e              -> error ("firstError: not a sum: " ++ show e)
 evalUnop CartesianProd (Vlist lst) = 
   let list = map (\l -> Vlist l) (subsequences lst) in
     return . Return . Vlist $ list
@@ -189,14 +197,14 @@ eval1' (App (Vrec x v1 v2) v) = ("E-AppRec", return . shiftC (-1) $ subst (App v
 eval1' (Do x (Return v) c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
 eval1' (Do x (Op l v (y :. c1)) c2) = ("E-DoOp", return $ Op l v (y :. Do x c1 c2)) -- E-DoOp
 eval1' (Do x (Sc l v (y :. c1) (z :. c2)) c3) = ("E-DoSc", return $ Sc l v (y :. c1) (z :. Do x c2 c3)) -- E-DoSc
-eval1' (Do x (For v (y :. c1) (z :. c2)) c3) = ("E-DoFor", return $ For v (y :. c1) (z :. Do x c2 c3)) -- E-DoFor
+eval1' (Do x (For l v (y :. c1) (z :. c2)) c3) = ("E-DoFor", return $ For l v (y :. c1) (z :. Do x c2 c3)) -- E-DoFor
 eval1' (Do x c1 c2) = case (eval1' c1) of 
     (step, (Just c1')) -> ("E-Do and " ++ step, return $ Do x c1' c2) -- E-Do
     (step, Nothing) -> ("Nothing", Nothing)
 
-eval1' (Handle (Parallel (x, p, k, c) r) (For v (y :. c1) (z :. c2))) = ("E-Traverse" , Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
-                         (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r) c1), 1),
-                         (shiftV 3 $ Lam z (Handle (Parallel (x, p, k, c) r) c2), 0)]))
+eval1' (Handle (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = ("E-Traverse" , Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
+                         (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r fwd) c1), 1),
+                         (shiftV 3 $ Lam z (Handle (Parallel (x, p, k, c) r fwd) c2), 0)]))
 
 eval1' (Handle h (Return v)) = ("E-HandRet",  return $ let (x, cr) = hreturn h in -- E-HandRet
   shiftC (-1) $ subst cr [(shiftV 1 v, 0)])
@@ -217,11 +225,19 @@ eval1' (Handle h (Sc l v (y :. c1) (z :. c2))) = case hsc h l of -- E-HandSc
           Do "k" (Unop Snd (Var "pk" 1)) $
           Sc l (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
       ])
-eval1' (Handle h (For v (y :. c1) (z :. c2))) = case hfor h of -- E-HandFor
+eval1' (Handle h (For label v (y :. c1) (z :. c2))) = case hfor h label of -- E-HandFor
     Just (x, l, k, c) -> ("E-HandFor", return $ shiftC (-3) $ subst c [ (shiftV 3 v, 2)
-                                                 , (shiftV 3 $ Lam l (For (Var l 0) (y :. Handle h c1) (z :.Return (Var z 0))), 1)
+                                                 , (shiftV 3 $ Lam l (For label (Var l 0) (y :. Handle h c1) (z :.Return (Var z 0))), 1)
                                                  , (shiftV 3 $ Lam z (Handle h c2), 0) ])
-    Nothing -> ("E-FwdFor", return $ For v (y :. Handle h c1) (z :. Handle h c2)) -- E-FwdFor
+    Nothing -> ("E-FwdFor", return $ case hfwd h of -- E-FwdSc
+      (f, p, k, c) -> shiftC (-3) $ subst c
+        [ (shiftV 3 $ Lam y (Handle h c1), 1)
+        , (shiftV 3 $ Lam z (Handle h c2), 0)
+        , (Lam "pk" $ 
+            Do "p" (Unop Fst (Var "pk" 0)) $
+            Do "k" (Unop Snd (Var "pk" 1)) $
+            For label (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
+        ]) -- E-FwdFor
 eval1' (Handle h c) = case eval1' c of 
     (step, (Just c')) -> ("E-Hand and " ++ step, return $ Handle h c') -- E-Hand
     (step, Nothing) -> ("Nothing", Nothing)
@@ -256,7 +272,7 @@ mapC fc fv c = case c of
   Return v -> Return (fv v)
   Op l v (y :. c) -> Op l (fv v) (y :. fc c)
   Sc l v (y :. c1) (z :. c2) -> Sc l (fv v) (y :. fc c1) (z :. fc c2)
-  For v (y :. c1) (z :. c2) -> For (fv v) (y :. fc c1) (z :. fc c2)
+  For l v (y :. c1) (z :. c2) -> For l (fv v) (y :. fc c1) (z :. fc c2)
   Handle h c -> Handle (mapH fc h) (fc c)
   Do x c1 c2 -> Do x (fc c1) (fc c2)
   App v1 v2 -> App (fv v1) (fv v2)
@@ -302,7 +318,7 @@ varmapC :: (Int -> (Name, Int) -> Value) -> Int -> Comp -> Comp
 varmapC onvar cur c = case c of
     Op l v (y :. c) -> Op l (fv cur v) (y :. fc (cur+1) c)
     Sc l v (y :. c1) (z :. c2) -> Sc l (fv cur v) (y :. fc (cur+1) c1) (z :. fc (cur+1) c2)
-    For v (y :. c1) (z :. c2) -> For (fv cur v) (y :. fc (cur+1) c1) (z :. fc (cur+1) c2)
+    For l v (y :. c1) (z :. c2) -> For l (fv cur v) (y :. fc (cur+1) c1) (z :. fc (cur+1) c2)
     Handle h c -> Handle (varmapH onvar cur h) (fc cur c)
     Do x c1 c2 -> Do x (fc cur c1) (fc (cur+1) c2)
     Let x v c  -> Let x (fv cur v) (fc (cur+1) c)
@@ -314,10 +330,11 @@ varmapC onvar cur c = case c of
     fv = varmapV onvar
 
 varmapH :: (Int -> (Name, Int) -> Value) -> Int -> Handler -> Handler
-varmapH onvar cur (Parallel h1 h2) = (Parallel h1' h2') -- parallel handlers 
+varmapH onvar cur (Parallel h1 h2 h3) = (Parallel h1' h2' h3') -- parallel handlers 
   where
     h1' = let (x, l, k, c) = h1 in (x, l, k, fc (cur+3) c)
     h2' = let (x, c) = h2 in (x, fc (cur+1) c)
+    h3' = let (f, p, k, c) = h3 in (f, p, k, fc (cur+4) c)
     fc = varmapC onvar
 varmapH onvar cur h = h { hreturn = hr, hop = ho, hsc = hs, hfwd = hf } -- sequential handlers
   where

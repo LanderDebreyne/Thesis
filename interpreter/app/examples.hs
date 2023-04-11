@@ -43,6 +43,22 @@ hInc = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" ->   (Just ("list", "l", "k", Return . Lam "s" $ 
+          Do "xs" (App (Var "l" 2) (Var "list" 3)) $
+          Do "first" (Binop Map (Var "xs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+          Do "second" (Binop Map (Var "xs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+          Do "k'" (App (Var "k" 4) (Var "first" 1)) $
+          Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+                                    If (Var "n" 0) (Return (Vint 0)) 
+                                    (Do "h" (Unop Head (Var "l" 1)) $
+                                      Do "t" (Unop Tail (Var "l" 2)) $
+                                      Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                      Do "x" (Binop Add (Var "h" 2) (Var "y" 0)) $
+                                      Return (Var "x" 0))) 
+            (Do "s'" (App (Var "reduce" 0) (Var "second" 2)) $
+            App (Var "k'" 2) (Var "s'" 0))))
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "s" $ App (Var "f" 3) (Vpair
     ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
                 App (Var "p'" 0) (Var "s" 2)
@@ -51,21 +67,7 @@ hInc = Handler
                  Do "k'" (App (Var "k" 4) (Var "z" 1)) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
-  (Just ("list", "l", "k", Return . Lam "s" $ 
-      Do "xs" (App (Var "l" 2) (Var "list" 3)) $
-      -- TODO
-      Do "first" (Binop Map (Var "xs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
-      Do "second" (Binop Map (Var "xs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
-      Do "k'" (App (Var "k" 4) (Var "first" 1)) $
-      Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
-                                 If (Var "n" 0) (Return (Vint 0)) 
-                                 (Do "h" (Unop Head (Var "l" 1)) $
-                                  Do "t" (Unop Tail (Var "l" 2)) $
-                                  Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
-                                  Do "x" (Binop Add (Var "h" 2) (Var "y" 0)) $
-                                  Return (Var "x" 0))) 
-        (Do "s'" (App (Var "reduce" 0) (Var "second" 2)) $
-        App (Var "k'" 2) (Var "s'" 0))))
+
 
 -- | @runInc@ is a macro to help applying the initial count value
 runInc :: Int -> Comp -> Comp
@@ -77,7 +79,7 @@ cInc = Op "choose" Vunit ("b" :.
         If (Var "b" 0) (op "inc" Vunit) (op "inc" Vunit))
 
 cIncFor :: Comp
-cIncFor = For (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit) ("z" :. Return (Var "z" 0))
+cIncFor = For "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit) ("z" :. Return (Var "z" 0))
 
 -- Handling @cInc@:
 -- >>> evalFile $ hOnce # runInc 0 cInc
@@ -114,8 +116,10 @@ hOnce = Handler
       Do "t" (Unop Head (Var "ts" 0)) $
       App (Var "k" 2) (Var "t" 0))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMap (Var "z" 0) (Var "k" 1)))
-  Nothing -- TODO: for
+   -- TODO: for
 
 -- | @failure@ is a wrapper for @fail@ with a polymorphic return type.
 -- Defined in Section 7.1
@@ -153,8 +157,10 @@ hCut = Handler
       Do "x'" (Unop Open (Var "x" 0)) $
       Binop ConcatMapCutList (Var "x'" 0) (Var "k" 2))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
-  Nothing -- TODO: for
+  -- TODO: for
 
 -- | A simple program simulates the behavior of @cOnce@ using @cut@ and @call@.
 cCut :: Comp
@@ -189,8 +195,10 @@ hExcept = Handler
         (Do "y" (App (Var "p" 3) (Vbool False)) $ app2 exceptMap (Var "y" 0) (Var "k" 3))
         (app2 exceptMap (Var "x" 1) (Var "k" 2)))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   (lift2fwd ("k", "z", app2 exceptMap (Var "z" 0) (Var "k" 1)))
-  Nothing -- TODO: for
+   -- TODO: for
 
 -- | @exceptMap@ refers to the @exceptMap@ function in Section 7.3
 exceptMap :: Value
@@ -247,6 +255,8 @@ hState = Handler
                          Do "newm" (Binop Update (Vpair (Var "x" 8, Var "oldv" 0)) (Var "m'" 2)) $
                          App (Var "k'" 2) (Var "newm" 0))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "s" $ App (Var "f" 3) (Vpair
     ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
                 App (Var "p'" 0) (Var "s" 2)
@@ -255,7 +265,7 @@ hState = Handler
                  Do "k'" (App (Var "k" 4) (Var "z" 1)) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
-    Nothing -- For not possible?
+    -- For not possible?
 
 -- | @cState@ refers to the @c_state@ program in Section 7.4
 cState :: Comp
@@ -301,6 +311,8 @@ hDepth = Handler
                                          Do "k'" (App (Var "k" 5) (Var "v" 0)) $
                                          App (Var "k'" 0) (Var "d" 5)))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "d" $ App (Var "f" 3) (Vpair
     ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
                 App (Var "p'" 0) (Var "d" 2)
@@ -310,7 +322,7 @@ hDepth = Handler
         Do "k'" (App (Var "k" 5) (Var "v" 1)) $
         App (Var "k'" 0) (Var "d" 1))
     )))
-    Nothing -- TODO: for
+    -- TODO: for
 
 -- | @hDepth2@ is another handler for @depth@.
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
@@ -342,6 +354,8 @@ hDepth2 = Handler
                                          Do "k'" (App (Var "k" 9) (Var "v" 3)) $
                                          App (Var "k'" 0) (Var "trued" 1)))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "d" $ App (Var "f" 3) (Vpair
     ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
                 App (Var "p'" 0) (Var "d" 2)
@@ -351,7 +365,6 @@ hDepth2 = Handler
         Do "k'" (App (Var "k" 5) (Var "v" 1)) $
         App (Var "k'" 0) (Var "d" 1))
     )))
-    Nothing
 
 -- | @cDepth@ refers to the @c_depth@ program in Section 7.5
 cDepth :: Comp
@@ -398,6 +411,8 @@ hToken = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "s" $ App (Var "f" 3) (Vpair
     ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
                 App (Var "p'" 0) (Var "s" 2)
@@ -406,7 +421,6 @@ hToken = Handler
                  Do "k'" (App (Var "k" 4) (Var "z" 1)) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
-    Nothing
 
 -- | @<>@ refers to the syntactic sugar @<>@ in Section 7.6
 (<>) :: Comp -> Comp -> Comp
@@ -512,11 +526,12 @@ hReader = Handler
                          Do "newm" (Binop Update (Vpair ((Var "envKey" 8), (Var "oldEnv" 7))) (Var "m'" 1)) $
                          App (Var "k'" 1) (Var "newm" 0))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "m" $
         Do "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) $
         App (Var "f" 4) (Var "pk" 0)
   )
-    Nothing 
 
 -- | cReader is an example reader effect program
 cReader :: Comp
@@ -563,26 +578,28 @@ hAccum = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" ->     (Just ("list", "l", "k", 
+          Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
+          Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+          Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+          Do "k'" (App (Var "k" 3) (Var "second" 0)) $
+          Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+                                    If (Var "n" 0) (Return (Vint 0)) (Do "h" (Unop Head (Var "l" 1)) $
+                                                                      Do "t" (Unop Tail (Var "l" 2)) $
+                                                                      Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                                                      Do "x" (Binop Add (Var "h" 2) (Var "y" 0)) $
+                                                                      Return (Var "x" 0))) 
+            (Do "rest" (App (Var "reduce" 0) (Var "first" 3)) $
+            Do "base" (Unop Fst (Var "k'" 2)) $
+            Do "k''" (Unop Snd (Var "k'" 3)) $
+            Do "res" (Binop Add (Var "base" 1) (Var "rest" 2)) $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    (Just ("list", "l", "k", 
-      Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
-      Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
-      Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
-      Do "k'" (App (Var "k" 3) (Var "second" 0)) $
-      Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
-                                 If (Var "n" 0) (Return (Vint 0)) (Do "h" (Unop Head (Var "l" 1)) $
-                                                                   Do "t" (Unop Tail (Var "l" 2)) $
-                                                                   Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
-                                                                   Do "x" (Binop Add (Var "h" 2) (Var "y" 0)) $
-                                                                   Return (Var "x" 0))) 
-        (Do "rest" (App (Var "reduce" 0) (Var "first" 3)) $
-        Do "base" (Unop Fst (Var "k'" 2)) $
-        Do "k''" (Unop Snd (Var "k'" 3)) $
-        Do "res" (Binop Add (Var "base" 1) (Var "rest" 2)) $
-        Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
 
 hPure :: Handler
 hPure = Parallel
@@ -590,16 +607,20 @@ hPure = Parallel
       Do "result" (Binop Map (Var "list" 2) (Var "p" 1)) $
       App (Var "k" 1) (Var "result" 0)))
   (("x", Return (Var "x" 0)))
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
 
 cAccum :: Comp
-cAccum = For (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
+cAccum = For "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
 exFor :: Comp
 exFor = hPure # hAccum # cAccum
 
 -- Usage:
 -- >>> evalFile exFor
--- Return (VPair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit]))
+-- Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit]))
 
 
 -- Example without traverse clausule
@@ -618,11 +639,12 @@ hAccumNoFor = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
 
 exNoFor :: Comp
 exNoFor = hPure # hAccumNoFor # cAccum
@@ -653,26 +675,29 @@ hAccumS = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" -> (Just ("list", "l", "k", 
+          Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
+          Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+          Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+          Do "k'" (App (Var "k" 3) (Var "second" 0)) $
+          Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+                                If (Var "n" 0) (Return (Vstr "")) (Do "h" (Unop Head (Var "l" 1)) $
+                                                                  Do "t" (Unop Tail (Var "l" 2)) $
+                                                                  Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                                                  Do "x" (Binop AppendS (Var "h" 2) (Var "y" 0)) $
+                                                                  Return (Var "x" 0))) 
+            (Do "rest" (App (Var "reduce" 0) (Var "first" 3)) $
+            Do "base" (Unop Fst (Var "k'" 2)) $
+            Do "k''" (Unop Snd (Var "k'" 3)) $
+            Do "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    (Just ("list", "l", "k", 
-      Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
-      Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
-      Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
-      Do "k'" (App (Var "k" 3) (Var "second" 0)) $
-      Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
-                            If (Var "n" 0) (Return (Vstr "")) (Do "h" (Unop Head (Var "l" 1)) $
-                                                              Do "t" (Unop Tail (Var "l" 2)) $
-                                                              Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
-                                                              Do "x" (Binop AppendS (Var "h" 2) (Var "y" 0)) $
-                                                              Return (Var "x" 0))) 
-        (Do "rest" (App (Var "reduce" 0) (Var "first" 3)) $
-        Do "base" (Unop Fst (Var "k'" 2)) $
-        Do "k''" (Unop Snd (Var "k'" 3)) $
-        Do "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) $
-        Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+
 
 hWeak :: Handler
 hWeak = Handler
@@ -683,21 +708,24 @@ hWeak = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" -> (Just ("list", "l", "k",
+          Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
+          Do "FirstFail" (Unop FirstFail (Var "results" 0)) $
+          Case (Var "FirstFail" 0) 
+            "error" (Return $ Vsum $ Left (Var "error" 0))
+            "t" (App (Var "k" 3) (Var "t" 0))
+        ))
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    (Just ("list", "l", "k",
-      Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
-      Do "FirstFail" (Unop FirstFail (Var "results" 0)) $
-      Case (Var "FirstFail" 0) 
-        "error" (Return $ Vsum $ Left (Var "error" 0))
-        "t" (App (Var "k" 3) (Var "t" 0))
-    ))
+
 
 cWeak :: Comp
 cWeak = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
-         (For (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+         (For "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
          ("x" :. (Do "eq2" (Binop Eq (Var "x" 0) (Vstr "2")) $
          If (Var "eq2" 0)   (Do "_" (Op "accum" (Vstr "!") ("y" :. Return (Var "y" 0))) $
                             Do "_" (Op "throw" (Vstr "error") ("y" :. Return (Var "y" 0))) $
@@ -706,7 +734,7 @@ cWeak = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $
         ("x" :. Return (Var "x" 0)))
 
 exWeak :: Comp
-exWeak = hPure # hAccumS # hWeak # cWeak
+exWeak = hPure # hWeak # hAccumS # cWeak
 
 -- Usage:
 -- >>> evalFile exWeak
@@ -730,23 +758,27 @@ hPRNG = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    "for" ->   (Just ("list", "l", "k", Return . Lam "key" $ 
+        Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
+        Do "key1" (Unop Fst (Var "keys" 0)) $
+        Do "key2" (Unop Snd (Var "keys" 1)) $
+        Do "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) $
+        Do "for" (App (Var "l" 6) (Var "list" 7)) $
+        Do "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) $
+        Do "cont" (App (Var "k" 7) (Var "results" 0)) $
+        App (Var "cont" 0) (Var "key2" 4)))
+    _ -> Nothing
+  )
   ("f", "p", "k", Return . Lam "key" $
         Do "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) $
         App (Var "f" 4) (Var "pk" 0)
   )
-  (Just ("list", "l", "k", Return . Lam "key" $ 
-    Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
-    Do "key1" (Unop Fst (Var "keys" 0)) $
-    Do "key2" (Unop Snd (Var "keys" 1)) $
-    Do "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) $
-    Do "for" (App (Var "l" 6) (Var "list" 7)) $
-    Do "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) $
-    Do "cont" (App (Var "k" 7) (Var "results" 0)) $
-    App (Var "cont" 0) (Var "key2" 4)))
+
 
 
 cPRNG :: Comp
-cPRNG = For (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
+cPRNG = For "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
 
 cPRNGseq :: Comp
 cPRNGseq =  Do "1" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) $
@@ -762,6 +794,10 @@ hPureK = Parallel
       Do "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) $
       App (Var "k" 3) (Var "resultskeys" 0)))
   (("x", Return (Var "x" 0)))
+  ("f", "p", "k", Return . Lam "key" $
+        Do "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) $
+        App (Var "f" 4) (Var "pk" 0)
+  )
 
 exPRNGpar :: Comp
 exPRNGpar = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
@@ -794,19 +830,22 @@ hAmb = Handler
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     "amb" -> Just ("x", "k",
-      For (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+      For "for" (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    "for" ->   (Just ("list", "l", "k",
+        Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
+        Do "productElts" (Unop CartesianProd (Var "results" 0)) $
+        For "for" (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))
+      ))
     _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-  (Just ("list", "l", "k",
-    Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
-    Do "productElts" (Unop CartesianProd (Var "results" 0)) $
-    For (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))
-  ))
+
 
 cAmb :: Comp
 cAmb = 
@@ -876,11 +915,12 @@ hAccumSc1 = Handler
               Do "res" (Binop Add (Var "base" 1) (Var "rest" 2)) $
               Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
 
 
 hAccumSc2 :: Handler
@@ -897,7 +937,7 @@ hAccumSc2 = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     "for" -> Just ("x", "p", "k", 
-              Do "pairs" (For (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+              Do "pairs" (For "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
               Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
               Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
               Do "k'" (App (Var "k" 3) (Var "second" 0)) $
@@ -913,11 +953,12 @@ hAccumSc2 = Handler
               Do "res" (Binop Add (Var "base" 1) (Var "rest" 2)) $
               Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
 
 
 hPureSc :: Handler
@@ -931,12 +972,12 @@ hPureSc = Handler
               Do "results" (Binop Map (Var "x" 2) (Var "p" 1)) $
               App (Var "k" 1) (Var "results" 0))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
-
 
 -- cAccum example rewritten as scoped effect
 cAccumSc :: Comp
@@ -972,11 +1013,12 @@ hAccumScNoFor = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
 
 
 exNoForSc :: Comp
@@ -1023,11 +1065,12 @@ hAccumSSc = Handler
                 Do "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) $
                 Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
 
 
 hWeakSc :: Handler
@@ -1045,11 +1088,12 @@ hWeakSc = Handler
         "error" (Return $ Vsum $ Left (Var "error" 0))
         "t" (App (Var "k" 3) (Var "t" 0)))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-    Nothing
 
 cWeakSc :: Comp
 cWeakSc = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
@@ -1095,15 +1139,12 @@ hPRNGSc = Handler
         Do "cont" (App (Var "k" 7) (Var "results" 0)) $
         App (Var "cont" 0) (Var "key2" 4))
     _ -> Nothing)
-  ("f", "p", "k", App (Var "f" 3) (Vpair -- TODO fwd
-  ( Lam "y" $ (App (Var "p" 3) (Var "y" 0))
-  , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
-              Do "s'" (Unop Snd (Var "zs" 1)) $
-              Do "k'" (App (Var "k" 4) (Var "z" 1)) $
-              App (Var "k'" 0) (Var "s'" 1)
-  )))
-  Nothing
-
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", Return . Lam "keys" $
+        Do "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) $
+        App (Var "f" 4) (Var "pk" 0)
+  )
 
 cPRNGSc :: Comp
 cPRNGSc = Sc "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
@@ -1127,11 +1168,12 @@ hPureKSc = Handler
                 Do "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) $
                 App (Var "k" 3) (Var "resultskeys" 0))
     _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
   ("f", "p", "k", Return . Lam "keys" $
         Do "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) $
         App (Var "f" 4) (Var "pk" 0)
   )
-    Nothing
 
 
 exPRNGparSc :: Comp
@@ -1171,13 +1213,14 @@ hAmbSc = Handler
     "for" -> Just ("x", "p", "k", 
               Do "results" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $ 
               Do "productElts" (Unop CartesianProd (Var "results" 0)) $
-              For (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+              For "for" (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
     _ -> Nothing)
   ("f", "p", "k", 
         Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
         App (Var "f" 3) (Var "pk" 0)
   )
-  Nothing
 
 exAmbSc :: Comp
 exAmbSc = hPureSc # hAccumSc1 # hAmbSc # cAmb
@@ -1192,7 +1235,7 @@ exCombSc :: Comp
 exCombSc = hPureSc # hAmbSc # cComb
 
 -- Usage:
--- >>> evalFile exComb
+-- >>> evalFile exCombSc
 -- Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
 
 -- Remark that these results are the same as the examples using parallel effects
@@ -1221,17 +1264,17 @@ cCatch2 = Do "_" (cIncr) $
       sc "catch" (Vstr "Overflow") ("b" :. If (Var "b" 0) cEx (Return (Vstr "fail")))
 
 -- Handling @cCatch@:
--- >>> evalFile $ hExcept # runInc 1 cCatch
+-- >>> evalFile $ hExcept # runInc 1 cCatch2
 -- Return Right ("success", 5)
--- >>> evalFile $ runInc 1 (hExcept # cCatch)
+-- >>> evalFile $ runInc 1 (hExcept # cCatch2)
 -- Return (Right "success", 5)
 
--- >>> evalFile $ hExcept # runInc 8 cCatch
+-- >>> evalFile $ hExcept # runInc 8 cCatch2
 -- Return Right ("fail", 9)
--- >>> evalFile $ runInc 8 (hExcept # cCatch)
+-- >>> evalFile $ runInc 8 (hExcept # cCatch2)
 -- Return (Right "fail", 12)
 
--- >>> evalFile $ hExcept # runInc 42 cCatch
+-- >>> evalFile $ hExcept # runInc 42 cCatch2
 -- Return Left "Overflow"
--- >>> evalFile $ runInc 42 (hExcept # cCatch)
--- Return Left "Overflow"
+-- >>> evalFile $ runInc 42 (hExcept # cCatch2)
+-- Return (Left "Overflow", 43)

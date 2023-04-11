@@ -47,7 +47,6 @@ instance Show Value where
 
 
 
-
 -- | Handler syntax
 data Handler = Handler
   { hname   :: Name                                   -- ^ handler name
@@ -56,20 +55,21 @@ data Handler = Handler
   , hreturn :: (Name, Comp)                           -- ^ (x, c)
   , hop     :: Name -> Maybe (Name, Name, Comp)       -- ^ l -> (x, k, c)
   , hsc     :: Name -> Maybe (Name, Name, Name, Comp) -- ^ l -> (x, p, k, c)
+  , hfor    :: Name -> Maybe (Name, Name, Name, Comp) -- ^ l -> (x, l, k, c)
   , hfwd    :: (Name, Name, Name, Comp)               -- ^ (f, p, k, c)
-  , hfor    :: Maybe (Name, Name, Name, Comp)         -- ^ (x, l, k, c)
   } | 
   Parallel {
-    pfor :: (Name, Name, Name, Comp)                  -- ^ (x, l, k, c)
-    , hreturn :: (Name, Comp)                         -- ^ (x, c) 
+    ptraverse :: (Name, Name, Name, Comp)             -- ^ (x, l, k, c)
+    , hreturn :: (Name, Comp)                         -- ^ (x, c)
+    , hfwd    :: (Name, Name, Name, Comp)             -- ^ (f, p, k, c) 
   }
 instance Show Handler where
   show (Handler name _ _ _ _ _ _ _) = "handler{" ++ name ++ "}"
-  show (Parallel _ _ ) = "parallel{}"
+  show (Parallel _ _ _ ) = "parallel{}"
 
 instance Eq Handler where
   Handler x _ _ _ _ _ _ _ == Handler y _ _ _ _ _ _ _ = x == y
-  Parallel _ _ == Parallel _ _ = True
+  Parallel _ _ _ == Parallel _ _ _ = True
 
 infixr 0 :.
 data (Dot a b) = a :. b deriving (Eq)
@@ -82,7 +82,7 @@ data Comp
   = Return Value                                   -- ^ return v
   | Op Name Value (Dot Name Comp)                  -- ^ op l v (y.c)
   | Sc Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
-  | For Value (Dot Name Comp) (Dot Name Comp)      -- ^ for l v (y.c1) (z.c2)
+  | For Name Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
   | Handle Handler Comp                            -- ^ v ★ c
   | Do Name Comp Comp                              -- ^ do x <- c1 in c2
   | Rec Name Comp Comp                             -- ^ rec x c1 c2
@@ -103,7 +103,7 @@ instance Show Comp where
     show (Return v) = "Return " ++ show v
     show (Op l v (x :. c)) = "op " ++ l ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c ++ ")"
     show (Sc l v (x :. c1) (y :. c2)) = "sc " ++ l ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
-    show (For v (x :. c1) (y :. c2)) = "for " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
+    show (For l v (x :. c1) (y :. c2)) = "for " ++ l ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
     show (Handle h c) = show h ++ " * " ++ show c
     show (Do x c1 c2) = "do " ++ x ++ " <- (" ++ show c1 ++ "\n in " ++ show c2 ++ ")"
     show (App v1 v2) = show v1 ++ " " ++ show v2
