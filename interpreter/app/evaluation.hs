@@ -31,13 +31,13 @@ evalFile' c = do
   writeFile "reductionNoSteps" (prettyprint' steps 1)
 
 -- | Verbose evaluation
-eval' :: Comp -> [(String, Comp)]
+eval' :: Comp -> [(Step, Comp)]
 eval' c = case eval1' c of
   (step , Just c') -> (step, c) : eval' c'
   (step , Nothing) -> [(step, c)]
 
 -- | Pretty print verbose evaluation
-prettyprint :: [(String, Comp)] -> Int -> String
+prettyprint :: [(Step, Comp)] -> Int -> String
 prettyprint [] _ = "" 
 prettyprint ((step, c) : cs) nr = show c ++ "\n\n" ++ show nr ++ ".\n{-- " ++ step ++ " --}" ++ "\n\n" ++ prettyprint cs (nr+1)
 
@@ -187,7 +187,7 @@ evalBinop Zip (Vlist xs) (Vlist ys) =  return $ case xs of
               Binop Append (Vlist [Var "z" 1]) (Var "zs" 0)
 evalBinop _ _ _ = Nothing
 
-
+-- | Single step evaluation with chosen reduction step
 eval1' :: Comp -> (Step, Maybe Comp)
 eval1' (App (Lam x c) v) = ("E-AppAbs", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)])-- E-AppAbs
 eval1' (Let x v c) = ("E-Let", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-Let

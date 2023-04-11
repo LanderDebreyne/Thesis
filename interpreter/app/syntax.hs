@@ -52,6 +52,7 @@ data Handler = Handler
   { hname   :: Name                                   -- ^ handler name
   , oplist  :: [Name]                                 -- ^ algebraic operations names
   , sclist  :: [Name]                                 -- ^ scoped operations names
+  , forlist :: [Name]                                 -- ^ for operations names
   , hreturn :: (Name, Comp)                           -- ^ (x, c)
   , hop     :: Name -> Maybe (Name, Name, Comp)       -- ^ l -> (x, k, c)
   , hsc     :: Name -> Maybe (Name, Name, Name, Comp) -- ^ l -> (x, p, k, c)
@@ -64,11 +65,11 @@ data Handler = Handler
     , hfwd    :: (Name, Name, Name, Comp)             -- ^ (f, p, k, c) 
   }
 instance Show Handler where
-  show (Handler name _ _ _ _ _ _ _) = "handler{" ++ name ++ "}"
+  show (Handler name _ _ _ _ _ _ _ _) = "handler{" ++ name ++ "}"
   show (Parallel _ _ _ ) = "parallel{}"
 
 instance Eq Handler where
-  Handler x _ _ _ _ _ _ _ == Handler y _ _ _ _ _ _ _ = x == y
+  Handler x _ _ _ _ _ _ _ _ == Handler y _ _ _ _ _ _ _ _ = x == y
   Parallel _ _ _ == Parallel _ _ _ = True
 
 infixr 0 :.

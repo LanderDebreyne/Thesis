@@ -33,7 +33,7 @@ absurd x = Undefined
 -- | @hInc@ refers to the @h_inc@ handler in Section 2.1 and Section 5
 hInc :: Handler
 hInc = Handler
-  "hInc" ["inc"] []
+  "hInc" ["inc"] [] []
   ("x", Return . Lam "s" $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
     "inc" -> Just ("_", "k",
@@ -101,7 +101,7 @@ cFwd = Sc "once" Vunit ("_" :. cInc) ("x" :. Op "inc" Vunit ("y" :.
 -- | @hOnce@ refers to the @h_once@ handler in Section 2.2 & Section 7.1
 hOnce :: Handler
 hOnce = Handler
-  "hOnce" ["choose", "fail"] ["once"]
+  "hOnce" ["choose", "fail"] ["once"] []
   ("x", Return $ Vlist [Var "x" 0])
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return $ Vlist [])
@@ -141,7 +141,7 @@ cOnce = Sc "once" Vunit ("_" :. op "choose" Vunit)
 -- | @hCut@ refers to the @h_cut@ handler in Section 7.2
 hCut :: Handler
 hCut = Handler
-  "hCut" ["choose", "fail", "cut"] ["call"]
+  "hCut" ["choose", "fail", "cut"] ["call"] []
   ("x", Return . Vret $ Vlist [Var "x" 0])
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return . Vret $ Vlist [])
@@ -180,7 +180,7 @@ cCut = Do "b" (sc "call" Vunit ("_" :.
 -- | @hExcept@ refers to the @h_except@ handler in Section 7.3
 hExcept :: Handler
 hExcept = Handler
-  "hExcept" ["raise"] ["catch"]
+  "hExcept" ["raise"] ["catch"] []
   ("x", Return $ Vsum (Right (Var "x" 0)))
   (\ oplabel -> case oplabel of
     "raise" -> Just ("e", "_", Return $ Vsum (Left (Var "e" 1)))
@@ -229,7 +229,7 @@ cCatch = sc "catch" (Vstr "Overflow") ("b" :. If (Var "b" 0) cRaise (Return (Vin
 -- | @hState@ refers to the @h_state@ handler in Section 7.4
 hState :: Handler
 hState = Handler
-  "hState" ["get", "put"] ["local"]
+  "hState" ["get", "put"] ["local"] []
   ("x", Return . Lam "m" $ Return (Vpair (Var "x" 1, Var "m" 0)))
   (\ oplabel -> case oplabel of
     "get" -> Just ("x", "k",
@@ -289,7 +289,7 @@ handle_cState = Do "m" (Unop Newmem Vunit) $
 -- | @hDepth@ refers to the @h_depth@ handler in Section 7.5
 hDepth :: Handler
 hDepth = Handler
-  "hDepth" ["choose", "fail"] ["depth"]
+  "hDepth" ["choose", "fail"] ["depth"] []
   ("x", Return . Lam "d" $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return (Vlist []))
@@ -328,7 +328,7 @@ hDepth = Handler
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
 hDepth2 :: Handler
 hDepth2 = Handler
-  "hDepth" ["choose", "fail"] ["depth"]
+  "hDepth" ["choose", "fail"] ["depth"] []
   ("x", Return . Lam "d" $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return (Vlist []))
@@ -398,7 +398,7 @@ cDepth = Sc "depth" (Vint 1) ("_" :.
 -- | @hToken@ refers to the @h_token@ handler in Section 7.6
 hToken :: Handler
 hToken = Handler
-  "hToken" ["token"] []
+  "hToken" ["token"] [] []
   ("x", Return . Lam "s" $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
     "token" -> Just ("x", "k", Return . Lam "s" $
@@ -504,7 +504,7 @@ handle_expr = hCut # (Do "c" (hToken # App expr Vunit) $
 -- | @hReader@ is a reader handler
 hReader :: Handler
 hReader = Handler
-  "hReader" ["ask"] ["local"]
+  "hReader" ["ask"] ["local"] []
   ("x", Return . Lam "m" $ Return (Vpair (Var "x" 1, Var "m" 0)))
   (\ oplabel -> case oplabel of
     "ask" -> Just ("_", "k",
@@ -566,7 +566,7 @@ example_cReader = handle_cReader (Lam "x" (Return (Vlist [(Vint 1), (Vint 2), (V
 -- | @hAccum@ is an example handler for accumulating a value
 hAccum :: Handler
 hAccum = Handler
-  "hAccum" ["accum"] []
+  "hAccum" ["accum"] [] ["for"]
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -627,7 +627,7 @@ exFor = hPure # hAccum # cAccum
 
 hAccumNoFor :: Handler
 hAccumNoFor = Handler
-  "hAccum" ["accum"] []
+  "hAccum" ["accum"] [] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -663,7 +663,7 @@ exNoFor = hPure # hAccumNoFor # cAccum
 -- Ideally does not need separate handler for accumulating strings
 hAccumS :: Handler
 hAccumS = Handler
-  "hAccum" ["accum"] []
+  "hAccum" ["accum"] [] ["for"]
   ("x", Return (Vpair (Vstr "", Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -701,7 +701,7 @@ hAccumS = Handler
 
 hWeak :: Handler
 hWeak = Handler
-  "hWeak" ["throw"] []
+  "hWeak" ["throw"] [] ["for"]
   ("x", Return (Vsum (Right (Var "x" 0))))
   (\ oplabel -> case oplabel of
     "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
@@ -746,7 +746,7 @@ exWeak = hPure # hWeak # hAccumS # cWeak
 
 hPRNG :: Handler
 hPRNG = Handler
-  "hPRNG" ["sampleUniform"] []
+  "hPRNG" ["sampleUniform"] [] ["for"]
   ("x", Return . Lam "key" $ Return (Var "x" 1))
   (\ oplabel -> case oplabel of
     "sampleUniform" -> Just ("x", "k", Return . Lam "key" $ 
@@ -826,7 +826,7 @@ exPRNGseq = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 
 hAmb :: Handler
 hAmb = Handler
-  "hAmb" ["amb"][]
+  "hAmb" ["amb"][] ["for"]
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     "amb" -> Just ("x", "k",
@@ -887,7 +887,7 @@ exComb = hPure # hAmb # cComb
 
 hAccumSc1 :: Handler
 hAccumSc1 = Handler
-  "hAccumSc" ["accum"] ["for"]
+  "hAccumSc" ["accum"] ["for"] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -925,7 +925,7 @@ hAccumSc1 = Handler
 
 hAccumSc2 :: Handler
 hAccumSc2 = Handler
-  "hAccumSc" ["accum"] ["for"]
+  "hAccumSc" ["accum"] ["for"] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -963,7 +963,7 @@ hAccumSc2 = Handler
 
 hPureSc :: Handler
 hPureSc = Handler
-  "hPureSc" [] ["for"]
+  "hPureSc" [] ["for"] []
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     _ -> Nothing)
@@ -1001,7 +1001,7 @@ exForSc2 = hPure # hAccumSc2 # cAccumSc
 
 hAccumScNoFor :: Handler
 hAccumScNoFor = Handler
-  "hAccumSc" ["accum"] []
+  "hAccumSc" ["accum"] [] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -1037,7 +1037,7 @@ exNoForSc = hPureSc # hAccumScNoFor # cAccumSc
 -- Ideally does not need separate handler for accumulating strings
 hAccumSSc :: Handler
 hAccumSSc = Handler
-  "hAccumSc" ["accum"] ["for"]
+  "hAccumSc" ["accum"] ["for"] [] 
   ("x", Return (Vpair (Vstr "", Var "x" 0)))
   (\ oplabel -> case oplabel of
     "accum" -> Just ("x", "k",
@@ -1075,7 +1075,7 @@ hAccumSSc = Handler
 
 hWeakSc :: Handler
 hWeakSc = Handler
-  "hWeak" ["throw"] ["for"]
+  "hWeak" ["throw"] ["for"] []
   ("x", Return (Vsum (Right (Var "x" 0))))
   (\ oplabel -> case oplabel of
     "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
@@ -1118,7 +1118,7 @@ exWeakSc = hPureSc # hAccumSSc # hWeakSc # cWeakSc
 
 hPRNGSc :: Handler
 hPRNGSc = Handler
-  "hPRNGSc" ["sampleUniform"] ["for"]
+  "hPRNGSc" ["sampleUniform"] ["for"] []
   ("x", Return . Lam "key" $ Return (Var "x" 1))
   (\ oplabel -> case oplabel of
     "sampleUniform" -> Just ("x", "k", Return . Lam "key" $ 
@@ -1158,7 +1158,7 @@ cPRNGseqSc =  Do "1" (Op ("sampleUniform") (Vunit) ("y" :. Return (Var "y" 0))) 
 -- Needs new parallel handler to thread keys through correctly
 hPureKSc :: Handler
 hPureKSc = Handler
-  "hPureSc" [] ["for"]
+  "hPureSc" [] ["for"] []
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     _ -> Nothing)
@@ -1203,7 +1203,7 @@ exPRNGseqSc = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 
 hAmbSc :: Handler
 hAmbSc = Handler
-  "hAmbSc" ["amb"]["for"]
+  "hAmbSc" ["amb"]["for"][]
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     "amb" -> Just ("x", "k",
