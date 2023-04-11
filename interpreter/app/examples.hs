@@ -50,8 +50,22 @@ hInc = Handler
                  Do "s'" (Unop Snd (Var "zs" 1)) $
                  Do "k'" (App (Var "k" 4) (Var "z" 1)) $
                  App (Var "k'" 0) (Var "s'" 1)
-    ))) 
-    Nothing
+    )))
+  (Just ("list", "l", "k", Return . Lam "s" $ 
+      Do "xs" (App (Var "l" 2) (Var "list" 3)) $
+      -- TODO
+      Do "first" (Binop Map (Var "xs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+      Do "second" (Binop Map (Var "xs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+      Do "k'" (App (Var "k" 4) (Var "first" 1)) $
+      Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+                                 If (Var "n" 0) (Return (Vint 0)) 
+                                 (Do "h" (Unop Head (Var "l" 1)) $
+                                  Do "t" (Unop Tail (Var "l" 2)) $
+                                  Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                  Do "x" (Binop Add (Var "h" 2) (Var "y" 0)) $
+                                  Return (Var "x" 0))) 
+        (Do "s'" (App (Var "reduce" 0) (Var "second" 2)) $
+        App (Var "k'" 2) (Var "s'" 0))))
 
 -- | @runInc@ is a macro to help applying the initial count value
 runInc :: Int -> Comp -> Comp
@@ -61,6 +75,9 @@ runInc s c = Do "c'" (hInc # c) $ App (Var "c'" 0) (Vint s)
 cInc :: Comp
 cInc = Op "choose" Vunit ("b" :.
         If (Var "b" 0) (op "inc" Vunit) (op "inc" Vunit))
+
+cIncFor :: Comp
+cIncFor = For (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit) ("z" :. Return (Var "z" 0))
 
 -- Handling @cInc@:
 -- >>> evalFile $ hOnce # runInc 0 cInc
@@ -98,7 +115,7 @@ hOnce = Handler
       App (Var "k" 2) (Var "t" 0))
     _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMap (Var "z" 0) (Var "k" 1)))
-  Nothing
+  Nothing -- TODO: for
 
 -- | @failure@ is a wrapper for @fail@ with a polymorphic return type.
 -- Defined in Section 7.1
@@ -137,7 +154,7 @@ hCut = Handler
       Binop ConcatMapCutList (Var "x'" 0) (Var "k" 2))
     _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
-  Nothing
+  Nothing -- TODO: for
 
 -- | A simple program simulates the behavior of @cOnce@ using @cut@ and @call@.
 cCut :: Comp
@@ -173,7 +190,7 @@ hExcept = Handler
         (app2 exceptMap (Var "x" 1) (Var "k" 2)))
     _ -> Nothing)
   (lift2fwd ("k", "z", app2 exceptMap (Var "z" 0) (Var "k" 1)))
-  Nothing
+  Nothing -- TODO: for
 
 -- | @exceptMap@ refers to the @exceptMap@ function in Section 7.3
 exceptMap :: Value
@@ -238,7 +255,7 @@ hState = Handler
                  Do "k'" (App (Var "k" 4) (Var "z" 1)) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
-    Nothing
+    Nothing -- For not possible?
 
 -- | @cState@ refers to the @c_state@ program in Section 7.4
 cState :: Comp
@@ -293,7 +310,7 @@ hDepth = Handler
         Do "k'" (App (Var "k" 5) (Var "v" 1)) $
         App (Var "k'" 0) (Var "d" 1))
     )))
-    Nothing
+    Nothing -- TODO: for
 
 -- | @hDepth2@ is another handler for @depth@.
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
@@ -499,7 +516,7 @@ hReader = Handler
         Do "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) $
         App (Var "f" 4) (Var "pk" 0)
   )
-    Nothing
+    Nothing 
 
 -- | cReader is an example reader effect program
 cReader :: Comp
@@ -1179,3 +1196,42 @@ exCombSc = hPureSc # hAmbSc # cComb
 -- Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
 
 -- Remark that these results are the same as the examples using parallel effects
+
+
+----------------------------------------------------------------------------------------------------------------------------
+
+-- Exceptions (new version of paper)
+
+-- cRaise of new version of paper
+cIncr :: Comp
+cIncr = Do "x" (op "inc" Vunit) $
+       Do "b" (Binop Larger (Var "x" 0) (Vint 10)) $
+       If (Var "b" 0) (op "raise" (Vstr "Overflow")) (Return (Var "x" 1))
+
+
+cEx :: Comp
+cEx = Do "_" cIncr $
+      Do "_" cIncr $
+      Do "_" cIncr $
+      Return (Vstr "success")
+
+-- cCatch of new version of paper
+cCatch2 :: Comp
+cCatch2 = Do "_" (cIncr) $
+      sc "catch" (Vstr "Overflow") ("b" :. If (Var "b" 0) cEx (Return (Vstr "fail")))
+
+-- Handling @cCatch@:
+-- >>> evalFile $ hExcept # runInc 1 cCatch
+-- Return Right ("success", 5)
+-- >>> evalFile $ runInc 1 (hExcept # cCatch)
+-- Return (Right "success", 5)
+
+-- >>> evalFile $ hExcept # runInc 8 cCatch
+-- Return Right ("fail", 9)
+-- >>> evalFile $ runInc 8 (hExcept # cCatch)
+-- Return (Right "fail", 12)
+
+-- >>> evalFile $ hExcept # runInc 42 cCatch
+-- Return Left "Overflow"
+-- >>> evalFile $ runInc 42 (hExcept # cCatch)
+-- Return Left "Overflow"
