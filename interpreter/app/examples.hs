@@ -734,7 +734,7 @@ cWeak = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $
         ("x" :. Return (Var "x" 0)))
 
 exWeak :: Comp
-exWeak = hPure # hWeak # hAccumS # cWeak
+exWeak = hPure # hAccumS # hWeak # cWeak
 
 -- Usage:
 -- >>> evalFile exWeak
