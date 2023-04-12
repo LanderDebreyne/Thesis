@@ -1,0 +1,3347 @@
+do f <- (handler{hDepth} * sc depth 1 (_. do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3))) (x. do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))))
+ in f 2)
+
+1.
+{-- E-Do and E-HandSc --}
+
+do f <- (Return \ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) ()
+ in do xs <- (p' 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' d)))))
+ in f 2)
+
+2.
+{-- E-DoRet --}
+
+\ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) ()
+ in do xs <- (p' 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' d))))) 2
+
+3.
+{-- E-AppAbs --}
+
+do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) ()
+ in do xs <- (p' 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))))
+
+4.
+{-- E-Do and E-AppAbs --}
+
+do p' <- (handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3))
+ in do xs <- (p' 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))))
+
+5.
+{-- E-Do and E-Hand and E-DoOp --}
+
+do p' <- (handler{hDepth} * op choose () (y. do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)))
+ in do xs <- (p' 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))))
+
+6.
+{-- E-Do and E-HandOp --}
+
+do p' <- (Return \ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in do xs <- (p' 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))))
+
+7.
+{-- E-DoRet --}
+
+do xs <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 1
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+8.
+{-- E-Do and E-AppAbs --}
+
+do xs <- (do b <- (Eq (1) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+9.
+{-- E-Do and E-Do and E-Binop --}
+
+do xs <- (do b <- (Return False
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+10.
+{-- E-Do and E-DoRet --}
+
+do xs <- (
+if False
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+11.
+{-- E-Do and E-IfTrue --}
+
+do xs <- (do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+12.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do xs <- (do k1 <- (handler{hDepth} * do b <- (Return True
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3))
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+13.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do xs <- (do k1 <- (handler{hDepth} * 
+if True
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+14.
+{-- E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do xs <- (do k1 <- (handler{hDepth} * Return 1
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+15.
+{-- E-Do and E-Do and E-HandRet --}
+
+do xs <- (do k1 <- (Return \ d. Return [(1, d)]
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+16.
+{-- E-Do and E-DoRet --}
+
+do xs <- (do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+17.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do xs <- (do k2 <- (handler{hDepth} * do b <- (Return False
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3))
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+18.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do xs <- (do k2 <- (handler{hDepth} * 
+if False
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+19.
+{-- E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do xs <- (do k2 <- (handler{hDepth} * do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 2
+ else Return 3)
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+20.
+{-- E-Do and E-Do and E-Hand and E-DoOp --}
+
+do xs <- (do k2 <- (handler{hDepth} * op choose () (y. do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3))
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+21.
+{-- E-Do and E-Do and E-HandOp --}
+
+do xs <- (do k2 <- (Return \ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+22.
+{-- E-Do and E-DoRet --}
+
+do xs <- (do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) d'
+ in Append (xs) (ys))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+23.
+{-- E-Do and E-Do and E-Binop --}
+
+do xs <- (do d' <- (Return 0
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) d'
+ in Append (xs) (ys))))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+24.
+{-- E-Do and E-DoRet --}
+
+do xs <- (do xs <- (\ d. Return [(1, d)] 0
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 0
+ in Append (xs) (ys)))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+25.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do xs <- (do xs <- (Return [(1, 0)]
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 0
+ in Append (xs) (ys)))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+26.
+{-- E-Do and E-DoRet --}
+
+do xs <- (do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 0
+ in Append ([(1, 0)]) (ys))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+27.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do xs <- (do ys <- (do b <- (Eq (0) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (0) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in Append ([(1, 0)]) (ys))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+28.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do xs <- (do ys <- (do b <- (Return True
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (0) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in Append ([(1, 0)]) (ys))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+29.
+{-- E-Do and E-Do and E-DoRet --}
+
+do xs <- (do ys <- (
+if True
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 2
+ else Return 3) False
+ in do d' <- (Add (0) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 0)]) (ys))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+30.
+{-- E-Do and E-Do and E-IfTrue --}
+
+do xs <- (do ys <- (Return []
+ in Append ([(1, 0)]) (ys))
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+31.
+{-- E-Do and E-DoRet --}
+
+do xs <- (Append ([(1, 0)]) ([])
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+32.
+{-- E-Do and E-Binop --}
+
+do xs <- (Return [(1, 0)]
+ in ConcatMap (xs) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))))
+
+33.
+{-- E-DoRet --}
+
+ConcatMap ([(1, 0)]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+
+34.
+{-- E-Binop --}
+
+do as <- (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)) (1, 0)
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+35.
+{-- E-Do and E-AppAbs --}
+
+do as <- (do v <- (Fst (1, 0)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+36.
+{-- E-Do and E-Do and E-Unop --}
+
+do as <- (do v <- (Return 1
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+37.
+{-- E-Do and E-DoRet --}
+
+do as <- (do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) 1
+ in k' 2)
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+38.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do as <- (do k' <- (handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)))
+ in k' 2)
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+39.
+{-- E-Do and E-Do and E-Hand and E-DoOp --}
+
+do as <- (do k' <- (handler{hDepth} * op choose () (y. do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))))
+ in k' 2)
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+40.
+{-- E-Do and E-Do and E-HandOp --}
+
+do as <- (do k' <- (Return \ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in k' 2)
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+41.
+{-- E-Do and E-DoRet --}
+
+do as <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 2
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+42.
+{-- E-Do and E-AppAbs --}
+
+do as <- (do b <- (Eq (2) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+43.
+{-- E-Do and E-Do and E-Binop --}
+
+do as <- (do b <- (Return False
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+44.
+{-- E-Do and E-DoRet --}
+
+do as <- (
+if False
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+45.
+{-- E-Do and E-IfTrue --}
+
+do as <- (do k1 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) True
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+46.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do as <- (do k1 <- (handler{hDepth} * do b <- (Return True
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)))
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+47.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do as <- (do k1 <- (handler{hDepth} * 
+if True
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+48.
+{-- E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do as <- (do k1 <- (handler{hDepth} * Return 1
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+49.
+{-- E-Do and E-Do and E-HandRet --}
+
+do as <- (do k1 <- (Return \ d. Return [(1, d)]
+ in do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+50.
+{-- E-Do and E-DoRet --}
+
+do as <- (do k2 <- (\ y. handler{hDepth} * do b <- (Return y
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) False
+ in do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+51.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do as <- (do k2 <- (handler{hDepth} * do b <- (Return False
+ in 
+if b
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)))
+ in do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+52.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do as <- (do k2 <- (handler{hDepth} * 
+if False
+ then Return 1
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))
+ in do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+53.
+{-- E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do as <- (do k2 <- (handler{hDepth} * do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))
+ in do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+54.
+{-- E-Do and E-Do and E-Hand and E-DoOp --}
+
+do as <- (do k2 <- (handler{hDepth} * op choose () (y. do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)))
+ in do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+55.
+{-- E-Do and E-Do and E-HandOp --}
+
+do as <- (do k2 <- (Return \ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+56.
+{-- E-Do and E-DoRet --}
+
+do as <- (do d' <- (Add (2) (-1)
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) d'
+ in Append (xs) (ys))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+57.
+{-- E-Do and E-Do and E-Binop --}
+
+do as <- (do d' <- (Return 1
+ in do xs <- (\ d. Return [(1, d)] d'
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) d'
+ in Append (xs) (ys))))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+58.
+{-- E-Do and E-DoRet --}
+
+do as <- (do xs <- (\ d. Return [(1, d)] 1
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 1
+ in Append (xs) (ys)))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+59.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do as <- (do xs <- (Return [(1, 1)]
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 1
+ in Append (xs) (ys)))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+60.
+{-- E-Do and E-DoRet --}
+
+do as <- (do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 1
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+61.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do as <- (do ys <- (do b <- (Eq (1) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+62.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do as <- (do ys <- (do b <- (Return False
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+63.
+{-- E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (
+if False
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+64.
+{-- E-Do and E-Do and E-IfTrue --}
+
+do as <- (do ys <- (do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) True
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+65.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do as <- (do ys <- (do k1 <- (handler{hDepth} * do b' <- (Return True
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+66.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do as <- (do ys <- (do k1 <- (handler{hDepth} * 
+if True
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+67.
+{-- E-Do and E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do as <- (do ys <- (do k1 <- (handler{hDepth} * Return 4
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+68.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do as <- (do ys <- (do k1 <- (Return \ d. Return [(4, d)]
+ in do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+69.
+{-- E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)) False
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+70.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do as <- (do ys <- (do k2 <- (handler{hDepth} * do b' <- (Return False
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+71.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do as <- (do ys <- (do k2 <- (handler{hDepth} * 
+if False
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+72.
+{-- E-Do and E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do as <- (do ys <- (do k2 <- (handler{hDepth} * do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6)
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+73.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoOp --}
+
+do as <- (do ys <- (do k2 <- (handler{hDepth} * op choose () (y. do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6))
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+74.
+{-- E-Do and E-Do and E-Do and E-HandOp --}
+
+do as <- (do ys <- (do k2 <- (Return \ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+75.
+{-- E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (do d' <- (Add (1) (-1)
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) d'
+ in Append (xs) (ys))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+76.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do as <- (do ys <- (do d' <- (Return 0
+ in do xs <- (\ d. Return [(4, d)] d'
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) d'
+ in Append (xs) (ys))))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+77.
+{-- E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (do xs <- (\ d. Return [(4, d)] 0
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 0
+ in Append (xs) (ys)))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+78.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do as <- (do ys <- (do xs <- (Return [(4, 0)]
+ in do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 0
+ in Append (xs) (ys)))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+79.
+{-- E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (do ys <- (\ d. do b <- (Eq (d) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (d) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))) 0
+ in Append ([(4, 0)]) (ys))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+80.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do as <- (do ys <- (do ys <- (do b <- (Eq (0) (0)
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (0) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in Append ([(4, 0)]) (ys))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+81.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do as <- (do ys <- (do ys <- (do b <- (Return True
+ in 
+if b
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (0) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys)))))))
+ in Append ([(4, 0)]) (ys))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+82.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (do ys <- (
+if True
+ then Return []
+ else do k1 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) True
+ in do k2 <- (\ y. handler{hDepth} * do b'' <- (Return y
+ in 
+if b''
+ then Return 5
+ else Return 6) False
+ in do d' <- (Add (0) (-1)
+ in do xs <- (k1 d'
+ in do ys <- (k2 d'
+ in Append (xs) (ys))))))
+ in Append ([(4, 0)]) (ys))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+83.
+{-- E-Do and E-Do and E-Do and E-IfTrue --}
+
+do as <- (do ys <- (do ys <- (Return []
+ in Append ([(4, 0)]) (ys))
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+84.
+{-- E-Do and E-Do and E-DoRet --}
+
+do as <- (do ys <- (Append ([(4, 0)]) ([])
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+85.
+{-- E-Do and E-Do and E-Binop --}
+
+do as <- (do ys <- (Return [(4, 0)]
+ in Append ([(1, 1)]) (ys))
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+86.
+{-- E-Do and E-DoRet --}
+
+do as <- (Append ([(1, 1)]) ([(4, 0)])
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+87.
+{-- E-Do and E-Binop --}
+
+do as <- (Return [(1, 1),(4, 0)]
+ in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append (as) (as')))
+
+88.
+{-- E-DoRet --}
+
+do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in 
+if b
+ then Return x
+ else do b' <- (op choose () (y. Return y)
+ in 
+if b'
+ then Return 4
+ else do b'' <- (op choose () (y. Return y)
+ in 
+if b''
+ then Return 5
+ else Return 6))) v
+ in k' 2)))
+ in Append ([(1, 1),(4, 0)]) (as'))
+
+89.
+{-- E-Do and E-Binop --}
+
+do as' <- (Return []
+ in Append ([(1, 1),(4, 0)]) (as'))
+
+90.
+{-- E-DoRet --}
+
+Append ([(1, 1),(4, 0)]) ([])
+
+91.
+{-- E-Binop --}
+
+Return [(1, 1),(4, 0)]
+
+92.
+{-- Nothing --}
+

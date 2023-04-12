@@ -1,0 +1,1038 @@
+parallel{} * handler{hAccum} * for for [1,2,3,4,5] (y. op accum y (y. Return y)) (z. Return z)
+
+1.
+{-- E-Hand and E-FwdFor --}
+
+parallel{} * do pk <- (Return (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+ in \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in for for [1,2,3,4,5] (y. p y) (z. k z))) pk)
+
+2.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in for for [1,2,3,4,5] (y. p y) (z. k z))) (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+
+3.
+{-- E-Hand and E-AppAbs --}
+
+parallel{} * do p <- (Fst (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+ in do k <- (Snd (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for [1,2,3,4,5] (y. p y) (z. k z)))
+
+4.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do p <- (Return \ y. handler{hAccum} * op accum y (y. Return y)
+ in do k <- (Snd (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for [1,2,3,4,5] (y. p y) (z. k z)))
+
+5.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do k <- (Snd (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum y (y. Return y) y) (z. k z))
+
+6.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do k <- (Return \ z. handler{hAccum} * Return z
+ in for for [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum y (y. Return y) y) (z. k z))
+
+7.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * for for [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum y (y. Return y) y) (z. \ z. handler{hAccum} * Return z z)
+
+8.
+{-- E-Traverse --}
+
+do result <- (Map ([1,2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+9.
+{-- E-Do and E-Binop --}
+
+do result <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 1
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+10.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 1
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+11.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (parallel{} * handler{hAccum} * op accum 1 (y. Return y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+12.
+{-- E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+13.
+{-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do result <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+14.
+{-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do result <- (do y <- (parallel{} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+15.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+16.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do y <- (parallel{} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+17.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do y <- (parallel{} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (1)
+ in Return (m'', s)))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+18.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do y <- (parallel{} * do s <- (Return ()
+ in do m'' <- (Add (0) (1)
+ in Return (m'', s)))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+19.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do y <- (parallel{} * do m'' <- (Add (0) (1)
+ in Return (m'', ()))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+20.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do result <- (do y <- (parallel{} * do m'' <- (Return 1
+ in Return (m'', ()))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+21.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do y <- (parallel{} * Return (1, ())
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+22.
+{-- E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (Return (1, ())
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+23.
+{-- E-Do and E-DoRet --}
+
+do result <- (do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+24.
+{-- E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 2
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+25.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 2
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+26.
+{-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 2 (y. Return y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+27.
+{-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+28.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+29.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+30.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s))))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+31.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s))))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+32.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (2)
+ in Return (m'', s)))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+33.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+ in do m'' <- (Add (0) (2)
+ in Return (m'', s)))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+34.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (2)
+ in Return (m'', ()))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+35.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 2
+ in Return (m'', ()))
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+36.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (parallel{} * Return (2, ())
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+37.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (Return (2, ())
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+38.
+{-- E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+39.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 3
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+40.
+{-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 3
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+41.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 3 (y. Return y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+42.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+43.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+44.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+45.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s))))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+46.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s))))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+47.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (3)
+ in Return (m'', s)))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+48.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+ in do m'' <- (Add (0) (3)
+ in Return (m'', s)))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+49.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (3)
+ in Return (m'', ()))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+50.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 3
+ in Return (m'', ()))
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+51.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (3, ())
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+52.
+{-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do ys' <- (do y <- (Return (3, ())
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+53.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+54.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 4
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+55.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 4
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+56.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 4 (y. Return y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+57.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+58.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+59.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+60.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s))))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+61.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s))))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+62.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (4)
+ in Return (m'', s)))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+63.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+ in do m'' <- (Add (0) (4)
+ in Return (m'', s)))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+64.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (4)
+ in Return (m'', ()))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+65.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 4
+ in Return (m'', ()))
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+66.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (4, ())
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+67.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (4, ())
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+68.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+69.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 5
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+70.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 5
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+71.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 5 (y. Return y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+72.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+73.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+74.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+75.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+76.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+77.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (5)
+ in Return (m'', s)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+78.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+ in do m'' <- (Add (0) (5)
+ in Return (m'', s)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+79.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (5)
+ in Return (m'', ()))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+80.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 5
+ in Return (m'', ()))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+81.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (5, ())
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+82.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (5, ())
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+83.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in Append ([(5, ())]) (ys))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+84.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
+ in Append ([(5, ())]) (ys))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+85.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([(5, ())]) ([])
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+86.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [(5, ())]
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+87.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (Append ([(4, ())]) ([(5, ())])
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+88.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (do ys' <- (Return [(4, ()),(5, ())]
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+89.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (Append ([(3, ())]) ([(4, ()),(5, ())])
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+90.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (Return [(3, ()),(4, ()),(5, ())]
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+91.
+{-- E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (Append ([(2, ())]) ([(3, ()),(4, ()),(5, ())])
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+92.
+{-- E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (Return [(2, ()),(3, ()),(4, ()),(5, ())]
+ in Append ([(1, ())]) (ys))
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+93.
+{-- E-Do and E-DoRet --}
+
+do result <- (Append ([(1, ())]) ([(2, ()),(3, ()),(4, ()),(5, ())])
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+94.
+{-- E-Do and E-Binop --}
+
+do result <- (Return [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+ in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
+
+95.
+{-- E-DoRet --}
+
+\ z. parallel{} * \ z. handler{hAccum} * Return z z [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+
+96.
+{-- E-AppAbs --}
+
+parallel{} * \ z. handler{hAccum} * Return z [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+
+97.
+{-- E-Hand and E-AppAbs --}
+
+parallel{} * handler{hAccum} * Return [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+
+98.
+{-- E-Hand and E-HandRet --}
+
+parallel{} * Return (0, [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())])
+
+99.
+{-- E-HandRet --}
+
+Return (0, [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())])
+
+100.
+{-- Nothing --}
+

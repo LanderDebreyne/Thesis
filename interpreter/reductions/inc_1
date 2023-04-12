@@ -1,0 +1,302 @@
+handler{hOnce} * do c' <- (handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y))
+ in c' 0)
+
+1.
+{-- E-Hand and E-Do and E-FwdOp --}
+
+handler{hOnce} * do c' <- (op choose () (b. handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y))
+ in c' 0)
+
+2.
+{-- E-Hand and E-DoOp --}
+
+handler{hOnce} * op choose () (b. do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0))
+
+3.
+{-- E-HandOp --}
+
+do xs <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) True
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+4.
+{-- E-Do and E-AppAbs --}
+
+do xs <- (handler{hOnce} * do c' <- (handler{hInc} * 
+if True
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0)
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+5.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
+
+do xs <- (handler{hOnce} * do c' <- (handler{hInc} * op inc () (y. Return y)
+ in c' 0)
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+6.
+{-- E-Do and E-Hand and E-Do and E-HandOp --}
+
+do xs <- (handler{hOnce} * do c' <- (Return \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in c' 0)
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+7.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do xs <- (handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s')) 0
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+8.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do xs <- (handler{hOnce} * do k' <- (\ y. handler{hInc} * Return y 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+9.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do xs <- (handler{hOnce} * do k' <- (handler{hInc} * Return 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+10.
+{-- E-Do and E-Hand and E-Do and E-HandRet --}
+
+do xs <- (handler{hOnce} * do k' <- (Return \ s. Return (0, s)
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+11.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do xs <- (handler{hOnce} * do s' <- (Add (0) (1)
+ in \ s. Return (0, s) s')
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+12.
+{-- E-Do and E-Hand and E-Do and E-Binop --}
+
+do xs <- (handler{hOnce} * do s' <- (Return 1
+ in \ s. Return (0, s) s')
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+13.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do xs <- (handler{hOnce} * \ s. Return (0, s) 1
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+14.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do xs <- (handler{hOnce} * Return (0, 1)
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+15.
+{-- E-Do and E-HandRet --}
+
+do xs <- (Return [(0, 1)]
+ in do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append (xs) (ys)))
+
+16.
+{-- E-DoRet --}
+
+do ys <- (\ b. handler{hOnce} * do c' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0) False
+ in Append ([(0, 1)]) (ys))
+
+17.
+{-- E-Do and E-AppAbs --}
+
+do ys <- (handler{hOnce} * do c' <- (handler{hInc} * 
+if False
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in c' 0)
+ in Append ([(0, 1)]) (ys))
+
+18.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
+
+do ys <- (handler{hOnce} * do c' <- (handler{hInc} * op inc () (y. Return y)
+ in c' 0)
+ in Append ([(0, 1)]) (ys))
+
+19.
+{-- E-Do and E-Hand and E-Do and E-HandOp --}
+
+do ys <- (handler{hOnce} * do c' <- (Return \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in c' 0)
+ in Append ([(0, 1)]) (ys))
+
+20.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do ys <- (handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s')) 0
+ in Append ([(0, 1)]) (ys))
+
+21.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do ys <- (handler{hOnce} * do k' <- (\ y. handler{hInc} * Return y 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in Append ([(0, 1)]) (ys))
+
+22.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do ys <- (handler{hOnce} * do k' <- (handler{hInc} * Return 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in Append ([(0, 1)]) (ys))
+
+23.
+{-- E-Do and E-Hand and E-Do and E-HandRet --}
+
+do ys <- (handler{hOnce} * do k' <- (Return \ s. Return (0, s)
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in Append ([(0, 1)]) (ys))
+
+24.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do ys <- (handler{hOnce} * do s' <- (Add (0) (1)
+ in \ s. Return (0, s) s')
+ in Append ([(0, 1)]) (ys))
+
+25.
+{-- E-Do and E-Hand and E-Do and E-Binop --}
+
+do ys <- (handler{hOnce} * do s' <- (Return 1
+ in \ s. Return (0, s) s')
+ in Append ([(0, 1)]) (ys))
+
+26.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do ys <- (handler{hOnce} * \ s. Return (0, s) 1
+ in Append ([(0, 1)]) (ys))
+
+27.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do ys <- (handler{hOnce} * Return (0, 1)
+ in Append ([(0, 1)]) (ys))
+
+28.
+{-- E-Do and E-HandRet --}
+
+do ys <- (Return [(0, 1)]
+ in Append ([(0, 1)]) (ys))
+
+29.
+{-- E-DoRet --}
+
+Append ([(0, 1)]) ([(0, 1)])
+
+30.
+{-- E-Binop --}
+
+Return [(0, 1),(0, 1)]
+
+31.
+{-- Nothing --}
+

@@ -1,0 +1,513 @@
+handler{hCut} * do b <- (sc call () (_. do y <- (op choose () (y. Return y)
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False)) (z. Return z)
+ in 
+if b
+ then Return "heads"
+ else Return "tails")
+
+1.
+{-- E-Hand and E-DoSc --}
+
+handler{hCut} * sc call () (_. do y <- (op choose () (y. Return y)
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False)) (z. do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+
+2.
+{-- E-HandSc --}
+
+do x <- (\ _. handler{hCut} * do y <- (op choose () (y. Return y)
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) ()
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+3.
+{-- E-Do and E-AppAbs --}
+
+do x <- (handler{hCut} * do y <- (op choose () (y. Return y)
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False)
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+4.
+{-- E-Do and E-Hand and E-DoOp --}
+
+do x <- (handler{hCut} * op choose () (y. do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+5.
+{-- E-Do and E-HandOp --}
+
+do x <- (do xs <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) True
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+6.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do xs <- (handler{hCut} * do y <- (Return True
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False)
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+7.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do xs <- (handler{hCut} * 
+if True
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+8.
+{-- E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do x <- (do xs <- (handler{hCut} * do _ <- (op cut () (y. Return y)
+ in Return True)
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+9.
+{-- E-Do and E-Do and E-Hand and E-DoOp --}
+
+do x <- (do xs <- (handler{hCut} * op cut () (y. do _ <- (Return y
+ in Return True))
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+10.
+{-- E-Do and E-Do and E-HandOp --}
+
+do x <- (do xs <- (do x <- (\ y. handler{hCut} * do _ <- (Return y
+ in Return True) ()
+ in Close x)
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+11.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do xs <- (do x <- (handler{hCut} * do _ <- (Return ()
+ in Return True)
+ in Close x)
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+12.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do xs <- (do x <- (handler{hCut} * Return True
+ in Close x)
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+13.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do x <- (do xs <- (do x <- (Return Vreturn [True]
+ in Close x)
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+14.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do xs <- (Close Vreturn [True]
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+15.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do xs <- (Return flag [True]
+ in do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (xs) (ys)))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+16.
+{-- E-Do and E-DoRet --}
+
+do x <- (do ys <- (\ y. handler{hCut} * do y <- (Return y
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False) False
+ in AppendCut (flag [True]) (ys))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+17.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do ys <- (handler{hCut} * do y <- (Return False
+ in 
+if y
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False)
+ in AppendCut (flag [True]) (ys))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+18.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do ys <- (handler{hCut} * 
+if False
+ then do _ <- (op cut () (y. Return y)
+ in Return True)
+ else Return False
+ in AppendCut (flag [True]) (ys))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+19.
+{-- E-Do and E-Do and E-Hand and E-IfTrue --}
+
+do x <- (do ys <- (handler{hCut} * Return False
+ in AppendCut (flag [True]) (ys))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+20.
+{-- E-Do and E-Do and E-HandRet --}
+
+do x <- (do ys <- (Return Vreturn [False]
+ in AppendCut (flag [True]) (ys))
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+21.
+{-- E-Do and E-DoRet --}
+
+do x <- (AppendCut (flag [True]) (Vreturn [False])
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+22.
+{-- E-Do and E-Binop --}
+
+do x <- (Return flag [True]
+ in do x' <- (Open x
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))))
+
+23.
+{-- E-DoRet --}
+
+do x' <- (Open flag [True]
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails")))
+
+24.
+{-- E-Do and E-Unop --}
+
+do x' <- (Return Vreturn [True]
+ in ConcatMapCutList (x') (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails")))
+
+25.
+{-- E-DoRet --}
+
+ConcatMapCutList (Vreturn [True]) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+
+26.
+{-- E-Binop --}
+
+do as <- (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails") True
+ in do as' <- (ConcatMapCutList (Vreturn []) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+ in AppendCut (as) (as')))
+
+27.
+{-- E-Do and E-AppAbs --}
+
+do as <- (handler{hCut} * do b <- (Return True
+ in 
+if b
+ then Return "heads"
+ else Return "tails")
+ in do as' <- (ConcatMapCutList (Vreturn []) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+ in AppendCut (as) (as')))
+
+28.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do as <- (handler{hCut} * 
+if True
+ then Return "heads"
+ else Return "tails"
+ in do as' <- (ConcatMapCutList (Vreturn []) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+ in AppendCut (as) (as')))
+
+29.
+{-- E-Do and E-Hand and E-IfTrue --}
+
+do as <- (handler{hCut} * Return "heads"
+ in do as' <- (ConcatMapCutList (Vreturn []) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+ in AppendCut (as) (as')))
+
+30.
+{-- E-Do and E-HandRet --}
+
+do as <- (Return Vreturn ["heads"]
+ in do as' <- (ConcatMapCutList (Vreturn []) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+ in AppendCut (as) (as')))
+
+31.
+{-- E-DoRet --}
+
+do as' <- (ConcatMapCutList (Vreturn []) (\ z. handler{hCut} * do b <- (Return z
+ in 
+if b
+ then Return "heads"
+ else Return "tails"))
+ in AppendCut (Vreturn ["heads"]) (as'))
+
+32.
+{-- E-Do and E-Binop --}
+
+do as' <- (Return Vreturn []
+ in AppendCut (Vreturn ["heads"]) (as'))
+
+33.
+{-- E-DoRet --}
+
+AppendCut (Vreturn ["heads"]) (Vreturn [])
+
+34.
+{-- E-Binop --}
+
+Return Vreturn ["heads"]
+
+35.
+{-- Nothing --}
+

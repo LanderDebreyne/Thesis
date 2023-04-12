@@ -1,0 +1,161 @@
+handler{hOnce} * sc once () (_. op choose () (y. Return y)) (b. 
+if b
+ then Return "heads"
+ else Return "tails")
+
+1.
+{-- E-HandSc --}
+
+do ts <- (\ _. handler{hOnce} * op choose () (y. Return y) ()
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+2.
+{-- E-Do and E-AppAbs --}
+
+do ts <- (handler{hOnce} * op choose () (y. Return y)
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+3.
+{-- E-Do and E-HandOp --}
+
+do ts <- (do xs <- (\ y. handler{hOnce} * Return y True
+ in do ys <- (\ y. handler{hOnce} * Return y False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+4.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do ts <- (do xs <- (handler{hOnce} * Return True
+ in do ys <- (\ y. handler{hOnce} * Return y False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+5.
+{-- E-Do and E-Do and E-HandRet --}
+
+do ts <- (do xs <- (Return [True]
+ in do ys <- (\ y. handler{hOnce} * Return y False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+6.
+{-- E-Do and E-DoRet --}
+
+do ts <- (do ys <- (\ y. handler{hOnce} * Return y False
+ in Append ([True]) (ys))
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+7.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do ts <- (do ys <- (handler{hOnce} * Return False
+ in Append ([True]) (ys))
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+8.
+{-- E-Do and E-Do and E-HandRet --}
+
+do ts <- (do ys <- (Return [False]
+ in Append ([True]) (ys))
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+9.
+{-- E-Do and E-DoRet --}
+
+do ts <- (Append ([True]) ([False])
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+10.
+{-- E-Do and E-Binop --}
+
+do ts <- (Return [True,False]
+ in do t <- (Head ts
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t))
+
+11.
+{-- E-DoRet --}
+
+do t <- (Head [True,False]
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t)
+
+12.
+{-- E-Do and E-Unop --}
+
+do t <- (Return True
+ in \ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" t)
+
+13.
+{-- E-DoRet --}
+
+\ b. handler{hOnce} * 
+if b
+ then Return "heads"
+ else Return "tails" True
+
+14.
+{-- E-AppAbs --}
+
+handler{hOnce} * 
+if True
+ then Return "heads"
+ else Return "tails"
+
+15.
+{-- E-Hand and E-IfTrue --}
+
+handler{hOnce} * Return "heads"
+
+16.
+{-- E-HandRet --}
+
+Return ["heads"]
+
+17.
+{-- Nothing --}
+

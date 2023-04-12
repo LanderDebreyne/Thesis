@@ -1,0 +1,6133 @@
+handler{hPureSc} * handler{hAccumSc} * sc for [1,2,3,4,5] (y. op accum y (y. Return y)) (z. Return z)
+
+1.
+{-- E-Hand and E-HandSc --}
+
+handler{hPureSc} * do pairs <- (sc for [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op accum y (y. Return y) y) (z. Return z)
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))))
+
+2.
+{-- E-Hand and E-DoSc --}
+
+handler{hPureSc} * sc for [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op accum y (y. Return y) y) (z. do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))))
+
+3.
+{-- E-HandSc --}
+
+do results <- (Map ([1,2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+4.
+{-- E-Do and E-Binop --}
+
+do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y 1
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+5.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do results <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) 1
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+6.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum 1 (y. Return y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+7.
+{-- E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+8.
+{-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do results <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+9.
+{-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do results <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+10.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+11.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (1)
+ in Return (m'', s))))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+12.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (1)
+ in Return (m'', s)))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+13.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do y <- (handler{hPureSc} * do s <- (Return ()
+ in do m'' <- (Add (0) (1)
+ in Return (m'', s)))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+14.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (1)
+ in Return (m'', ()))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+15.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do results <- (do y <- (handler{hPureSc} * do m'' <- (Return 1
+ in Return (m'', ()))
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+16.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do y <- (handler{hPureSc} * Return (1, ())
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+17.
+{-- E-Do and E-Do and E-HandRet --}
+
+do results <- (do y <- (Return (1, ())
+ in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+18.
+{-- E-Do and E-DoRet --}
+
+do results <- (do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+19.
+{-- E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y 2
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+20.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) 2
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+21.
+{-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum 2 (y. Return y)
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+22.
+{-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+23.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+24.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+25.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s))))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+26.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (2)
+ in Return (m'', s))))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+27.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (2)
+ in Return (m'', s)))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+28.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+ in do m'' <- (Add (0) (2)
+ in Return (m'', s)))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+29.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (2)
+ in Return (m'', ()))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+30.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 2
+ in Return (m'', ()))
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+31.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * Return (2, ())
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+32.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do y <- (Return (2, ())
+ in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+33.
+{-- E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+34.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y 3
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+35.
+{-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) 3
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+36.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum 3 (y. Return y)
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+37.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+38.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+39.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+40.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s))))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+41.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (3)
+ in Return (m'', s))))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+42.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (3)
+ in Return (m'', s)))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+43.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+ in do m'' <- (Add (0) (3)
+ in Return (m'', s)))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+44.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (3)
+ in Return (m'', ()))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+45.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 3
+ in Return (m'', ()))
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+46.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return (3, ())
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+47.
+{-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (Return (3, ())
+ in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+48.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+49.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y 4
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+50.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) 4
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+51.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum 4 (y. Return y)
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+52.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+53.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+54.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+55.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s))))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+56.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (4)
+ in Return (m'', s))))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+57.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (4)
+ in Return (m'', s)))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+58.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+ in do m'' <- (Add (0) (4)
+ in Return (m'', s)))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+59.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (4)
+ in Return (m'', ()))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+60.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 4
+ in Return (m'', ()))
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+61.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return (4, ())
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+62.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (4, ())
+ in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+63.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+64.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y 5
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+65.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) 5
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+66.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum 5 (y. Return y)
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+67.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+68.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+69.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+ in do m' <- (Fst k'
+ in do s <- (Snd k'
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s)))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+70.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+71.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+ in do s <- (Snd (0, ())
+ in do m'' <- (Add (m') (5)
+ in Return (m'', s))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+72.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+ in do m'' <- (Add (0) (5)
+ in Return (m'', s)))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+73.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+ in do m'' <- (Add (0) (5)
+ in Return (m'', s)))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+74.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (5)
+ in Return (m'', ()))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+75.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 5
+ in Return (m'', ()))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+76.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return (5, ())
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+77.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (5, ())
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+78.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum y (y. Return y) y)
+ in Append ([(5, ())]) (ys))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+79.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
+ in Append ([(5, ())]) (ys))
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+80.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([(5, ())]) ([])
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+81.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [(5, ())]
+ in Append ([(4, ())]) (ys))
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+82.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (Append ([(4, ())]) ([(5, ())])
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+83.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (Return [(4, ()),(5, ())]
+ in Append ([(3, ())]) (ys))
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+84.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (Append ([(3, ())]) ([(4, ()),(5, ())])
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+85.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (Return [(3, ()),(4, ()),(5, ())]
+ in Append ([(2, ())]) (ys))
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+86.
+{-- E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (Append ([(2, ())]) ([(3, ()),(4, ()),(5, ())])
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+87.
+{-- E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (Return [(2, ()),(3, ()),(4, ()),(5, ())]
+ in Append ([(1, ())]) (ys))
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+88.
+{-- E-Do and E-DoRet --}
+
+do results <- (Append ([(1, ())]) ([(2, ()),(3, ()),(4, ()),(5, ())])
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+89.
+{-- E-Do and E-Binop --}
+
+do results <- (Return [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+ in \ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) results)
+
+90.
+{-- E-DoRet --}
+
+\ z. handler{hPureSc} * do pairs <- (Return z
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))) [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+
+91.
+{-- E-AppAbs --}
+
+handler{hPureSc} * do pairs <- (Return [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]
+ in do first <- (Map (pairs) (\ l. Fst l)
+ in do second <- (Map (pairs) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))))
+
+92.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do first <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+93.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do y <- (\ l. Fst l (1, ())
+ in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+94.
+{-- E-Hand and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do first <- (do y <- (Fst (1, ())
+ in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+95.
+{-- E-Hand and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do first <- (do y <- (Return 1
+ in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+96.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+97.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do y <- (\ l. Fst l (2, ())
+ in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+98.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do first <- (do ys' <- (do y <- (Fst (2, ())
+ in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+99.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do y <- (Return 2
+ in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+100.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+101.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l (3, ())
+ in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+102.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do y <- (Fst (3, ())
+ in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+103.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do y <- (Return 3
+ in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+104.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+105.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l (4, ())
+ in do ys' <- (Map ([(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+106.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Fst (4, ())
+ in do ys' <- (Map ([(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+107.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return 4
+ in do ys' <- (Map ([(5, ())]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+108.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([(5, ())]) (\ l. Fst l)
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+109.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l (5, ())
+ in do ys' <- (Map ([]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+110.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Fst (5, ())
+ in do ys' <- (Map ([]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+111.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return 5
+ in do ys' <- (Map ([]) (\ l. Fst l)
+ in Append ([y]) (ys)))
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+112.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ l. Fst l)
+ in Append ([5]) (ys))
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+113.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
+ in Append ([5]) (ys))
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+114.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([5]) ([])
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+115.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [5]
+ in Append ([4]) (ys))
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+116.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (Append ([4]) ([5])
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+117.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (do ys' <- (Return [4,5]
+ in Append ([3]) (ys))
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+118.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (Append ([3]) ([4,5])
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+119.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (do ys' <- (Return [3,4,5]
+ in Append ([2]) (ys))
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+120.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (do ys' <- (Append ([2]) ([3,4,5])
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+121.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (do ys' <- (Return [2,3,4,5]
+ in Append ([1]) (ys))
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+122.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do first <- (Append ([1]) ([2,3,4,5])
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+123.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do first <- (Return [1,2,3,4,5]
+ in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce first
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))))
+
+124.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+125.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do y <- (\ l. Snd l (1, ())
+ in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+126.
+{-- E-Hand and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do second <- (do y <- (Snd (1, ())
+ in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+127.
+{-- E-Hand and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do second <- (do y <- (Return ()
+ in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+128.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+129.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do y <- (\ l. Snd l (2, ())
+ in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+130.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do second <- (do ys' <- (do y <- (Snd (2, ())
+ in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+131.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do y <- (Return ()
+ in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+132.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+133.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l (3, ())
+ in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+134.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do y <- (Snd (3, ())
+ in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+135.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do y <- (Return ()
+ in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+136.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+137.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l (4, ())
+ in do ys' <- (Map ([(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+138.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Snd (4, ())
+ in do ys' <- (Map ([(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+139.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return ()
+ in do ys' <- (Map ([(5, ())]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+140.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([(5, ())]) (\ l. Snd l)
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+141.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l (5, ())
+ in do ys' <- (Map ([]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+142.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Snd (5, ())
+ in do ys' <- (Map ([]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+143.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return ()
+ in do ys' <- (Map ([]) (\ l. Snd l)
+ in Append ([y]) (ys)))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+144.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ l. Snd l)
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+145.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+146.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([()]) ([])
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+147.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [()]
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+148.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (Append ([()]) ([()])
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+149.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (do ys' <- (Return [(),()]
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+150.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (Append ([()]) ([(),()])
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+151.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (do ys' <- (Return [(),(),()]
+ in Append ([()]) (ys))
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+152.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (do ys' <- (Append ([()]) ([(),(),()])
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+153.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (do ys' <- (Return [(),(),(),()]
+ in Append ([()]) (ys))
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+154.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do second <- (Append ([()]) ([(),(),(),()])
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+155.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do second <- (Return [(),(),(),(),()]
+ in do k' <- (\ z. handler{hAccumSc} * Return z second
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))))
+
+156.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do k' <- (\ z. handler{hAccumSc} * Return z [(),(),(),(),()]
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))
+
+157.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do k' <- (handler{hAccumSc} * Return [(),(),(),(),()]
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))
+
+158.
+{-- E-Hand and E-Do and E-HandRet --}
+
+handler{hPureSc} * do k' <- (Return (0, [(),(),(),(),()])
+ in letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst k'
+ in do k'' <- (Snd k'
+ in do res <- (Add (base) (rest)
+ in Return (res, k''))))))
+
+159.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * letrec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do rest <- (reduce [1,2,3,4,5]
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+160.
+{-- E-Hand and E-LetRec --}
+
+handler{hPureSc} * do rest <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) [1,2,3,4,5]
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+161.
+{-- E-Hand and E-Do and E-AppRec --}
+
+handler{hPureSc} * do rest <- (\ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))) [1,2,3,4,5]
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+162.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do rest <- (do n <- (Empty [1,2,3,4,5]
+ in 
+if n
+ then Return 0
+ else do h <- (Head [1,2,3,4,5]
+ in do t <- (Tail [1,2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+163.
+{-- E-Hand and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do n <- (Return False
+ in 
+if n
+ then Return 0
+ else do h <- (Head [1,2,3,4,5]
+ in do t <- (Tail [1,2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+164.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (
+if False
+ then Return 0
+ else do h <- (Head [1,2,3,4,5]
+ in do t <- (Tail [1,2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+165.
+{-- E-Hand and E-Do and E-IfTrue --}
+
+handler{hPureSc} * do rest <- (do h <- (Head [1,2,3,4,5]
+ in do t <- (Tail [1,2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+166.
+{-- E-Hand and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do h <- (Return 1
+ in do t <- (Tail [1,2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+167.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do t <- (Tail [1,2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (1) (y)
+ in Return x)))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+168.
+{-- E-Hand and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do t <- (Return [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (1) (y)
+ in Return x)))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+169.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) [2,3,4,5]
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+170.
+{-- E-Hand and E-Do and E-Do and E-AppRec --}
+
+handler{hPureSc} * do rest <- (do y <- (\ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))) [2,3,4,5]
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+171.
+{-- E-Hand and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do rest <- (do y <- (do n <- (Empty [2,3,4,5]
+ in 
+if n
+ then Return 0
+ else do h <- (Head [2,3,4,5]
+ in do t <- (Tail [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+172.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do n <- (Return False
+ in 
+if n
+ then Return 0
+ else do h <- (Head [2,3,4,5]
+ in do t <- (Tail [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+173.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (
+if False
+ then Return 0
+ else do h <- (Head [2,3,4,5]
+ in do t <- (Tail [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+174.
+{-- E-Hand and E-Do and E-Do and E-IfTrue --}
+
+handler{hPureSc} * do rest <- (do y <- (do h <- (Head [2,3,4,5]
+ in do t <- (Tail [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+175.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do h <- (Return 2
+ in do t <- (Tail [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+176.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do t <- (Tail [2,3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (2) (y)
+ in Return x)))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+177.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do t <- (Return [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (2) (y)
+ in Return x)))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+178.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) [3,4,5]
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+179.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppRec --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (\ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))) [3,4,5]
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+180.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do n <- (Empty [3,4,5]
+ in 
+if n
+ then Return 0
+ else do h <- (Head [3,4,5]
+ in do t <- (Tail [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+181.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do n <- (Return False
+ in 
+if n
+ then Return 0
+ else do h <- (Head [3,4,5]
+ in do t <- (Tail [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+182.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (
+if False
+ then Return 0
+ else do h <- (Head [3,4,5]
+ in do t <- (Tail [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+183.
+{-- E-Hand and E-Do and E-Do and E-Do and E-IfTrue --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do h <- (Head [3,4,5]
+ in do t <- (Tail [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+184.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do h <- (Return 3
+ in do t <- (Tail [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+185.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do t <- (Tail [3,4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (3) (y)
+ in Return x)))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+186.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do t <- (Return [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (3) (y)
+ in Return x)))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+187.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) [4,5]
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+188.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppRec --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (\ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))) [4,5]
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+189.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do n <- (Empty [4,5]
+ in 
+if n
+ then Return 0
+ else do h <- (Head [4,5]
+ in do t <- (Tail [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+190.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do n <- (Return False
+ in 
+if n
+ then Return 0
+ else do h <- (Head [4,5]
+ in do t <- (Tail [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+191.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (
+if False
+ then Return 0
+ else do h <- (Head [4,5]
+ in do t <- (Tail [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+192.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-IfTrue --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do h <- (Head [4,5]
+ in do t <- (Tail [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+193.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do h <- (Return 4
+ in do t <- (Tail [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+194.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do t <- (Tail [4,5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (4) (y)
+ in Return x)))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+195.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do t <- (Return [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (4) (y)
+ in Return x)))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+196.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) [5]
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+197.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppRec --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (\ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))) [5]
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+198.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do n <- (Empty [5]
+ in 
+if n
+ then Return 0
+ else do h <- (Head [5]
+ in do t <- (Tail [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+199.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do n <- (Return False
+ in 
+if n
+ then Return 0
+ else do h <- (Head [5]
+ in do t <- (Tail [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+200.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (
+if False
+ then Return 0
+ else do h <- (Head [5]
+ in do t <- (Tail [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+201.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do h <- (Head [5]
+ in do t <- (Tail [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+202.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do h <- (Return 5
+ in do t <- (Tail [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+203.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do t <- (Tail [5]
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (5) (y)
+ in Return x)))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+204.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do t <- (Return []
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (5) (y)
+ in Return x)))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+205.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) []
+ in do x <- (Add (5) (y)
+ in Return x))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+206.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppRec --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do y <- (\ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))) []
+ in do x <- (Add (5) (y)
+ in Return x))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+207.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do y <- (do n <- (Empty []
+ in 
+if n
+ then Return 0
+ else do h <- (Head []
+ in do t <- (Tail []
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (5) (y)
+ in Return x))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+208.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do y <- (do n <- (Return True
+ in 
+if n
+ then Return 0
+ else do h <- (Head []
+ in do t <- (Tail []
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x)))))
+ in do x <- (Add (5) (y)
+ in Return x))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+209.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do y <- (
+if True
+ then Return 0
+ else do h <- (Head []
+ in do t <- (Tail []
+ in do y <- (rec reduce = \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) in \ l. do n <- (Empty l
+ in 
+if n
+ then Return 0
+ else do h <- (Head l
+ in do t <- (Tail l
+ in do y <- (reduce t
+ in do x <- (Add (h) (y)
+ in Return x))))) t
+ in do x <- (Add (h) (y)
+ in Return x))))
+ in do x <- (Add (5) (y)
+ in Return x))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+210.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-IfTrue --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do y <- (Return 0
+ in do x <- (Add (5) (y)
+ in Return x))
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+211.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do x <- (Add (5) (0)
+ in Return x)
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+212.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (do x <- (Return 5
+ in Return x)
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+213.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do y <- (Return 5
+ in do x <- (Add (4) (y)
+ in Return x))
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+214.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do x <- (Add (4) (5)
+ in Return x)
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+215.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (do x <- (Return 9
+ in Return x)
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+216.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do y <- (Return 9
+ in do x <- (Add (3) (y)
+ in Return x))
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+217.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do x <- (Add (3) (9)
+ in Return x)
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+218.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (do x <- (Return 12
+ in Return x)
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+219.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do y <- (Return 12
+ in do x <- (Add (2) (y)
+ in Return x))
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+220.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (do x <- (Add (2) (12)
+ in Return x)
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+221.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do rest <- (do y <- (do x <- (Return 14
+ in Return x)
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+222.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do y <- (Return 14
+ in do x <- (Add (1) (y)
+ in Return x))
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+223.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (do x <- (Add (1) (14)
+ in Return x)
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+224.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do rest <- (do x <- (Return 15
+ in Return x)
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+225.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do rest <- (Return 15
+ in do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (rest)
+ in Return (res, k'')))))
+
+226.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do base <- (Fst (0, [(),(),(),(),()])
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (15)
+ in Return (res, k''))))
+
+227.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hPureSc} * do base <- (Return 0
+ in do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (base) (15)
+ in Return (res, k''))))
+
+228.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do k'' <- (Snd (0, [(),(),(),(),()])
+ in do res <- (Add (0) (15)
+ in Return (res, k'')))
+
+229.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hPureSc} * do k'' <- (Return [(),(),(),(),()]
+ in do res <- (Add (0) (15)
+ in Return (res, k'')))
+
+230.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do res <- (Add (0) (15)
+ in Return (res, [(),(),(),(),()]))
+
+231.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do res <- (Return 15
+ in Return (res, [(),(),(),(),()]))
+
+232.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * Return (15, [(),(),(),(),()])
+
+233.
+{-- E-HandRet --}
+
+Return (15, [(),(),(),(),()])
+
+234.
+{-- Nothing --}
+

@@ -1,0 +1,395 @@
+parallel{} * do key <- (Return StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
+ in do ex <- (handler{hPureSc} * handler{hPRNGSc} * do 1 <- (op sampleUniform () (y. Return y)
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3])))
+ in ex key))
+
+1.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do ex <- (handler{hPureSc} * handler{hPRNGSc} * do 1 <- (op sampleUniform () (y. Return y)
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3])))
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+2.
+{-- E-Hand and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+parallel{} * do ex <- (handler{hPureSc} * handler{hPRNGSc} * op sampleUniform () (y. do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))))
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+3.
+{-- E-Hand and E-Do and E-Hand and E-HandOp --}
+
+parallel{} * do ex <- (handler{hPureSc} * Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key))))
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+4.
+{-- E-Hand and E-Do and E-HandRet --}
+
+parallel{} * do ex <- (Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key))))
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+5.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key)))) StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
+
+6.
+{-- E-Hand and E-AppAbs --}
+
+parallel{} * do pair <- (Rand StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key))))
+
+7.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do pair <- (Return (48, StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key))))
+
+8.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do val <- (Fst (48, StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+ in do key <- (Snd (48, StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key)))
+
+9.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do val <- (Return 48
+ in do key <- (Snd (48, StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) val
+ in cont key)))
+
+10.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do key <- (Snd (48, StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) 48
+ in cont key))
+
+11.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do key <- (Return StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413}
+ in do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) 48
+ in cont key))
+
+12.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do cont <- (\ y. handler{hPRNGSc} * do 1 <- (Return y
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3]))) 48
+ in cont StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+
+13.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * do 1 <- (Return 48
+ in do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [1,2,3])))
+ in cont StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+
+14.
+{-- E-Hand and E-Do and E-Hand and E-DoRet --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * do 2 <- (op sampleUniform () (y. Return y)
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3]))
+ in cont StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+
+15.
+{-- E-Hand and E-Do and E-Hand and E-DoOp --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * op sampleUniform () (y. do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])))
+ in cont StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+
+16.
+{-- E-Hand and E-Do and E-HandOp --}
+
+parallel{} * do cont <- (Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) val
+ in cont key))))
+ in cont StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413})
+
+17.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) val
+ in cont key)))) StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413}
+
+18.
+{-- E-Hand and E-AppAbs --}
+
+parallel{} * do pair <- (Rand StdGen {unStdGen = SMGen 4530528345362647137 13679457532755275413}
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) val
+ in cont key))))
+
+19.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do pair <- (Return (23, StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) val
+ in cont key))))
+
+20.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do val <- (Fst (23, StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+ in do key <- (Snd (23, StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) val
+ in cont key)))
+
+21.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do val <- (Return 23
+ in do key <- (Snd (23, StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) val
+ in cont key)))
+
+22.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do key <- (Snd (23, StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) 23
+ in cont key))
+
+23.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do key <- (Return StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}
+ in do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) 23
+ in cont key))
+
+24.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do cont <- (\ y. handler{hPRNGSc} * do 2 <- (Return y
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3])) 23
+ in cont StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+
+25.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * do 2 <- (Return 23
+ in do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,2,3]))
+ in cont StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+
+26.
+{-- E-Hand and E-Do and E-Hand and E-DoRet --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * do 3 <- (op sampleUniform () (y. Return y)
+ in Return [48,23,3])
+ in cont StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+
+27.
+{-- E-Hand and E-Do and E-Hand and E-DoOp --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * op sampleUniform () (y. do 3 <- (Return y
+ in Return [48,23,3]))
+ in cont StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+
+28.
+{-- E-Hand and E-Do and E-HandOp --}
+
+parallel{} * do cont <- (Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) val
+ in cont key))))
+ in cont StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413})
+
+29.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) val
+ in cont key)))) StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}
+
+30.
+{-- E-Hand and E-AppAbs --}
+
+parallel{} * do pair <- (Rand StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) val
+ in cont key))))
+
+31.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do pair <- (Return (95, StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) val
+ in cont key))))
+
+32.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do val <- (Fst (95, StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+ in do key <- (Snd (95, StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) val
+ in cont key)))
+
+33.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do val <- (Return 95
+ in do key <- (Snd (95, StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) val
+ in cont key)))
+
+34.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do key <- (Snd (95, StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) 95
+ in cont key))
+
+35.
+{-- E-Hand and E-Do and E-Unop --}
+
+parallel{} * do key <- (Return StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413}
+ in do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) 95
+ in cont key))
+
+36.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * do cont <- (\ y. handler{hPRNGSc} * do 3 <- (Return y
+ in Return [48,23,3]) 95
+ in cont StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+
+37.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * do 3 <- (Return 95
+ in Return [48,23,3])
+ in cont StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+
+38.
+{-- E-Hand and E-Do and E-Hand and E-DoRet --}
+
+parallel{} * do cont <- (handler{hPRNGSc} * Return [48,23,95]
+ in cont StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+
+39.
+{-- E-Hand and E-Do and E-HandRet --}
+
+parallel{} * do cont <- (Return \ key. Return [48,23,95]
+ in cont StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413})
+
+40.
+{-- E-Hand and E-DoRet --}
+
+parallel{} * \ key. Return [48,23,95] StdGen {unStdGen = SMGen 13442699337163646347 13679457532755275413}
+
+41.
+{-- E-Hand and E-AppAbs --}
+
+parallel{} * Return [48,23,95]
+
+42.
+{-- E-HandRet --}
+
+Return [48,23,95]
+
+43.
+{-- Nothing --}
+

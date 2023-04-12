@@ -1,0 +1,1405 @@
+handler{hPureSc} * do key <- (Return StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
+ in do ex <- (handler{hPureSc} * handler{hPRNGSc} * sc for [(),(),()] (y. op sampleUniform () (y. Return y)) (y. Return y)
+ in ex key))
+
+1.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do ex <- (handler{hPureSc} * handler{hPRNGSc} * sc for [(),(),()] (y. op sampleUniform () (y. Return y)) (y. Return y)
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+2.
+{-- E-Hand and E-Do and E-Hand and E-HandSc --}
+
+handler{hPureSc} * do ex <- (handler{hPureSc} * Return \ key. do keys <- (SplitKeyPair key
+ in do key1 <- (Fst keys
+ in do key2 <- (Snd keys
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2)))))))
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+3.
+{-- E-Hand and E-Do and E-HandRet --}
+
+handler{hPureSc} * do ex <- (Return \ key. do keys <- (SplitKeyPair key
+ in do key1 <- (Fst keys
+ in do key2 <- (Snd keys
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2)))))))
+ in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
+
+4.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * \ key. do keys <- (SplitKeyPair key
+ in do key1 <- (Fst keys
+ in do key2 <- (Snd keys
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2))))))) StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
+
+5.
+{-- E-Hand and E-AppAbs --}
+
+handler{hPureSc} * do keys <- (SplitKeyPair StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
+ in do key1 <- (Fst keys
+ in do key2 <- (Snd keys
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2)))))))
+
+6.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hPureSc} * do keys <- (Return (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+ in do key1 <- (Fst keys
+ in do key2 <- (Snd keys
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2)))))))
+
+7.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do key1 <- (Fst (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+ in do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2))))))
+
+8.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hPureSc} * do key1 <- (Return StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}
+ in do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+ in do key1s <- (SplitKey (key1) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2))))))
+
+9.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+ in do key1s <- (SplitKey (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2)))))
+
+10.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hPureSc} * do key2 <- (Return StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}
+ in do key1s <- (SplitKey (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont key2)))))
+
+11.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do key1s <- (SplitKey (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}) ([(),(),()])
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))))
+
+12.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do key1s <- (Return [StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]
+ in do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) (key1s)
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))))
+
+13.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do for <- (sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. Return z)
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})))
+
+14.
+{-- E-Hand and E-DoSc --}
+
+handler{hPureSc} * sc for [(),(),()] (y. \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y) (z. do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))))
+
+15.
+{-- E-HandSc --}
+
+do results <- (Map ([(),(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+16.
+{-- E-Do and E-Binop --}
+
+do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y ()
+ in do ys' <- (Map ([(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+17.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do results <- (do y <- (handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) ()
+ in do ys' <- (Map ([(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+18.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do y <- (handler{hPureSc} * handler{hPRNGSc} * op sampleUniform () (y. Return y)
+ in do ys' <- (Map ([(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+19.
+{-- E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do y <- (handler{hPureSc} * Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do ys' <- (Map ([(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+20.
+{-- E-Do and E-Do and E-HandRet --}
+
+do results <- (do y <- (Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do ys' <- (Map ([(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+21.
+{-- E-Do and E-DoRet --}
+
+do results <- (do ys' <- (Map ([(),()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+22.
+{-- E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y ()
+ in do ys' <- (Map ([()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+23.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) ()
+ in do ys' <- (Map ([()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+24.
+{-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hPRNGSc} * op sampleUniform () (y. Return y)
+ in do ys' <- (Map ([()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+25.
+{-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do ys' <- (do y <- (handler{hPureSc} * Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do ys' <- (Map ([()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+26.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do y <- (Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do ys' <- (Map ([()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+27.
+{-- E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (Map ([()]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+28.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y ()
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+29.
+{-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) ()
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+30.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hPRNGSc} * op sampleUniform () (y. Return y)
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+31.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+32.
+{-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do results <- (do ys' <- (do ys' <- (do y <- (Return \ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([y]) (ys)))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+33.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hPRNGSc} * op sampleUniform () (y. Return y) y)
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+34.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (do ys' <- (Return []
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+35.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (do ys' <- (Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([])
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+36.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (do ys' <- (Return [\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+37.
+{-- E-Do and E-Do and E-DoRet --}
+
+do results <- (do ys' <- (Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))])
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+38.
+{-- E-Do and E-Do and E-Binop --}
+
+do results <- (do ys' <- (Return [\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]
+ in Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) (ys))
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+39.
+{-- E-Do and E-DoRet --}
+
+do results <- (Append ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))])
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+40.
+{-- E-Do and E-Binop --}
+
+do results <- (Return [\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]
+ in \ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) results)
+
+41.
+{-- E-DoRet --}
+
+\ z. handler{hPureSc} * do for <- (Return z
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))) [\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]
+
+42.
+{-- E-AppAbs --}
+
+handler{hPureSc} * do for <- (Return [\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]
+ in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})))
+
+43.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do results <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+44.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (do z <- (\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))) StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413}
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+45.
+{-- E-Hand and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413}
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+46.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do z <- (do pair <- (Return (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+47.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do z <- (do val <- (Fst (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+48.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do z <- (do val <- (Return 80
+ in do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+49.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do z <- (do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y 80
+ in cont key))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+50.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}
+ in do cont <- (\ y. handler{hPRNGSc} * Return y 80
+ in cont key))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+51.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do z <- (do cont <- (\ y. handler{hPRNGSc} * Return y 80
+ in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+52.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do z <- (do cont <- (handler{hPRNGSc} * Return 80
+ in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+53.
+{-- E-Hand and E-Do and E-Do and E-Do and E-HandRet --}
+
+handler{hPureSc} * do results <- (do z <- (do cont <- (Return \ key. Return 80
+ in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+54.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do z <- (\ key. Return 80 StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+55.
+{-- E-Hand and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do z <- (Return 80
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+56.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))),\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+57.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))) StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781}
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+58.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781}
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+59.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do pair <- (Return (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+60.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do val <- (Fst (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+61.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do val <- (Return 38
+ in do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+62.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y 38
+ in cont key))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+63.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}
+ in do cont <- (\ y. handler{hPRNGSc} * Return y 38
+ in cont key))
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+64.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do cont <- (\ y. handler{hPRNGSc} * Return y 38
+ in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+65.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do cont <- (handler{hPRNGSc} * Return 38
+ in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+66.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (do cont <- (Return \ key. Return 38
+ in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+67.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (\ key. Return 38 StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+68.
+{-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do zs <- (do z <- (Return 38
+ in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([z]) (zs)))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+69.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (Zip ([\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+70.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (\ key. do pair <- (Rand key
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))) StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+71.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+72.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do pair <- (Return (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do val <- (Fst pair
+ in do key <- (Snd pair
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key))))
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+73.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do val <- (Fst (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+74.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do val <- (Return 7
+ in do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y val
+ in cont key)))
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+75.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do cont <- (\ y. handler{hPRNGSc} * Return y 7
+ in cont key))
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+76.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}
+ in do cont <- (\ y. handler{hPRNGSc} * Return y 7
+ in cont key))
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+77.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (\ y. handler{hPRNGSc} * Return y 7
+ in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+78.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (handler{hPRNGSc} * Return 7
+ in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+79.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (Return \ key. Return 7
+ in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+80.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (\ key. Return 7 StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+81.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do z <- (Return 7
+ in do zs <- (Zip ([]) ([])
+ in Append ([z]) (zs)))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+82.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do zs <- (Zip ([]) ([])
+ in Append ([7]) (zs))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+83.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (do zs <- (Return []
+ in Append ([7]) (zs))
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+84.
+{-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (Append ([7]) ([])
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+85.
+{-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (do zs <- (do zs <- (Return [7]
+ in Append ([38]) (zs))
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+86.
+{-- E-Hand and E-Do and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (do zs <- (Append ([38]) ([7])
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+87.
+{-- E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (do zs <- (Return [38,7]
+ in Append ([80]) (zs))
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+88.
+{-- E-Hand and E-Do and E-DoRet --}
+
+handler{hPureSc} * do results <- (Append ([80]) ([38,7])
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+89.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hPureSc} * do results <- (Return [80,38,7]
+ in do cont <- (\ y. handler{hPRNGSc} * Return y results
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
+
+90.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * do cont <- (\ y. handler{hPRNGSc} * Return y [80,38,7]
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+
+91.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hPureSc} * do cont <- (handler{hPRNGSc} * Return [80,38,7]
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+
+92.
+{-- E-Hand and E-Do and E-HandRet --}
+
+handler{hPureSc} * do cont <- (Return \ key. Return [80,38,7]
+ in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
+
+93.
+{-- E-Hand and E-DoRet --}
+
+handler{hPureSc} * \ key. Return [80,38,7] StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}
+
+94.
+{-- E-Hand and E-AppAbs --}
+
+handler{hPureSc} * Return [80,38,7]
+
+95.
+{-- E-HandRet --}
+
+Return [80,38,7]
+
+96.
+{-- Nothing --}
+

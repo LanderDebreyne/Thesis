@@ -1,0 +1,844 @@
+handler{hOnce} * do c' <- (handler{hInc} * sc once () (_. op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y))) (x. op inc () (y. do z <- (Add (x) (y)
+ in Return z)))
+ in c' 0)
+
+1.
+{-- E-Hand and E-Do and E-FwdSc --}
+
+handler{hOnce} * do c' <- (Return \ s. \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc once () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' s), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))))
+ in c' 0)
+
+2.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * \ s. \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc once () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' s), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s')))) 0
+
+3.
+{-- E-Hand and E-AppAbs --}
+
+handler{hOnce} * \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc once () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))))
+
+4.
+{-- E-Hand and E-AppAbs --}
+
+handler{hOnce} * do p <- (Fst (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))))
+ in do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))))
+ in sc once () (_. p _) (x. k x)))
+
+5.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hOnce} * do p <- (Return \ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0)
+ in do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))))
+ in sc once () (_. p _) (x. k x)))
+
+6.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))))
+ in sc once () (_. \ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0) _) (x. k x))
+
+7.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hOnce} * do k <- (Return \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s')))
+ in sc once () (_. \ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0) _) (x. k x))
+
+8.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * sc once () (_. \ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0) _) (x. \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x)
+
+9.
+{-- E-HandSc --}
+
+do ts <- (\ _. handler{hOnce} * \ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0) _ ()
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+10.
+{-- E-Do and E-AppAbs --}
+
+do ts <- (handler{hOnce} * \ y. do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) y
+ in p' 0) ()
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+11.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do ts <- (handler{hOnce} * do p' <- (\ _. handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)) ()
+ in p' 0)
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+12.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do ts <- (handler{hOnce} * do p' <- (handler{hInc} * op choose () (b. 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y))
+ in p' 0)
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+13.
+{-- E-Do and E-Hand and E-Do and E-FwdOp --}
+
+do ts <- (handler{hOnce} * do p' <- (op choose () (b. handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y))
+ in p' 0)
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+14.
+{-- E-Do and E-Hand and E-DoOp --}
+
+do ts <- (handler{hOnce} * op choose () (b. do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+15.
+{-- E-Do and E-HandOp --}
+
+do ts <- (do xs <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) True
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+16.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do ts <- (do xs <- (handler{hOnce} * do p' <- (handler{hInc} * 
+if True
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0)
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+17.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
+
+do ts <- (do xs <- (handler{hOnce} * do p' <- (handler{hInc} * op inc () (y. Return y)
+ in p' 0)
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+18.
+{-- E-Do and E-Do and E-Hand and E-Do and E-HandOp --}
+
+do ts <- (do xs <- (handler{hOnce} * do p' <- (Return \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in p' 0)
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+19.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do ts <- (do xs <- (handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s')) 0
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+20.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do ts <- (do xs <- (handler{hOnce} * do k' <- (\ y. handler{hInc} * Return y 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+21.
+{-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do ts <- (do xs <- (handler{hOnce} * do k' <- (handler{hInc} * Return 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+22.
+{-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do ts <- (do xs <- (handler{hOnce} * do k' <- (Return \ s. Return (0, s)
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+23.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do ts <- (do xs <- (handler{hOnce} * do s' <- (Add (0) (1)
+ in \ s. Return (0, s) s')
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+24.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do ts <- (do xs <- (handler{hOnce} * do s' <- (Return 1
+ in \ s. Return (0, s) s')
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+25.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do ts <- (do xs <- (handler{hOnce} * \ s. Return (0, s) 1
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+26.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do ts <- (do xs <- (handler{hOnce} * Return (0, 1)
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+27.
+{-- E-Do and E-Do and E-HandRet --}
+
+do ts <- (do xs <- (Return [(0, 1)]
+ in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append (xs) (ys)))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+28.
+{-- E-Do and E-DoRet --}
+
+do ts <- (do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
+if b
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0) False
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+29.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do ts <- (do ys <- (handler{hOnce} * do p' <- (handler{hInc} * 
+if False
+ then op inc () (y. Return y)
+ else op inc () (y. Return y)
+ in p' 0)
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+30.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
+
+do ts <- (do ys <- (handler{hOnce} * do p' <- (handler{hInc} * op inc () (y. Return y)
+ in p' 0)
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+31.
+{-- E-Do and E-Do and E-Hand and E-Do and E-HandOp --}
+
+do ts <- (do ys <- (handler{hOnce} * do p' <- (Return \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in p' 0)
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+32.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do ts <- (do ys <- (handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * Return y s
+ in do s' <- (Add (s) (1)
+ in k' s')) 0
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+33.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do ts <- (do ys <- (handler{hOnce} * do k' <- (\ y. handler{hInc} * Return y 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+34.
+{-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do ts <- (do ys <- (handler{hOnce} * do k' <- (handler{hInc} * Return 0
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+35.
+{-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
+
+do ts <- (do ys <- (handler{hOnce} * do k' <- (Return \ s. Return (0, s)
+ in do s' <- (Add (0) (1)
+ in k' s'))
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+36.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do ts <- (do ys <- (handler{hOnce} * do s' <- (Add (0) (1)
+ in \ s. Return (0, s) s')
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+37.
+{-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
+
+do ts <- (do ys <- (handler{hOnce} * do s' <- (Return 1
+ in \ s. Return (0, s) s')
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+38.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do ts <- (do ys <- (handler{hOnce} * \ s. Return (0, s) 1
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+39.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do ts <- (do ys <- (handler{hOnce} * Return (0, 1)
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+40.
+{-- E-Do and E-Do and E-HandRet --}
+
+do ts <- (do ys <- (Return [(0, 1)]
+ in Append ([(0, 1)]) (ys))
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+41.
+{-- E-Do and E-DoRet --}
+
+do ts <- (Append ([(0, 1)]) ([(0, 1)])
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+42.
+{-- E-Do and E-Binop --}
+
+do ts <- (Return [(0, 1),(0, 1)]
+ in do t <- (Head ts
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t))
+
+43.
+{-- E-DoRet --}
+
+do t <- (Head [(0, 1),(0, 1)]
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t)
+
+44.
+{-- E-Do and E-Unop --}
+
+do t <- (Return (0, 1)
+ in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x t)
+
+45.
+{-- E-DoRet --}
+
+\ x. handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) x (0, 1)
+
+46.
+{-- E-AppAbs --}
+
+handler{hOnce} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s'))) (0, 1)
+
+47.
+{-- E-Hand and E-AppAbs --}
+
+handler{hOnce} * do z <- (Fst (0, 1)
+ in do s' <- (Snd (0, 1)
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s')))
+
+48.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hOnce} * do z <- (Return 0
+ in do s' <- (Snd (0, 1)
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) z
+ in k' s')))
+
+49.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * do s' <- (Snd (0, 1)
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) 0
+ in k' s'))
+
+50.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hOnce} * do s' <- (Return 1
+ in do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) 0
+ in k' s'))
+
+51.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * do k' <- (\ x. handler{hInc} * op inc () (y. do z <- (Add (x) (y)
+ in Return z)) 0
+ in k' 1)
+
+52.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hOnce} * do k' <- (handler{hInc} * op inc () (y. do z <- (Add (0) (y)
+ in Return z))
+ in k' 1)
+
+53.
+{-- E-Hand and E-Do and E-HandOp --}
+
+handler{hOnce} * do k' <- (Return \ s. do k' <- (\ y. handler{hInc} * do z <- (Add (0) (y)
+ in Return z) s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in k' 1)
+
+54.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * do z <- (Add (0) (y)
+ in Return z) s
+ in do s' <- (Add (s) (1)
+ in k' s')) 1
+
+55.
+{-- E-Hand and E-AppAbs --}
+
+handler{hOnce} * do k' <- (\ y. handler{hInc} * do z <- (Add (0) (y)
+ in Return z) 1
+ in do s' <- (Add (1) (1)
+ in k' s'))
+
+56.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hOnce} * do k' <- (handler{hInc} * do z <- (Add (0) (1)
+ in Return z)
+ in do s' <- (Add (1) (1)
+ in k' s'))
+
+57.
+{-- E-Hand and E-Do and E-Hand and E-Do and E-Binop --}
+
+handler{hOnce} * do k' <- (handler{hInc} * do z <- (Return 1
+ in Return z)
+ in do s' <- (Add (1) (1)
+ in k' s'))
+
+58.
+{-- E-Hand and E-Do and E-Hand and E-DoRet --}
+
+handler{hOnce} * do k' <- (handler{hInc} * Return 1
+ in do s' <- (Add (1) (1)
+ in k' s'))
+
+59.
+{-- E-Hand and E-Do and E-HandRet --}
+
+handler{hOnce} * do k' <- (Return \ s. Return (1, s)
+ in do s' <- (Add (1) (1)
+ in k' s'))
+
+60.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * do s' <- (Add (1) (1)
+ in \ s. Return (1, s) s')
+
+61.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hOnce} * do s' <- (Return 2
+ in \ s. Return (1, s) s')
+
+62.
+{-- E-Hand and E-DoRet --}
+
+handler{hOnce} * \ s. Return (1, s) 2
+
+63.
+{-- E-Hand and E-AppAbs --}
+
+handler{hOnce} * Return (1, 2)
+
+64.
+{-- E-HandRet --}
+
+Return [(1, 2)]
+
+65.
+{-- Nothing --}
+

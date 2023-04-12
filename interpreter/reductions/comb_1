@@ -1,0 +1,3888 @@
+parallel{} * handler{hAmb} * do d1 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3)))))
+
+1.
+{-- E-Hand and E-Hand and E-DoOp --}
+
+parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))))
+
+2.
+{-- E-Hand and E-HandOp --}
+
+parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y) (z. Return z)
+
+3.
+{-- E-Traverse --}
+
+do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in \ z. parallel{} * Return z result)
+
+4.
+{-- E-Do and E-Binop --}
+
+do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+5.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+6.
+{-- E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (parallel{} * handler{hAmb} * do d1 <- (Return "H"
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3)))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+7.
+{-- E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (parallel{} * handler{hAmb} * do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+8.
+{-- E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+do result <- (do y <- (parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+9.
+{-- E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do y <- (parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y) (z. Return z)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+10.
+{-- E-Do and E-Do and E-Traverse --}
+
+do result <- (do y <- (do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+11.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+12.
+{-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+13.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d2 <- (Return "H"
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+14.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+15.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+16.
+{-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do y <- (do result <- (do y <- (parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y) (z. Return z)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+17.
+{-- E-Do and E-Do and E-Do and E-Do and E-Traverse --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+18.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+19.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+20.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "H"
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+21.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+22.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "HH"
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+23.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * AppendS ("HH") ("H")
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+24.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * Return "HHH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+25.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * Return "HHH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+26.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do y <- (Return "HHH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+27.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+28.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+29.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+30.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "T"
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+31.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+32.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "HH"
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+33.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * AppendS ("HH") ("T")
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+34.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * Return "HHT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+35.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * Return "HHT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+36.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (Return "HHT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+37.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append (["HHT"]) (ys))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+38.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do ys' <- (Return []
+ in Append (["HHT"]) (ys))
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+39.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (Append (["HHT"]) ([])
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+40.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (Return ["HHT"]
+ in Append (["HHH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+41.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (Append (["HHH"]) (["HHT"])
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+42.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do y <- (do result <- (Return ["HHH","HHT"]
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+43.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do y <- (\ z. parallel{} * Return z ["HHH","HHT"]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+44.
+{-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do y <- (parallel{} * Return ["HHH","HHT"]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+45.
+{-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (do result <- (do y <- (Return ["HHH","HHT"]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+46.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+47.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+48.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+49.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d2 <- (Return "T"
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+50.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+51.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+52.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y) (z. Return z)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+53.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Traverse --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+54.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+55.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+56.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "H"
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+57.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+58.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "HT"
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+59.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * AppendS ("HT") ("H")
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+60.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * Return "HTH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+61.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * Return "HTH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+62.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (Return "HTH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+63.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+64.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+65.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+66.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "T"
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+67.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+68.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "HT"
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+69.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * AppendS ("HT") ("T")
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+70.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * Return "HTT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+71.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * Return "HTT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+72.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (Return "HTT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+73.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("H") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append (["HTT"]) (ys))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+74.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do ys' <- (Return []
+ in Append (["HTT"]) (ys))
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+75.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Append (["HTT"]) ([])
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+76.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Return ["HTT"]
+ in Append (["HTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+77.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (Append (["HTH"]) (["HTT"])
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+78.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (Return ["HTH","HTT"]
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+79.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (\ z. parallel{} * Return z ["HTH","HTT"]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+80.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * Return ["HTH","HTT"]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+81.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do y <- (Return ["HTH","HTT"]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+82.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("H") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([["HTH","HTT"]]) (ys))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+83.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (do ys' <- (Return []
+ in Append ([["HTH","HTT"]]) (ys))
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+84.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (do ys' <- (Append ([["HTH","HTT"]]) ([])
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+85.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (do ys' <- (Return [["HTH","HTT"]]
+ in Append ([["HHH","HHT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+86.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (do result <- (Append ([["HHH","HHT"]]) ([["HTH","HTT"]])
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+87.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do y <- (do result <- (Return [["HHH","HHT"],["HTH","HTT"]]
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+88.
+{-- E-Do and E-Do and E-DoRet --}
+
+do result <- (do y <- (\ z. parallel{} * Return z [["HHH","HHT"],["HTH","HTT"]]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+89.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do result <- (do y <- (parallel{} * Return [["HHH","HHT"],["HTH","HTT"]]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+90.
+{-- E-Do and E-Do and E-HandRet --}
+
+do result <- (do y <- (Return [["HHH","HHT"],["HTH","HTT"]]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+
+91.
+{-- E-Do and E-DoRet --}
+
+do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+92.
+{-- E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+93.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+94.
+{-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d1 <- (Return "T"
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3)))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+95.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+96.
+{-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+97.
+{-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do y <- (parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y) (z. Return z)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+98.
+{-- E-Do and E-Do and E-Do and E-Traverse --}
+
+do result <- (do ys' <- (do y <- (do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+99.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+100.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+101.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d2 <- (Return "H"
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+102.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+103.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+104.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y) (z. Return z)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+105.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Traverse --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+106.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+107.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+108.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "H"
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+109.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+110.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "TH"
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+111.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * AppendS ("TH") ("H")
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+112.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * Return "THH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+113.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (parallel{} * Return "THH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+114.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do y <- (Return "THH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+115.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+116.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+117.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+118.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "T"
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+119.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+120.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "TH"
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+121.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * AppendS ("TH") ("T")
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+122.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * Return "THT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+123.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * Return "THT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+124.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do y <- (Return "THT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+125.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("H")
+ in AppendS (l1) (d3))) y)
+ in Append (["THT"]) (ys))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+126.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (do ys' <- (Return []
+ in Append (["THT"]) (ys))
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+127.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (Append (["THT"]) ([])
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+128.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (do ys' <- (Return ["THT"]
+ in Append (["THH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+129.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (Append (["THH"]) (["THT"])
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+130.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (do result <- (Return ["THH","THT"]
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+131.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (\ z. parallel{} * Return z ["THH","THT"]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+132.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * Return ["THH","THT"]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+133.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do y <- (Return ["THH","THT"]
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+134.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+135.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+136.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+137.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d2 <- (Return "T"
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+138.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+139.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * op amb ["H","T"] (y. do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+140.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * for for ["H","T"] (y. \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y) (z. Return z)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+141.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Traverse --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (Map (["H","T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+142.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+143.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) "H"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+144.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "H"
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+145.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+146.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "TT"
+ in AppendS (l1) ("H"))
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+147.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * AppendS ("TT") ("H")
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+148.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * handler{hAmb} * Return "TTH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+149.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (parallel{} * Return "TTH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+150.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do y <- (Return "TTH"
+ in do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+151.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Map (["T"]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+152.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+153.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) "T"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+154.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do d3 <- (Return "T"
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3)))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+155.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+156.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * do l1 <- (Return "TT"
+ in AppendS (l1) ("T"))
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+157.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * AppendS ("TT") ("T")
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+158.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * handler{hAmb} * Return "TTT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+159.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * Return "TTT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+160.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (Return "TTT"
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append ([y]) (ys)))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+161.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d3 <- (Return y
+ in do l1 <- (AppendS ("T") ("T")
+ in AppendS (l1) (d3))) y)
+ in Append (["TTT"]) (ys))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+162.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do ys' <- (Return []
+ in Append (["TTT"]) (ys))
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+163.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Append (["TTT"]) ([])
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+164.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Return ["TTT"]
+ in Append (["TTH"]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+165.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (Append (["TTH"]) (["TTT"])
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+166.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (do result <- (Return ["TTH","TTT"]
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+167.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (\ z. parallel{} * Return z ["TTH","TTT"]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+168.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (parallel{} * Return ["TTH","TTT"]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+169.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do y <- (Return ["TTH","TTT"]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([y]) (ys)))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+170.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d2 <- (Return y
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS ("T") (d2)
+ in AppendS (l1) (d3)))) y)
+ in Append ([["TTH","TTT"]]) (ys))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+171.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (do ys' <- (Return []
+ in Append ([["TTH","TTT"]]) (ys))
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+172.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Append ([["TTH","TTT"]]) ([])
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+173.
+{-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (do ys' <- (Return [["TTH","TTT"]]
+ in Append ([["THH","THT"]]) (ys))
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+174.
+{-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (do result <- (Append ([["THH","THT"]]) ([["TTH","TTT"]])
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+175.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do y <- (do result <- (Return [["THH","THT"],["TTH","TTT"]]
+ in \ z. parallel{} * Return z result)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+176.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do y <- (\ z. parallel{} * Return z [["THH","THT"],["TTH","TTT"]]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+177.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do result <- (do ys' <- (do y <- (parallel{} * Return [["THH","THT"],["TTH","TTT"]]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+178.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do result <- (do ys' <- (do y <- (Return [["THH","THT"],["TTH","TTT"]]
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([y]) (ys)))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+179.
+{-- E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAmb} * do d1 <- (Return y
+ in do d2 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do l1 <- (AppendS (d1) (d2)
+ in AppendS (l1) (d3))))) y)
+ in Append ([[["THH","THT"],["TTH","TTT"]]]) (ys))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+180.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (do ys' <- (Return []
+ in Append ([[["THH","THT"],["TTH","TTT"]]]) (ys))
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+181.
+{-- E-Do and E-Do and E-DoRet --}
+
+do result <- (do ys' <- (Append ([[["THH","THT"],["TTH","TTT"]]]) ([])
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+182.
+{-- E-Do and E-Do and E-Binop --}
+
+do result <- (do ys' <- (Return [[["THH","THT"],["TTH","TTT"]]]
+ in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
+ in \ z. parallel{} * Return z result)
+
+183.
+{-- E-Do and E-DoRet --}
+
+do result <- (Append ([[["HHH","HHT"],["HTH","HTT"]]]) ([[["THH","THT"],["TTH","TTT"]]])
+ in \ z. parallel{} * Return z result)
+
+184.
+{-- E-Do and E-Binop --}
+
+do result <- (Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
+ in \ z. parallel{} * Return z result)
+
+185.
+{-- E-DoRet --}
+
+\ z. parallel{} * Return z [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
+
+186.
+{-- E-AppAbs --}
+
+parallel{} * Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
+
+187.
+{-- E-HandRet --}
+
+Return [[["HHH","HHT"],["HTH","HTT"]],[["THH","THT"],["TTH","TTT"]]]
+
+188.
+{-- Nothing --}
+

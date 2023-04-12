@@ -1,0 +1,3837 @@
+handler{hExcept} * do c' <- (handler{hInc} * do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in c' 8)
+
+1.
+{-- E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
+
+handler{hExcept} * do c' <- (handler{hInc} * do _ <- (op inc () (y. do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x)))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in c' 8)
+
+2.
+{-- E-Hand and E-Do and E-Hand and E-DoOp --}
+
+handler{hExcept} * do c' <- (handler{hInc} * op inc () (y. do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z)))
+ in c' 8)
+
+3.
+{-- E-Hand and E-Do and E-HandOp --}
+
+handler{hExcept} * do c' <- (Return \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z)) s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in c' 8)
+
+4.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z)) s
+ in do s' <- (Add (s) (1)
+ in k' s')) 8
+
+5.
+{-- E-Hand and E-AppAbs --}
+
+handler{hExcept} * do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z)) 8
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+6.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do x <- (Return 8
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+7.
+{-- E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Larger (8) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 8)
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+8.
+{-- E-Hand and E-Do and E-Hand and E-Do and E-Do and E-Binop --}
+
+handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Return False
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 8)
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+9.
+{-- E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+handler{hExcept} * do k' <- (handler{hInc} * do _ <- (
+if False
+ then op raise "Overflow" (y. Return y)
+ else Return 8
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+10.
+{-- E-Hand and E-Do and E-Hand and E-Do and E-IfTrue --}
+
+handler{hExcept} * do k' <- (handler{hInc} * do _ <- (Return 8
+ in sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z))
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+11.
+{-- E-Hand and E-Do and E-Hand and E-DoRet --}
+
+handler{hExcept} * do k' <- (handler{hInc} * sc catch "Overflow" (b. 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail") (z. Return z)
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+12.
+{-- E-Hand and E-Do and E-FwdSc --}
+
+handler{hExcept} * do k' <- (Return \ s. \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc catch "Overflow" (b. p b) (z. k z))) (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' s), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))))
+ in do s' <- (Add (8) (1)
+ in k' s'))
+
+13.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * do s' <- (Add (8) (1)
+ in \ s. \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc catch "Overflow" (b. p b) (z. k z))) (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' s), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s')))) s')
+
+14.
+{-- E-Hand and E-Do and E-Binop --}
+
+handler{hExcept} * do s' <- (Return 9
+ in \ s. \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc catch "Overflow" (b. p b) (z. k z))) (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' s), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s')))) s')
+
+15.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * \ s. \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc catch "Overflow" (b. p b) (z. k z))) (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' s), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s')))) 9
+
+16.
+{-- E-Hand and E-AppAbs --}
+
+handler{hExcept} * \ pk. do p <- (Fst pk
+ in do k <- (Snd pk
+ in sc catch "Overflow" (b. p b) (z. k z))) (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))))
+
+17.
+{-- E-Hand and E-AppAbs --}
+
+handler{hExcept} * do p <- (Fst (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))))
+ in do k <- (Snd (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))))
+ in sc catch "Overflow" (b. p b) (z. k z)))
+
+18.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hExcept} * do p <- (Return \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9)
+ in do k <- (Snd (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))))
+ in sc catch "Overflow" (b. p b) (z. k z)))
+
+19.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * do k <- (Snd (\ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9), \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))))
+ in sc catch "Overflow" (b. \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b) (z. k z))
+
+20.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hExcept} * do k <- (Return \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s')))
+ in sc catch "Overflow" (b. \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b) (z. k z))
+
+21.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * sc catch "Overflow" (b. \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b) (z. \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)
+
+22.
+{-- E-HandSc --}
+
+do x <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b True
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+23.
+{-- E-Do and E-AppAbs --}
+
+do x <- (handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) True
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+24.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do x <- (handler{hExcept} * do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" True
+ in p' 9)
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+25.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do x <- (handler{hExcept} * do p' <- (handler{hInc} * 
+if True
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail"
+ in p' 9)
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+26.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
+
+do x <- (handler{hExcept} * do p' <- (handler{hInc} * do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in p' 9)
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+27.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
+
+do x <- (handler{hExcept} * do p' <- (handler{hInc} * do _ <- (op inc () (y. do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x)))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in p' 9)
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+28.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
+
+do x <- (handler{hExcept} * do p' <- (handler{hInc} * op inc () (y. do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))))
+ in p' 9)
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+29.
+{-- E-Do and E-Hand and E-Do and E-HandOp --}
+
+do x <- (handler{hExcept} * do p' <- (Return \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))) s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in p' 9)
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+30.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))) s
+ in do s' <- (Add (s) (1)
+ in k' s')) 9
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+31.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do x <- (handler{hExcept} * do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))) 9
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+32.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do x <- (Return 9
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+33.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Larger (9) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 9)
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+34.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-Do and E-Binop --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Return False
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 9)
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+35.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (
+if False
+ then op raise "Overflow" (y. Return y)
+ else Return 9
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+36.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-IfTrue --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (Return 9
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+37.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+38.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (op inc () (y. do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x)))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+39.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * op inc () (y. do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+40.
+{-- E-Do and E-Hand and E-Do and E-HandOp --}
+
+do x <- (handler{hExcept} * do k' <- (Return \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")) s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in do s' <- (Add (9) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+41.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * do s' <- (Add (9) (1)
+ in \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")) s
+ in do s' <- (Add (s) (1)
+ in k' s')) s')
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+42.
+{-- E-Do and E-Hand and E-Do and E-Binop --}
+
+do x <- (handler{hExcept} * do s' <- (Return 10
+ in \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")) s
+ in do s' <- (Add (s) (1)
+ in k' s')) s')
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+43.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")) s
+ in do s' <- (Add (s) (1)
+ in k' s')) 10
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+44.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do x <- (handler{hExcept} * do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")) 10
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+45.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do x <- (Return 10
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+46.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Larger (10) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 10)
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+47.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-Do and E-Binop --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Return False
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 10)
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+48.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (
+if False
+ then op raise "Overflow" (y. Return y)
+ else Return 10
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+49.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-IfTrue --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (Return 10
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+50.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+51.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (op inc () (y. do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x)))
+ in Return "success")
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+52.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * op inc () (y. do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success"))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+53.
+{-- E-Do and E-Hand and E-Do and E-HandOp --}
+
+do x <- (handler{hExcept} * do k' <- (Return \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success") s
+ in do s' <- (Add (s) (1)
+ in k' s'))
+ in do s' <- (Add (10) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+54.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * do s' <- (Add (10) (1)
+ in \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success") s
+ in do s' <- (Add (s) (1)
+ in k' s')) s')
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+55.
+{-- E-Do and E-Hand and E-Do and E-Binop --}
+
+do x <- (handler{hExcept} * do s' <- (Return 11
+ in \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success") s
+ in do s' <- (Add (s) (1)
+ in k' s')) s')
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+56.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do x <- (handler{hExcept} * \ s. do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success") s
+ in do s' <- (Add (s) (1)
+ in k' s')) 11
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+57.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do x <- (handler{hExcept} * do k' <- (\ y. handler{hInc} * do _ <- (do x <- (Return y
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success") 11
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+58.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do x <- (Return 11
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+59.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Larger (11) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 11)
+ in Return "success")
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+60.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-Do and E-Binop --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (do b <- (Return True
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return 11)
+ in Return "success")
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+61.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoRet --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (
+if True
+ then op raise "Overflow" (y. Return y)
+ else Return 11
+ in Return "success")
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+62.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-IfTrue --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * do _ <- (op raise "Overflow" (y. Return y)
+ in Return "success")
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+63.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
+
+do x <- (handler{hExcept} * do k' <- (handler{hInc} * op raise "Overflow" (y. do _ <- (Return y
+ in Return "success"))
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+64.
+{-- E-Do and E-Hand and E-Do and E-FwdOp --}
+
+do x <- (handler{hExcept} * do k' <- (op raise "Overflow" (y. handler{hInc} * do _ <- (Return y
+ in Return "success"))
+ in do s' <- (Add (11) (1)
+ in k' s'))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+65.
+{-- E-Do and E-Hand and E-DoOp --}
+
+do x <- (handler{hExcept} * op raise "Overflow" (y. do k' <- (handler{hInc} * do _ <- (Return y
+ in Return "success")
+ in do s' <- (Add (11) (1)
+ in k' s')))
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+66.
+{-- E-Do and E-HandOp --}
+
+do x <- (Return Left "Overflow"
+ in do b <- (Eq (x) (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)))
+
+67.
+{-- E-DoRet --}
+
+do b <- (Eq (Left "Overflow") (Left "Overflow")
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x Left "Overflow"
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+68.
+{-- E-Do and E-Binop --}
+
+do b <- (Return True
+ in 
+if b
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x Left "Overflow"
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+69.
+{-- E-DoRet --}
+
+
+if True
+ then do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+ else do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x Left "Overflow"
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)
+
+70.
+{-- E-IfTrue --}
+
+do y <- (\ b. handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) b False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+71.
+{-- E-Do and E-AppAbs --}
+
+do y <- (handler{hExcept} * \ y. do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" y
+ in p' 9) False
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+72.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do y <- (handler{hExcept} * do p' <- (\ b. handler{hInc} * 
+if b
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail" False
+ in p' 9)
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+73.
+{-- E-Do and E-Hand and E-Do and E-AppAbs --}
+
+do y <- (handler{hExcept} * do p' <- (handler{hInc} * 
+if False
+ then do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in do _ <- (do x <- (op inc () (y. Return y)
+ in do b <- (Larger (x) (10)
+ in 
+if b
+ then op raise "Overflow" (y. Return y)
+ else Return x))
+ in Return "success")))
+ else Return "fail"
+ in p' 9)
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+74.
+{-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
+
+do y <- (handler{hExcept} * do p' <- (handler{hInc} * Return "fail"
+ in p' 9)
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+75.
+{-- E-Do and E-Hand and E-Do and E-HandRet --}
+
+do y <- (handler{hExcept} * do p' <- (Return \ s. Return ("fail", s)
+ in p' 9)
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+76.
+{-- E-Do and E-Hand and E-DoRet --}
+
+do y <- (handler{hExcept} * \ s. Return ("fail", s) 9
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+77.
+{-- E-Do and E-Hand and E-AppAbs --}
+
+do y <- (handler{hExcept} * Return ("fail", 9)
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+78.
+{-- E-Do and E-HandRet --}
+
+do y <- (Return Right ("fail", 9)
+ in do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x y
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z))
+
+79.
+{-- E-DoRet --}
+
+do f' <- (\ z. Return \ k. case z of
+ e -> Return Left e 
+| x -> k x Right ("fail", 9)
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)
+
+80.
+{-- E-Do and E-AppAbs --}
+
+do f' <- (Return \ k. case Right ("fail", 9) of
+ e -> Return Left e 
+| x -> k x
+ in f' \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z)
+
+81.
+{-- E-DoRet --}
+
+\ k. case Right ("fail", 9) of
+ e -> Return Left e 
+| x -> k x \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z
+
+82.
+{-- E-AppAbs --}
+
+case Right ("fail", 9) of
+ e -> Return Left e 
+| x -> \ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z x
+
+83.
+{-- E-CaseRight --}
+
+\ z. handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) z ("fail", 9)
+
+84.
+{-- E-AppAbs --}
+
+handler{hExcept} * \ zs. do z <- (Fst zs
+ in do s' <- (Snd zs
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s'))) ("fail", 9)
+
+85.
+{-- E-Hand and E-AppAbs --}
+
+handler{hExcept} * do z <- (Fst ("fail", 9)
+ in do s' <- (Snd ("fail", 9)
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s')))
+
+86.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hExcept} * do z <- (Return "fail"
+ in do s' <- (Snd ("fail", 9)
+ in do k' <- (\ z. handler{hInc} * Return z z
+ in k' s')))
+
+87.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * do s' <- (Snd ("fail", 9)
+ in do k' <- (\ z. handler{hInc} * Return z "fail"
+ in k' s'))
+
+88.
+{-- E-Hand and E-Do and E-Unop --}
+
+handler{hExcept} * do s' <- (Return 9
+ in do k' <- (\ z. handler{hInc} * Return z "fail"
+ in k' s'))
+
+89.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * do k' <- (\ z. handler{hInc} * Return z "fail"
+ in k' 9)
+
+90.
+{-- E-Hand and E-Do and E-AppAbs --}
+
+handler{hExcept} * do k' <- (handler{hInc} * Return "fail"
+ in k' 9)
+
+91.
+{-- E-Hand and E-Do and E-HandRet --}
+
+handler{hExcept} * do k' <- (Return \ s. Return ("fail", s)
+ in k' 9)
+
+92.
+{-- E-Hand and E-DoRet --}
+
+handler{hExcept} * \ s. Return ("fail", s) 9
+
+93.
+{-- E-Hand and E-AppAbs --}
+
+handler{hExcept} * Return ("fail", 9)
+
+94.
+{-- E-HandRet --}
+
+Return Right ("fail", 9)
+
+95.
+{-- Nothing --}
+

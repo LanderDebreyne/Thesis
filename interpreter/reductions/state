@@ -1,0 +1,678 @@
+do m <- (Newmem ()
+ in do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))))
+ in do x <- (c m
+ in Fst x)))
+
+1.
+{-- E-Do and E-Unop --}
+
+do m <- (Return <memory>
+ in do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))))
+ in do x <- (c m
+ in Fst x)))
+
+2.
+{-- E-DoRet --}
+
+do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))))
+ in do x <- (c <memory>
+ in Fst x))
+
+3.
+{-- E-Do and E-Hand and E-DoOp --}
+
+do c <- (handler{hState} * op put ("x", 10) (y. do _ <- (Return y
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2)))))
+ in do x <- (c <memory>
+ in Fst x))
+
+4.
+{-- E-Do and E-HandOp --}
+
+do c <- (Return \ m. do k' <- (\ y. handler{hState} * do _ <- (Return y
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2)))) ()
+ in do m' <- (Update (("x", 10)) (m)
+ in k' m'))
+ in do x <- (c <memory>
+ in Fst x))
+
+5.
+{-- E-DoRet --}
+
+do x <- (\ m. do k' <- (\ y. handler{hState} * do _ <- (Return y
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2)))) ()
+ in do m' <- (Update (("x", 10)) (m)
+ in k' m')) <memory>
+ in Fst x)
+
+6.
+{-- E-Do and E-AppAbs --}
+
+do x <- (do k' <- (\ y. handler{hState} * do _ <- (Return y
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2)))) ()
+ in do m' <- (Update (("x", 10)) (<memory>)
+ in k' m'))
+ in Fst x)
+
+7.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do k' <- (handler{hState} * do _ <- (Return ()
+ in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))))
+ in do m' <- (Update (("x", 10)) (<memory>)
+ in k' m'))
+ in Fst x)
+
+8.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do k' <- (handler{hState} * do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2)))
+ in do m' <- (Update (("x", 10)) (<memory>)
+ in k' m'))
+ in Fst x)
+
+9.
+{-- E-Do and E-Do and E-Hand and E-DoSc --}
+
+do x <- (do k' <- (handler{hState} * sc local ("x", 42) (_. op get "x" (y. Return y)) (z. do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))))
+ in do m' <- (Update (("x", 10)) (<memory>)
+ in k' m'))
+ in Fst x)
+
+10.
+{-- E-Do and E-Do and E-HandSc --}
+
+do x <- (do k' <- (Return \ m. do x <- (Fst ("x", 42)
+ in do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (m)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve (x) (m)
+ in do newm <- (Update ((x, oldv)) (m')
+ in k' newm))))))))))
+ in do m' <- (Update (("x", 10)) (<memory>)
+ in k' m'))
+ in Fst x)
+
+11.
+{-- E-Do and E-DoRet --}
+
+do x <- (do m' <- (Update (("x", 10)) (<memory>)
+ in \ m. do x <- (Fst ("x", 42)
+ in do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (m)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve (x) (m)
+ in do newm <- (Update ((x, oldv)) (m')
+ in k' newm)))))))))) m')
+ in Fst x)
+
+12.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do m' <- (Return <memory>
+ in \ m. do x <- (Fst ("x", 42)
+ in do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (m)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve (x) (m)
+ in do newm <- (Update ((x, oldv)) (m')
+ in k' newm)))))))))) m')
+ in Fst x)
+
+13.
+{-- E-Do and E-DoRet --}
+
+do x <- (\ m. do x <- (Fst ("x", 42)
+ in do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (m)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve (x) (m)
+ in do newm <- (Update ((x, oldv)) (m')
+ in k' newm)))))))))) <memory>
+ in Fst x)
+
+14.
+{-- E-Do and E-AppAbs --}
+
+do x <- (do x <- (Fst ("x", 42)
+ in do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (<memory>)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve (x) (<memory>)
+ in do newm <- (Update ((x, oldv)) (m')
+ in k' newm))))))))))
+ in Fst x)
+
+15.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do x <- (Return "x"
+ in do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (<memory>)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve (x) (<memory>)
+ in do newm <- (Update ((x, oldv)) (m')
+ in k' newm))))))))))
+ in Fst x)
+
+16.
+{-- E-Do and E-DoRet --}
+
+do x <- (do v <- (Snd ("x", 42)
+ in do um <- (Update (("x", 42)) (<memory>)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))))))
+ in Fst x)
+
+17.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do v <- (Return 42
+ in do um <- (Update (("x", 42)) (<memory>)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))))))
+ in Fst x)
+
+18.
+{-- E-Do and E-DoRet --}
+
+do x <- (do um <- (Update (("x", 42)) (<memory>)
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))))
+ in Fst x)
+
+19.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do um <- (Return <memory>
+ in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))))
+ in Fst x)
+
+20.
+{-- E-Do and E-DoRet --}
+
+do x <- (do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))))
+ in Fst x)
+
+21.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do p' <- (handler{hState} * op get "x" (y. Return y)
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))))
+ in Fst x)
+
+22.
+{-- E-Do and E-Do and E-HandOp --}
+
+do x <- (do p' <- (Return \ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * Return y v
+ in k' m))
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))))
+ in Fst x)
+
+23.
+{-- E-Do and E-DoRet --}
+
+do x <- (do tm <- (\ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * Return y v
+ in k' m)) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+24.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do v <- (Retrieve ("x") (<memory>)
+ in do k' <- (\ y. handler{hState} * Return y v
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+25.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do v <- (Return 42
+ in do k' <- (\ y. handler{hState} * Return y v
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+26.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (\ y. handler{hState} * Return y 42
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+27.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do k' <- (handler{hState} * Return 42
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+28.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do x <- (do tm <- (do k' <- (Return \ m. Return (42, m)
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+29.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (\ m. Return (42, m) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+30.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (Return (42, <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))))
+ in Fst x)
+
+31.
+{-- E-Do and E-DoRet --}
+
+do x <- (do t <- (Fst (42, <memory>)
+ in do m' <- (Snd (42, <memory>)
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))
+ in Fst x)
+
+32.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do t <- (Return 42
+ in do m' <- (Snd (42, <memory>)
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) t
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm)))))
+ in Fst x)
+
+33.
+{-- E-Do and E-DoRet --}
+
+do x <- (do m' <- (Snd (42, <memory>)
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) 42
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))
+ in Fst x)
+
+34.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do m' <- (Return <memory>
+ in do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) 42
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (m')
+ in k' newm))))
+ in Fst x)
+
+35.
+{-- E-Do and E-DoRet --}
+
+do x <- (do k' <- (\ z. handler{hState} * do x1 <- (Return z
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2))) 42
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in k' newm)))
+ in Fst x)
+
+36.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do k' <- (handler{hState} * do x1 <- (Return 42
+ in do x2 <- (op get "x" (y. Return y)
+ in Return (x1, x2)))
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in k' newm)))
+ in Fst x)
+
+37.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do k' <- (handler{hState} * do x2 <- (op get "x" (y. Return y)
+ in Return (42, x2))
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in k' newm)))
+ in Fst x)
+
+38.
+{-- E-Do and E-Do and E-Hand and E-DoOp --}
+
+do x <- (do k' <- (handler{hState} * op get "x" (y. do x2 <- (Return y
+ in Return (42, x2)))
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in k' newm)))
+ in Fst x)
+
+39.
+{-- E-Do and E-Do and E-HandOp --}
+
+do x <- (do k' <- (Return \ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' m))
+ in do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in k' newm)))
+ in Fst x)
+
+40.
+{-- E-Do and E-DoRet --}
+
+do x <- (do oldv <- (Retrieve ("x") (<memory>)
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in \ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' m)) newm))
+ in Fst x)
+
+41.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do oldv <- (Return 10
+ in do newm <- (Update (("x", oldv)) (<memory>)
+ in \ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' m)) newm))
+ in Fst x)
+
+42.
+{-- E-Do and E-DoRet --}
+
+do x <- (do newm <- (Update (("x", 10)) (<memory>)
+ in \ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' m)) newm)
+ in Fst x)
+
+43.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do newm <- (Return <memory>
+ in \ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' m)) newm)
+ in Fst x)
+
+44.
+{-- E-Do and E-DoRet --}
+
+do x <- (\ m. do v <- (Retrieve ("x") (m)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' m)) <memory>
+ in Fst x)
+
+45.
+{-- E-Do and E-AppAbs --}
+
+do x <- (do v <- (Retrieve ("x") (<memory>)
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' <memory>))
+ in Fst x)
+
+46.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do v <- (Return 10
+ in do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) v
+ in k' <memory>))
+ in Fst x)
+
+47.
+{-- E-Do and E-DoRet --}
+
+do x <- (do k' <- (\ y. handler{hState} * do x2 <- (Return y
+ in Return (42, x2)) 10
+ in k' <memory>)
+ in Fst x)
+
+48.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do k' <- (handler{hState} * do x2 <- (Return 10
+ in Return (42, x2))
+ in k' <memory>)
+ in Fst x)
+
+49.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do k' <- (handler{hState} * Return (42, 10)
+ in k' <memory>)
+ in Fst x)
+
+50.
+{-- E-Do and E-Do and E-HandRet --}
+
+do x <- (do k' <- (Return \ m. Return ((42, 10), m)
+ in k' <memory>)
+ in Fst x)
+
+51.
+{-- E-Do and E-DoRet --}
+
+do x <- (\ m. Return ((42, 10), m) <memory>
+ in Fst x)
+
+52.
+{-- E-Do and E-AppAbs --}
+
+do x <- (Return ((42, 10), <memory>)
+ in Fst x)
+
+53.
+{-- E-DoRet --}
+
+Fst ((42, 10), <memory>)
+
+54.
+{-- E-Unop --}
+
+Return (42, 10)
+
+55.
+{-- Nothing --}
+
