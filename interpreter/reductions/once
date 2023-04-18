@@ -1,4 +1,4 @@
-handler{hOnce} * sc once () (_. op choose () (y. Return y)) (b. 
+handler{hOnce} * sc once : Tunit -> Tunit () (_. op choose : Tunit -> Tbool () (y. Return y)) (b. 
 if b
  then Return "heads"
  else Return "tails")
@@ -6,7 +6,7 @@ if b
 1.
 {-- E-HandSc --}
 
-do ts <- (\ _. handler{hOnce} * op choose () (y. Return y) ()
+do ts <- (\ _. handler{hOnce} * op choose : Tunit -> Tbool () (y. Return y) ()
  in do t <- (Head ts
  in \ b. handler{hOnce} * 
 if b
@@ -16,7 +16,7 @@ if b
 2.
 {-- E-Do and E-AppAbs --}
 
-do ts <- (handler{hOnce} * op choose () (y. Return y)
+do ts <- (handler{hOnce} * op choose : Tunit -> Tbool () (y. Return y)
  in do t <- (Head ts
  in \ b. handler{hOnce} * 
 if b

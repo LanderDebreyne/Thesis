@@ -1,20 +1,20 @@
-do f <- (handler{hDepth} * sc depth 1 (_. do b <- (op choose () (y. Return y)
+do f <- (handler{hDepth} * sc depth : Tunit -> Tunit 1 (_. do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
- else Return 3))) (x. do b <- (op choose () (y. Return y)
+ else Return 3))) (x. do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -24,26 +24,26 @@ if b''
 1.
 {-- E-Do and E-HandSc --}
 
-do f <- (Return \ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+do f <- (Return \ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
  else Return 3)) ()
  in do xs <- (p' 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -54,26 +54,26 @@ if b''
 2.
 {-- E-DoRet --}
 
-\ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+\ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
  else Return 3)) ()
  in do xs <- (p' 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -83,26 +83,26 @@ if b''
 3.
 {-- E-AppAbs --}
 
-do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+do p' <- (\ _. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
  else Return 3)) ()
  in do xs <- (p' 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -112,26 +112,26 @@ if b''
 4.
 {-- E-Do and E-AppAbs --}
 
-do p' <- (handler{hDepth} * do b <- (op choose () (y. Return y)
+do p' <- (handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
  else Return 3))
  in do xs <- (p' 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -141,26 +141,26 @@ if b''
 5.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do p' <- (handler{hDepth} * op choose () (y. do b <- (Return y
+do p' <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
  else Return 3)))
  in do xs <- (p' 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -178,7 +178,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -187,7 +187,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -198,15 +198,15 @@ if b'
  in Append (xs) (ys)))))))
  in do xs <- (p' 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -224,7 +224,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -233,7 +233,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -243,15 +243,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))) 1
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -269,7 +269,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -278,7 +278,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -288,15 +288,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -314,7 +314,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -323,7 +323,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -333,15 +333,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -358,7 +358,7 @@ if False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -367,7 +367,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -377,15 +377,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -399,7 +399,7 @@ do xs <- (do k1 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -408,7 +408,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -418,15 +418,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -440,7 +440,7 @@ do xs <- (do k1 <- (handler{hDepth} * do b <- (Return True
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -449,7 +449,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -459,15 +459,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -480,7 +480,7 @@ if b''
 do xs <- (do k1 <- (handler{hDepth} * 
 if True
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -489,7 +489,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -499,15 +499,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -522,7 +522,7 @@ do xs <- (do k1 <- (handler{hDepth} * Return 1
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -532,15 +532,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -555,7 +555,7 @@ do xs <- (do k1 <- (Return \ d. Return [(1, d)]
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -565,15 +565,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -587,7 +587,7 @@ do xs <- (do k2 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -597,15 +597,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -619,7 +619,7 @@ do xs <- (do k2 <- (handler{hDepth} * do b <- (Return False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -629,15 +629,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -650,7 +650,7 @@ if b''
 do xs <- (do k2 <- (handler{hDepth} * 
 if False
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -660,15 +660,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -678,7 +678,7 @@ if b''
 19.
 {-- E-Do and E-Do and E-Hand and E-IfTrue --}
 
-do xs <- (do k2 <- (handler{hDepth} * do b' <- (op choose () (y. Return y)
+do xs <- (do k2 <- (handler{hDepth} * do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -688,15 +688,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -706,7 +706,7 @@ if b''
 20.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do xs <- (do k2 <- (handler{hDepth} * op choose () (y. do b' <- (Return y
+do xs <- (do k2 <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b' <- (Return y
  in 
 if b'
  then Return 2
@@ -716,15 +716,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -757,15 +757,15 @@ if b'
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -797,15 +797,15 @@ if b'
  in Append (xs) (ys))))))) d'
  in Append (xs) (ys))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -837,15 +837,15 @@ if b'
  in Append (xs) (ys))))))) d'
  in Append (xs) (ys))))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -876,15 +876,15 @@ if b'
  in Append (xs) (ys))))))) 0
  in Append (xs) (ys)))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -915,15 +915,15 @@ if b'
  in Append (xs) (ys))))))) 0
  in Append (xs) (ys)))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -953,15 +953,15 @@ if b'
  in Append (xs) (ys))))))) 0
  in Append ([(1, 0)]) (ys))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -991,15 +991,15 @@ if b'
  in Append (xs) (ys)))))))
  in Append ([(1, 0)]) (ys))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1029,15 +1029,15 @@ if b'
  in Append (xs) (ys)))))))
  in Append ([(1, 0)]) (ys))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1066,15 +1066,15 @@ if b'
  in Append (xs) (ys))))))
  in Append ([(1, 0)]) (ys))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1087,15 +1087,15 @@ if b''
 do xs <- (do ys <- (Return []
  in Append ([(1, 0)]) (ys))
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1107,15 +1107,15 @@ if b''
 
 do xs <- (Append ([(1, 0)]) ([])
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1127,15 +1127,15 @@ if b''
 
 do xs <- (Return [(1, 0)]
  in ConcatMap (xs) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1146,15 +1146,15 @@ if b''
 {-- E-DoRet --}
 
 ConcatMap ([(1, 0)]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1165,30 +1165,30 @@ if b''
 {-- E-Binop --}
 
 do as <- (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
  else Return 6))) v
  in k' 2)) (1, 0)
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1200,30 +1200,30 @@ if b''
 {-- E-Do and E-AppAbs --}
 
 do as <- (do v <- (Fst (1, 0)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
  else Return 6))) v
  in k' 2))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1235,30 +1235,30 @@ if b''
 {-- E-Do and E-Do and E-Unop --}
 
 do as <- (do v <- (Return 1
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
  else Return 6))) v
  in k' 2))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1269,30 +1269,30 @@ if b''
 37.
 {-- E-Do and E-DoRet --}
 
-do as <- (do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+do as <- (do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
  else Return 6))) 1
  in k' 2)
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1303,30 +1303,30 @@ if b''
 38.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do as <- (do k' <- (handler{hDepth} * do b <- (op choose () (y. Return y)
+do as <- (do k' <- (handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
  else Return 6)))
  in k' 2)
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1337,30 +1337,30 @@ if b''
 39.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do as <- (do k' <- (handler{hDepth} * op choose () (y. do b <- (Return y
+do as <- (do k' <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
  else Return 6))))
  in k' 2)
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1379,11 +1379,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1392,11 +1392,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1407,15 +1407,15 @@ if b''
  in Append (xs) (ys)))))))
  in k' 2)
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1434,11 +1434,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1447,11 +1447,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1461,15 +1461,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))) 2
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1488,11 +1488,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1501,11 +1501,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1515,15 +1515,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1542,11 +1542,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1555,11 +1555,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1569,15 +1569,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1595,11 +1595,11 @@ if False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1608,11 +1608,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1622,15 +1622,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1645,11 +1645,11 @@ do as <- (do k1 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1658,11 +1658,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1672,15 +1672,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1695,11 +1695,11 @@ do as <- (do k1 <- (handler{hDepth} * do b <- (Return True
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1708,11 +1708,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1722,15 +1722,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1744,11 +1744,11 @@ if b''
 do as <- (do k1 <- (handler{hDepth} * 
 if True
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1757,11 +1757,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1771,15 +1771,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1795,11 +1795,11 @@ do as <- (do k1 <- (handler{hDepth} * Return 1
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1809,15 +1809,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1833,11 +1833,11 @@ do as <- (do k1 <- (Return \ d. Return [(1, d)]
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1847,15 +1847,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys))))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1870,11 +1870,11 @@ do as <- (do k2 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1884,15 +1884,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1907,11 +1907,11 @@ do as <- (do k2 <- (handler{hDepth} * do b <- (Return False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1921,15 +1921,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1943,11 +1943,11 @@ if b''
 do as <- (do k2 <- (handler{hDepth} * 
 if False
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1957,15 +1957,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1976,11 +1976,11 @@ if b''
 53.
 {-- E-Do and E-Do and E-Hand and E-IfTrue --}
 
-do as <- (do k2 <- (handler{hDepth} * do b' <- (op choose () (y. Return y)
+do as <- (do k2 <- (handler{hDepth} * do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1990,15 +1990,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2009,11 +2009,11 @@ if b''
 54.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do as <- (do k2 <- (handler{hDepth} * op choose () (y. do b' <- (Return y
+do as <- (do k2 <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b' <- (Return y
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2023,15 +2023,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2050,7 +2050,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2059,7 +2059,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2073,15 +2073,15 @@ if b''
  in do ys <- (k2 d'
  in Append (xs) (ys)))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2102,7 +2102,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2111,7 +2111,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2122,15 +2122,15 @@ if b''
  in Append (xs) (ys))))))) d'
  in Append (xs) (ys))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2151,7 +2151,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2160,7 +2160,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2171,15 +2171,15 @@ if b''
  in Append (xs) (ys))))))) d'
  in Append (xs) (ys))))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2199,7 +2199,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2208,7 +2208,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2219,15 +2219,15 @@ if b''
  in Append (xs) (ys))))))) 1
  in Append (xs) (ys)))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2247,7 +2247,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2256,7 +2256,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2267,15 +2267,15 @@ if b''
  in Append (xs) (ys))))))) 1
  in Append (xs) (ys)))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2294,7 +2294,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2303,7 +2303,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2314,15 +2314,15 @@ if b''
  in Append (xs) (ys))))))) 1
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2341,7 +2341,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2350,7 +2350,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2361,15 +2361,15 @@ if b''
  in Append (xs) (ys)))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2388,7 +2388,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2397,7 +2397,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2408,15 +2408,15 @@ if b''
  in Append (xs) (ys)))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2434,7 +2434,7 @@ if False
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2443,7 +2443,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2454,15 +2454,15 @@ if b''
  in Append (xs) (ys))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2477,7 +2477,7 @@ do as <- (do ys <- (do k1 <- (\ y. handler{hDepth} * do b' <- (Return y
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2486,7 +2486,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2497,15 +2497,15 @@ if b''
  in Append (xs) (ys))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2520,7 +2520,7 @@ do as <- (do ys <- (do k1 <- (handler{hDepth} * do b' <- (Return True
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2529,7 +2529,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2540,15 +2540,15 @@ if b''
  in Append (xs) (ys))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2562,7 +2562,7 @@ if b''
 do as <- (do ys <- (do k1 <- (handler{hDepth} * 
 if True
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2571,7 +2571,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2582,15 +2582,15 @@ if b''
  in Append (xs) (ys))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2606,7 +2606,7 @@ do as <- (do ys <- (do k1 <- (handler{hDepth} * Return 4
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2617,15 +2617,15 @@ if b''
  in Append (xs) (ys))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2641,7 +2641,7 @@ do as <- (do ys <- (do k1 <- (Return \ d. Return [(4, d)]
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2652,15 +2652,15 @@ if b''
  in Append (xs) (ys))))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2675,7 +2675,7 @@ do as <- (do ys <- (do k2 <- (\ y. handler{hDepth} * do b' <- (Return y
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2686,15 +2686,15 @@ if b''
  in Append (xs) (ys)))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2709,7 +2709,7 @@ do as <- (do ys <- (do k2 <- (handler{hDepth} * do b' <- (Return False
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2720,15 +2720,15 @@ if b''
  in Append (xs) (ys)))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2742,7 +2742,7 @@ if b''
 do as <- (do ys <- (do k2 <- (handler{hDepth} * 
 if False
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2753,15 +2753,15 @@ if b''
  in Append (xs) (ys)))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2772,7 +2772,7 @@ if b''
 72.
 {-- E-Do and E-Do and E-Do and E-Hand and E-IfTrue --}
 
-do as <- (do ys <- (do k2 <- (handler{hDepth} * do b'' <- (op choose () (y. Return y)
+do as <- (do ys <- (do k2 <- (handler{hDepth} * do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2783,15 +2783,15 @@ if b''
  in Append (xs) (ys)))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2802,7 +2802,7 @@ if b''
 73.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoOp --}
 
-do as <- (do ys <- (do k2 <- (handler{hDepth} * op choose () (y. do b'' <- (Return y
+do as <- (do ys <- (do k2 <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b'' <- (Return y
  in 
 if b''
  then Return 5
@@ -2813,15 +2813,15 @@ if b''
  in Append (xs) (ys)))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2856,15 +2856,15 @@ if b''
  in Append (xs) (ys)))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2898,15 +2898,15 @@ if b''
  in Append (xs) (ys))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2940,15 +2940,15 @@ if b''
  in Append (xs) (ys))))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2981,15 +2981,15 @@ if b''
  in Append (xs) (ys)))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3022,15 +3022,15 @@ if b''
  in Append (xs) (ys)))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3062,15 +3062,15 @@ if b''
  in Append ([(4, 0)]) (ys))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3102,15 +3102,15 @@ if b''
  in Append ([(4, 0)]) (ys))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3142,15 +3142,15 @@ if b''
  in Append ([(4, 0)]) (ys))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3181,15 +3181,15 @@ if b''
  in Append ([(4, 0)]) (ys))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3204,15 +3204,15 @@ do as <- (do ys <- (do ys <- (Return []
  in Append ([(4, 0)]) (ys))
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3226,15 +3226,15 @@ if b''
 do as <- (do ys <- (Append ([(4, 0)]) ([])
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3248,15 +3248,15 @@ if b''
 do as <- (do ys <- (Return [(4, 0)]
  in Append ([(1, 1)]) (ys))
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3269,15 +3269,15 @@ if b''
 
 do as <- (Append ([(1, 1)]) ([(4, 0)])
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3290,15 +3290,15 @@ if b''
 
 do as <- (Return [(1, 1),(4, 0)]
  in do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3310,15 +3310,15 @@ if b''
 {-- E-DoRet --}
 
 do as' <- (ConcatMap ([]) (\ v_. do v <- (Fst v_
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5

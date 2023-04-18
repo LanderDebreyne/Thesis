@@ -1,78 +1,78 @@
-parallel{} * handler{hAccum} * for for [1,2,3,4,5] (y. op accum y (y. Return y)) (z. Return z)
+parallel{} * handler{hAccum} * for for : Tunit [1,2,3,4,5] (y. op accum : Tunit -> Tunit y (y. Return y)) (z. Return z)
 
 1.
 {-- E-Hand and E-FwdFor --}
 
-parallel{} * do pk <- (Return (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+parallel{} * do pk <- (Return (\ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccum} * Return z)
  in \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in for for [1,2,3,4,5] (y. p y) (z. k z))) pk)
+ in for for : Tunit [1,2,3,4,5] (y. p y) (z. k z))) pk)
 
 2.
 {-- E-Hand and E-DoRet --}
 
 parallel{} * \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in for for [1,2,3,4,5] (y. p y) (z. k z))) (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for : Tunit [1,2,3,4,5] (y. p y) (z. k z))) (\ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccum} * Return z)
 
 3.
 {-- E-Hand and E-AppAbs --}
 
-parallel{} * do p <- (Fst (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
- in do k <- (Snd (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
- in for for [1,2,3,4,5] (y. p y) (z. k z)))
+parallel{} * do p <- (Fst (\ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccum} * Return z)
+ in do k <- (Snd (\ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for : Tunit [1,2,3,4,5] (y. p y) (z. k z)))
 
 4.
 {-- E-Hand and E-Do and E-Unop --}
 
-parallel{} * do p <- (Return \ y. handler{hAccum} * op accum y (y. Return y)
- in do k <- (Snd (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
- in for for [1,2,3,4,5] (y. p y) (z. k z)))
+parallel{} * do p <- (Return \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y)
+ in do k <- (Snd (\ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for : Tunit [1,2,3,4,5] (y. p y) (z. k z)))
 
 5.
 {-- E-Hand and E-DoRet --}
 
-parallel{} * do k <- (Snd (\ y. handler{hAccum} * op accum y (y. Return y), \ z. handler{hAccum} * Return z)
- in for for [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum y (y. Return y) y) (z. k z))
+parallel{} * do k <- (Snd (\ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccum} * Return z)
+ in for for : Tunit [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y) (z. k z))
 
 6.
 {-- E-Hand and E-Do and E-Unop --}
 
 parallel{} * do k <- (Return \ z. handler{hAccum} * Return z
- in for for [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum y (y. Return y) y) (z. k z))
+ in for for : Tunit [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y) (z. k z))
 
 7.
 {-- E-Hand and E-DoRet --}
 
-parallel{} * for for [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum y (y. Return y) y) (z. \ z. handler{hAccum} * Return z z)
+parallel{} * for for : Tunit [1,2,3,4,5] (y. \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y) (z. \ z. handler{hAccum} * Return z z)
 
 8.
 {-- E-Traverse --}
 
-do result <- (Map ([1,2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (Map ([1,2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
 9.
 {-- E-Do and E-Binop --}
 
-do result <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 1
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y 1
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
 10.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 1
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 1
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
 11.
 {-- E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * op accum 1 (y. Return y)
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 1 (y. Return y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -84,7 +84,7 @@ do result <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
  in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -96,7 +96,7 @@ do result <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
  in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -108,7 +108,7 @@ do result <- (do y <- (parallel{} * do k' <- (Return (0, ())
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
  in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -119,7 +119,7 @@ do result <- (do y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (1)
  in Return (m'', s))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -130,7 +130,7 @@ do result <- (do y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (1)
  in Return (m'', s))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -140,7 +140,7 @@ do result <- (do y <- (parallel{} * do m' <- (Return 0
 do result <- (do y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (1)
  in Return (m'', s)))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -150,7 +150,7 @@ do result <- (do y <- (parallel{} * do s <- (Snd (0, ())
 do result <- (do y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (1)
  in Return (m'', s)))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -159,7 +159,7 @@ do result <- (do y <- (parallel{} * do s <- (Return ()
 
 do result <- (do y <- (parallel{} * do m'' <- (Add (0) (1)
  in Return (m'', ()))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -168,7 +168,7 @@ do result <- (do y <- (parallel{} * do m'' <- (Add (0) (1)
 
 do result <- (do y <- (parallel{} * do m'' <- (Return 1
  in Return (m'', ()))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -176,7 +176,7 @@ do result <- (do y <- (parallel{} * do m'' <- (Return 1
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
 do result <- (do y <- (parallel{} * Return (1, ())
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
@@ -184,22 +184,22 @@ do result <- (do y <- (parallel{} * Return (1, ())
 {-- E-Do and E-Do and E-HandRet --}
 
 do result <- (do y <- (Return (1, ())
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
 23.
 {-- E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
 
 24.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 2
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y 2
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -207,8 +207,8 @@ do result <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op ac
 25.
 {-- E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 2
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 2
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -216,8 +216,8 @@ do result <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y
 26.
 {-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 2 (y. Return y)
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 2 (y. Return y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -230,7 +230,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * 
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
  in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -243,7 +243,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Retur
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
  in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -256,7 +256,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
  in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -268,7 +268,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (2)
  in Return (m'', s))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -280,7 +280,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (2)
  in Return (m'', s))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -291,7 +291,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
 do result <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (2)
  in Return (m'', s)))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -302,7 +302,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
 do result <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (2)
  in Return (m'', s)))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -312,7 +312,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
 
 do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (2)
  in Return (m'', ()))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -322,7 +322,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (2)
 
 do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 2
  in Return (m'', ()))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -331,7 +331,7 @@ do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 2
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
 do result <- (do ys' <- (do y <- (parallel{} * Return (2, ())
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -340,7 +340,7 @@ do result <- (do ys' <- (do y <- (parallel{} * Return (2, ())
 {-- E-Do and E-Do and E-Do and E-HandRet --}
 
 do result <- (do ys' <- (do y <- (Return (2, ())
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -348,7 +348,7 @@ do result <- (do ys' <- (do y <- (Return (2, ())
 38.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * \ z. handler{hAccum} * Return z z result)
@@ -356,8 +356,8 @@ do result <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. parallel{} * \ y. handle
 39.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 3
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y 3
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -366,8 +366,8 @@ do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAcc
 40.
 {-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 3
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 3
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -376,8 +376,8 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} *
 41.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 3 (y. Return y)
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 3 (y. Return y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -391,7 +391,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
  in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -405,7 +405,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAcc
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
  in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -419,7 +419,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, (
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
  in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -432,7 +432,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (3)
  in Return (m'', s))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -445,7 +445,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (3)
  in Return (m'', s))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -457,7 +457,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
 do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (3)
  in Return (m'', s)))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -469,7 +469,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
 do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (3)
  in Return (m'', s)))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -480,7 +480,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
 
 do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (3)
  in Return (m'', ()))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -491,7 +491,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (3)
 
 do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 3
  in Return (m'', ()))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -501,7 +501,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 3
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
 do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (3, ())
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -511,7 +511,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (3, ())
 {-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
 do result <- (do ys' <- (do ys' <- (do y <- (Return (3, ())
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -520,7 +520,7 @@ do result <- (do ys' <- (do ys' <- (do y <- (Return (3, ())
 53.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
  in Append ([(1, ())]) (ys))
@@ -529,8 +529,8 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. parallel{} * \ 
 54.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 4
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y 4
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -540,8 +540,8 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. h
 55.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 4
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 4
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -551,8 +551,8 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handle
 56.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 4 (y. Return y)
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 4 (y. Return y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -567,7 +567,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
  in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -582,7 +582,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (h
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
  in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -597,7 +597,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (R
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
  in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -611,7 +611,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (F
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (4)
  in Return (m'', s))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -625,7 +625,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (R
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (4)
  in Return (m'', s))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -638,7 +638,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (R
 do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (4)
  in Return (m'', s)))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -651,7 +651,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Sn
 do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (4)
  in Return (m'', s)))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -663,7 +663,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Re
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (4)
  in Return (m'', ()))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -675,7 +675,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 4
  in Return (m'', ()))
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -686,7 +686,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (4, ())
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -697,7 +697,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (4, 
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (4, ())
- in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -707,7 +707,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (4, ())
 68.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
  in Append ([(2, ())]) (ys))
@@ -717,8 +717,8 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. parall
 69.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y 5
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y 5
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -729,8 +729,8 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel
 70.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) 5
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 5
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -741,8 +741,8 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 71.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum 5 (y. Return y)
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 5 (y. Return y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -758,7 +758,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
  in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -774,7 +774,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
  in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -790,7 +790,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
  in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -805,7 +805,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (5)
  in Return (m'', s))))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -820,7 +820,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (5)
  in Return (m'', s))))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -834,7 +834,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (5)
  in Return (m'', s)))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -848,7 +848,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (5)
  in Return (m'', s)))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -861,7 +861,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (5)
  in Return (m'', ()))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -874,7 +874,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 5
  in Return (m'', ()))
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -886,7 +886,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (5, ())
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -898,7 +898,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * 
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
 do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (5, ())
- in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+ in do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([y]) (ys)))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))
@@ -909,7 +909,7 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (5, ()
 83.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum y (y. Return y) y)
+do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * \ y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) y)
  in Append ([(5, ())]) (ys))
  in Append ([(4, ())]) (ys))
  in Append ([(3, ())]) (ys))

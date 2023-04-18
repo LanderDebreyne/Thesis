@@ -3,6 +3,7 @@ module Test where
 import Examples
 import Evaluation
 import Syntax
+import Typing
 import Test.HUnit
 
 data Tdata = Tdata { name :: String, testC :: Comp, result :: Comp } deriving (Show)
@@ -31,13 +32,20 @@ reductionGen ((Tdata name comp _):xs) = do
 runAllTests = runTestTT $ TestList allTests
 runFastTests = runTestTT $ TestList fastTests
 
-allTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) allTestsData
-fastTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) fastTestsData
-slowTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) slowTestsData
+allTests = testsFromData allTestsData
+fastTests = testsFromData fastTestsData
+slowTests = testsFromData slowTestsData
+
+testsFromData :: [Tdata] -> [Test]
+testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
+
 allTestsData = fastTestsData ++ slowTestsData
 fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData
 slowTestsData = ambTestsData ++ parserTestsData
 
+-- TODO: problem with weakExceptions and amb tests
+
+-- Parser and reader tests do not work as reduction because parser uses haskell recursion and tries to print an infinite list
 reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData
 
 -- | Inc tests

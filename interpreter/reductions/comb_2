@@ -1,24 +1,24 @@
-handler{hPureSc} * handler{hAmbSc} * do d1 <- (op amb ["H","T"] (y. Return y)
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+handler{hPureSc} * handler{hAmbSc} * do d1 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3)))))
 
 1.
 {-- E-Hand and E-Hand and E-DoOp --}
 
-handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d1 <- (Return y
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))))
 
 2.
 {-- E-Hand and E-HandOp --}
 
-handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d1 <- (Return y
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y) (z. Return z)
 
@@ -26,8 +26,8 @@ handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d1 <- (Return 
 {-- E-HandSc --}
 
 do results <- (Map (["H","T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in \ z. handler{hPureSc} * Return z results)
@@ -36,13 +36,13 @@ do results <- (Map (["H","T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * d
 {-- E-Do and E-Binop --}
 
 do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y "H"
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -52,13 +52,13 @@ do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- 
 {-- E-Do and E-Do and E-AppAbs --}
 
 do results <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) "H"
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -68,13 +68,13 @@ do results <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Retu
 {-- E-Do and E-Do and E-Hand and E-AppAbs --}
 
 do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d1 <- (Return "H"
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3)))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -83,13 +83,13 @@ do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d1 <- (Return "H
 7.
 {-- E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -98,13 +98,13 @@ do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (op amb ["
 8.
 {-- E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d2 <- (Return y
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -113,13 +113,13 @@ do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y
 9.
 {-- E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do y <- (handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d2 <- (Return y
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y) (z. Return z)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -129,13 +129,13 @@ do results <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAm
 {-- E-Do and E-Do and E-HandSc --}
 
 do results <- (do y <- (do results <- (Map (["H","T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -145,18 +145,18 @@ do results <- (do y <- (do results <- (Map (["H","T"]) (\ y. handler{hPureSc} * 
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
 do results <- (do y <- (do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y "H"
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -166,18 +166,18 @@ do results <- (do y <- (do results <- (do y <- (\ y. handler{hPureSc} * \ y. han
 {-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
 do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) "H"
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -187,18 +187,18 @@ do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * \ y. handler{
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
 do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (Return "H"
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -207,18 +207,18 @@ do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbS
 14.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") ("H")
  in AppendS (l1) (d3)))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -227,18 +227,18 @@ do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbS
 15.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d3 <- (Return y
+do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d3 <- (Return y
  in do l1 <- (AppendS ("H") ("H")
  in AppendS (l1) (d3))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -247,18 +247,18 @@ do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbS
 16.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
+do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
  in do l1 <- (AppendS ("H") ("H")
  in AppendS (l1) (d3))) y) (z. Return z)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -272,14 +272,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (Map (["H","T"]) (
  in AppendS (l1) (d3))) y)
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -297,14 +297,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (\ y. han
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -322,14 +322,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -347,14 +347,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -371,14 +371,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -395,14 +395,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -418,14 +418,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -441,14 +441,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -464,14 +464,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (handler{
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -487,14 +487,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do y <- (Return "
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -509,14 +509,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (Map ([
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -535,14 +535,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -561,14 +561,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -587,14 +587,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -612,14 +612,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -637,14 +637,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -661,14 +661,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -685,14 +685,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -709,14 +709,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -733,14 +733,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do y <
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -756,14 +756,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do ys'
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -777,14 +777,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (do ys'
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -797,14 +797,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (Append
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -817,14 +817,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (Return
  in Append (["HHH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -836,14 +836,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (do ys' <- (Return
 do results <- (do y <- (do results <- (do y <- (do results <- (Append (["HHH"]) (["HHT"])
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -855,14 +855,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (Append (["HHH"]) 
 do results <- (do y <- (do results <- (do y <- (do results <- (Return ["HHH","HHT"]
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -873,14 +873,14 @@ do results <- (do y <- (do results <- (do y <- (do results <- (Return ["HHH","HH
 
 do results <- (do y <- (do results <- (do y <- (\ z. handler{hPureSc} * Return z ["HHH","HHT"]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -891,14 +891,14 @@ do results <- (do y <- (do results <- (do y <- (\ z. handler{hPureSc} * Return z
 
 do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * Return ["HHH","HHT"]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -909,14 +909,14 @@ do results <- (do y <- (do results <- (do y <- (handler{hPureSc} * Return ["HHH"
 
 do results <- (do y <- (do results <- (do y <- (Return ["HHH","HHT"]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -926,14 +926,14 @@ do results <- (do y <- (do results <- (do y <- (Return ["HHH","HHT"]
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
 do results <- (do y <- (do results <- (do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -943,19 +943,19 @@ do results <- (do y <- (do results <- (do ys' <- (Map (["T"]) (\ y. handler{hPur
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
 do results <- (do y <- (do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y "T"
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -965,19 +965,19 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (\ y. handler{hPureSc}
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
 do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) "T"
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -987,19 +987,19 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * \ 
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
 do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (Return "T"
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1008,19 +1008,19 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * ha
 50.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") ("T")
  in AppendS (l1) (d3)))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1029,19 +1029,19 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * ha
 51.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d3 <- (Return y
+do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d3 <- (Return y
  in do l1 <- (AppendS ("H") ("T")
  in AppendS (l1) (d3))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1050,19 +1050,19 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * ha
 52.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
+do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
  in do l1 <- (AppendS ("H") ("T")
  in AppendS (l1) (d3))) y) (z. Return z)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1076,15 +1076,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Map ([
  in AppendS (l1) (d3))) y)
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1102,15 +1102,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1128,15 +1128,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1154,15 +1154,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1179,15 +1179,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1204,15 +1204,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1228,15 +1228,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1252,15 +1252,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1276,15 +1276,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1300,15 +1300,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1323,15 +1323,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1350,15 +1350,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1377,15 +1377,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1404,15 +1404,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1430,15 +1430,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1456,15 +1456,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1481,15 +1481,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1506,15 +1506,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1531,15 +1531,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1556,15 +1556,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1580,15 +1580,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1602,15 +1602,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1623,15 +1623,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1644,15 +1644,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
  in Append (["HTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1664,15 +1664,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (do ys'
 do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Append (["HTH"]) (["HTT"])
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1684,15 +1684,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Append
 do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Return ["HTH","HTT"]
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1703,15 +1703,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Return
 
 do results <- (do y <- (do results <- (do ys' <- (do y <- (\ z. handler{hPureSc} * Return z ["HTH","HTT"]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1722,15 +1722,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (\ z. handler{hPureSc}
 
 do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * Return ["HTH","HTT"]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1741,15 +1741,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * Re
 
 do results <- (do y <- (do results <- (do ys' <- (do y <- (Return ["HTH","HTT"]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1759,15 +1759,15 @@ do results <- (do y <- (do results <- (do ys' <- (do y <- (Return ["HTH","HTT"]
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
 do results <- (do y <- (do results <- (do ys' <- (do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("H") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([["HTH","HTT"]]) (ys))
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1781,8 +1781,8 @@ do results <- (do y <- (do results <- (do ys' <- (do ys' <- (Return []
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1795,8 +1795,8 @@ do results <- (do y <- (do results <- (do ys' <- (Append ([["HTH","HTT"]]) ([])
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1809,8 +1809,8 @@ do results <- (do y <- (do results <- (do ys' <- (Return [["HTH","HTT"]]
  in Append ([["HHH","HHT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1822,8 +1822,8 @@ do results <- (do y <- (do results <- (do ys' <- (Return [["HTH","HTT"]]
 do results <- (do y <- (do results <- (Append ([["HHH","HHT"]]) ([["HTH","HTT"]])
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1835,8 +1835,8 @@ do results <- (do y <- (do results <- (Append ([["HHH","HHT"]]) ([["HTH","HTT"]]
 do results <- (do y <- (do results <- (Return [["HHH","HHT"],["HTH","HTT"]]
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1847,8 +1847,8 @@ do results <- (do y <- (do results <- (Return [["HHH","HHT"],["HTH","HTT"]]
 
 do results <- (do y <- (\ z. handler{hPureSc} * Return z [["HHH","HHT"],["HTH","HTT"]]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1859,8 +1859,8 @@ do results <- (do y <- (\ z. handler{hPureSc} * Return z [["HHH","HHT"],["HTH","
 
 do results <- (do y <- (handler{hPureSc} * Return [["HHH","HHT"],["HTH","HTT"]]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1871,8 +1871,8 @@ do results <- (do y <- (handler{hPureSc} * Return [["HHH","HHT"],["HTH","HTT"]]
 
 do results <- (do y <- (Return [["HHH","HHT"],["HTH","HTT"]]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1882,8 +1882,8 @@ do results <- (do y <- (Return [["HHH","HHT"],["HTH","HTT"]]
 {-- E-Do and E-DoRet --}
 
 do results <- (do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([[["HHH","HHT"],["HTH","HTT"]]]) (ys))
@@ -1893,13 +1893,13 @@ do results <- (do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmb
 {-- E-Do and E-Do and E-Binop --}
 
 do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y "T"
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1910,13 +1910,13 @@ do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} 
 {-- E-Do and E-Do and E-Do and E-AppAbs --}
 
 do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) "T"
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1927,13 +1927,13 @@ do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do 
 {-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
 do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d1 <- (Return "T"
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3)))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1943,13 +1943,13 @@ do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d1 <-
 95.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1959,13 +1959,13 @@ do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <-
 96.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d2 <- (Return y
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1975,13 +1975,13 @@ do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb [
 97.
 {-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d2 <- (Return y
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y) (z. Return z)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -1992,13 +1992,13 @@ do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. 
 {-- E-Do and E-Do and E-Do and E-HandSc --}
 
 do results <- (do ys' <- (do y <- (do results <- (Map (["H","T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2009,18 +2009,18 @@ do results <- (do ys' <- (do y <- (do results <- (Map (["H","T"]) (\ y. handler{
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
 do results <- (do ys' <- (do y <- (do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y "H"
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2031,18 +2031,18 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (\ y. handler{hPureSc}
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
 do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) "H"
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2053,18 +2053,18 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * \ 
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
 do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (Return "H"
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2074,18 +2074,18 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * ha
 102.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") ("H")
  in AppendS (l1) (d3)))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2095,18 +2095,18 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * ha
 103.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d3 <- (Return y
+do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d3 <- (Return y
  in do l1 <- (AppendS ("T") ("H")
  in AppendS (l1) (d3))))
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2116,18 +2116,18 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * ha
 104.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
+do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
  in do l1 <- (AppendS ("T") ("H")
  in AppendS (l1) (d3))) y) (z. Return z)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2142,14 +2142,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (Map ([
  in AppendS (l1) (d3))) y)
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2168,14 +2168,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2194,14 +2194,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2220,14 +2220,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2245,14 +2245,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2270,14 +2270,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2294,14 +2294,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2318,14 +2318,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2342,14 +2342,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2366,14 +2366,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do y <
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2389,14 +2389,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2416,14 +2416,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2443,14 +2443,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2470,14 +2470,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2496,14 +2496,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2522,14 +2522,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2547,14 +2547,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2572,14 +2572,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2597,14 +2597,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2622,14 +2622,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2646,14 +2646,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2668,14 +2668,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2689,14 +2689,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2710,14 +2710,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
  in Append (["THH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2730,14 +2730,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (do ys'
 do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (Append (["THH"]) (["THT"])
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2750,14 +2750,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (Append
 do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (Return ["THH","THT"]
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2769,14 +2769,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (do results <- (Return
 
 do results <- (do ys' <- (do y <- (do results <- (do y <- (\ z. handler{hPureSc} * Return z ["THH","THT"]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2788,14 +2788,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (\ z. handler{hPureSc}
 
 do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * Return ["THH","THT"]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2807,14 +2807,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (handler{hPureSc} * Re
 
 do results <- (do ys' <- (do y <- (do results <- (do y <- (Return ["THH","THT"]
  in do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2825,14 +2825,14 @@ do results <- (do ys' <- (do y <- (do results <- (do y <- (Return ["THH","THT"]
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (Map (["T"]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2843,19 +2843,19 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (Map (["T"]) (\ y. h
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y "T"
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2866,19 +2866,19 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (\ y. handl
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) "T"
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2889,19 +2889,19 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hP
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d2 <- (Return "T"
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2911,19 +2911,19 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hP
 138.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb ["H","T"] (y. Return y)
+do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") ("T")
  in AppendS (l1) (d3)))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2933,19 +2933,19 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hP
 139.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb ["H","T"] (y. do d3 <- (Return y
+do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAmbSc} * op amb : Tlist Tint -> Tint ["H","T"] (y. do d3 <- (Return y
  in do l1 <- (AppendS ("T") ("T")
  in AppendS (l1) (d3))))
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2955,19 +2955,19 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hP
 140.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
+do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * sc for : Tunit -> Tunit ["H","T"] (y. \ y. handler{hAmbSc} * do d3 <- (Return y
  in do l1 <- (AppendS ("T") ("T")
  in AppendS (l1) (d3))) y) (z. Return z)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -2982,15 +2982,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in AppendS (l1) (d3))) y)
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3009,15 +3009,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3036,15 +3036,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3063,15 +3063,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3089,15 +3089,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3115,15 +3115,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3140,15 +3140,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3165,15 +3165,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3190,15 +3190,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3215,15 +3215,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3239,15 +3239,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3267,15 +3267,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3295,15 +3295,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3323,15 +3323,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3350,15 +3350,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3377,15 +3377,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3403,15 +3403,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3429,15 +3429,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3455,15 +3455,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3481,15 +3481,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3506,15 +3506,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3529,15 +3529,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3551,15 +3551,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3573,15 +3573,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
  in Append (["TTH"]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3594,15 +3594,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Append (["TTH"]) (["TTT"])
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3615,15 +3615,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results <- (Return ["TTH","TTT"]
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3635,15 +3635,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (do results
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (\ z. handler{hPureSc} * Return z ["TTH","TTT"]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3655,15 +3655,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (\ z. handl
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hPureSc} * Return ["TTH","TTT"]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3675,15 +3675,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (handler{hP
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (Return ["TTH","TTT"]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([y]) (ys)))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3694,15 +3694,15 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do y <- (Return ["T
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
 do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d2 <- (Return y
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS ("T") (d2)
  in AppendS (l1) (d3)))) y)
  in Append ([["TTH","TTT"]]) (ys))
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3717,8 +3717,8 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (do ys' <- (Return [
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3732,8 +3732,8 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (Append ([["TTH","TT
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3747,8 +3747,8 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (Return [["TTH","TTT
  in Append ([["THH","THT"]]) (ys))
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3761,8 +3761,8 @@ do results <- (do ys' <- (do y <- (do results <- (do ys' <- (Return [["TTH","TTT
 do results <- (do ys' <- (do y <- (do results <- (Append ([["THH","THT"]]) ([["TTH","TTT"]])
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3775,8 +3775,8 @@ do results <- (do ys' <- (do y <- (do results <- (Append ([["THH","THT"]]) ([["T
 do results <- (do ys' <- (do y <- (do results <- (Return [["THH","THT"],["TTH","TTT"]]
  in \ z. handler{hPureSc} * Return z results)
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3788,8 +3788,8 @@ do results <- (do ys' <- (do y <- (do results <- (Return [["THH","THT"],["TTH","
 
 do results <- (do ys' <- (do y <- (\ z. handler{hPureSc} * Return z [["THH","THT"],["TTH","TTT"]]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3801,8 +3801,8 @@ do results <- (do ys' <- (do y <- (\ z. handler{hPureSc} * Return z [["THH","THT
 
 do results <- (do ys' <- (do y <- (handler{hPureSc} * Return [["THH","THT"],["TTH","TTT"]]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3814,8 +3814,8 @@ do results <- (do ys' <- (do y <- (handler{hPureSc} * Return [["THH","THT"],["TT
 
 do results <- (do ys' <- (do y <- (Return [["THH","THT"],["TTH","TTT"]]
  in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([y]) (ys)))
@@ -3826,8 +3826,8 @@ do results <- (do ys' <- (do y <- (Return [["THH","THT"],["TTH","TTT"]]
 {-- E-Do and E-Do and E-DoRet --}
 
 do results <- (do ys' <- (do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAmbSc} * do d1 <- (Return y
- in do d2 <- (op amb ["H","T"] (y. Return y)
- in do d3 <- (op amb ["H","T"] (y. Return y)
+ in do d2 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
+ in do d3 <- (op amb : Tlist Tint -> Tint ["H","T"] (y. Return y)
  in do l1 <- (AppendS (d1) (d2)
  in AppendS (l1) (d3))))) y)
  in Append ([[["THH","THT"],["TTH","TTT"]]]) (ys))

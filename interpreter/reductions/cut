@@ -1,7 +1,7 @@
-handler{hCut} * do b <- (sc call () (_. do y <- (op choose () (y. Return y)
+handler{hCut} * do b <- (sc call : Tunit -> Tunit () (_. do y <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False)) (z. Return z)
  in 
@@ -12,10 +12,10 @@ if b
 1.
 {-- E-Hand and E-DoSc --}
 
-handler{hCut} * sc call () (_. do y <- (op choose () (y. Return y)
+handler{hCut} * sc call : Tunit -> Tunit () (_. do y <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False)) (z. do b <- (Return z
  in 
@@ -26,10 +26,10 @@ if b
 2.
 {-- E-HandSc --}
 
-do x <- (\ _. handler{hCut} * do y <- (op choose () (y. Return y)
+do x <- (\ _. handler{hCut} * do y <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) ()
  in do x' <- (Open x
@@ -42,10 +42,10 @@ if b
 3.
 {-- E-Do and E-AppAbs --}
 
-do x <- (handler{hCut} * do y <- (op choose () (y. Return y)
+do x <- (handler{hCut} * do y <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False)
  in do x' <- (Open x
@@ -58,10 +58,10 @@ if b
 4.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do x <- (handler{hCut} * op choose () (y. do y <- (Return y
+do x <- (handler{hCut} * op choose : Tunit -> Tbool () (y. do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False))
  in do x' <- (Open x
@@ -77,13 +77,13 @@ if b
 do x <- (do xs <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) True
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -100,13 +100,13 @@ if b
 do x <- (do xs <- (handler{hCut} * do y <- (Return True
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False)
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -122,13 +122,13 @@ if b
 
 do x <- (do xs <- (handler{hCut} * 
 if True
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -142,12 +142,12 @@ if b
 8.
 {-- E-Do and E-Do and E-Hand and E-IfTrue --}
 
-do x <- (do xs <- (handler{hCut} * do _ <- (op cut () (y. Return y)
+do x <- (do xs <- (handler{hCut} * do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -161,12 +161,12 @@ if b
 9.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do x <- (do xs <- (handler{hCut} * op cut () (y. do _ <- (Return y
+do x <- (do xs <- (handler{hCut} * op cut : Tunit -> Tunit () (y. do _ <- (Return y
  in Return True))
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -186,7 +186,7 @@ do x <- (do xs <- (do x <- (\ y. handler{hCut} * do _ <- (Return y
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -206,7 +206,7 @@ do x <- (do xs <- (do x <- (handler{hCut} * do _ <- (Return ()
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -225,7 +225,7 @@ do x <- (do xs <- (do x <- (handler{hCut} * Return True
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -244,7 +244,7 @@ do x <- (do xs <- (do x <- (Return Vreturn [True]
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -262,7 +262,7 @@ do x <- (do xs <- (Close Vreturn [True]
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -280,7 +280,7 @@ do x <- (do xs <- (Return flag [True]
  in do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (xs) (ys)))
@@ -297,7 +297,7 @@ if b
 do x <- (do ys <- (\ y. handler{hCut} * do y <- (Return y
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False) False
  in AppendCut (flag [True]) (ys))
@@ -314,7 +314,7 @@ if b
 do x <- (do ys <- (handler{hCut} * do y <- (Return False
  in 
 if y
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False)
  in AppendCut (flag [True]) (ys))
@@ -330,7 +330,7 @@ if b
 
 do x <- (do ys <- (handler{hCut} * 
 if False
- then do _ <- (op cut () (y. Return y)
+ then do _ <- (op cut : Tunit -> Tunit () (y. Return y)
  in Return True)
  else Return False
  in AppendCut (flag [True]) (ys))

@@ -1,7 +1,7 @@
 do m <- (Newmem ()
- in do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+ in do c <- (handler{hState} * do _ <- (op put : Tpair Tstr Tint -> Tunit ("x", 10) (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))))
  in do x <- (c m
  in Fst x)))
@@ -10,9 +10,9 @@ do m <- (Newmem ()
 {-- E-Do and E-Unop --}
 
 do m <- (Return <memory>
- in do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+ in do c <- (handler{hState} * do _ <- (op put : Tpair Tstr Tint -> Tunit ("x", 10) (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))))
  in do x <- (c m
  in Fst x)))
@@ -20,9 +20,9 @@ do m <- (Return <memory>
 2.
 {-- E-DoRet --}
 
-do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+do c <- (handler{hState} * do _ <- (op put : Tpair Tstr Tint -> Tunit ("x", 10) (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))))
  in do x <- (c <memory>
  in Fst x))
@@ -30,9 +30,9 @@ do c <- (handler{hState} * do _ <- (op put ("x", 10) (y. Return y)
 3.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do c <- (handler{hState} * op put ("x", 10) (y. do _ <- (Return y
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+do c <- (handler{hState} * op put : Tpair Tstr Tint -> Tunit ("x", 10) (y. do _ <- (Return y
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2)))))
  in do x <- (c <memory>
  in Fst x))
@@ -41,8 +41,8 @@ do c <- (handler{hState} * op put ("x", 10) (y. do _ <- (Return y
 {-- E-Do and E-HandOp --}
 
 do c <- (Return \ m. do k' <- (\ y. handler{hState} * do _ <- (Return y
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2)))) ()
  in do m' <- (Update (("x", 10)) (m)
  in k' m'))
@@ -53,8 +53,8 @@ do c <- (Return \ m. do k' <- (\ y. handler{hState} * do _ <- (Return y
 {-- E-DoRet --}
 
 do x <- (\ m. do k' <- (\ y. handler{hState} * do _ <- (Return y
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2)))) ()
  in do m' <- (Update (("x", 10)) (m)
  in k' m')) <memory>
@@ -64,8 +64,8 @@ do x <- (\ m. do k' <- (\ y. handler{hState} * do _ <- (Return y
 {-- E-Do and E-AppAbs --}
 
 do x <- (do k' <- (\ y. handler{hState} * do _ <- (Return y
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2)))) ()
  in do m' <- (Update (("x", 10)) (<memory>)
  in k' m'))
@@ -75,8 +75,8 @@ do x <- (do k' <- (\ y. handler{hState} * do _ <- (Return y
 {-- E-Do and E-Do and E-AppAbs --}
 
 do x <- (do k' <- (handler{hState} * do _ <- (Return ()
- in do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+ in do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))))
  in do m' <- (Update (("x", 10)) (<memory>)
  in k' m'))
@@ -85,8 +85,8 @@ do x <- (do k' <- (handler{hState} * do _ <- (Return ()
 8.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do x <- (do k' <- (handler{hState} * do x1 <- (sc local ("x", 42) (_. op get "x" (y. Return y)) (z. Return z)
- in do x2 <- (op get "x" (y. Return y)
+do x <- (do k' <- (handler{hState} * do x1 <- (sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. Return z)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2)))
  in do m' <- (Update (("x", 10)) (<memory>)
  in k' m'))
@@ -95,8 +95,8 @@ do x <- (do k' <- (handler{hState} * do x1 <- (sc local ("x", 42) (_. op get "x"
 9.
 {-- E-Do and E-Do and E-Hand and E-DoSc --}
 
-do x <- (do k' <- (handler{hState} * sc local ("x", 42) (_. op get "x" (y. Return y)) (z. do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+do x <- (do k' <- (handler{hState} * sc local : Tpair Tstr Tint -> Tunit ("x", 42) (_. op get : Tstr -> Tint "x" (y. Return y)) (z. do x1 <- (Return z
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))))
  in do m' <- (Update (("x", 10)) (<memory>)
  in k' m'))
@@ -108,12 +108,12 @@ do x <- (do k' <- (handler{hState} * sc local ("x", 42) (_. op get "x" (y. Retur
 do x <- (do k' <- (Return \ m. do x <- (Fst ("x", 42)
  in do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (m)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve (x) (m)
  in do newm <- (Update ((x, oldv)) (m')
@@ -129,12 +129,12 @@ do x <- (do m' <- (Update (("x", 10)) (<memory>)
  in \ m. do x <- (Fst ("x", 42)
  in do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (m)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve (x) (m)
  in do newm <- (Update ((x, oldv)) (m')
@@ -148,12 +148,12 @@ do x <- (do m' <- (Return <memory>
  in \ m. do x <- (Fst ("x", 42)
  in do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (m)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve (x) (m)
  in do newm <- (Update ((x, oldv)) (m')
@@ -166,12 +166,12 @@ do x <- (do m' <- (Return <memory>
 do x <- (\ m. do x <- (Fst ("x", 42)
  in do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (m)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve (x) (m)
  in do newm <- (Update ((x, oldv)) (m')
@@ -184,12 +184,12 @@ do x <- (\ m. do x <- (Fst ("x", 42)
 do x <- (do x <- (Fst ("x", 42)
  in do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (<memory>)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve (x) (<memory>)
  in do newm <- (Update ((x, oldv)) (m')
@@ -202,12 +202,12 @@ do x <- (do x <- (Fst ("x", 42)
 do x <- (do x <- (Return "x"
  in do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (<memory>)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve (x) (<memory>)
  in do newm <- (Update ((x, oldv)) (m')
@@ -219,12 +219,12 @@ do x <- (do x <- (Return "x"
 
 do x <- (do v <- (Snd ("x", 42)
  in do um <- (Update (("x", 42)) (<memory>)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -236,12 +236,12 @@ do x <- (do v <- (Snd ("x", 42)
 
 do x <- (do v <- (Return 42
  in do um <- (Update (("x", 42)) (<memory>)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -252,12 +252,12 @@ do x <- (do v <- (Return 42
 {-- E-Do and E-DoRet --}
 
 do x <- (do um <- (Update (("x", 42)) (<memory>)
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -268,12 +268,12 @@ do x <- (do um <- (Update (("x", 42)) (<memory>)
 {-- E-Do and E-Do and E-Binop --}
 
 do x <- (do um <- (Return <memory>
- in do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+ in do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' um
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -283,12 +283,12 @@ do x <- (do um <- (Return <memory>
 20.
 {-- E-Do and E-DoRet --}
 
-do x <- (do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
+do x <- (do p' <- (\ _. handler{hState} * op get : Tstr -> Tint "x" (y. Return y) ()
  in do tm <- (p' <memory>
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -298,12 +298,12 @@ do x <- (do p' <- (\ _. handler{hState} * op get "x" (y. Return y) ()
 21.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do x <- (do p' <- (handler{hState} * op get "x" (y. Return y)
+do x <- (do p' <- (handler{hState} * op get : Tstr -> Tint "x" (y. Return y)
  in do tm <- (p' <memory>
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -320,7 +320,7 @@ do x <- (do p' <- (Return \ m. do v <- (Retrieve ("x") (m)
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -336,7 +336,7 @@ do x <- (do tm <- (\ m. do v <- (Retrieve ("x") (m)
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -352,7 +352,7 @@ do x <- (do tm <- (do v <- (Retrieve ("x") (<memory>)
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -368,7 +368,7 @@ do x <- (do tm <- (do v <- (Return 42
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -383,7 +383,7 @@ do x <- (do tm <- (do k' <- (\ y. handler{hState} * Return y 42
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -398,7 +398,7 @@ do x <- (do tm <- (do k' <- (handler{hState} * Return 42
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -413,7 +413,7 @@ do x <- (do tm <- (do k' <- (Return \ m. Return (42, m)
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -427,7 +427,7 @@ do x <- (do tm <- (\ m. Return (42, m) <memory>
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -441,7 +441,7 @@ do x <- (do tm <- (Return (42, <memory>)
  in do t <- (Fst tm
  in do m' <- (Snd tm
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -454,7 +454,7 @@ do x <- (do tm <- (Return (42, <memory>)
 do x <- (do t <- (Fst (42, <memory>)
  in do m' <- (Snd (42, <memory>)
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -467,7 +467,7 @@ do x <- (do t <- (Fst (42, <memory>)
 do x <- (do t <- (Return 42
  in do m' <- (Snd (42, <memory>)
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) t
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -479,7 +479,7 @@ do x <- (do t <- (Return 42
 
 do x <- (do m' <- (Snd (42, <memory>)
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) 42
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -491,7 +491,7 @@ do x <- (do m' <- (Snd (42, <memory>)
 
 do x <- (do m' <- (Return <memory>
  in do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) 42
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (m')
@@ -502,7 +502,7 @@ do x <- (do m' <- (Return <memory>
 {-- E-Do and E-DoRet --}
 
 do x <- (do k' <- (\ z. handler{hState} * do x1 <- (Return z
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2))) 42
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (<memory>)
@@ -513,7 +513,7 @@ do x <- (do k' <- (\ z. handler{hState} * do x1 <- (Return z
 {-- E-Do and E-Do and E-AppAbs --}
 
 do x <- (do k' <- (handler{hState} * do x1 <- (Return 42
- in do x2 <- (op get "x" (y. Return y)
+ in do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (x1, x2)))
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (<memory>)
@@ -523,7 +523,7 @@ do x <- (do k' <- (handler{hState} * do x1 <- (Return 42
 37.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do x <- (do k' <- (handler{hState} * do x2 <- (op get "x" (y. Return y)
+do x <- (do k' <- (handler{hState} * do x2 <- (op get : Tstr -> Tint "x" (y. Return y)
  in Return (42, x2))
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (<memory>)
@@ -533,7 +533,7 @@ do x <- (do k' <- (handler{hState} * do x2 <- (op get "x" (y. Return y)
 38.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do x <- (do k' <- (handler{hState} * op get "x" (y. do x2 <- (Return y
+do x <- (do k' <- (handler{hState} * op get : Tstr -> Tint "x" (y. do x2 <- (Return y
  in Return (42, x2)))
  in do oldv <- (Retrieve ("x") (<memory>)
  in do newm <- (Update (("x", oldv)) (<memory>)

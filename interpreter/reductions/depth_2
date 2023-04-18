@@ -1,20 +1,20 @@
-do f <- (handler{hDepth} * sc depth 1 (_. do b <- (op choose () (y. Return y)
+do f <- (handler{hDepth} * sc depth : Tunit -> Tunit 1 (_. do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
- else Return 3))) (x. do b <- (op choose () (y. Return y)
+ else Return 3))) (x. do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -24,11 +24,11 @@ if b''
 1.
 {-- E-Do and E-HandSc --}
 
-do f <- (Return \ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+do f <- (Return \ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -39,15 +39,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (d) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -58,11 +58,11 @@ if b''
 2.
 {-- E-DoRet --}
 
-\ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+\ d. do p' <- (\ _. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -73,15 +73,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (d) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -91,11 +91,11 @@ if b''
 3.
 {-- E-AppAbs --}
 
-do p' <- (\ _. handler{hDepth} * do b <- (op choose () (y. Return y)
+do p' <- (\ _. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -106,15 +106,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -124,11 +124,11 @@ if b''
 4.
 {-- E-Do and E-AppAbs --}
 
-do p' <- (handler{hDepth} * do b <- (op choose () (y. Return y)
+do p' <- (handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -139,15 +139,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -157,11 +157,11 @@ if b''
 5.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do p' <- (handler{hDepth} * op choose () (y. do b <- (Return y
+do p' <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -172,15 +172,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -198,7 +198,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -207,7 +207,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -222,15 +222,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -249,7 +249,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -258,7 +258,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -271,15 +271,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -298,7 +298,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -307,7 +307,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -320,15 +320,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (md) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -346,7 +346,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -355,7 +355,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -368,15 +368,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -394,7 +394,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -403,7 +403,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -416,15 +416,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -442,7 +442,7 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -451,7 +451,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -464,15 +464,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -489,7 +489,7 @@ if False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -498,7 +498,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -511,15 +511,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -533,7 +533,7 @@ do xs <- (do k1 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -542,7 +542,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -555,15 +555,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -577,7 +577,7 @@ do xs <- (do k1 <- (handler{hDepth} * do b <- (Return True
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -586,7 +586,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -599,15 +599,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -620,7 +620,7 @@ if b''
 do xs <- (do k1 <- (handler{hDepth} * 
 if True
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -629,7 +629,7 @@ if b'
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -642,15 +642,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -665,7 +665,7 @@ do xs <- (do k1 <- (handler{hDepth} * Return 1
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -678,15 +678,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -701,7 +701,7 @@ do xs <- (do k1 <- (Return \ d. Return [(1, d)]
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -714,15 +714,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -736,7 +736,7 @@ do xs <- (do k2 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -749,15 +749,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -771,7 +771,7 @@ do xs <- (do k2 <- (handler{hDepth} * do b <- (Return False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -784,15 +784,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -805,7 +805,7 @@ if b''
 do xs <- (do k2 <- (handler{hDepth} * 
 if False
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -818,15 +818,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -836,7 +836,7 @@ if b''
 21.
 {-- E-Do and E-Do and E-Hand and E-IfTrue --}
 
-do xs <- (do k2 <- (handler{hDepth} * do b' <- (op choose () (y. Return y)
+do xs <- (do k2 <- (handler{hDepth} * do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 2
@@ -849,15 +849,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -867,7 +867,7 @@ if b''
 22.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do xs <- (do k2 <- (handler{hDepth} * op choose () (y. do b' <- (Return y
+do xs <- (do k2 <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b' <- (Return y
  in 
 if b'
  then Return 2
@@ -880,15 +880,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -924,15 +924,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -967,15 +967,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1010,15 +1010,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1052,15 +1052,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1094,15 +1094,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1135,15 +1135,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1176,15 +1176,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1217,15 +1217,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1257,15 +1257,15 @@ if b'
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1281,15 +1281,15 @@ do xs <- (do ys <- (Return []
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1304,15 +1304,15 @@ do xs <- (Append ([(1, 0)]) ([])
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1327,15 +1327,15 @@ do xs <- (Return [(1, 0)]
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1349,15 +1349,15 @@ ConcatMap ([(1, 0)]) (\ vd. do v <- (Fst vd
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1371,15 +1371,15 @@ do as <- (\ vd. do v <- (Fst vd
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1389,15 +1389,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1412,15 +1412,15 @@ do as <- (do v <- (Fst (1, 0)
  in do rd <- (Snd (1, 0)
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1430,15 +1430,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1453,15 +1453,15 @@ do as <- (do v <- (Return 1
  in do rd <- (Snd (1, 0)
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1471,15 +1471,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1493,15 +1493,15 @@ if b''
 do as <- (do rd <- (Snd (1, 0)
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1511,15 +1511,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1533,15 +1533,15 @@ if b''
 do as <- (do rd <- (Return 0
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1551,15 +1551,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1572,15 +1572,15 @@ if b''
 
 do as <- (do consumed <- (Minus (1) (0)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1590,15 +1590,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1611,15 +1611,15 @@ if b''
 
 do as <- (do consumed <- (Return 1
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1629,15 +1629,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1649,15 +1649,15 @@ if b''
 {-- E-Do and E-DoRet --}
 
 do as <- (do trued <- (Minus (2) (1)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1667,15 +1667,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1687,15 +1687,15 @@ if b''
 {-- E-Do and E-Do and E-Binop --}
 
 do as <- (do trued <- (Return 1
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1705,15 +1705,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1724,15 +1724,15 @@ if b''
 45.
 {-- E-Do and E-DoRet --}
 
-do as <- (do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+do as <- (do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1742,15 +1742,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1761,15 +1761,15 @@ if b''
 46.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do as <- (do k' <- (handler{hDepth} * do b <- (op choose () (y. Return y)
+do as <- (do k' <- (handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1779,15 +1779,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1798,15 +1798,15 @@ if b''
 47.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do as <- (do k' <- (handler{hDepth} * op choose () (y. do b <- (Return y
+do as <- (do k' <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1816,15 +1816,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1843,11 +1843,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1856,11 +1856,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1874,15 +1874,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1901,11 +1901,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1914,11 +1914,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1931,15 +1931,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1958,11 +1958,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1971,11 +1971,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -1988,15 +1988,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2015,11 +2015,11 @@ if b
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2028,11 +2028,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2045,15 +2045,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2071,11 +2071,11 @@ if False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2084,11 +2084,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2101,15 +2101,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2124,11 +2124,11 @@ do as <- (do k1 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2137,11 +2137,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2154,15 +2154,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2177,11 +2177,11 @@ do as <- (do k1 <- (handler{hDepth} * do b <- (Return True
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2190,11 +2190,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2207,15 +2207,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2229,11 +2229,11 @@ if b''
 do as <- (do k1 <- (handler{hDepth} * 
 if True
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2242,11 +2242,11 @@ if b''
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2259,15 +2259,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2283,11 +2283,11 @@ do as <- (do k1 <- (handler{hDepth} * Return 1
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2300,15 +2300,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2324,11 +2324,11 @@ do as <- (do k1 <- (Return \ d. Return [(1, d)]
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2341,15 +2341,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2364,11 +2364,11 @@ do as <- (do k2 <- (\ y. handler{hDepth} * do b <- (Return y
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2381,15 +2381,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2404,11 +2404,11 @@ do as <- (do k2 <- (handler{hDepth} * do b <- (Return False
  in 
 if b
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2421,15 +2421,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2443,11 +2443,11 @@ if b''
 do as <- (do k2 <- (handler{hDepth} * 
 if False
  then Return 1
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2460,15 +2460,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2479,11 +2479,11 @@ if b''
 61.
 {-- E-Do and E-Do and E-Hand and E-IfTrue --}
 
-do as <- (do k2 <- (handler{hDepth} * do b' <- (op choose () (y. Return y)
+do as <- (do k2 <- (handler{hDepth} * do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2496,15 +2496,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2515,11 +2515,11 @@ if b''
 62.
 {-- E-Do and E-Do and E-Hand and E-DoOp --}
 
-do as <- (do k2 <- (handler{hDepth} * op choose () (y. do b' <- (Return y
+do as <- (do k2 <- (handler{hDepth} * op choose : Tunit -> Tbool () (y. do b' <- (Return y
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2532,15 +2532,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2559,7 +2559,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2568,7 +2568,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2585,15 +2585,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2614,7 +2614,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2623,7 +2623,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2637,15 +2637,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2666,7 +2666,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2675,7 +2675,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2689,15 +2689,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2717,7 +2717,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2726,7 +2726,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2740,15 +2740,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2768,7 +2768,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2777,7 +2777,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2791,15 +2791,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2818,7 +2818,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2827,7 +2827,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2841,15 +2841,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2868,7 +2868,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2877,7 +2877,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2891,15 +2891,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2918,7 +2918,7 @@ if b
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2927,7 +2927,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2941,15 +2941,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2967,7 +2967,7 @@ if True
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2976,7 +2976,7 @@ if b''
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -2990,15 +2990,15 @@ if b''
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3015,15 +3015,15 @@ do as <- (do ys <- (Return []
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3039,15 +3039,15 @@ do as <- (Append ([(1, 0)]) ([])
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3063,15 +3063,15 @@ do as <- (Return [(1, 0)]
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5
@@ -3086,15 +3086,15 @@ do as' <- (ConcatMap ([]) (\ vd. do v <- (Fst vd
  in do rd <- (Snd vd
  in do consumed <- (Minus (1) (rd)
  in do trued <- (Minus (2) (consumed)
- in do k' <- (\ x. handler{hDepth} * do b <- (op choose () (y. Return y)
+ in do k' <- (\ x. handler{hDepth} * do b <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b
  then Return x
- else do b' <- (op choose () (y. Return y)
+ else do b' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b'
  then Return 4
- else do b'' <- (op choose () (y. Return y)
+ else do b'' <- (op choose : Tunit -> Tbool () (y. Return y)
  in 
 if b''
  then Return 5

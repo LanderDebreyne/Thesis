@@ -1,7 +1,7 @@
-do c' <- (handler{hInc} * handler{hOnce} * op choose () (b. 
+do c' <- (handler{hInc} * handler{hOnce} * op choose : Tunit -> Tbool () (b. 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y))
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y))
  in c' 0)
 
 1.
@@ -9,12 +9,12 @@ if b
 
 do c' <- (handler{hInc} * do xs <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) True
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) True
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys)))
  in c' 0)
 
@@ -23,45 +23,45 @@ if b
 
 do c' <- (handler{hInc} * do xs <- (handler{hOnce} * 
 if True
- then op inc () (y. Return y)
- else op inc () (y. Return y)
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y)
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys)))
  in c' 0)
 
 3.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do c' <- (handler{hInc} * do xs <- (handler{hOnce} * op inc () (y. Return y)
+do c' <- (handler{hInc} * do xs <- (handler{hOnce} * op inc : Tunit -> Tunit () (y. Return y)
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys)))
  in c' 0)
 
 4.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do c' <- (handler{hInc} * do xs <- (op inc () (y. handler{hOnce} * Return y)
+do c' <- (handler{hInc} * do xs <- (op inc : Tunit -> Tunit () (y. handler{hOnce} * Return y)
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys)))
  in c' 0)
 
 5.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do c' <- (handler{hInc} * op inc () (y. do xs <- (handler{hOnce} * Return y
+do c' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. do xs <- (handler{hOnce} * Return y
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys))))
  in c' 0)
 
@@ -71,8 +71,8 @@ if b
 do c' <- (Return \ s. do k' <- (\ y. handler{hInc} * do xs <- (handler{hOnce} * Return y
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys))) s
  in do s' <- (Add (s) (1)
  in k' s'))
@@ -84,8 +84,8 @@ if b
 \ s. do k' <- (\ y. handler{hInc} * do xs <- (handler{hOnce} * Return y
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys))) s
  in do s' <- (Add (s) (1)
  in k' s')) 0
@@ -96,8 +96,8 @@ if b
 do k' <- (\ y. handler{hInc} * do xs <- (handler{hOnce} * Return y
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys))) 0
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -108,8 +108,8 @@ if b
 do k' <- (handler{hInc} * do xs <- (handler{hOnce} * Return 0
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys)))
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -120,8 +120,8 @@ if b
 do k' <- (handler{hInc} * do xs <- (Return [0]
  in do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append (xs) (ys)))
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -131,8 +131,8 @@ if b
 
 do k' <- (handler{hInc} * do ys <- (\ b. handler{hOnce} * 
 if b
- then op inc () (y. Return y)
- else op inc () (y. Return y) False
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y) False
  in Append ([0]) (ys))
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -142,8 +142,8 @@ if b
 
 do k' <- (handler{hInc} * do ys <- (handler{hOnce} * 
 if False
- then op inc () (y. Return y)
- else op inc () (y. Return y)
+ then op inc : Tunit -> Tunit () (y. Return y)
+ else op inc : Tunit -> Tunit () (y. Return y)
  in Append ([0]) (ys))
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -151,7 +151,7 @@ if False
 13.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do k' <- (handler{hInc} * do ys <- (handler{hOnce} * op inc () (y. Return y)
+do k' <- (handler{hInc} * do ys <- (handler{hOnce} * op inc : Tunit -> Tunit () (y. Return y)
  in Append ([0]) (ys))
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -159,7 +159,7 @@ do k' <- (handler{hInc} * do ys <- (handler{hOnce} * op inc () (y. Return y)
 14.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do k' <- (handler{hInc} * do ys <- (op inc () (y. handler{hOnce} * Return y)
+do k' <- (handler{hInc} * do ys <- (op inc : Tunit -> Tunit () (y. handler{hOnce} * Return y)
  in Append ([0]) (ys))
  in do s' <- (Add (0) (1)
  in k' s'))
@@ -167,7 +167,7 @@ do k' <- (handler{hInc} * do ys <- (op inc () (y. handler{hOnce} * Return y)
 15.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * op inc () (y. do ys <- (handler{hOnce} * Return y
+do k' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. do ys <- (handler{hOnce} * Return y
  in Append ([0]) (ys)))
  in do s' <- (Add (0) (1)
  in k' s'))

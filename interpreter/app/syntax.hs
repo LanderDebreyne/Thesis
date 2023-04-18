@@ -2,8 +2,20 @@
 module Syntax where
 
 import System.Random
+import qualified Data.Set as Set
 
 type Name = String
+
+-- | Label syntax
+data Label = Lop Name ValueType ValueType 
+             | Lsc Name ValueType ValueType
+             | Lfor Name ValueType 
+             deriving (Eq)
+
+instance Show Label where
+  show (Lop x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
+  show (Lsc x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
+  show (Lfor x t) = x ++ " : " ++ show t
 
 -- | Value syntax
 data Value 
@@ -49,15 +61,15 @@ instance Show Value where
 
 -- | Handler syntax
 data Handler = Handler
-  { hname   :: Name                                   -- ^ handler name
-  , oplist  :: [Name]                                 -- ^ algebraic operations names
-  , sclist  :: [Name]                                 -- ^ scoped operations names
-  , forlist :: [Name]                                 -- ^ for operations names
-  , hreturn :: (Name, Comp)                           -- ^ (x, c)
-  , hop     :: Name -> Maybe (Name, Name, Comp)       -- ^ l -> (x, k, c)
-  , hsc     :: Name -> Maybe (Name, Name, Name, Comp) -- ^ l -> (x, p, k, c)
-  , hfor    :: Name -> Maybe (Name, Name, Name, Comp) -- ^ l -> (x, l, k, c)
-  , hfwd    :: (Name, Name, Name, Comp)               -- ^ (f, p, k, c)
+  { hname   :: Name                                     -- ^ handler name
+  , oplist  :: [Label]                                  -- ^ algebraic operations names
+  , sclist  :: [Label]                                  -- ^ scoped operations names
+  , forlist :: [Label]                                  -- ^ for operations names
+  , hreturn :: (Name, Comp)                             -- ^ (x, c)
+  , hop     :: Label -> Maybe (Name, Name, Comp)        -- ^ l -> (x, k, c)
+  , hsc     :: Label -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, p, k, c)
+  , hfor    :: Label -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, l, k, c)
+  , hfwd    :: (Name, Name, Name, Comp)                 -- ^ (f, p, k, c)
   } | 
   Parallel {
     ptraverse :: (Name, Name, Name, Comp)             -- ^ (x, l, k, c)
@@ -80,16 +92,16 @@ instance Show (Dot Name Comp) where
 
 -- | Computation syntax
 data Comp
-  = Return Value                                   -- ^ return v
-  | Op Name Value (Dot Name Comp)                  -- ^ op l v (y.c)
-  | Sc Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
-  | For Name Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
-  | Handle Handler Comp                            -- ^ v ★ c
-  | Do Name Comp Comp                              -- ^ do x <- c1 in c2
-  | Rec Name Comp Comp                             -- ^ rec x c1 c2
-  | App Value Value                                -- ^ v1 v2
-  | Let Name Value Comp                            -- ^ let x = v in c
-  | Letrec Name Value Comp                         -- ^ letrec x = c in c
+  = Return Value                                    -- ^ return v
+  | Op Label Value (Dot Name Comp)                  -- ^ op l v (y.c)
+  | Sc Label Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
+  | For Label Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
+  | Handle Handler Comp                             -- ^ v ★ c
+  | Do Name Comp Comp                               -- ^ do x <- c1 in c2
+  | Rec Name Comp Comp                              -- ^ rec x c1 c2
+  | App Value Value                                 -- ^ v1 v2
+  | Let Name Value Comp                             -- ^ let x = v in c
+  | Letrec Name Value Comp                          -- ^ letrec x = c in c
   -- extensions:
   -- We implement most functions in the paper as built-in functions
   -- because the interpreter doesn't support pattern matching and recursive functions.
@@ -102,9 +114,9 @@ data Comp
 
 instance Show Comp where
     show (Return v) = "Return " ++ show v
-    show (Op l v (x :. c)) = "op " ++ l ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c ++ ")"
-    show (Sc l v (x :. c1) (y :. c2)) = "sc " ++ l ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
-    show (For l v (x :. c1) (y :. c2)) = "for " ++ l ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
+    show (Op l v (x :. c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c ++ ")"
+    show (Sc l v (x :. c1) (y :. c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
+    show (For l v (x :. c1) (y :. c2)) = "for " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
     show (Handle h c) = show h ++ " * " ++ show c
     show (Do x c1 c2) = "do " ++ x ++ " <- (" ++ show c1 ++ "\n in " ++ show c2 ++ ")"
     show (App v1 v2) = show v1 ++ " " ++ show v2
@@ -177,3 +189,28 @@ retrieve x m = case runMem m x of Just s  -> s
                                   Nothing -> error "var undefined"
 update :: (Name, s) -> Memory s -> Memory s
 update (x, s) m = Mem $ \ y -> if x == y then Just s else runMem m y
+
+
+-- | Typing syntax
+
+-- | Value type syntax
+data ValueType = Tunit
+            | Tpair ValueType ValueType
+            | Tfunction ValueType ComputationType
+            | THandler ComputationType ComputationType
+            | Tlist ValueType
+            | TValVar Name Int
+            | TOpAbs Name Int ValueType
+            | Tapp ValueType ValueType
+            | Tsum ValueType ValueType
+            | Tint 
+            | Tbool
+            | Tstr
+            | Tchar
+            deriving (Eq, Show)
+
+-- | Effect type syntax
+type EffectType = Set.Set Label
+
+-- | Computation type syntax
+type ComputationType = (ValueType, EffectType)
