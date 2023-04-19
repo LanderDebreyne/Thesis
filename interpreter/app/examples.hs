@@ -175,7 +175,6 @@ hCut = Handler
   (\ forlabel -> case forlabel of 
     _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
-  -- TODO: for
 
 lCut :: Label
 lCut = Lop "cut" Tunit Tunit
@@ -219,7 +218,6 @@ hExcept = Handler
   (\ forlabel -> case forlabel of
     _ -> Nothing)
   (lift2fwd ("k", "z", app2 exceptMap (Var "z" 0) (Var "k" 1)))
-   -- TODO: for
 
 lRaise :: Label
 lRaise = Lop "raise" Tstr Tunit
@@ -358,7 +356,6 @@ hDepth = Handler
         Do "k'" (App (Var "k" 5) (Var "v" 1)) $
         App (Var "k'" 0) (Var "d" 1))
     )))
-    -- TODO: for
 
 -- | @hDepth2@ is another handler for @depth@.
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
@@ -902,22 +899,58 @@ hAmb = Handler
 lAmb :: Label
 lAmb = Lop "amb" (Tlist Tint) Tint
 
+hAccumL :: Handler
+hAccumL = Handler
+  "hAccumL" [lAccum] [] [lFor]
+  ("x", Return (Vpair (Vlist [], Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    (Lop "accum" _ _) -> Just ("x", "k",
+      Do "k'" (App (Var "k" 0) (Vunit)) $
+      Do "m'" (Unop Fst (Var "k'" 0)) $
+      Do "s" (Unop Snd (Var "k'" 1)) $
+      Do "m''" (Binop Append (Var "x" 4) (Var "m'" 1)) $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    (Lfor "for" _) ->     (Just ("list", "l", "k", 
+          Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
+          Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+          Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+          Do "k'" (App (Var "k" 3) (Var "second" 0)) $
+          Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+                                    If (Var "n" 0) (Return (Vlist [])) (Do "h" (Unop Head (Var "l" 1)) $
+                                                                      Do "t" (Unop Tail (Var "l" 2)) $
+                                                                      Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                                                      Do "x" (Binop Append (Var "h" 2) (Var "y" 0)) $
+                                                                      Return (Var "x" 0))) 
+            (Do "rest" (App (Var "reduce" 0) (Var "first" 3)) $
+            Do "base" (Unop Fst (Var "k'" 2)) $
+            Do "k''" (Unop Snd (Var "k'" 3)) $
+            Do "res" (Binop Append (Var "base" 1) (Var "rest" 2)) $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
 cAmb :: Comp
 cAmb = 
   Do "d1" (Op lAmb (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
   Do "d2" (Op lAmb (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
   Do "res" (Binop Add (Var "d1" 1) (Var "d2" 0)) $
   Do "eq" (Binop Eq (Var "res" 0) (Vint 13)) $
-  If (Var "eq" 0) (Op lAccum (Vint 1) ("y" :. Return Vunit)) (Return Vunit)
+  If (Var "eq" 0) (Op lAccum (Vpair (Var "d1" 3, Var "d2" 2)) ("y" :. Return Vunit)) (Return Vunit)
 
 
 exAmb :: Comp
-exAmb = hPure # hAccum # hAmb # cAmb
+exAmb = hPure # hAccumL # hAmb # cAmb
 
 -- Usage:
 -- >>> evalFile exAmb
--- Return (6, [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
-
+-- Return ([(4, 9),(5, 8),(6, 7),(7, 6),(8, 5),(9, 4)], [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
 -- Finds [(4,9),(5,8),(6,7),(7,6),(8,5),(9,4)]
 
 
@@ -1257,7 +1290,6 @@ exPRNGseqSc = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 ----------------------------------------------------------------------------------------------------------------------------
 
 -- Amb example as scoped effect
--- TODO: why the for effect here?
 hAmbSc :: Handler
 hAmbSc = Handler
   "hAmbSc" [lAmb] [lForSc] []
@@ -1270,7 +1302,7 @@ hAmbSc = Handler
     lForSc -> Just ("x", "p", "k", 
               Do "results" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $ 
               Do "productElts" (Unop CartesianProd (Var "results" 0)) $
-              For lFor (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+              Sc lForSc (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
     _ -> Nothing)
   (\ forlabel -> case forlabel of
     _ -> Nothing)
@@ -1279,12 +1311,50 @@ hAmbSc = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
+
+hAccumScL :: Handler
+hAccumScL = Handler
+  "hAccumScL" [lAccum] [lForSc] []
+  ("x", Return (Vpair (Vlist [], Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    lAccum -> Just ("x", "k",
+      Do "k'" (App (Var "k" 0) (Vunit)) $
+      Do "m'" (Unop Fst (Var "k'" 0)) $
+      Do "s" (Unop Snd (Var "k'" 1)) $
+      Do "m''" (Binop Append (Var "x" 4) (Var "m'" 1)) $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    lForSc -> Just ("x", "p", "k", 
+              Do "pairs" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+              Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+              Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+              Do "k'" (App (Var "k" 3) (Var "second" 0)) $
+              Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+              If (Var "n" 0) (Return (Vlist [])) (Do "h" (Unop Head (Var "l" 1)) $
+                                                Do "t" (Unop Tail (Var "l" 2)) $
+                                                Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                                Do "x" (Binop Append (Var "h" 2) (Var "y" 0)) $
+                                                Return (Var "x" 0))) 
+              (Do "rest" (App (Var "reduce" 0) (Var "first" 3)) $
+              Do "base" (Unop Fst (Var "k'" 2)) $
+              Do "k''" (Unop Snd (Var "k'" 3)) $
+              Do "res" (Binop Append (Var "base" 1) (Var "rest" 2)) $
+              Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
 exAmbSc :: Comp
-exAmbSc = hPureSc # hAccumSc1 # hAmbSc # cAmb
+exAmbSc = hPureSc # hAccumScL # hAmbSc # cAmb
 
 -- Usage:
 -- >>> evalFile exAmbSc
--- Return (6, [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
+-- Return ([(4, 9),(5, 8),(6, 7),(7, 6),(8, 5),(9, 4)], [[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()],[(),(),(),(),(),(),(),(),()]])
 
 -- Finds [(4,9),(5,8),(6,7),(7,6),(8,5),(9,4)]
 
