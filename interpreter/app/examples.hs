@@ -14,11 +14,11 @@ app2 :: Value -> Value -> Value -> Comp
 app2 f v1 v2 = Do "f'" (App f v1) $ App (Var "f'" 0) (shiftV 1 v2)
 
 -- | Generic Algebraic Operation.
-op :: Label -> Value -> Comp
+op :: Name -> Value -> Comp
 op l x = Op l x ("y" :. Return (Var "y" 0))
 
 -- | Generic Scoped Operation.
-sc :: Label -> Value -> Dot Name Comp -> Comp
+sc :: Name -> Value -> Dot Name Comp -> Comp
 sc l x p = Sc l x p ("z" :. Return (Var "z" 0))
 
 -- | @absurd@ is a function that takes a value and returns an undefined computation.
@@ -33,10 +33,10 @@ absurd x = Undefined
 -- | @hInc@ refers to the @h_inc@ handler in Section 2.1 and Section 5
 hInc :: Handler
 hInc = Handler
-  "hInc" [lInc] [] []
+  "hInc" ["inc"] [] []
   ("x", Return . Lam "s" $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "inc" _ _) -> Just ("_", "k",
+    "inc" -> Just ("_", "k",
       Return . Lam "s" $ Do "k'" (App (Var "k" 1) (Var "s" 0)) $
                          Do "s'" (Binop Add (Var "s" 1) (Vint 1)) $
                          App (Var "k'" 1) (Var "s'" 0))
@@ -44,7 +44,7 @@ hInc = Handler
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of
-    (Lfor "for" _) ->   (Just ("list", "l", "k", Return . Lam "s" $ 
+    "for" ->   (Just ("list", "l", "k", Return . Lam "s" $ 
           Do "xs" (App (Var "l" 2) (Var "list" 3)) $
           Do "first" (Binop Map (Var "xs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
           Do "second" (Binop Map (Var "xs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
@@ -68,11 +68,6 @@ hInc = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
-lInc :: Label
-lInc = Lop "inc" Tunit Tunit
-
-lFor :: Label
-lFor = Lfor "for" Tunit
 
 
 -- | @runInc@ is a macro to help applying the initial count value
@@ -81,11 +76,11 @@ runInc s c = Do "c'" (hInc # c) $ App (Var "c'" 0) (Vint s)
 
 -- | @cInc@ refers to the @c_inc@ program in Section 2.1
 cInc :: Comp
-cInc = Op lChoose Vunit ("b" :.
-        If (Var "b" 0) (op lInc Vunit) (op lInc Vunit))
+cInc = Op "choose" Vunit ("b" :.
+        If (Var "b" 0) (op "inc" Vunit) (op "inc" Vunit))
 
 cIncFor :: Comp
-cIncFor = For lFor (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op lInc Vunit) ("z" :. Return (Var "z" 0))
+cIncFor = For "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit) ("z" :. Return (Var "z" 0))
 
 -- Handling @cInc@:
 -- >>> evalFile $ hOnce # runInc 0 cInc
@@ -94,7 +89,7 @@ cIncFor = For lFor (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op lInc Vunit) (
 -- Return (Vpair (Vlist [Vint 0,Vint 1],Vint 2))
 
 cFwd :: Comp
-cFwd = Sc (Lsc "once" Tunit Tunit) Vunit ("_" :. cInc) ("x" :. Op (Lop "inc" Tint Tunit) Vunit ("y" :. 
+cFwd = Sc "once" Vunit ("_" :. cInc) ("x" :. Op "inc" Vunit ("y" :. 
         Do "z" (Binop Add (Var "x" 1) (Var "y" 0)) $ Return (Var "z" 0)))
 
 -- Handling @cFwd@:
@@ -107,17 +102,17 @@ cFwd = Sc (Lsc "once" Tunit Tunit) Vunit ("_" :. cInc) ("x" :. Op (Lop "inc" Tin
 -- | @hOnce@ refers to the @h_once@ handler in Section 2.2 & Section 7.1
 hOnce :: Handler
 hOnce = Handler
-  "hOnce" [lChoose, lFail] [lOnce] []
+  "hOnce" ["choose", "fail"] ["once"] []
   ("x", Return $ Vlist [Var "x" 0])
   (\ oplabel -> case oplabel of
-    (Lop "fail" _ _) -> Just ("_", "_", Return $ Vlist [])
-    (Lop "choose" _ _) -> Just ("x", "k",
+    "fail" -> Just ("_", "_", Return $ Vlist [])
+    "choose" -> Just ("x", "k",
       Do "xs" (App (Var "k" 0) (Vbool True)) $
       Do "ys" (App (Var "k" 1) (Vbool False)) $
       Binop Append (Var "xs" 1) (Var "ys" 0))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "once" _ _) -> Just ("_", "p", "k",
+    "once" -> Just ("_", "p", "k",
       Do "ts" (App (Var "p" 1) Vunit) $
       Do "t" (Unop Head (Var "ts" 0)) $
       App (Var "k" 2) (Var "t" 0))
@@ -127,23 +122,16 @@ hOnce = Handler
   (lift2fwd ("k", "z", Binop ConcatMap (Var "z" 0) (Var "k" 1)))
    -- TODO: for
 
-lChoose :: Label
-lChoose = Lop "choose" Tunit Tbool
 
-lFail :: Label
-lFail = Lop "fail" Tunit Tunit
-
-lOnce :: Label
-lOnce = Lsc "once" Tunit Tunit
 
 -- | @failure@ is a wrapper for @fail@ with a polymorphic return type.
 -- Defined in Section 7.1
 failure :: Comp
-failure = Op lFail Vunit ("y" :. absurd (Var "y" 0))
+failure = Op "fail" Vunit ("y" :. absurd (Var "y" 0))
 
 -- | @cOnce@ refers to the @c_once@ program in Section 2.3
 cOnce :: Comp
-cOnce = Sc lOnce Vunit ("_" :. op lChoose Vunit)
+cOnce = Sc "once" Vunit ("_" :. op "choose" Vunit)
                         ("b" :. If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails")))
 
 -- Handling @cOnce@:
@@ -156,18 +144,18 @@ cOnce = Sc lOnce Vunit ("_" :. op lChoose Vunit)
 -- | @hCut@ refers to the @h_cut@ handler in Section 7.2
 hCut :: Handler
 hCut = Handler
-  "hCut" [lChoose, lFail, lCut] [lCall] []
+  "hCut" ["choose", "fail", "cut"] ["call"] []
   ("x", Return . Vret $ Vlist [Var "x" 0])
   (\ oplabel -> case oplabel of
-    (Lop "fail" _ _) -> Just ("_", "_", Return . Vret $ Vlist [])
-    (Lop "choose" _ _) -> Just ("x", "k",
+    "fail" -> Just ("_", "_", Return . Vret $ Vlist [])
+    "choose" -> Just ("x", "k",
       Do "xs" (App (Var "k" 0) (Vbool True)) $
       Do "ys" (App (Var "k" 1) (Vbool False)) $
       Binop AppendCut (Var "xs" 1) (Var "ys" 0))
-    (Lop "cut" _ _) -> Just ("_", "k", Do "x" (App (Var "k" 0) Vunit) $ Unop Close (Var "x" 0))
+    "cut" -> Just ("_", "k", Do "x" (App (Var "k" 0) Vunit) $ Unop Close (Var "x" 0))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "call" _ _) -> Just ("_", "p", "k",
+    "call" -> Just ("_", "p", "k",
       Do "x" (App (Var "p" 1) Vunit) $
       Do "x'" (Unop Open (Var "x" 0)) $
       Binop ConcatMapCutList (Var "x'" 0) (Var "k" 2))
@@ -176,17 +164,12 @@ hCut = Handler
     _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
 
-lCut :: Label
-lCut = Lop "cut" Tunit Tunit
-
-lCall :: Label
-lCall = Lsc "call" Tunit Tunit
 
 -- | A simple program simulates the behavior of @cOnce@ using @cut@ and @call@.
 cCut :: Comp
-cCut = Do "b" (sc lCall Vunit ("_" :.
-          Do "y" (op lChoose Vunit) $
-          If (Var "y" 0) (Do "_" (op lCut Vunit) $ Return (Vbool True))
+cCut = Do "b" (sc "call" Vunit ("_" :.
+          Do "y" (op "choose" Vunit) $
+          If (Var "y" 0) (Do "_" (op "cut" Vunit) $ Return (Vbool True))
                          (Return (Vbool False)))) $
        If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails"))
 
@@ -200,13 +183,13 @@ cCut = Do "b" (sc lCall Vunit ("_" :.
 -- | @hExcept@ refers to the @h_except@ handler in Section 7.3
 hExcept :: Handler
 hExcept = Handler
-  "hExcept" [lRaise] [lCatch] []
+  "hExcept" ["raise"] ["catch"] []
   ("x", Return $ Vsum (Right (Var "x" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "raise" _ _) -> Just ("e", "_", Return $ Vsum (Left (Var "e" 1)))
+    "raise" -> Just ("e", "_", Return $ Vsum (Left (Var "e" 1)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "catch" _ _) -> Just ("e", "p", "k",
+    "catch" -> Just ("e", "p", "k",
       Do "x" (App (Var "p" 1) (Vbool True)) $
       -- NOTE: A little different from the paper.
       -- We assume Eq is defined for |String + alpha| for simplicity.
@@ -219,11 +202,7 @@ hExcept = Handler
     _ -> Nothing)
   (lift2fwd ("k", "z", app2 exceptMap (Var "z" 0) (Var "k" 1)))
 
-lRaise :: Label
-lRaise = Lop "raise" Tstr Tunit
 
-lCatch :: Label
-lCatch = Lsc "catch" (Tsum Tstr Tunit) Tunit
 
 -- | @exceptMap@ refers to the @exceptMap@ function in Section 7.3
 exceptMap :: Value
@@ -233,14 +212,14 @@ exceptMap = Lam "z" . Return . Lam "k" $
 
 -- | @cRaise@ refers to the @_raise@ program in Section 7.3
 cRaise :: Comp
-cRaise = Do "x" (op lInc Vunit) $
+cRaise = Do "x" (op "inc" Vunit) $
          Do "b" (Binop Larger (Var "x" 0) (Vint 10)) $
-         If (Var "b" 0) (Op lRaise (Vstr "Overflow") ("y" :. absurd (Var "y" 0)))
+         If (Var "b" 0) (Op "raise" (Vstr "Overflow") ("y" :. absurd (Var "y" 0)))
                         (Return (Var "x" 0))
 
 -- | @cCatch@ refers to the @c_catch@ program in Section 7.3
 cCatch :: Comp
-cCatch = sc lCatch (Vstr "Overflow") ("b" :. If (Var "b" 0) cRaise (Return (Vint 10)))
+cCatch = sc "catch" (Vstr "Overflow") ("b" :. If (Var "b" 0) cRaise (Return (Vint 10)))
 
 -- Handling @cCatch@:
 -- >>> evalFile $ hExcept # runInc 42 cCatch
@@ -254,20 +233,20 @@ cCatch = sc lCatch (Vstr "Overflow") ("b" :. If (Var "b" 0) cRaise (Return (Vint
 -- | @hState@ refers to the @h_state@ handler in Section 7.4
 hState :: Handler
 hState = Handler
-  "hState" [lGet, lPut] [lLocal] []
+  "hState" ["get", "put"] ["local"] []
   ("x", Return . Lam "m" $ Return (Vpair (Var "x" 1, Var "m" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "get" _ _) -> Just ("x", "k",
+    "get" -> Just ("x", "k",
       Return . Lam "m" $ Do "v" (Binop Retrieve (Var "x" 2) (Var "m" 0)) $
                          Do "k'" (App (Var "k" 2) (Var "v" 0)) $
                          App (Var "k'" 0) (Var "m" 2))
-    (Lop "put" _ _) -> Just ("pa", "k",
+    "put" -> Just ("pa", "k",
       Return . Lam "m" $ Do "k'" (App (Var "k" 1) Vunit) $
                          Do "m'" (Binop Update (Var "pa" 3) (Var "m" 1)) $
                          App (Var "k'" 1) (Var "m'" 0))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "local" _ _) -> Just ("xv", "p", "k",
+    "local" -> Just ("xv", "p", "k",
       Return . Lam "m" $ Do "x" (Unop Fst (Var "xv" 3)) $
                          Do "v" (Unop Snd (Var "xv" 4)) $
                          Do "um" (Binop Update (Var "xv" 5) (Var "m" 2)) $
@@ -290,22 +269,12 @@ hState = Handler
                  Do "k'" (App (Var "k" 4) (Var "z" 1)) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
-    -- For not possible?
-
-lGet :: Label
-lGet = Lop "get" Tstr Tint
-
-lPut :: Label
-lPut = Lop "put" (Tpair Tstr Tint) Tunit
-
-lLocal :: Label
-lLocal = Lsc "local" (Tpair Tstr Tint) Tunit
 
 -- | @cState@ refers to the @c_state@ program in Section 7.4
 cState :: Comp
-cState = Do "_" (op lPut (Vpair (Vstr "x", Vint 10))) $
-         Do "x1" (sc lLocal (Vpair (Vstr "x", Vint 42)) ("_" :. op lGet (Vstr "x"))) $
-         Do "x2" (op lGet (Vstr "x")) $
+cState = Do "_" (op "put" (Vpair (Vstr "x", Vint 10))) $
+         Do "x1" (sc "local" (Vpair (Vstr "x", Vint 42)) ("_" :. op "get" (Vstr "x"))) $
+         Do "x2" (op "get" (Vstr "x")) $
          Return (Vpair (Var "x1" 1, Var "x2" 0))
 
 -- Handling @cState@:
@@ -323,11 +292,11 @@ handle_cState = Do "m" (Unop Newmem Vunit) $
 -- | @hDepth@ refers to the @h_depth@ handler in Section 7.5
 hDepth :: Handler
 hDepth = Handler
-  "hDepth" [lChoose, lFail] [lDepth] []
+  "hDepth" ["choose", "fail"] ["depth"] []
   ("x", Return . Lam "d" $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
   (\ oplabel -> case oplabel of
-    (Lop "fail" _ _) -> Just ("_", "_", Return (Vlist []))
-    (Lop "choose" _ _)   -> Just ("x", "k", Return . Lam "d" $
+    "fail" -> Just ("_", "_", Return (Vlist []))
+    "choose" -> Just ("x", "k", Return . Lam "d" $
       Do "b" (Binop Eq (Var "d" 0) (Vint 0)) $
       If (Var "b" 0) (Return (Vlist []))
                      (Do "k1" (App (Var "k" 2) (Vbool True)) $
@@ -338,7 +307,7 @@ hDepth = Handler
                       Binop Append (Var "xs" 1) (Var "ys" 0) ))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "depth" _ _) -> Just ("d'", "p", "k", Return . Lam "d" $
+    "depth" -> Just ("d'", "p", "k", Return . Lam "d" $
       Do "p'" (App (Var "p" 2) Vunit) $
       Do "xs" (App (Var "p'" 0) (Var "d'" 4)) $
       Binop ConcatMap (Var "xs" 0) (Lam "v_" $ Do "v" (Unop Fst (Var "v_" 0)) $
@@ -361,11 +330,11 @@ hDepth = Handler
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
 hDepth2 :: Handler
 hDepth2 = Handler
-  "hDepth" [lChoose, lFail] [lDepth] []
+  "hDepth" ["choose", "fail"] ["depth"] []
   ("x", Return . Lam "d" $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
   (\ oplabel -> case oplabel of
-    (Lop "fail" _ _) -> Just ("_", "_", Return (Vlist []))
-    (Lop "choose" _ _)   -> Just ("x", "k", Return . Lam "d" $
+    "fail" -> Just ("_", "_", Return (Vlist []))
+    "choose" -> Just ("x", "k", Return . Lam "d" $
       Do "b" (Binop Eq (Var "d" 0) (Vint 0)) $
       If (Var "b" 0) (Return (Vlist []))
                      (Do "k1" (App (Var "k" 2) (Vbool True)) $
@@ -376,7 +345,7 @@ hDepth2 = Handler
                       Binop Append (Var "xs" 1) (Var "ys" 0) ))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "depth" _ _) -> Just ("d'", "p", "k", Return . Lam "d" $
+    "depth" -> Just ("d'", "p", "k", Return . Lam "d" $
       Do "p'" (App (Var "p" 2) Vunit) $
       Do "md" (Binop Min (Var "d'" 4) (Var "d" 1)) $
       Do "xs" (App (Var "p'" 1) (Var "md" 0)) $
@@ -399,25 +368,23 @@ hDepth2 = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
-lDepth :: Label
-lDepth = Lsc "depth" Tunit Tunit
 
 -- | @cDepth@ refers to the @c_depth@ program in Section 7.5
 cDepth :: Comp
-cDepth = Sc lDepth (Vint 1) ("_" :.
- Do "b" (op lChoose Vunit) $
+cDepth = Sc "depth" (Vint 1) ("_" :.
+ Do "b" (op "choose" Vunit) $
  If (Var "b" 0) (Return (Vint 1))
-                ( Do "b'" (op lChoose Vunit) $
+                ( Do "b'" (op "choose" Vunit) $
                   If (Var "b'" 0)
                      (Return (Vint 2))
                      (Return (Vint 3))))
   ("x" :.
-   Do "b" (op lChoose Vunit) $
+   Do "b" (op "choose" Vunit) $
    If (Var "b" 0) (Return (Var "x" 1))
-                  ( Do "b'" (op lChoose Vunit) $
+                  ( Do "b'" (op "choose" Vunit) $
                     If (Var "b'" 0)
                        (Return (Vint 4))
-                       (Do "b''" (op lChoose Vunit) $
+                       (Do "b''" (op "choose" Vunit) $
                          If (Var "b''" 0)
                             (Return (Vint 5))
                             (Return (Vint 6)))))
@@ -434,10 +401,10 @@ cDepth = Sc lDepth (Vint 1) ("_" :.
 -- | @hToken@ refers to the @h_token@ handler in Section 7.6
 hToken :: Handler
 hToken = Handler
-  "hToken" [lToken] [] []
+  "hToken" ["token"] [] []
   ("x", Return . Lam "s" $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "token" _ _) -> Just ("x", "k", Return . Lam "s" $
+    "token" -> Just ("x", "k", Return . Lam "s" $
       Do "b" (Binop Eq (Var "s" 0) (Vstr "")) $
       If (Var "b" 0) failure
                      ( Do "x'" (Unop HeadS (Var "s" 1)) $
@@ -458,26 +425,23 @@ hToken = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
-lToken :: Label
-lToken = Lop "token" Tchar Tunit
-
 -- | @<>@ refers to the syntactic sugar @<>@ in Section 7.6
 (<>) :: Comp -> Comp -> Comp
-x <> y = Op lChoose Vunit ("b" :. If (Var "b" 0) (shiftC 1 x) (shiftC 1 y))
+x <> y = Op "choose" Vunit ("b" :. If (Var "b" 0) (shiftC 1 x) (shiftC 1 y))
 
 -- Parsers defined in Fig. 7 :
 digit :: Value
 digit =  Lam "_" $ 
-         op lToken (Vchar '0')
-      <> op lToken (Vchar '1')
-      <> op lToken (Vchar '2')
-      <> op lToken (Vchar '3')
-      <> op lToken (Vchar '4')
-      <> op lToken (Vchar '5')
-      <> op lToken (Vchar '6')
-      <> op lToken (Vchar '7')
-      <> op lToken (Vchar '8')
-      <> op lToken (Vchar '9')
+         op "token" (Vchar '0')
+      <> op "token" (Vchar '1')
+      <> op "token" (Vchar '2')
+      <> op "token" (Vchar '3')
+      <> op "token" (Vchar '4')
+      <> op "token" (Vchar '5')
+      <> op "token" (Vchar '6')
+      <> op "token" (Vchar '7')
+      <> op "token" (Vchar '8')
+      <> op "token" (Vchar '9')
 -- | For simplicity, we directly use Haskell's recursion to implement the recursive function @many1@.
 many1 :: Value -> Comp
 many1 p = Do "a" (App p Vunit) $
@@ -487,7 +451,7 @@ many1 p = Do "a" (App p Vunit) $
 expr :: Value
 expr = Lam "_" $
        (Do "i" (App term Vunit) $
-        Do "_" (op lToken (Vchar '+')) $
+        Do "_" (op "token" (Vchar '+')) $
         Do "j" (App expr Vunit) $
         Do "x" (Binop Add (Var "i" 2) (Var "j" 0)) $
         Return (Var "x" 0))
@@ -495,7 +459,7 @@ expr = Lam "_" $
 term :: Value
 term = Lam "_" $
        (Do "i" (App factor Vunit) $
-        Do "_" (op lToken (Vchar '*')) $
+        Do "_" (op "token" (Vchar '*')) $
         Do "j" (App term Vunit) $
         Do "x" (Binop Mul (Var "i" 2) (Var "j" 0)) $
         Return (Var "x" 0))
@@ -505,17 +469,17 @@ factor = Lam "_" $
          (Do "ds" (many1 digit) $
           Do "x" (Unop Read (Var "ds" 0)) $
           Return (Var "x" 0))
-      <> (Do "_" (op lToken (Vchar '(')) $
+      <> (Do "_" (op "token" (Vchar '(')) $
           Do "i" (App expr Vunit) $
-          Do "_" (op lToken (Vchar ')')) $
+          Do "_" (op "token" (Vchar ')')) $
           Return (Var "i" 1))
 
 -- | @expr1@ refers to the @expr_1@ parser in Section 7.6
 expr1 :: Value
 expr1 = Lam "_" $
         Do "i" (App term Vunit) $
-        sc lCall Vunit ("_" :. ( Do "_" (op lToken (Vchar '+')) $
-                                  Do "_" (op lCut Vunit) $
+        sc "call" Vunit ("_" :. ( Do "_" (op "token" (Vchar '+')) $
+                                  Do "_" (op "cut" Vunit) $
                                   Do "j" (App expr1 Vunit) $
                                   Do "x" (Binop Add (Var "i" 4) (Var "j" 0)) $
                                   Return (Var "x" 0)) <> Return (Var "i" 1))
@@ -543,16 +507,16 @@ handle_expr = hCut # (Do "c" (hToken # App expr Vunit) $
 -- | @hReader@ is a reader handler
 hReader :: Handler
 hReader = Handler
-  "hReader" [lAsk] [lLocal] []
+  "hReader" ["ask"] ["local"] []
   ("x", Return . Lam "m" $ Return (Vpair (Var "x" 1, Var "m" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "ask" _ _) -> Just ("_", "k",
+    "ask" -> Just ("_", "k",
       Return . Lam "m" $ Do "env" (Binop Retrieve (Vstr "readerEnv") (Var "m" 0)) $
                          Do "k'" (App (Var "k" 2) (Var "env" 0)) $
                          App (Var "k'" 0) (Var "m" 2))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    (Lsc "local" _ _) -> Just ("x", "p", "k",
+    "local" -> Just ("x", "p", "k",
       Return . Lam "m" $ Do "envKey" (Return (Vstr "readerEnv")) $
                          Do "oldEnv" (Binop Retrieve (Var "envKey" 0) (Var "m" 1)) $
                          Do "newEnv" (App (Var "x" 5) (Var "oldEnv" 0)) $ 
@@ -572,19 +536,17 @@ hReader = Handler
         App (Var "f" 4) (Var "pk" 0)
   )
 
-lAsk :: Label
-lAsk = Lop "ask" Tunit Tunit
 
 -- | cReader is an example reader effect program
 cReader :: Comp
-cReader = Do "x1" (op lAsk Vunit) $
-          Do "x2" ((sc lLocal (Lam "x" (Binop Append (Var "x" 0) (Vlist [Vint 5])))) ("_" :. op lAsk Vunit)) $
-          Do "x3" (op lAsk Vunit) $ 
+cReader = Do "x1" (op "ask" Vunit) $
+          Do "x2" ((sc "local" (Lam "x" (Binop Append (Var "x" 0) (Vlist [Vint 5])))) ("_" :. op "ask" Vunit)) $
+          Do "x3" (op "ask" Vunit) $ 
           Return (Vpair ((Vpair (Var "x1" 0, Var "x3" 1)), (Var "x3" 2)))
 
 -- | @runReader@ is a macro to help applying the initial reader value
 runReader :: Value -> Comp -> Comp
-runReader s c = Do "x3" ((sc lLocal s) ("_" :. c)) $ 
+runReader s c = Do "x3" ((sc "local" s) ("_" :. c)) $ 
                 Return (Var "x3" 0)
 
 -- Handling @cReader@:
@@ -608,10 +570,10 @@ example_cReader = handle_cReader (Lam "x" (Return (Vlist [(Vint 1), (Vint 2), (V
 -- | @hAccum@ is an example handler for accumulating a value
 hAccum :: Handler
 hAccum = Handler
-  "hAccum" [lAccum] [] [lFor]
+  "hAccum" ["accum"] [] ["for"]
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "accum" _ _) -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -621,7 +583,7 @@ hAccum = Handler
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of
-    (Lfor "for" _) ->     (Just ("list", "l", "k", 
+    "for" ->     (Just ("list", "l", "k", 
           Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
           Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
           Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
@@ -654,11 +616,8 @@ hPure = Parallel
         App (Var "f" 3) (Var "pk" 0)
   )
 
-lAccum :: Label
-lAccum = Lop "accum" Tunit Tunit
-
 cAccum :: Comp
-cAccum = For lFor (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op lAccum (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
+cAccum = For "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
 exFor :: Comp
 exFor = hPure # hAccum # cAccum
@@ -672,10 +631,10 @@ exFor = hPure # hAccum # cAccum
 
 hAccumNoFor :: Handler
 hAccumNoFor = Handler
-  "hAccum" [lAccum] [] []
+  "hAccum" ["accum"] [] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "accum" _ _) -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -708,10 +667,10 @@ exNoFor = hPure # hAccumNoFor # cAccum
 -- Ideally does not need separate handler for accumulating strings
 hAccumS :: Handler
 hAccumS = Handler
-  "hAccum" [lAccum] [] [lFor]
+  "hAccum" ["accum"] [] ["for"]
   ("x", Return (Vpair (Vstr "", Var "x" 0)))
   (\ oplabel -> case oplabel of
-    lAccum -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -721,7 +680,7 @@ hAccumS = Handler
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of
-    lFor -> (Just ("list", "l", "k", 
+    "for" -> (Just ("list", "l", "k", 
           Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
           Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
           Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
@@ -746,15 +705,15 @@ hAccumS = Handler
 
 hWeak :: Handler
 hWeak = Handler
-  "hWeak" [lThrow] [] [lFor]
+  "hWeak" ["throw"] [] ["for"]
   ("x", Return (Vsum (Right (Var "x" 0))))
   (\ oplabel -> case oplabel of
-    (Lop "throw" _ _) -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
+    "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of
-    lFor -> (Just ("list", "l", "k",
+    "for" -> (Just ("list", "l", "k",
           Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
           Do "FirstFail" (Unop FirstFail (Var "results" 0)) $
           Case (Var "FirstFail" 0) 
@@ -767,18 +726,15 @@ hWeak = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
-lThrow :: Label
-lThrow = Lop "throw" Tunit Tunit
-
 
 cWeak :: Comp
-cWeak = Do "_" (Op lAccum (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
-         (For lFor (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+cWeak = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
+         (For "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
          ("x" :. (Do "eq2" (Binop Eq (Var "x" 0) (Vstr "2")) $
-         If (Var "eq2" 0)   (Do "_" (Op lAccum (Vstr "!") ("y" :. Return (Var "y" 0))) $
-                            Do "_" (Op lThrow (Vstr "error") ("y" :. Return (Var "y" 0))) $
-                            Op lAccum (Vstr "unreachable") ("y" :. Return (Var "y" 0)))
-        (Op lAccum (Var "x" 1) ("y" :. Return (Var "y" 0)))))
+         If (Var "eq2" 0)   (Do "_" (Op "accum" (Vstr "!") ("y" :. Return (Var "y" 0))) $
+                            Do "_" (Op "throw" (Vstr "error") ("y" :. Return (Var "y" 0))) $
+                            Op "accum" (Vstr "unreachable") ("y" :. Return (Var "y" 0)))
+        (Op "accum" (Var "x" 1) ("y" :. Return (Var "y" 0)))))
         ("x" :. Return (Var "x" 0)))
 
 exWeak :: Comp
@@ -794,10 +750,10 @@ exWeak = hPure # hAccumS # hWeak # cWeak
 
 hPRNG :: Handler
 hPRNG = Handler
-  "hPRNG" [lUniform] [] [lFor]
+  "hPRNG" ["sampleUniform"] [] ["for"]
   ("x", Return . Lam "key" $ Return (Var "x" 1))
   (\ oplabel -> case oplabel of
-    lUniform -> Just ("x", "k", Return . Lam "key" $ 
+    "sampleUniform" -> Just ("x", "k", Return . Lam "key" $ 
       Do "pair" (Unop Rand (Var "key" 0)) $
       Do "val" (Unop Fst (Var "pair" 0)) $
       Do "key" (Unop Snd (Var "pair" 1)) $
@@ -807,7 +763,7 @@ hPRNG = Handler
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of 
-    lFor ->   (Just ("list", "l", "k", Return . Lam "key" $ 
+    "for" ->   (Just ("list", "l", "k", Return . Lam "key" $ 
         Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
         Do "key1" (Unop Fst (Var "keys" 0)) $
         Do "key2" (Unop Snd (Var "keys" 1)) $
@@ -824,16 +780,13 @@ hPRNG = Handler
   )
 
 
-lUniform :: Label
-lUniform = Lop "sampleUniform" Tunit Tunit
-
 cPRNG :: Comp
-cPRNG = For lFor (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op lUniform (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
+cPRNG = For "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
 
 cPRNGseq :: Comp
-cPRNGseq =  Do "1" (Op lUniform Vunit ("y" :. Return (Var "y" 0))) $
-            Do "2" (Op lUniform Vunit ("y" :. Return (Var "y" 0))) $
-            Do "3" (Op lUniform Vunit ("y" :. Return (Var "y" 0))) $
+cPRNGseq =  Do "1" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
+            Do "2" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
+            Do "3" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
 
 -- Needs new parallel handler to thread keys through correctly
@@ -876,19 +829,19 @@ exPRNGseq = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 
 hAmb :: Handler
 hAmb = Handler
-  "hAmb" [lAmb][] [lFor]
+  "hAmb" ["amb"][] ["for"]
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
-    (Lop "amb" _ _) -> Just ("x", "k",
-      For lFor (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+    "amb" -> Just ("x", "k",
+      For "for" (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of 
-    lFor ->   (Just ("list", "l", "k",
+    "for" ->   (Just ("list", "l", "k",
         Do "results" (App (Var "l" 1) (Var "list" 2)) $ 
         Do "productElts" (Unop CartesianProd (Var "results" 0)) $
-        For lFor (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))
+        For "for" (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))
       ))
     _ -> Nothing)
   ("f", "p", "k", 
@@ -896,15 +849,13 @@ hAmb = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
-lAmb :: Label
-lAmb = Lop "amb" (Tlist Tint) Tint
 
 hAccumL :: Handler
 hAccumL = Handler
-  "hAccumL" [lAccum] [] [lFor]
+  "hAccumL" ["accum"] [] ["for"]
   ("x", Return (Vpair (Vlist [], Var "x" 0)))
   (\ oplabel -> case oplabel of
-    (Lop "accum" _ _) -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -914,7 +865,7 @@ hAccumL = Handler
   (\ sclabel -> case sclabel of
     _ -> Nothing)
   (\ forlabel -> case forlabel of
-    (Lfor "for" _) ->     (Just ("list", "l", "k", 
+    "for" ->     (Just ("list", "l", "k", 
           Do "pairs" (App (Var "l" 1) (Var "list" 2)) $
           Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
           Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
@@ -938,11 +889,11 @@ hAccumL = Handler
 
 cAmb :: Comp
 cAmb = 
-  Do "d1" (Op lAmb (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
-  Do "d2" (Op lAmb (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
+  Do "d1" (Op "amb" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
+  Do "d2" (Op "amb" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) ("y" :. Return (Var "y" 0))) $
   Do "res" (Binop Add (Var "d1" 1) (Var "d2" 0)) $
   Do "eq" (Binop Eq (Var "res" 0) (Vint 13)) $
-  If (Var "eq" 0) (Op lAccum (Vpair (Var "d1" 3, Var "d2" 2)) ("y" :. Return Vunit)) (Return Vunit)
+  If (Var "eq" 0) (Op "accum" (Vpair (Var "d1" 3, Var "d2" 2)) ("y" :. Return Vunit)) (Return Vunit)
 
 
 exAmb :: Comp
@@ -956,9 +907,9 @@ exAmb = hPure # hAccumL # hAmb # cAmb
 
 cComb :: Comp
 cComb = 
-  Do "d1" (Op lAmb (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
-  Do "d2" (Op lAmb (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
-  Do "d3" (Op lAmb (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
+  Do "d1" (Op "amb" (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
+  Do "d2" (Op "amb" (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
+  Do "d3" (Op "amb" (Vlist [Vstr "H", Vstr "T"]) ("y" :. Return (Var "y" 0))) $
   Do "l1" (Binop AppendS (Var "d1" 2) (Var "d2" 1)) $ 
   Binop AppendS (Var "l1" 0) (Var "d3" 1)
 
@@ -975,10 +926,10 @@ exComb = hPure # hAmb # cComb
 
 hAccumSc1 :: Handler
 hAccumSc1 = Handler
-  "hAccumSc" [lAccum] [lForSc] []
+  "hAccumSc" ["accum"] ["for"] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
-    lAccum -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -986,8 +937,8 @@ hAccumSc1 = Handler
       Return (Vpair (Var "m''" 0, Var "s" 1)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", 
-              Do "pairs" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+    "for" -> Just ("x", "p", "k", 
+              Do "pairs" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
               Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
               Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
               Do "k'" (App (Var "k" 3) (Var "second" 0)) $
@@ -1010,15 +961,12 @@ hAccumSc1 = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
-lForSc :: Label
-lForSc = Lsc "for" Tunit Tunit
-
 hAccumSc2 :: Handler
 hAccumSc2 = Handler
-  "hAccumSc" [lAccum] [lForSc] []
+  "hAccumSc" ["accum"] ["for"] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
-    lAccum -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -1026,8 +974,8 @@ hAccumSc2 = Handler
       Return (Vpair (Var "m''" 0, Var "s" 1)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", 
-              Do "pairs" (For lFor (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+    "for" -> Just ("x", "p", "k", 
+              Do "pairs" (For "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
               Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
               Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
               Do "k'" (App (Var "k" 3) (Var "second" 0)) $
@@ -1053,12 +1001,12 @@ hAccumSc2 = Handler
 
 hPureSc :: Handler
 hPureSc = Handler
-  "hPureSc" [] [lForSc] []
+  "hPureSc" [] ["for"] []
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", 
+    "for" -> Just ("x", "p", "k", 
               Do "results" (Binop Map (Var "x" 2) (Var "p" 1)) $
               App (Var "k" 1) (Var "results" 0))
     _ -> Nothing)
@@ -1071,7 +1019,7 @@ hPureSc = Handler
 
 -- cAccum example rewritten as scoped effect
 cAccumSc :: Comp
-cAccumSc = Sc lForSc (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op lAccum (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
+cAccumSc = Sc "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
 -- cAccumSc example handled by handler that uses scoped effect for pure for handling
 exForSc1 :: Comp
@@ -1091,10 +1039,10 @@ exForSc2 = hPure # hAccumSc2 # cAccumSc
 
 hAccumScNoFor :: Handler
 hAccumScNoFor = Handler
-  "hAccumSc" [lAccum] [] []
+  "hAccumSc" ["accum"] [] []
   ("x", Return (Vpair (Vint 0, Var "x" 0)))
   (\ oplabel -> case oplabel of
-    lAccum -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -1127,10 +1075,10 @@ exNoForSc = hPureSc # hAccumScNoFor # cAccumSc
 -- Ideally does not need separate handler for accumulating strings
 hAccumSSc :: Handler
 hAccumSSc = Handler
-  "hAccumSc" [lAccum] [lForSc] [] 
+  "hAccumSc" ["accum"] ["for"] [] 
   ("x", Return (Vpair (Vstr "", Var "x" 0)))
   (\ oplabel -> case oplabel of
-    lAccum -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -1138,8 +1086,8 @@ hAccumSSc = Handler
       Return (Vpair (Var "m''" 0, Var "s" 1)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", 
-              Do "pairs" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+    "for" -> Just ("x", "p", "k", 
+              Do "pairs" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
               Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
               Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
               Do "k'" (App (Var "k" 3) (Var "second" 0)) $
@@ -1165,14 +1113,14 @@ hAccumSSc = Handler
 
 hWeakSc :: Handler
 hWeakSc = Handler
-  "hWeak" [lThrow] [lForSc] []
+  "hWeak" ["throw"] ["for"] []
   ("x", Return (Vsum (Right (Var "x" 0))))
   (\ oplabel -> case oplabel of
-    (Lop "throw" _ _) -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
+    "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k",
-      Do "results" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+    "for" -> Just ("x", "p", "k",
+      Do "results" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
       Do "FirstFail" (Unop FirstFail (Var "results" 0)) $
       Case (Var "FirstFail" 0) 
         "error" (Return $ Vsum $ Left (Var "error" 0))
@@ -1186,13 +1134,13 @@ hWeakSc = Handler
   )
 
 cWeakSc :: Comp
-cWeakSc = Do "_" (Op lAccum (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
-         (Sc lForSc (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+cWeakSc = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
+         (Sc "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
          ("x" :. (Do "eq2" (Binop Eq (Var "x" 0) (Vstr "2")) $
-         If (Var "eq2" 0)   (Do "_" (Op lAccum (Vstr "!") ("y" :. Return (Var "y" 0))) $
-                            Do "_" (Op lThrow (Vstr "error") ("y" :. Return (Var "y" 0))) $
-                            Op lAccum (Vstr "unreachable") ("y" :. Return (Var "y" 0)))
-        (Op lAccum (Var "x" 1) ("y" :. Return (Var "y" 0)))))
+         If (Var "eq2" 0)   (Do "_" (Op "accum" (Vstr "!") ("y" :. Return (Var "y" 0))) $
+                            Do "_" (Op "throw" (Vstr "error") ("y" :. Return (Var "y" 0))) $
+                            Op "accum" (Vstr "unreachable") ("y" :. Return (Var "y" 0)))
+        (Op "accum" (Var "x" 1) ("y" :. Return (Var "y" 0)))))
         ("x" :. Return (Var "x" 0)))
 
 exWeakSc :: Comp
@@ -1208,10 +1156,10 @@ exWeakSc = hPureSc # hAccumSSc # hWeakSc # cWeakSc
 
 hPRNGSc :: Handler
 hPRNGSc = Handler
-  "hPRNGSc" [lUniform] [lForSc] []
+  "hPRNGSc" ["sampleUniform"] ["for"] []
   ("x", Return . Lam "key" $ Return (Var "x" 1))
   (\ oplabel -> case oplabel of
-    lUniform -> Just ("x", "k", Return . Lam "key" $ 
+    "sampleUniform" -> Just ("x", "k", Return . Lam "key" $ 
       Do "pair" (Unop Rand (Var "key" 0)) $
       Do "val" (Unop Fst (Var "pair" 0)) $
       Do "key" (Unop Snd (Var "pair" 1)) $
@@ -1219,12 +1167,12 @@ hPRNGSc = Handler
       App (Var "cont" 0) (Var "key" 1))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", Return . Lam "key" $ 
+    "for" -> Just ("x", "p", "k", Return . Lam "key" $ 
         Do "keys" (Unop SplitKeyPair (Var "key" 0)) $
         Do "key1" (Unop Fst (Var "keys" 0)) $
         Do "key2" (Unop Snd (Var "keys" 1)) $
         Do "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) $
-        Do "for" (Sc lForSc (Var "x" 7) ("y" :. App (Var "p" 7) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+        Do "for" (Sc "for" (Var "x" 7) ("y" :. App (Var "p" 7) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
         Do "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) $
         Do "cont" (App (Var "k" 7) (Var "results" 0)) $
         App (Var "cont" 0) (Var "key2" 4))
@@ -1237,23 +1185,23 @@ hPRNGSc = Handler
   )
 
 cPRNGSc :: Comp
-cPRNGSc = Sc lForSc (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op lUniform (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
+cPRNGSc = Sc "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
 
 cPRNGseqSc :: Comp
-cPRNGseqSc =  Do "1" (Op lUniform Vunit ("y" :. Return (Var "y" 0))) $
-            Do "2" (Op lUniform Vunit ("y" :. Return (Var "y" 0))) $
-            Do "3" (Op lUniform Vunit ("y" :. Return (Var "y" 0))) $
+cPRNGseqSc =  Do "1" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
+            Do "2" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
+            Do "3" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
 
 -- Needs new parallel handler to thread keys through correctly
 hPureKSc :: Handler
 hPureKSc = Handler
-  "hPureSc" [] [lForSc] []
+  "hPureSc" [] ["for"] []
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", Return . Lam "keys" $
+    "for" -> Just ("x", "p", "k", Return . Lam "keys" $
                 Do "results" (Binop Map (Var "x" 3) (Var "p" 2)) $
                 Do "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) $
                 App (Var "k" 3) (Var "resultskeys" 0))
@@ -1292,17 +1240,17 @@ exPRNGseqSc = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 -- Amb example as scoped effect
 hAmbSc :: Handler
 hAmbSc = Handler
-  "hAmbSc" [lAmb] [lForSc] []
+  "hAmbSc" ["amb"] ["for"] []
   ("x", Return (Var "x" 0))
   (\ oplabel -> case oplabel of
-    (Lop "amb" _ _) -> Just ("x", "k",
-      Sc lForSc (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+    "amb" -> Just ("x", "k",
+      Sc "for" (Var "x" 1) ("y" :. App (Var "k" 1) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", 
-              Do "results" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $ 
+    "for" -> Just ("x", "p", "k", 
+              Do "results" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $ 
               Do "productElts" (Unop CartesianProd (Var "results" 0)) $
-              Sc lForSc (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
+              Sc "for" (Var "productElts" 0) ("y" :. App (Var "k" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0)))
     _ -> Nothing)
   (\ forlabel -> case forlabel of
     _ -> Nothing)
@@ -1314,10 +1262,10 @@ hAmbSc = Handler
 
 hAccumScL :: Handler
 hAccumScL = Handler
-  "hAccumScL" [lAccum] [lForSc] []
+  "hAccumScL" ["accum"] ["for"] []
   ("x", Return (Vpair (Vlist [], Var "x" 0)))
   (\ oplabel -> case oplabel of
-    lAccum -> Just ("x", "k",
+    "accum" -> Just ("x", "k",
       Do "k'" (App (Var "k" 0) (Vunit)) $
       Do "m'" (Unop Fst (Var "k'" 0)) $
       Do "s" (Unop Snd (Var "k'" 1)) $
@@ -1325,8 +1273,8 @@ hAccumScL = Handler
       Return (Vpair (Var "m''" 0, Var "s" 1)))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
-    lForSc -> Just ("x", "p", "k", 
-              Do "pairs" (Sc lForSc (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
+    "for" -> Just ("x", "p", "k", 
+              Do "pairs" (Sc "for" (Var "x" 2) ("y" :. App (Var "p" 2) (Var "y" 0)) ("z" :. Return (Var "z" 0))) $
               Do "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
               Do "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
               Do "k'" (App (Var "k" 3) (Var "second" 0)) $
@@ -1374,9 +1322,9 @@ exCombSc = hPureSc # hAmbSc # cComb
 
 -- cRaise of new version of paper
 cIncr :: Comp
-cIncr = Do "x" (op lInc Vunit) $
+cIncr = Do "x" (op "inc" Vunit) $
        Do "b" (Binop Larger (Var "x" 0) (Vint 10)) $
-       If (Var "b" 0) (op lRaise (Vstr "Overflow")) (Return (Var "x" 1))
+       If (Var "b" 0) (op "raise" (Vstr "Overflow")) (Return (Var "x" 1))
 
 
 cEx :: Comp
@@ -1388,7 +1336,7 @@ cEx = Do "_" cIncr $
 -- cCatch of new version of paper
 cCatch2 :: Comp
 cCatch2 = Do "_" (cIncr) $
-      sc lCatch (Vstr "Overflow") ("b" :. If (Var "b" 0) cEx (Return (Vstr "fail")))
+      sc "catch" (Vstr "Overflow") ("b" :. If (Var "b" 0) cEx (Return (Vstr "fail")))
 
 -- Handling @cCatch@:
 -- >>> evalFile $ hExcept # runInc 1 cCatch2

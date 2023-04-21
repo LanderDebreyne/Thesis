@@ -6,16 +6,16 @@ import qualified Data.Set as Set
 
 type Name = String
 
--- | Label syntax
-data Label = Lop Name ValueType ValueType 
-             | Lsc Name ValueType ValueType
-             | Lfor Name ValueType 
-             deriving (Eq)
+-- -- | Label syntax
+-- data Label = Lop Name ValueType ValueType 
+--              | Lsc Name ValueType ValueType
+--              | Lfor Name ValueType 
+--              deriving (Eq)
 
-instance Show Label where
-  show (Lop x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
-  show (Lsc x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
-  show (Lfor x t) = x ++ " : " ++ show t
+-- instance Show Label where
+--   show (Lop x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
+--   show (Lsc x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
+--   show (Lfor x t) = x ++ " : " ++ show t
 
 -- | Value syntax
 data Value 
@@ -62,13 +62,13 @@ instance Show Value where
 -- | Handler syntax
 data Handler = Handler
   { hname   :: Name                                     -- ^ handler name
-  , oplist  :: [Label]                                  -- ^ algebraic operations names
-  , sclist  :: [Label]                                  -- ^ scoped operations names
-  , forlist :: [Label]                                  -- ^ for operations names
+  , oplist  :: [Name]                                  -- ^ algebraic operations names
+  , sclist  :: [Name]                                  -- ^ scoped operations names
+  , forlist :: [Name]                                  -- ^ for operations names
   , hreturn :: (Name, Comp)                             -- ^ (x, c)
-  , hop     :: Label -> Maybe (Name, Name, Comp)        -- ^ l -> (x, k, c)
-  , hsc     :: Label -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, p, k, c)
-  , hfor    :: Label -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, l, k, c)
+  , hop     :: Name -> Maybe (Name, Name, Comp)        -- ^ l -> (x, k, c)
+  , hsc     :: Name -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, p, k, c)
+  , hfor    :: Name -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, l, k, c)
   , hfwd    :: (Name, Name, Name, Comp)                 -- ^ (f, p, k, c)
   } | 
   Parallel {
@@ -93,9 +93,9 @@ instance Show (Dot Name Comp) where
 -- | Computation syntax
 data Comp
   = Return Value                                    -- ^ return v
-  | Op Label Value (Dot Name Comp)                  -- ^ op l v (y.c)
-  | Sc Label Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
-  | For Label Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
+  | Op Name Value (Dot Name Comp)                  -- ^ op l v (y.c)
+  | Sc Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
+  | For Name Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
   | Handle Handler Comp                             -- ^ v ★ c
   | Do Name Comp Comp                               -- ^ do x <- c1 in c2
   | Rec Name Comp Comp                              -- ^ rec x c1 c2
@@ -191,26 +191,26 @@ update :: (Name, s) -> Memory s -> Memory s
 update (x, s) m = Mem $ \ y -> if x == y then Just s else runMem m y
 
 
--- | Typing syntax
+-- -- | Typing syntax
 
--- | Value type syntax
-data ValueType = Tunit
-            | Tpair ValueType ValueType
-            | Tfunction ValueType ComputationType
-            | THandler ComputationType ComputationType
-            | Tlist ValueType
-            | TValVar Name Int
-            | TOpAbs Name Int ValueType
-            | Tapp ValueType ValueType
-            | Tsum ValueType ValueType
-            | Tint 
-            | Tbool
-            | Tstr
-            | Tchar
-            deriving (Eq, Show)
+-- -- | Value type syntax
+-- data ValueType = Tunit
+--             | Tpair ValueType ValueType
+--             | Tfunction ValueType ComputationType
+--             | THandler ComputationType ComputationType
+--             | Tlist ValueType
+--             | TValVar Name Int
+--             | TOpAbs Name Int ValueType
+--             | Tapp ValueType ValueType
+--             | Tsum ValueType ValueType
+--             | Tint 
+--             | Tbool
+--             | Tstr
+--             | Tchar
+--             deriving (Eq, Show)
 
--- | Effect type syntax
-type EffectType = Set.Set Label
+-- -- | Effect type syntax
+-- type EffectType = Set.Set Label
 
--- | Computation type syntax
-type ComputationType = (ValueType, EffectType)
+-- -- | Computation type syntax
+-- type ComputationType = (ValueType, EffectType)
