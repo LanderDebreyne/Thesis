@@ -6,21 +6,11 @@ import qualified Data.Set as Set
 
 type Name = String
 
--- -- | Label syntax
--- data Label = Lop Name ValueType ValueType 
---              | Lsc Name ValueType ValueType
---              | Lfor Name ValueType 
---              deriving (Eq)
-
--- instance Show Label where
---   show (Lop x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
---   show (Lsc x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
---   show (Lfor x t) = x ++ " : " ++ show t
-
 -- | Value syntax
 data Value 
   = Var Name Int
   | Lam Name Comp
+  | LamA Name ValueType Comp
   | Vunit
   | Vpair (Value, Value)
   | Vhandler Handler
@@ -98,9 +88,11 @@ data Comp
   | For Name Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
   | Handle Handler Comp                             -- ^ v ★ c
   | Do Name Comp Comp                               -- ^ do x <- c1 in c2
+  | DoA Name Comp ComputationType Comp               -- ^ do x <- c1 : t in c2
   | Rec Name Comp Comp                              -- ^ rec x c1 c2
   | App Value Value                                 -- ^ v1 v2
   | Let Name Value Comp                             -- ^ let x = v in c
+  | LetA Name Value ValueType Comp                  -- ^ let x : t = v in c
   | Letrec Name Value Comp                          -- ^ letrec x = c in c
   -- extensions:
   -- We implement most functions in the paper as built-in functions
@@ -150,6 +142,7 @@ data Op1
     | CartesianProd
     | Rand
     | SplitKeyPair
+    | Flatten
     deriving (Show, Eq)
 
 data Op2
@@ -191,26 +184,52 @@ update :: (Name, s) -> Memory s -> Memory s
 update (x, s) m = Mem $ \ y -> if x == y then Just s else runMem m y
 
 
--- -- | Typing syntax
+-- | Typing syntax
 
--- -- | Value type syntax
--- data ValueType = Tunit
---             | Tpair ValueType ValueType
---             | Tfunction ValueType ComputationType
---             | THandler ComputationType ComputationType
---             | Tlist ValueType
---             | TValVar Name Int
---             | TOpAbs Name Int ValueType
---             | Tapp ValueType ValueType
---             | Tsum ValueType ValueType
---             | Tint 
---             | Tbool
---             | Tstr
---             | Tchar
---             deriving (Eq, Show)
+-- | Label syntax
+data Label = Lop Name ValueType ValueType 
+             | Lsc Name ValueType ValueType
+             | Lfor Name ValueType 
+             deriving (Eq)
 
--- -- | Effect type syntax
--- type EffectType = Set.Set Label
+instance Show Label where
+  show (Lop x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
+  show (Lsc x t1 t2) = x ++ " : " ++ show t1 ++ " -> " ++ show t2
+  show (Lfor x t) = x ++ " : " ++ show t
 
--- -- | Computation type syntax
--- type ComputationType = (ValueType, EffectType)
+instance Ord Label where
+  compare (Lop x1 _ _) (Lop x2 _ _) = compare x1 x2
+  compare (Lsc x1 _ _) (Lsc x2 _ _) = compare x1 x2
+  compare (Lfor x1 _) (Lfor x2 _) = compare x1 x2
+  compare (Lop _ _ _) (Lsc _ _ _) = LT
+  compare (Lsc _ _ _) (Lop _ _ _) = GT
+  compare (Lop _ _ _) (Lfor _ _) = LT
+  compare (Lfor _ _) (Lop _ _ _) = GT
+  compare (Lsc _ _ _) (Lfor _ _) = LT
+  compare (Lfor _ _) (Lsc _ _ _) = GT
+
+-- | Value type syntax
+data ValueType = Tunit
+            | Tpair ValueType ValueType
+            | Tfunction ValueType ComputationType
+            | THandler ComputationType ComputationType
+            | Tlist ValueType
+            | TValVar Name Int
+            | TOpAbs Name Int ValueType
+            | Tapp ValueType ValueType
+            | Tsum ValueType ValueType
+            | Tint 
+            | Tbool
+            | Tstr
+            | Tchar
+            | Tflag ValueType 
+            | Tret ValueType
+            | Tmem
+            | Tkey
+            deriving (Eq, Show)
+
+-- | Effect type syntax
+type EffectType = Set.Set Label
+
+-- | Computation type syntax
+type ComputationType = (ValueType, EffectType)

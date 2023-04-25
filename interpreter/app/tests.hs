@@ -1,6 +1,7 @@
 module Test where
 
 import Examples
+import CombExamples
 import Evaluation
 import Syntax
 import Typing
@@ -40,8 +41,8 @@ testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
 
 allTestsData = fastTestsData ++ slowTestsData
-fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData
-slowTestsData = ambTestsData ++ parserTestsData
+fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
+slowTestsData = ambTestsData ++ parserTestsData 
 
 -- TODO: problem with weakExceptions and amb tests
 
@@ -183,3 +184,13 @@ combTestsData2 = Tdata "comb_2" (exCombSc) (Return (Vlist [
             Vlist [Vlist [Vstr "THH", Vstr "THT"], Vlist [Vstr "TTH", Vstr "TTT"]]]))
 ambTestsData = [ambTestsData1, ambTestsData2, combTestsData1, combTestsData2]
 ambTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) ambTestsData 
+
+
+-- | Depth and Amb tests
+
+runDepthAmbTests = runTestTT $ TestList depthAmbTests
+
+depthAmbTestsData1 = Tdata "depth_amb_1" (exDepthAmb1) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 1)], Vlist [Vlist [Vpair (Vint 4, Vint 0)], Vlist []]], Vlist []]))
+depthAmbTestsData2 = Tdata "depth_amb_2" (exDepthAmb2) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 0)], Vlist []], Vlist []]))
+depthAmbTestsData = [depthAmbTestsData1, depthAmbTestsData2]
+depthAmbTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) depthAmbTestsData

@@ -120,7 +120,6 @@ hOnce = Handler
   (\ forlabel -> case forlabel of
     _ -> Nothing)
   (lift2fwd ("k", "z", Binop ConcatMap (Var "z" 0) (Var "k" 1)))
-   -- TODO: for
 
 
 

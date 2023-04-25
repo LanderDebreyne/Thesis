@@ -24,6 +24,15 @@ evalFile c = do
   let steps = eval' c
   writeFile "reduction" (prettyprint steps 1)
 
+-- | Evaluation with steps and flatten result
+evalFileFlat :: Comp -> IO ()
+evalFileFlat c = do
+  let steps = eval' c
+  writeFile "reductionFlat" (prettyprint steps 1)
+  appendFile "reductionFlat" "-- Flatten result: \n"
+  let stepsFlat = eval' (Do "c" (evalP (snd (last steps))) $ App (Lam "c" $ Unop Flatten (Var "c" 0)) (Var "c" 0))
+  appendFile "reductionFlat" (prettyprint stepsFlat 1)
+
 -- | Evaluation without steps
 evalFile' :: Comp -> IO ()
 evalFile' c = do
@@ -136,6 +145,14 @@ evalUnop Rand (Vkey g) = let (val, key) = randomR (0, 100) g in
   return . Return . Vpair $ (Vint val, Vkey key)
 evalUnop SplitKeyPair (Vkey g) = let (key1, key2) = split g in
   return . Return . Vpair $ (Vkey key1, Vkey key2)
+evalUnop Flatten (Vpair (Vlist x, Vlist y)) = evalUnop Flatten (Vlist (x ++ y))
+evalUnop Flatten (Vlist []) = return . Return . Vlist $ []
+evalUnop Flatten (Vlist ((Vlist l):ys)) = evalUnop Flatten (Vlist (l ++ ys))
+evalUnop Flatten (Vlist (l:ys)) = case evalUnop Flatten (Vlist (ys)) of
+  Nothing -> Nothing
+  Just (Return (Vlist ls)) -> case l of 
+    Vunit -> return . Return . Vlist $ ls
+    _ -> return . Return . Vlist $ (l:ls)
 
 evalBinop :: Op2 -> Value -> Value -> Maybe Comp
 evalBinop Add (Vint x) (Vint y) = return . Return . Vint $ x + y
