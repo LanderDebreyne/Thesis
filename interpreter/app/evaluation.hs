@@ -59,6 +59,10 @@ prettyprint' (c : cs) nr = show c ++ "\n\n" ++ show nr ++ ".\n" ++ prettyprint' 
 eval1 :: Comp -> Maybe Comp
 eval1 (App (Lam x c) v) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-AppAbs
 
+-- Annotated Lambda function
+eval1 (App (LamA x t c) v) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-AppAbs
+--
+
 eval1 (Let x v c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-Let
 eval1 (Letrec x v c) = return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)] -- E-LetRec
 eval1 (App (Vrec x v1 v2) v) = return . shiftC (-1) $ subst (App v2 v) [(shiftV 1 (Vrec x v1 v2), 0)] -- E-AppRec
@@ -68,6 +72,14 @@ eval1 (Do x (Op l v (y :. c1)) c2) = return $ Op l v (y :. Do x c1 c2) -- E-DoOp
 eval1 (Do x (Sc l v (y :. c1) (z :. c2)) c3) = return $ Sc l v (y :. c1) (z :. Do x c2 c3) -- E-DoSc
 eval1 (Do x (For l v (y :. c1) (z :. c2)) c3) = return $ For l v (y :. c1) (z :. Do x c2 c3) -- E-DoFor
 eval1 (Do x c1 c2) = do c1' <- eval1 c1; return $ Do x c1' c2 -- E-Do
+
+-- Annotated Do
+eval1 (DoA x (Return v) _ c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
+eval1 (DoA x (Op l v (y :. c1)) _ c2) = return $ Op l v (y :. Do x c1 c2) -- E-DoOp
+eval1 (DoA x (Sc l v (y :. c1) (z :. c2)) _ c3) = return $ Sc l v (y :. c1) (z :. Do x c2 c3) -- E-DoSc
+eval1 (DoA x (For l v (y :. c1) (z :. c2)) _ c3) = return $ For l v (y :. c1) (z :. Do x c2 c3) -- E-DoFor
+eval1 (DoA x c1 t c2) = do c1' <- eval1 c1; return $ DoA x c1' t c2 -- E-Do
+--
 
 eval1 (Handle (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
                          (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r fwd) c1), 1),
@@ -96,7 +108,7 @@ eval1 (Handle h (For label v (y :. c1) (z :. c2))) = return $ case hfor h label 
     Just (x, l, k, c) -> shiftC (-3) $ subst c [ (shiftV 3 v, 2)
                                                  , (shiftV 3 $ Lam l (For label (Var l 0) (y :. Handle h c1) (z :. Return (Var z 0))), 1)
                                                  , (shiftV 3 $ Lam z (Handle h c2), 0) ]
-    Nothing -> case hfwd h of -- E-FwdSc
+    Nothing -> case hfwd h of -- E-FwdFor
       (f, p, k, c) -> shiftC (-3) $ subst c
         [ (shiftV 3 $ Lam y (Handle h c1), 1)
         , (shiftV 3 $ Lam z (Handle h c2), 0)
@@ -106,6 +118,47 @@ eval1 (Handle h (For label v (y :. c1) (z :. c2))) = return $ case hfor h label 
             For label (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
         ]
 eval1 (Handle h c) = do c' <- eval1 c; return $ Handle h c' -- E-Hand 
+
+-- Annotated Handle
+eval1 (HandleA t (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
+                         (shiftV 3 $ Lam y (HandleA t (Parallel (x, p, k, c) r fwd) c1), 1),
+                         (shiftV 3 $ Lam z (HandleA t (Parallel (x, p, k, c) r fwd) c2), 0)])
+
+eval1 (HandleA t h (Return v)) = return $ let (x, cr) = hreturn h in -- E-HandRet
+  shiftC (-1) $ subst cr [(shiftV 1 v, 0)]
+eval1 (HandleA t h (Op l v (y :. c1))) = return $ case hop h l of -- E-HandOp
+  Just (x, k, c) -> shiftC (-2) $ subst c [ (shiftV 2 v, 1)
+                                          , (shiftV 2 $ Lam y (HandleA t h c1), 0) ]
+  Nothing -> Op l v (y :. Handle h c1) -- E-FwdOp
+eval1 (HandleA t h (Sc l v (y :. c1) (z :. c2))) = return $ case hsc h l of -- E-HandSc
+  Just (x, p, k, c) -> shiftC (-3) $ subst c [ (shiftV 3 v, 2)
+                                             , (shiftV 3 $ Lam y (HandleA t h c1), 1)
+                                             , (shiftV 3 $ Lam z (HandleA t h c2), 0) ]
+  Nothing -> case hfwd h of -- E-FwdSc
+    (f, p, k, c) -> shiftC (-3) $ subst c
+      [ (shiftV 3 $ Lam y (HandleA t h c1), 1)
+      , (shiftV 3 $ Lam z (HandleA t h c2), 0)
+      , (Lam "pk" $ 
+          Do "p" (Unop Fst (Var "pk" 0)) $
+          Do "k" (Unop Snd (Var "pk" 1)) $
+          Sc l (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
+      ]
+eval1 (HandleA t h (For label v (y :. c1) (z :. c2))) = return $ case hfor h label of -- E-HandFor
+    Just (x, l, k, c) -> shiftC (-3) $ subst c [ (shiftV 3 v, 2)
+                                                 , (shiftV 3 $ Lam l (For label (Var l 0) (y :. HandleA t h c1) (z :. Return (Var z 0))), 1)
+                                                 , (shiftV 3 $ Lam z (HandleA t h c2), 0) ]
+    Nothing -> case hfwd h of -- E-FwdSc
+      (f, p, k, c) -> shiftC (-3) $ subst c
+        [ (shiftV 3 $ Lam y (HandleA t h c1), 1)
+        , (shiftV 3 $ Lam z (HandleA t h c2), 0)
+        , (Lam "pk" $ 
+            Do "p" (Unop Fst (Var "pk" 0)) $
+            Do "k" (Unop Snd (Var "pk" 1)) $
+            For label (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
+        ]
+eval1 (HandleA t h c) = do c' <- eval1 c; return $ HandleA t h c' -- E-Hand 
+-- 
+
 eval1 (If (Vbool True) c1 c2) = return c1 -- E-IfTrue
 eval1 (If (Vbool False) c1 c2) = return c2 -- E-IfFalse
 eval1 (Unop op v) = evalUnop op v -- E-Unop
@@ -207,6 +260,9 @@ evalBinop _ _ _ = Nothing
 -- | Single step evaluation with chosen reduction step
 eval1' :: Comp -> (Step, Maybe Comp)
 eval1' (App (Lam x c) v) = ("E-AppAbs", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)])-- E-AppAbs
+-- Annotated Lambda function
+eval1' (App (LamA x t c) v) = ("E-AppAbs", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)])-- E-AppAbs
+-- 
 eval1' (Let x v c) = ("E-Let", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-Let
 eval1' (Letrec x v c) = ("E-LetRec", return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)]) -- E-LetRec
 eval1' (App (Vrec x v1 v2) v) = ("E-AppRec", return . shiftC (-1) $ subst (App v2 v) [(shiftV 1 (Vrec x v1 v2), 0)]) -- E-AppRec
@@ -218,6 +274,16 @@ eval1' (Do x (For l v (y :. c1) (z :. c2)) c3) = ("E-DoFor", return $ For l v (y
 eval1' (Do x c1 c2) = case (eval1' c1) of 
     (step, (Just c1')) -> ("E-Do and " ++ step, return $ Do x c1' c2) -- E-Do
     (step, Nothing) -> ("Nothing", Nothing)
+
+-- Annotated Do
+eval1' (DoA x (Return v) _ c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
+eval1' (DoA x (Op l v (y :. c1)) _ c2) = ("E-DoOp", return $ Op l v (y :. Do x c1 c2)) -- E-DoOp
+eval1' (DoA x (Sc l v (y :. c1) (z :. c2)) _ c3) = ("E-DoSc", return $ Sc l v (y :. c1) (z :. Do x c2 c3)) -- E-DoSc
+eval1' (DoA x (For l v (y :. c1) (z :. c2)) _ c3) = ("E-DoFor", return $ For l v (y :. c1) (z :. Do x c2 c3)) -- E-DoFor
+eval1' (DoA x c1 t c2) = case (eval1' c1) of 
+    (step, (Just c1')) -> ("E-Do and " ++ step, return $ DoA x c1' t c2) -- E-Do
+    (step, Nothing) -> ("Nothing", Nothing)
+--
 
 eval1' (Handle (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = ("E-Traverse" , Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
                          (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r fwd) c1), 1),
@@ -259,6 +325,48 @@ eval1' (Handle h c) = case eval1' c of
     (step, (Just c')) -> ("E-Hand and " ++ step, return $ Handle h c') -- E-Hand
     (step, Nothing) -> ("Nothing", Nothing)
 
+-- Annotated Handle
+eval1' (HandleA t (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = ("E-Traverse" , Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
+                         (shiftV 3 $ Lam y (HandleA t (Parallel (x, p, k, c) r fwd) c1), 1),
+                         (shiftV 3 $ Lam z (HandleA t (Parallel (x, p, k, c) r fwd) c2), 0)]))
+
+eval1' (HandleA t h (Return v)) = ("E-HandRet",  return $ let (x, cr) = hreturn h in -- E-HandRet
+  shiftC (-1) $ subst cr [(shiftV 1 v, 0)])
+eval1' (HandleA t h (Op l v (y :. c1))) = case hop h l of -- E-HandOp
+  Just (x, k, c) -> ("E-HandOp", return $ shiftC (-2) $ subst c [ (shiftV 2 v, 1)
+                                          , (shiftV 2 $ Lam y (HandleA t h c1), 0) ])
+  Nothing -> ("E-FwdOp", return $ Op l v (y :. HandleA t h c1)) -- E-FwdOp
+eval1' (HandleA t h (Sc l v (y :. c1) (z :. c2))) = case hsc h l of -- E-HandSc
+  Just (x, p, k, c) -> ("E-HandSc", return $ shiftC (-3) $ subst c [ (shiftV 3 v, 2)
+                                             , (shiftV 3 $ Lam y (HandleA t h c1), 1)
+                                             , (shiftV 3 $ Lam z (HandleA t h c2), 0) ])
+  Nothing -> case hfwd h of -- E-FwdSc
+    (f, p, k, c) -> ("E-FwdSc", return $ shiftC (-3) $ subst c
+      [ (shiftV 3 $ Lam y (HandleA t h c1), 1)
+      , (shiftV 3 $ Lam z (HandleA t h c2), 0)
+      , (Lam "pk" $ 
+          Do "p" (Unop Fst (Var "pk" 0)) $
+          Do "k" (Unop Snd (Var "pk" 1)) $
+          Sc l (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
+      ])
+eval1' (HandleA t h (For label v (y :. c1) (z :. c2))) = case hfor h label of -- E-HandFor
+    Just (x, l, k, c) -> ("E-HandFor", return $ shiftC (-3) $ subst c [ (shiftV 3 v, 2)
+                                                 , (shiftV 3 $ Lam l (For label (Var l 0) (y :. HandleA t h c1) (z :.Return (Var z 0))), 1)
+                                                 , (shiftV 3 $ Lam z (HandleA t h c2), 0) ])
+    Nothing -> ("E-FwdFor", return $ case hfwd h of -- E-FwdSc
+      (f, p, k, c) -> shiftC (-3) $ subst c
+        [ (shiftV 3 $ Lam y (HandleA t h c1), 1)
+        , (shiftV 3 $ Lam z (HandleA t h c2), 0)
+        , (Lam "pk" $ 
+            Do "p" (Unop Fst (Var "pk" 0)) $
+            Do "k" (Unop Snd (Var "pk" 1)) $
+            For label (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
+        ]) -- E-FwdFor
+eval1' (HandleA t h c) = case eval1' c of 
+    (step, (Just c')) -> ("E-Hand and " ++ step, return $ HandleA t h c') -- E-Hand
+    (step, Nothing) -> ("Nothing", Nothing)
+--
+
 eval1' (If (Vbool True) c1 c2) = ("E-IfTrue", return c1) -- E-IfTrue
 eval1' (If (Vbool False) c1 c2) = ("E-IfTrue", return c2) -- E-IfFalse
 eval1' (Unop op v) = case evalUnop op v of -- E-Unop
@@ -291,9 +399,12 @@ mapC fc fv c = case c of
   Sc l v (y :. c1) (z :. c2) -> Sc l (fv v) (y :. fc c1) (z :. fc c2)
   For l v (y :. c1) (z :. c2) -> For l (fv v) (y :. fc c1) (z :. fc c2)
   Handle h c -> Handle (mapH fc h) (fc c)
+  HandleA t h c -> HandleA t (mapH fc h) (fc c)
   Do x c1 c2 -> Do x (fc c1) (fc c2)
+  DoA x c1 t c2 -> DoA x (fc c1) t (fc c2)
   App v1 v2 -> App (fv v1) (fv v2)
   Let x v c  -> Let x (fv v) (fc c)
+  LetA x v t c -> LetA x (fv v) t (fc c)
   Letrec x v c -> Letrec x (fv v) (fc c)
   If v c1 c2 -> If (fv v) (fc c1) (fc c2)
   Binop op v1 v2 -> Binop op (fv v1) (fv v2)
@@ -314,6 +425,7 @@ mapV :: (Comp -> Comp) -> (Value -> Value) -> Value -> Value
 mapV fc fv v = case v of
   Var x n -> Var x n
   Lam x c -> Lam x (fc c)
+  LamA x t c -> LamA x t (fc c)
   Vpair (v1, v2) -> Vpair (fv v1, fv v2)
   Vsum v -> case v of
     Left t -> Vsum (Left (fv t))
@@ -337,8 +449,11 @@ varmapC onvar cur c = case c of
     Sc l v (y :. c1) (z :. c2) -> Sc l (fv cur v) (y :. fc (cur+1) c1) (z :. fc (cur+1) c2)
     For l v (y :. c1) (z :. c2) -> For l (fv cur v) (y :. fc (cur+1) c1) (z :. fc (cur+1) c2)
     Handle h c -> Handle (varmapH onvar cur h) (fc cur c)
+    HandleA t h c -> HandleA t (varmapH onvar cur h) (fc cur c)
     Do x c1 c2 -> Do x (fc cur c1) (fc (cur+1) c2)
+    DoA x c1 t c2 -> DoA x (fc cur c1) t (fc (cur+1) c2)
     Let x v c  -> Let x (fv cur v) (fc (cur+1) c)
+    LetA x v t c -> LetA x (fv cur v) t (fc (cur+1) c)
     Letrec x v c -> Letrec x (fv (cur+1) v) (fc (cur+1) c)
     Case v x c1 y c2 -> Case (fv cur v) x (fc (cur+1) c1) y (fc (cur+1) c2)
     oth -> mapC (fc cur) (fv cur) oth
@@ -366,6 +481,7 @@ varmapV :: (Int -> (Name, Int) -> Value) -> Int -> Value -> Value
 varmapV onvar cur v = case v of
     Var x i -> onvar cur (x, i)
     Lam x c -> Lam x (fc (cur+1) c)
+    LamA x t c -> LamA x t (fc (cur+1) c)
     oth -> mapV (fc cur) (fv cur) oth
   where
     fc = varmapC onvar

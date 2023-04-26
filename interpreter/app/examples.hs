@@ -25,7 +25,7 @@ sc l x p = Sc l x p ("z" :. Return (Var "z" 0))
 --   The Undefined computation is used as opposed to the undefined haskell primitive to be able to 
 --   print/show intermediate computation steps in the evaluation.
 absurd :: Value -> Comp
-absurd x = Undefined
+absurd _ = Undefined
 
 ----------------------------------------------------------------
 -- * Section 2.1 & Section 5: Inc

@@ -2,6 +2,7 @@ module Test where
 
 import Examples
 import CombExamples
+import TypedExamples
 import Evaluation
 import Syntax
 import Typing

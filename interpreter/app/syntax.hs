@@ -31,6 +31,7 @@ data Value
 instance Show Value where
   show (Var x i) = x
   show (Lam x c) = ("\\ " ++ x ++ ". " ++ show c)
+  show (LamA x t c) = ("\\ " ++ x ++ " : " ++ show t ++ ". " ++ show c)
   show Vunit = "()"
   show (Vpair (v1, v2)) = "(" ++ show v1 ++ ", " ++ show v2 ++ ")"
   show (Vhandler h) = show h
@@ -51,15 +52,15 @@ instance Show Value where
 
 -- | Handler syntax
 data Handler = Handler
-  { hname   :: Name                                     -- ^ handler name
+  { hname   :: Name                                    -- ^ handler name
   , oplist  :: [Name]                                  -- ^ algebraic operations names
   , sclist  :: [Name]                                  -- ^ scoped operations names
   , forlist :: [Name]                                  -- ^ for operations names
-  , hreturn :: (Name, Comp)                             -- ^ (x, c)
+  , hreturn :: (Name, Comp)                            -- ^ (x, c)
   , hop     :: Name -> Maybe (Name, Name, Comp)        -- ^ l -> (x, k, c)
   , hsc     :: Name -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, p, k, c)
   , hfor    :: Name -> Maybe (Name, Name, Name, Comp)  -- ^ l -> (x, l, k, c)
-  , hfwd    :: (Name, Name, Name, Comp)                 -- ^ (f, p, k, c)
+  , hfwd    :: (Name, Name, Name, Comp)                -- ^ (f, p, k, c)
   } | 
   Parallel {
     ptraverse :: (Name, Name, Name, Comp)             -- ^ (x, l, k, c)
@@ -87,6 +88,7 @@ data Comp
   | Sc Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
   | For Name Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
   | Handle Handler Comp                             -- ^ v ★ c
+  | HandleA ValueType Handler Comp                  -- ^ v ★ : t c
   | Do Name Comp Comp                               -- ^ do x <- c1 in c2
   | DoA Name Comp ComputationType Comp               -- ^ do x <- c1 : t in c2
   | Rec Name Comp Comp                              -- ^ rec x c1 c2
@@ -110,9 +112,12 @@ instance Show Comp where
     show (Sc l v (x :. c1) (y :. c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
     show (For l v (x :. c1) (y :. c2)) = "for " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
     show (Handle h c) = show h ++ " * " ++ show c
+    show (HandleA t h c) = show h ++ " : " ++ show t ++ " * " ++ " " ++ show c
     show (Do x c1 c2) = "do " ++ x ++ " <- (" ++ show c1 ++ "\n in " ++ show c2 ++ ")"
+    show (DoA x c1 t c2) = "do " ++ x ++ " <- (" ++ show c1 ++ " : " ++ show t ++ "\n in " ++ show c2 ++ ")"
     show (App v1 v2) = show v1 ++ " " ++ show v2
     show (Let x v c) = "let " ++ x ++ " = " ++ show v ++ "\n in " ++ show c
+    show (LetA x v t c) = "let " ++ x ++ " : " ++ show t ++ " = " ++ show v ++ "\n in " ++ show c
     show (Letrec x v c) = "letrec " ++ x ++ " = " ++ show v ++ "\n in " ++ show c    
     show (If v c1 c2) = "\nif " ++ show v ++ "\n then " ++ show c1 ++ "\n else " ++ show c2
     show (Case v x c1 y c2) = "case " ++ show v ++ " of\n " ++ x ++ " -> " ++ show c1 ++ " \n| " ++ y ++ " -> " ++ show c2
@@ -214,8 +219,8 @@ data ValueType = Tunit
             | Tfunction ValueType ComputationType
             | THandler ComputationType ComputationType
             | Tlist ValueType
-            | TValVar Name Int
-            | TOpAbs Name Int ValueType
+            | TValVar Name
+            | TOpAbs Name ValueType
             | Tapp ValueType ValueType
             | Tsum ValueType ValueType
             | Tint 

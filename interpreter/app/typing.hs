@@ -1,17 +1,45 @@
 module Typing where
 
 import Syntax
+import Evaluation
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
 type Gamma = Map.Map Name ValueType
 
+typeCheckEval :: Comp -> ComputationType -> [(String, Comp)]
+typeCheckEval c ct = 
+  if typeCheckC Map.empty c ct 
+    then case eval1' c of
+      (step, Just c') -> (step, c) : typeCheckEval c' ct
+      (step, Nothing) -> []
+  else [("Typecheck failed", c)]
+
+-- | Evaluation with steps
+checkFile :: Comp -> ComputationType -> IO ()
+checkFile c ct = do
+  let steps = typeCheckEval c ct
+  writeFile "typecheck" (prettyprintT steps 1)
+
+-- | Pretty print verbose evaluation
+prettyprintT :: [(String, Comp)] -> Int -> String
+prettyprintT [] _ = "" 
+prettyprintT ((step, c):xs) n = 
+  "\n Step: " ++ show n ++ ": " ++ step ++ "\n" ++ show c ++ "\n" ++ prettyprintT xs (n+1) ++ "\n"
+
+
+
 typeCheckC :: Gamma -> Comp -> ComputationType -> Bool
 typeCheckC gam (Return v) (vt, _) = typeCheckV gam v vt -- SD-Ret
-typeCheckC gam (App (LamA n vt1 c) v2) (vt2, e) = typeCheckC (Map.insert n vt1 gam) c (Tfunction vt1 (vt2, e), e)  && typeCheckV gam v2 vt1 -- SD-App
-typeCheckC gam (DoA n c1 (vt1, e1) c2) (vt2, e2) = typeCheckC gam c1 (vt1, e1) && typeCheckC (Map.insert n vt1 gam) c2 (vt2, e2) -- SD-Do
+typeCheckC gam (App v1 v2) (vt2, e) = case v1 of
+  (LamA n vt1 c) -> typeCheckC (Map.insert n vt1 gam) c (Tfunction vt1 (vt2, e), e)  && typeCheckV gam v2 vt1 -- SD-App
+  (Var n _) -> case Map.lookup n gam of
+    Just (Tfunction vt1 (vt3, e1)) -> typeCheckV gam v2 vt1 && typeEq vt2 vt3 && rowEq e e1
+    Nothing -> False
+  _ -> False
+typeCheckC gam (DoA n c1 (vt1, e1) c2) (vt2, e2) = typeCheckC (Map.insert n vt1 gam) c2 (vt2, e2) --typeCheckC gam c1 (vt1, e1) -- && typeCheckC (Map.insert n vt1 gam) c2 (vt2, e2) -- SD-Do
 typeCheckC gam (LetA n v vt1 c) (vt2, e) = typeCheckV gam v vt1 && typeCheckC (Map.insert n vt1 gam) c (vt2, e) -- SD-Let
--- SD-Hand
+typeCheckC gam (HandleA (THandler ct1 (vt1, e1)) h c) (vt2, e2) = typeCheckC gam c ct1 && typeEq vt1 vt2 && rowEq e1 e2 -- SD-Hand
 typeCheckC _ _ _ = False 
 
 typeCheckV :: Gamma -> Value -> ValueType -> Bool
@@ -51,8 +79,8 @@ typeEq (Tflag t) (Tflag t') = typeEq t t'
 typeEq Tmem Tmem = True
 typeEq Tkey Tkey = True
 typeEq (Tfunction t1 (t2, e)) (Tfunction t1' (t2', e')) = typeEq t1 t1' && typeEq t2 t2'
-typeEq (TValVar _ _) t = True
-typeEq t (TValVar _ _) = True
+typeEq (TValVar _) t = True
+typeEq t (TValVar _) = True
 typeEq _ _ = False
 
 rowEq :: EffectType -> EffectType -> Bool
