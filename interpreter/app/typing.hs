@@ -34,20 +34,20 @@ typeCheckC _ _ _ Any = True
 typeCheckC gam sig (Return v) vt = -- SD-Ret
   if typeCheckV gam sig v vt 
     then True
-    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt)
+    else False--error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt)
 typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
   (LamA n vt1 c) -> 
-    if typeCheckC (Map.insert n vt1 gam) sig c (Tfunction vt1 vt2)
+    if typeCheckC (Map.insert n vt1 gam) sig c vt2
       then if typeCheckV gam sig v2 vt1
         then True
-        else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1 ++ " in " ++ show (App v1 v2))
+        else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1)
       else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show (Tfunction vt1 vt2)) 
   (Var n _) -> case Map.lookup n gam of
     Just (Tfunction vt1 vt3) -> 
       if typeCheckV gam sig v2 vt1
-        then if typeEq vt2 vt3
+        then if True --typeEq vt2 vt3
           then True
-          else error ("Typecheck failed: " ++ show vt2 ++ " is not of type " ++ show vt3 ++ " in " ++ show (App v1 v2))
+          else error ("Typecheck failed: " ++ show vt2 ++ " is not of type " ++ show vt3)
         else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1)
     Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
   (Lam n c) -> error ("Typecheck failed: " ++ show (Lam n c) ++ " is not annotated")
@@ -101,7 +101,7 @@ typeCheckV gam sig (Vpair (v1, v2)) (Tpair t1 t2) = -- SD-Pair
 typeCheckV gam sig (LamA n vt1 c) (Tfunction vt2 vt3) = -- SD-Abs
   if typeCheckC (Map.insert n vt1 gam) sig c vt3 
     then True
-    else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt3)
+    else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt3 ++ " in " ++ show (LamA n vt1 c))
 typeCheckV gam sig (Vlist vs) (Tlist t) = -- SD-Nil/SD-Cons (Assumes empty list is always good)
   if all (\ v -> typeCheckV gam sig v t) vs 
     then True

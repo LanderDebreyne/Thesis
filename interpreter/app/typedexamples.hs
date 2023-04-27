@@ -40,7 +40,7 @@ hIncT = Handler
   ("x", Return . LamA "s" Tint $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
     "inc" -> Just ("_", "k",
-      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint (Tfunction Tint (Tpair Tint Tint))) $
+      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint (Tpair Tint Tint)) $
                          DoA "s'" (Binop Add (Var "s" 1) (Vint 1)) (Tint) $
                          App (Var "k'" 1) (Var "s'" 0))
     _ -> Nothing)
@@ -75,7 +75,7 @@ hIncT = Handler
 
 -- | @runInc@ is a macro to help applying the initial count value
 runIncT :: Int -> Comp -> Comp
-runIncT s c = DoA "c'" (HandleA (THandler Tunit (Tfunction Tint (Tpair Tint Tint))) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
+runIncT s c = DoA "c'" (HandleA (THandler Tint (Tpair Tint Tint)) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
 
 -- | @cInc@ refers to the @c_inc@ program in Section 2.1
 cIncT :: Comp
@@ -110,8 +110,8 @@ hOnceT = Handler
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return $ Vlist [])
     "choose" -> Just ("x", "k",
-      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tint) $
-      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tint) $
+      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tpair Tint Tint) $
+      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tpair Tint Tint) $
       Binop Append (Var "xs" 1) (Var "ys" 0))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
