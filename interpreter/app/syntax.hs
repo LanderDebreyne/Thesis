@@ -81,12 +81,23 @@ data (Dot a b) = a :. b deriving (Eq)
 instance Show (Dot Name Comp) where
   show (x :. y) = (show x) ++ ". " ++ (show y) 
 
+data (DotA a t b) = DotA a t b 
+
+instance Eq (DotA Name ValueType Comp) where
+  DotA a t b == DotA a' t' b' = a == a' && b == b'
+
+instance Show (DotA Name ValueType Comp) where
+  show (DotA x t y) = (show x) ++ " : " ++ (show t) ++ ". " ++ (show y) 
+
 -- | Computation syntax
 data Comp
   = Return Value                                    -- ^ return v
-  | Op Name Value (Dot Name Comp)                  -- ^ op l v (y.c)
-  | Sc Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ sc l v (y.c1) (z.c2)
-  | For Name Value (Dot Name Comp) (Dot Name Comp) -- ^ for l v (y.c1) (z.c2)
+  | Op Name Value (Dot Name Comp)                   -- ^ op l v (y.c)
+  | OpA Name Value (DotA Name ValueType Comp)       -- ^ op l v (y : t .c)
+  | Sc Name Value (Dot Name Comp) (Dot Name Comp)   -- ^ sc l v (y.c1) (z.c2)
+  | ScA Name Value (DotA Name ValueType Comp) (DotA Name ValueType Comp) -- ^ sc l v (y : t .c1) (z : t .c2)
+  | For Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ for l v (y.c1) (z.c2)
+  | ForA Name Value (DotA Name ValueType Comp) (DotA Name ValueType Comp) -- ^ for l v (y : t .c1) (z : t .c2)
   | Handle Handler Comp                             -- ^ v ★ c
   | HandleA ValueType Handler Comp                  -- ^ v ★ : t c
   | Do Name Comp Comp                               -- ^ do x <- c1 in c2
@@ -109,12 +120,15 @@ data Comp
 instance Show Comp where
     show (Return v) = "Return " ++ show v
     show (Op l v (x :. c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c ++ ")"
+    show (OpA l v (DotA x t c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c ++ ")"
     show (Sc l v (x :. c1) (y :. c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
+    show (ScA l v (DotA x t c1) (DotA y t' c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c1 ++ ") (" ++ y ++ " : " ++ show t' ++ ". " ++ show c2 ++ ")"
     show (For l v (x :. c1) (y :. c2)) = "for " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
+    show (ForA l v (DotA x t c1) (DotA y t' c2)) = "for " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c1 ++ ") (" ++ y ++ " : " ++ show t' ++ ". " ++ show c2 ++ ")"
     show (Handle h c) = show h ++ " * " ++ show c
     show (HandleA t h c) = show h ++ " : " ++ show t ++ " * " ++ " " ++ show c
     show (Do x c1 c2) = "do " ++ x ++ " <- (" ++ show c1 ++ "\n in " ++ show c2 ++ ")"
-    show (DoA x c1 t c2) = "do " ++ x ++ " <- (" ++ show c1 ++ " : " ++ show t ++ "\n in " ++ show c2 ++ ")"
+    show (DoA x c1 t c2) = "doA " ++ x ++ " <- (" ++ show c1 ++ " : " ++ show t ++ "\n in " ++ show c2 ++ ")"
     show (App v1 v2) = show v1 ++ " " ++ show v2
     show (Let x v c) = "let " ++ x ++ " = " ++ show v ++ "\n in " ++ show c
     show (LetA x v t c) = "let " ++ x ++ " : " ++ show t ++ " = " ++ show v ++ "\n in " ++ show c
@@ -195,6 +209,7 @@ update (x, s) m = Mem $ \ y -> if x == y then Just s else runMem m y
 data Label = Lop Name ValueType ValueType 
              | Lsc Name ValueType ValueType
              | Lfor Name ValueType 
+             | Lhandler Name ValueType ValueType
              deriving (Eq)
 
 instance Show Label where
@@ -231,10 +246,11 @@ data ValueType = Tunit
             | Tret ValueType
             | Tmem
             | Tkey
+            | Any
             deriving (Eq, Show)
 
 -- | Effect type syntax
 type EffectType = Set.Set Label
 
 -- | Computation type syntax
-type ComputationType = (ValueType, EffectType)
+type ComputationType = ValueType

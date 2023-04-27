@@ -6,66 +6,136 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 
 type Gamma = Map.Map Name ValueType
+type Sigma = Map.Map Name Label
 
-typeCheckEval :: Comp -> ComputationType -> [(String, Comp)]
-typeCheckEval c ct = 
-  if typeCheckC Map.empty c ct 
+typeCheckEval :: Gamma -> Sigma -> Comp -> ComputationType -> [(String, Comp)]
+typeCheckEval gam sig c ct = 
+  if typeCheckC gam sig c ct 
     then case eval1' c of
-      (step, Just c') -> (step, c) : typeCheckEval c' ct
+      (step, Just c') -> (step, c) : typeCheckEval gam sig c' ct
       (step, Nothing) -> []
   else [("Typecheck failed", c)]
 
 -- | Evaluation with steps
-checkFile :: Comp -> ComputationType -> IO ()
-checkFile c ct = do
-  let steps = typeCheckEval c ct
+checkFile :: Gamma -> Sigma -> Comp -> ComputationType -> IO ()
+checkFile gam sig c ct = do
+  let steps = typeCheckEval gam sig c ct
   writeFile "typecheck" (prettyprintT steps 1)
 
 -- | Pretty print verbose evaluation
 prettyprintT :: [(String, Comp)] -> Int -> String
 prettyprintT [] _ = "" 
 prettyprintT ((step, c):xs) n = 
-  "\n Step: " ++ show n ++ ": " ++ step ++ "\n" ++ show c ++ "\n" ++ prettyprintT xs (n+1) ++ "\n"
+  "\n Step " ++ show n ++ ": " ++ step ++ "\n" ++ show c ++ "\n" ++ prettyprintT xs (n+1) ++ "\n"
 
 
-
-typeCheckC :: Gamma -> Comp -> ComputationType -> Bool
-typeCheckC gam (Return v) (vt, _) = typeCheckV gam v vt -- SD-Ret
-typeCheckC gam (App v1 v2) (vt2, e) = case v1 of
-  (LamA n vt1 c) -> typeCheckC (Map.insert n vt1 gam) c (Tfunction vt1 (vt2, e), e)  && typeCheckV gam v2 vt1 -- SD-App
+typeCheckC :: Gamma -> Sigma -> Comp -> ComputationType -> Bool
+typeCheckC _ _ _ Any = True
+typeCheckC gam sig (Return v) vt = -- SD-Ret
+  if typeCheckV gam sig v vt 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt)
+typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
+  (LamA n vt1 c) -> 
+    if typeCheckC (Map.insert n vt1 gam) sig c (Tfunction vt1 vt2)
+      then if typeCheckV gam sig v2 vt1
+        then True
+        else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1 ++ " in " ++ show (App v1 v2))
+      else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show (Tfunction vt1 vt2)) 
   (Var n _) -> case Map.lookup n gam of
-    Just (Tfunction vt1 (vt3, e1)) -> typeCheckV gam v2 vt1 && typeEq vt2 vt3 && rowEq e e1
-    Nothing -> False
-  _ -> False
-typeCheckC gam (DoA n c1 (vt1, e1) c2) (vt2, e2) = typeCheckC (Map.insert n vt1 gam) c2 (vt2, e2) --typeCheckC gam c1 (vt1, e1) -- && typeCheckC (Map.insert n vt1 gam) c2 (vt2, e2) -- SD-Do
-typeCheckC gam (LetA n v vt1 c) (vt2, e) = typeCheckV gam v vt1 && typeCheckC (Map.insert n vt1 gam) c (vt2, e) -- SD-Let
-typeCheckC gam (HandleA (THandler ct1 (vt1, e1)) h c) (vt2, e2) = typeCheckC gam c ct1 && typeEq vt1 vt2 && rowEq e1 e2 -- SD-Hand
-typeCheckC _ _ _ = False 
+    Just (Tfunction vt1 vt3) -> 
+      if typeCheckV gam sig v2 vt1
+        then if typeEq vt2 vt3
+          then True
+          else error ("Typecheck failed: " ++ show vt2 ++ " is not of type " ++ show vt3 ++ " in " ++ show (App v1 v2))
+        else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1)
+    Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
+  (Lam n c) -> error ("Typecheck failed: " ++ show (Lam n c) ++ " is not annotated")
+  _ -> error ("Typecheck failed: " ++ show v1 ++ " is not a function")
+typeCheckC gam sig (DoA n c1 vt1 c2) vt2 = -- SD-Do
+  if typeCheckC (Map.insert n vt1 gam) sig c2 vt2
+    then if typeCheckC gam sig c1 vt1
+      then True
+      else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt1)
+    else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt2) 
+typeCheckC gam sig (LetA n v vt1 c) vt2 = -- SD-Let
+  if typeCheckV gam sig v vt1
+    then if typeCheckC (Map.insert n vt1 gam) sig c vt2 
+      then True
+      else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt2)
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt1)
+typeCheckC gam sig (HandleA (THandler ct1 vt1) h c) vt2 = -- SD-Hand
+  if typeCheckC gam sig c ct1 
+    then True
+    else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show ct1)
+typeCheckC gam sig (OpA n v (DotA y a c)) vt2 = case Map.lookup n sig of -- SD-Op
+  Just (Lop _ lt1 lt2) -> 
+    if typeCheckV gam sig v lt1 
+      then if typeCheckC (Map.insert y a gam) sig c vt2
+        then True
+        else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt2)
+      else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show lt1)
+  Nothing -> error "Typecheck failed: Label not found"
+typeCheckC gam sig (If v c1 c2) vt = -- SD-If
+  if typeCheckC gam sig c1 vt 
+    then if typeCheckC gam sig c2 vt
+      then True
+      else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
+    else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt)
+typeCheckC gam sig (Binop _ _ _) vt = True -- SD-Binop -- TODO (Assumes operations are well-typed)
+typeCheckC gam sig (Unop _ _) vt = True -- SD-Unop -- TODO (Assumes operations are well-typed)
+typeCheckC _ _ c t = False -- error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show t)
 
-typeCheckV :: Gamma -> Value -> ValueType -> Bool
-typeCheckV gam (Var n i) vt = case Map.lookup n gam of -- SD-Var
-  Just vt' -> vt == vt'
-  Nothing -> False
-typeCheckV gam Vunit Tunit = True -- SD-Unit
-typeCheckV gam (Vpair (v1, v2)) (Tpair t1 t2) = typeCheckV gam v1 t1 && typeCheckV gam v2 t2 -- SD-Pair
-typeCheckV gam (LamA n vt1 c) (Tfunction vt2 (vt3, e)) = typeCheckC (Map.insert n vt1 gam) c (vt3, e) -- SD-Abs
-typeCheckV gam (Vlist vs) (Tlist t) = all (\ v -> typeCheckV gam v t) vs -- SD-Nil/SD-Cons (Assumes empty list is always good)
-typeCheckV gam (Vsum (Left v)) (Tsum t1 t2) = typeCheckV gam v t1 -- SD-Inl
-typeCheckV gam (Vsum (Right v)) (Tsum t1 t2) = typeCheckV gam v t2 -- SD-Inr
-typeCheckV gam (Vbool _) Tbool = True -- SD-Bool
-typeCheckV gam (Vint _) Tint = True -- SD-Int
-typeCheckV gam (Vchar _) Tchar = True -- SD-Char
-typeCheckV gam (Vstr _) Tstr = True -- SD-Str
-typeCheckV gam (Vret v) (Tret t) = typeCheckV gam v t -- SD-Ret
-typeCheckV gam (Vflag v) (Tflag t) = typeCheckV gam v t -- SD-Flag
-typeCheckV gam (Vmem m) (Tmem) = True -- SD-Mem
-typeCheckV gam (Vkey k) (Tkey) = True -- SD-Key
+typeCheckV :: Gamma -> Sigma -> Value -> ValueType -> Bool
+typeCheckV _ _ _ Any = True
+typeCheckV gam sig (Var n i) vt = case Map.lookup n gam of -- SD-Var
+  Just vt' -> typeEq vt vt'
+  Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
+typeCheckV gam sig Vunit Tunit = True -- SD-Unit
+typeCheckV gam sig (Vpair (v1, v2)) (Tpair t1 t2) = -- SD-Pair
+  if typeCheckV gam sig v1 t1 
+    then if typeCheckV gam sig v2 t2
+      then True
+      else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show t2)
+    else error ("Typecheck failed: " ++ show v1 ++ " is not of type " ++ show t1)
+typeCheckV gam sig (LamA n vt1 c) (Tfunction vt2 vt3) = -- SD-Abs
+  if typeCheckC (Map.insert n vt1 gam) sig c vt3 
+    then True
+    else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt3)
+typeCheckV gam sig (Vlist vs) (Tlist t) = -- SD-Nil/SD-Cons (Assumes empty list is always good)
+  if all (\ v -> typeCheckV gam sig v t) vs 
+    then True
+    else error ("Typecheck failed: " ++ show vs ++ " is not of type " ++ show t)
+typeCheckV gam sig (Vsum (Left v)) (Tsum t1 t2) = -- SD-Inl
+  if typeCheckV gam sig v t1 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t1)
+typeCheckV gam sig (Vsum (Right v)) (Tsum t1 t2) = -- SD-Inr
+  if typeCheckV gam sig v t2 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t2)
+typeCheckV gam sig (Vbool _) Tbool = True -- SD-Bool
+typeCheckV gam sig (Vint _) Tint = True -- SD-Int
+typeCheckV gam sig (Vchar _) Tchar = True -- SD-Char
+typeCheckV gam sig (Vstr _) Tstr = True -- SD-Str
+typeCheckV gam sig (Vret v) (Tret t) = -- SD-Ret
+  if typeCheckV gam sig v t 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t)
+typeCheckV gam sig (Vflag v) (Tflag t) = -- SD-Flag
+  if typeCheckV gam sig v t 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t)
+typeCheckV gam sig (Vmem m) (Tmem) = True -- SD-Mem
+typeCheckV gam sig (Vkey k) (Tkey) = True -- SD-Key
 -- SD-Rec
 -- SD-Handler
 -- SD-Par
-typeCheckV _ _ _ = False
+typeCheckV _ _ c t = False -- error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show t)
 
 typeEq :: ValueType -> ValueType -> Bool
+typeEq Any _ = True
+typeEq _ Any = True
 typeEq Tunit Tunit = True
 typeEq (Tpair t1 t2) (Tpair t1' t2') = typeEq t1 t1' && typeEq t2 t2'
 typeEq (Tlist t) (Tlist t') = typeEq t t'
@@ -78,7 +148,7 @@ typeEq (Tret t) (Tret t') = typeEq t t'
 typeEq (Tflag t) (Tflag t') = typeEq t t'
 typeEq Tmem Tmem = True
 typeEq Tkey Tkey = True
-typeEq (Tfunction t1 (t2, e)) (Tfunction t1' (t2', e')) = typeEq t1 t1' && typeEq t2 t2'
+typeEq (Tfunction t1 t2) (Tfunction t1' t2') = typeEq t1 t1' && typeEq t2 t2'
 typeEq (TValVar _) t = True
 typeEq t (TValVar _) = True
 typeEq _ _ = False
