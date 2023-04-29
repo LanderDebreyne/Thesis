@@ -13,7 +13,7 @@ typeCheckEval gam sig c ct =
   if typeCheckC gam sig c ct 
     then case eval1' c of
       (step, Just c') -> (step, c) : typeCheckEval gam sig c' ct
-      (step, Nothing) -> []
+      (step, Nothing) -> [("Nothing", c)]
   else [("Typecheck failed", c)]
 
 -- | Evaluation with steps
@@ -49,6 +49,8 @@ typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
           then True
           else error ("Typecheck failed: " ++ show vt2 ++ " is not of type " ++ show vt3)
         else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1)
+    Just Any -> True
+    Just x -> error ("Typecheck failed: " ++ show x ++ " is not a function")
     Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
   (Lam n c) -> error ("Typecheck failed: " ++ show (Lam n c) ++ " is not annotated")
   _ -> error ("Typecheck failed: " ++ show v1 ++ " is not a function")
@@ -76,6 +78,16 @@ typeCheckC gam sig (OpA n v (DotA y a c)) vt2 = case Map.lookup n sig of -- SD-O
         else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt2)
       else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show lt1)
   Nothing -> error "Typecheck failed: Label not found"
+typeCheckC gam sig (ScA n v (DotA y a c1) (DotA z b c2)) vt = case Map.lookup n sig of -- SD-Sc
+  Just (Lsc _ lt1 lt2) ->
+    if typeCheckV gam sig v lt1
+      then if typeCheckC (Map.insert y a gam) sig c1 vt
+        then if typeCheckC (Map.insert z b gam) sig c2 vt
+          then True
+          else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
+        else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt)
+      else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show lt1)
+  Nothing -> error "Typecheck failed: Label not found"
 typeCheckC gam sig (If v c1 c2) vt = -- SD-If
   if typeCheckC gam sig c1 vt 
     then if typeCheckC gam sig c2 vt
@@ -88,6 +100,9 @@ typeCheckC _ _ c t = False -- error ("Typecheck failed: " ++ show c ++ " is not 
 
 typeCheckV :: Gamma -> Sigma -> Value -> ValueType -> Bool
 typeCheckV _ _ _ Any = True
+typeCheckV gam sig v (TValVar n) = case Map.lookup n gam of -- SD-ValVar
+  Just vt -> typeCheckV gam sig v vt
+  Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
 typeCheckV gam sig (Var n i) vt = case Map.lookup n gam of -- SD-Var
   Just vt' -> typeEq vt vt'
   Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")

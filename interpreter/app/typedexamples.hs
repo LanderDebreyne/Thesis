@@ -30,6 +30,7 @@ sc l x p = Sc l x p ("z" :. Return (Var "z" 0))
 absurd :: Value -> Comp
 absurd _ = Undefined
 
+
 ----------------------------------------------------------------
 -- * Section 2.1 & Section 5: Inc
 
@@ -40,7 +41,7 @@ hIncT = Handler
   ("x", Return . LamA "s" Tint $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
     "inc" -> Just ("_", "k",
-      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint (Tpair Tint Tint)) $
+      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint (Tpair (TValVar "tIncA") Tint)) $
                          DoA "s'" (Binop Add (Var "s" 1) (Vint 1)) (Tint) $
                          App (Var "k'" 1) (Var "s'" 0))
     _ -> Nothing)
@@ -62,42 +63,57 @@ hIncT = Handler
             (Do "s'" (App (Var "reduce" 0) (Var "second" 2)) $
             App (Var "k'" 2) (Var "s'" 0))))
     _ -> Nothing)
-  ("f", "p", "k", Return . Lam "s" $ App (Var "f" 3) (Vpair
-    ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
+  ("f", "p", "k", Return . LamA "s" Tint $ App (Var "f" 3) (Vpair
+    ( LamA "y" (TValVar "tIncA") $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction (TValVar "tIncA") (Tfunction Tint (Tpair (TValVar "tIncA") Tint)))$
                 App (Var "p'" 0) (Var "s" 2)
-    , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
-                 Do "s'" (Unop Snd (Var "zs" 1)) $
-                 Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+    , LamA "zs" (Tpair (TValVar "tIncA") (Tint)) $ DoA "z" (Unop Fst (Var "zs" 0)) (TValVar "tIncA") $
+                 DoA "s'" (Unop Snd (Var "zs" 1)) Tint $
+                 DoA "k'" (App (Var "k" 4) (Var "z" 1)) (Tfunction Tint (Tpair (TValVar "tIncA") Tint)) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
 
 
 -- | @runInc@ is a macro to help applying the initial count value
-runIncT :: Int -> Comp -> Comp
-runIncT s c = DoA "c'" (HandleA (THandler Tint (Tpair Tint Tint)) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
+runInc1T :: Int -> Comp -> Comp
+runInc1T s c = DoA "c'" (HandleA (THandler Tint (Tpair Tint Tint)) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
+
+runInc2T :: Int -> Comp -> Comp
+runInc2T s c = DoA "c'" (HandleA (THandler (Tlist Tint) (Tpair (Tlist Tint) Tint)) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
 
 -- | @cInc@ refers to the @c_inc@ program in Section 2.1
 cIncT :: Comp
 cIncT = OpA "choose" Vunit (DotA "b" Tbool
         (If (Var "b" 0) (op "inc" Vunit Any) (op "inc" Vunit Any)))
 
-tGam = Map.fromList([("hIncA", Tunit), ("hOnceA", Tint)])
-tSig = Map.fromList([
+tInc1Gam = Map.fromList([
+  ("tIncA", Tint), 
+  ("tOnceA", Tpair Tint Tint)])
+tInc1Sig = Map.fromList([
   ("inc", Lop "inc" Tunit Tunit), 
   ("choose", Lop "choose" Tunit Tbool)])
-tComp = (HandleA (THandler (Tpair Tint Tint) (Tlist (Tpair Tint Tint))) (hOnceT) (runIncT 0 cIncT))
+tInc1Comp = (HandleA (THandler (Tpair Tint Tint) (Tlist (Tpair Tint Tint))) (hOnceT) (runInc1T 0 cIncT))
+tInc1 = checkFile tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint))
 
-testIncT = checkFile tGam tSig tComp (Tlist (Tpair Tint Tint))
+tInc2Gam = Map.fromList([
+  ("tIncA", Tlist Tint), 
+  ("tOnceA", Tint)])
+tInc2Comp = runInc2T 0 (HandleA (THandler Tint (Tlist Tint)) (hOnceT) (cIncT))
+tInc2 = checkFile tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint)
+
+tInc3Sig = Map.fromList([
+  ("inc", Lop "inc" Tunit Tunit), 
+  ("choose", Lop "choose" Tunit Tbool),
+  ("once", Lsc "once" Tunit Tint)])
+tInc3Comp = (HandleA (THandler (Tpair Tint Tint) (Tlist (Tpair Tint Tint)))) (hOnceT) (runInc1T 0 cFwdT)
+tInc3 = checkFile tInc1Gam tInc3Sig tInc3Comp (Tpair Tint Tint)
 
 cIncForT :: Comp
 cIncForT = ForA "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) (DotA "y" Tunit (op "inc" Vunit Any)) (DotA "z" Any (Return (Var "z" 0)))
 
-
-
 cFwdT :: Comp
-cFwdT = ScA "once" Vunit (DotA "_" Any cIncT) (DotA "x" Tint (Op "inc" Vunit ("y" :. 
-        DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) (Tint) $ Return (Var "z" 0))))
+cFwdT = ScA "once" Vunit (DotA "_" Any cIncT) (DotA "x" Tint (OpA "inc" Vunit (DotA "y" Tint
+        (DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) (Tint) $ Return (Var "z" 0)))))
 
 ----------------------------------------------------------------
 -- * Section 2.2 & Section 7.1 : Nondeterminism with Once
@@ -110,14 +126,14 @@ hOnceT = Handler
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return $ Vlist [])
     "choose" -> Just ("x", "k",
-      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tpair Tint Tint) $
-      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tpair Tint Tint) $
+      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tlist (TValVar "tOnceA")) $
+      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tlist (TValVar "tOnceA")) $
       Binop Append (Var "xs" 1) (Var "ys" 0))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     "once" -> Just ("_", "p", "k",
-      Do "ts" (App (Var "p" 1) Vunit) $
-      Do "t" (Unop Head (Var "ts" 0)) $
+      DoA "ts" (App (Var "p" 1) Vunit) (Tlist Any) $
+      DoA "t" (Unop Head (Var "ts" 0)) (Any) $
       App (Var "k" 2) (Var "t" 0))
     _ -> Nothing)
   (\ forlabel -> case forlabel of

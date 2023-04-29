@@ -7,6 +7,7 @@ import Evaluation
 import Syntax
 import Typing
 import Test.HUnit
+import qualified Data.Map as Map
 
 data Tdata = Tdata { name :: String, testC :: Comp, result :: Comp } deriving (Show)
 
@@ -20,6 +21,16 @@ testCaseGen name test result = [TestCase (assertEqual (name ++ " NVL") (last (ev
     , TestCase (assertEqual (name ++ " NV") (evalP test) result)]
 
 
+-- | Unit test generator for typechecking a computation
+
+typeCheckGen :: String -> Gamma -> Sigma -> Comp -> ComputationType -> Int -> [Test]
+typeCheckGen name gam sig test result n = x : y
+    where x = TestCase (assertEqual (name ++ ".type_check."++ (show n)) (typeCheckC gam sig test result) True)
+          y = case (eval1' test) of
+            (step, Just c') -> typeCheckGen name gam sig c' result (n+1)
+            (step, Nothing) -> []
+
+
 -- | Reduction generator for given list of Tests
 
 reductionGen :: [Tdata] -> IO ()
@@ -31,12 +42,14 @@ reductionGen ((Tdata name comp _):xs) = do
 
 -- | All test
 
-runAllTests = runTestTT $ TestList allTests
+runAllTests = runTestTT $ TestList (typeCheckTests ++ allTests)
 runFastTests = runTestTT $ TestList fastTests
 
 allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
+
+typeCheckTests = incTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -44,8 +57,6 @@ testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test
 allTestsData = fastTestsData ++ slowTestsData
 fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
 slowTestsData = ambTestsData ++ parserTestsData 
-
--- TODO: problem with weakExceptions and amb tests
 
 -- Parser and reader tests do not work as reduction because parser uses haskell recursion and tries to print an infinite list
 reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData
@@ -59,6 +70,11 @@ incTests2Data = Tdata "inc_2" (runInc 0 (hOnce # cInc)) (Return (Vpair (Vlist [V
 incTests3Data = Tdata "inc_fwd" (hOnce # runInc 0 cFwd) (Return (Vlist [Vpair (Vint 1,Vint 2)]))
 incTestsData = [incTests1Data, incTests2Data, incTests3Data]
 incTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) incTestsData
+
+-- Inc typechecking 
+incType1 = typeCheckGen "inc_1" tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint)) 1
+incType2 = typeCheckGen "inc_2" tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint) 1
+incTypeTests = incType1 ++ incType2
 
 -- | Once tests
 
