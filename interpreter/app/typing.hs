@@ -14,7 +14,7 @@ typeCheckEval gam sig c ct =
     then case eval1' c of
       (step, Just c') -> (step, c) : typeCheckEval gam sig c' ct
       (step, Nothing) -> [("Nothing", c)]
-  else [("Typecheck failed", c)]
+  else [("No more evaluation", c)]
 
 -- | Evaluation with steps
 checkFile :: Gamma -> Sigma -> Comp -> ComputationType -> IO ()
@@ -40,7 +40,7 @@ typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
     if typeCheckC (Map.insert n vt1 gam) sig c vt2
       then if typeCheckV gam sig v2 vt1
         then True
-        else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1)
+        else error ("Typecheck failed: " ++ show v2 ++ " is not of type " ++ show vt1 ++ " in " ++ show (LamA n vt1 c))
       else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show (Tfunction vt1 vt2)) 
   (Var n _) -> case Map.lookup n gam of
     Just (Tfunction vt1 vt3) -> 
@@ -81,11 +81,11 @@ typeCheckC gam sig (OpA n v (DotA y a c)) vt2 = case Map.lookup n sig of -- SD-O
 typeCheckC gam sig (ScA n v (DotA y a c1) (DotA z b c2)) vt = case Map.lookup n sig of -- SD-Sc
   Just (Lsc _ lt1 lt2) ->
     if typeCheckV gam sig v lt1
-      then if typeCheckC (Map.insert y a gam) sig c1 vt
+      then if typeCheckC (Map.insert y a gam) sig c1 lt2
         then if typeCheckC (Map.insert z b gam) sig c2 vt
           then True
           else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
-        else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt)
+        else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show lt2)
       else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show lt1)
   Nothing -> error "Typecheck failed: Label not found"
 typeCheckC gam sig (If v c1 c2) vt = -- SD-If

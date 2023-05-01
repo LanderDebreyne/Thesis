@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -74,6 +74,7 @@ incTests = concat $ map (\(Tdata name test result) -> testCaseGen name test resu
 -- Inc typechecking 
 incType1 = typeCheckGen "inc_1" tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint)) 1
 incType2 = typeCheckGen "inc_2" tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint) 1
+incType3 = typeCheckGen "inc_fwd" tInc1Gam tInc3Sig tInc3Comp (Tlist (Tpair Tint Tint)) 1
 incTypeTests = incType1 ++ incType2
 
 -- | Once tests
@@ -82,6 +83,9 @@ runOnceTests = runTestTT $ TestList onceTests
 
 onceTestsData = Tdata "once" (hOnce # cOnce) (Return (Vlist [Vstr "heads"]))
 onceTests = testCaseGen (name onceTestsData) (testC onceTestsData) (result onceTestsData)
+
+-- Once typechecking
+onceTypeTests = typeCheckGen "once" tOnceGam tOnceSig tOnceComp (Tlist Tstr) 1
 
 -- | Cut tests
 

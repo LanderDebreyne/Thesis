@@ -64,9 +64,9 @@ hIncT = Handler
             App (Var "k'" 2) (Var "s'" 0))))
     _ -> Nothing)
   ("f", "p", "k", Return . LamA "s" Tint $ App (Var "f" 3) (Vpair
-    ( LamA "y" (TValVar "tIncA") $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction (TValVar "tIncA") (Tfunction Tint (Tpair (TValVar "tIncA") Tint)))$
+    ( LamA "y" (Any) $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction (Any) (Tfunction Tint (Tpair (Any) Tint)))$
                 App (Var "p'" 0) (Var "s" 2)
-    , LamA "zs" (Tpair (TValVar "tIncA") (Tint)) $ DoA "z" (Unop Fst (Var "zs" 0)) (TValVar "tIncA") $
+    , LamA "zs" (Tpair (Any) (Tint)) $ DoA "z" (Unop Fst (Var "zs" 0)) (TValVar "tIncA") $
                  DoA "s'" (Unop Snd (Var "zs" 1)) Tint $
                  DoA "k'" (App (Var "k" 4) (Var "z" 1)) (Tfunction Tint (Tpair (TValVar "tIncA") Tint)) $
                  App (Var "k'" 0) (Var "s'" 1)
@@ -126,8 +126,8 @@ hOnceT = Handler
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return $ Vlist [])
     "choose" -> Just ("x", "k",
-      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tlist (TValVar "tOnceA")) $
-      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tlist (TValVar "tOnceA")) $
+      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tlist Any) $
+      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tlist Any) $
       Binop Append (Var "xs" 1) (Var "ys" 0))
     _ -> Nothing)
   (\ sclabel -> case sclabel of
@@ -143,9 +143,17 @@ hOnceT = Handler
 
 -- | @cOnce@ refers to the @c_once@ program in Section 2.3
 cOnceT :: Comp
-cOnceT = ScA "once" Vunit (DotA "_" Any (op "choose" Vunit Tbool))
+cOnceT = ScA "once" Vunit (DotA "_" Any (op "choose" Vunit Any))
                         (DotA "b" Tbool (If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails"))))
 
 -- Handling @cOnce@:
 -- >>> evalFile $ hOnce # cOnce
 -- Return (Vlist [Vstr "heads"])
+
+tOnceGam = Map.fromList([
+  ("tOnceA", Tstr)])
+tOnceSig = Map.fromList([
+  ("choose", Lop "choose" Tunit Tbool),
+  ("once", Lsc "once" Tunit Tbool)])
+tOnceComp = HandleA (THandler (Any) (Tlist (Any))) hOnceT cOnceT
+tOnce = checkFile tOnceGam tOnceSig tOnceComp (Tlist (TValVar "tOnceA"))
