@@ -75,7 +75,7 @@ incTests = concat $ map (\(Tdata name test result) -> testCaseGen name test resu
 incType1 = typeCheckGen "inc_1" tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint)) 1
 incType2 = typeCheckGen "inc_2" tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint) 1
 incType3 = typeCheckGen "inc_fwd" tInc1Gam tInc3Sig tInc3Comp (Tlist (Tpair Tint Tint)) 1
-incTypeTests = incType1 ++ incType2
+incTypeTests = incType1 ++ incType2 ++ incType3
 
 -- | Once tests
 

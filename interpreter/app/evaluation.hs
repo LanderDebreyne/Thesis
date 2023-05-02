@@ -351,7 +351,7 @@ eval1' (HandleA t h (ScA l v (DotA y a c1) (DotA z b c2))) = case hsc h l of -- 
       ])
 eval1' (HandleA t h (ForA label v (DotA y a c1) (DotA z b c2))) = case hfor h label of -- E-HandFor
     Just (x, l, k, c) -> ("E-HandFor", return $ shiftC (-3) $ subst c [ (shiftV 3 v, 2)
-                                                 , (shiftV 3 $ LamA l a (ForA label (Var l 0) (DotA y a (HandleA (THandler a b) h c1)) (DotA z b (Return (Var z 0)))), 1)
+                                                 , (shiftV 3 $ LamA l a (ForA label (Var l 0) (DotA y a (HandleA t h c1)) (DotA z b (Return (Var z 0)))), 1)
                                                  , (shiftV 3 $ LamA z b (HandleA t h c2), 0) ])
     Nothing -> ("E-FwdFor", return $ case hfwd h of -- E-FwdFor
       (f, p, k, c) -> shiftC (-3) $ subst c
@@ -387,7 +387,7 @@ eval1' c = ("Nothing", Nothing)
 -- | The @lift@ syntactic sugar
 lift2fwd :: (Name, Name, Comp) -> (Name, Name, Name, Comp)
 lift2fwd (k, z, c) = ( "f", "p", "k",
-  App (Var "f" 2) $ Vpair (Var "p" 1, Lam "z" c ))
+  App (Var "f" 2) $ Vpair (Var "p" 1, LamA "z" Any c ))
 
 ----------------------------------------------------------------
 -- Auxiliary functions for implementing the evaluation:

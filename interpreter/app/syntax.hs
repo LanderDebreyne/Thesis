@@ -99,7 +99,7 @@ data Comp
   | For Name Value (Dot Name Comp) (Dot Name Comp)  -- ^ for l v (y.c1) (z.c2)
   | ForA Name Value (DotA Name ValueType Comp) (DotA Name ValueType Comp) -- ^ for l v (y : t .c1) (z : t .c2)
   | Handle Handler Comp                             -- ^ v ★ c
-  | HandleA ValueType Handler Comp                  -- ^ v ★ : t c
+  | HandleA HTransform Handler Comp                  -- ^ v ★ : t c
   | Do Name Comp Comp                               -- ^ do x <- c1 in c2
   | DoA Name Comp ComputationType Comp               -- ^ do x <- c1 : t in c2
   | Rec Name Comp Comp                              -- ^ rec x c1 c2
@@ -254,3 +254,5 @@ type EffectType = Set.Set Label
 
 -- | Computation type syntax
 type ComputationType = ValueType
+
+data HTransform = UNone | UList HTransform | UFirst HTransform | USecond HTransform | UFunction HTransform deriving (Eq, Show)

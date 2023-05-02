@@ -75,11 +75,8 @@ hIncT = Handler
 
 
 -- | @runInc@ is a macro to help applying the initial count value
-runInc1T :: Int -> Comp -> Comp
-runInc1T s c = DoA "c'" (HandleA (THandler Tint (Tpair Tint Tint)) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
-
-runInc2T :: Int -> Comp -> Comp
-runInc2T s c = DoA "c'" (HandleA (THandler (Tlist Tint) (Tpair (Tlist Tint) Tint)) hIncT c) (Tfunction Tint (Tpair Tint Tint)) $ App (Var "c'" 0) (Vint s)
+runIncT :: Int -> Comp -> Comp
+runIncT s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tpair (Tlist Tint) Tint)) $ App (Var "c'" 0) (Vint s)
 
 -- | @cInc@ refers to the @c_inc@ program in Section 2.1
 cIncT :: Comp
@@ -92,28 +89,28 @@ tInc1Gam = Map.fromList([
 tInc1Sig = Map.fromList([
   ("inc", Lop "inc" Tunit Tunit), 
   ("choose", Lop "choose" Tunit Tbool)])
-tInc1Comp = (HandleA (THandler (Tpair Tint Tint) (Tlist (Tpair Tint Tint))) (hOnceT) (runInc1T 0 cIncT))
+tInc1Comp = (HandleA (UList UNone) (hOnceT) (runIncT 0 cIncT))
 tInc1 = checkFile tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint))
 
 tInc2Gam = Map.fromList([
   ("tIncA", Tlist Tint), 
   ("tOnceA", Tint)])
-tInc2Comp = runInc2T 0 (HandleA (THandler Tint (Tlist Tint)) (hOnceT) (cIncT))
+tInc2Comp = runIncT 0 (HandleA (UList UNone) (hOnceT) (cIncT))
 tInc2 = checkFile tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint)
 
 tInc3Sig = Map.fromList([
   ("inc", Lop "inc" Tunit Tunit), 
   ("choose", Lop "choose" Tunit Tbool),
   ("once", Lsc "once" Tunit Tint)])
-tInc3Comp = (HandleA (THandler (Tpair Tint Tint) (Tlist (Tpair Tint Tint)))) (hOnceT) (runInc1T 0 cFwdT)
-tInc3 = checkFile tInc1Gam tInc3Sig tInc3Comp (Tpair Tint Tint)
+tInc3Comp = HandleA (UList UNone) (hOnceT) (runIncT 0 cFwdT)
+tInc3 = checkFile tInc1Gam tInc3Sig tInc3Comp (Tlist (Tpair Tint Tint))
 
 cIncForT :: Comp
 cIncForT = ForA "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) (DotA "y" Tunit (op "inc" Vunit Any)) (DotA "z" Any (Return (Var "z" 0)))
 
 cFwdT :: Comp
 cFwdT = ScA "once" Vunit (DotA "_" Any cIncT) (DotA "x" Tint (OpA "inc" Vunit (DotA "y" Tint
-        (DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) (Tint) $ Return (Var "z" 0)))))
+        (DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) Any $ Return (Var "z" 0)))))
 
 ----------------------------------------------------------------
 -- * Section 2.2 & Section 7.1 : Nondeterminism with Once
@@ -155,5 +152,5 @@ tOnceGam = Map.fromList([
 tOnceSig = Map.fromList([
   ("choose", Lop "choose" Tunit Tbool),
   ("once", Lsc "once" Tunit Tbool)])
-tOnceComp = HandleA (THandler (Any) (Tlist (Any))) hOnceT cOnceT
+tOnceComp = HandleA (UList UNone) hOnceT cOnceT
 tOnce = checkFile tOnceGam tOnceSig tOnceComp (Tlist (TValVar "tOnceA"))
