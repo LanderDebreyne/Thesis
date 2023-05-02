@@ -114,8 +114,9 @@ catchTests = concat $ map (\(Tdata name test result) -> testCaseGen name test re
 
 -- Catch typechecking
 catchType1 = typeCheckGen "catch_1" tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint)) 1
+catchType2 = typeCheckGen "catch_2" tCatchGam1 tCatchSig1 tCatchComp2 (Tpair (Tsum Tstr Tint) Tint) 1
 
-catchTypeTests = catchType1
+catchTypeTests = catchType1 ++ catchType2
 
 -- | State tests
 

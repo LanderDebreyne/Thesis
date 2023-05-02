@@ -240,7 +240,6 @@ cCatchT = sc "catch" (Vstr "Overflow") "b" Tbool (If (Var "b" 0) cRaiseT (Return
 runIncT2 :: Int -> Comp -> Comp
 runIncT2 s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tsum Tstr (Tpair Tint Tint))) $ App (Var "c'" 0) (Vint s)
 
--- TODO: add tests
 
 tCatchGam1 = Map.fromList([
   ("tCatchA", Tint),
@@ -251,5 +250,11 @@ tCatchSig1 = Map.fromList([
   ("inc", Lop "inc" Tunit Tint)])
 tCatchComp1 = HandleA (USum UNone UNone) hExceptT (runIncT2 42 cCatchT)
 tCatch1 = checkFile tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint))
+
+runIncT3 :: Int -> Comp -> Comp
+runIncT3 s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tpair (Tsum Tstr Tint) Tint)) $ App (Var "c'" 0) (Vint s)
+
+tCatchComp2 = runIncT3 42 (HandleA (USum UNone UNone) hExceptT cCatchT)
+tCatch2 = checkFile tCatchGam1 tCatchSig1 tCatchComp2 (Tpair (Tsum Tstr Tint) Tint)
 
 
