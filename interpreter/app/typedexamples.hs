@@ -14,7 +14,7 @@ import Typing
 
 -- | @app2 f v1 v2@ applies the function @f@ to two arguments @v1@ and @v2@.
 app2 :: Value -> Value -> Value -> Comp
-app2 f v1 v2 = Do "f'" (App f v1) $ App (Var "f'" 0) (shiftV 1 v2)
+app2 f v1 v2 = DoA "f'" (App f v1) Any $ App (Var "f'" 0) (shiftV 1 v2) -- TODO
 
 -- | Generic Algebraic Operation.
 op :: Name -> Value -> ValueType -> Comp
@@ -22,7 +22,7 @@ op l x t = OpA l x (DotA "y" t (Return (Var "y" 0)))
 
 -- | Generic Scoped Operation.
 sc :: Name -> Value -> Name -> ValueType -> Comp -> ValueType -> Comp
-sc l x n vt c t = ScA l x (DotA n vt c) (DotA "z" t (Return (Var "z" 0)))
+sc l x n vt c t = ScA l x (DotA n vt c) (DotA "z'" t (Return (Var "z'" 0)))
 
 -- | @absurd@ is a function that takes a value and returns an undefined computation.
 --   The Undefined computation is used as opposed to the undefined haskell primitive to be able to 
@@ -41,7 +41,7 @@ hIncT = Handler
   ("x", Return . LamA "s" Tint $ Return (Vpair (Var "x" 1, Var "s" 0)))
   (\ oplabel -> case oplabel of
     "inc" -> Just ("_", "k",
-      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint (Tpair (TValVar "tIncA") Tint)) $
+      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint Any) $
                          DoA "s'" (Binop Add (Var "s" 1) (Vint 1)) (Tint) $
                          App (Var "k'" 1) (Var "s'" 0))
     _ -> Nothing)
@@ -64,11 +64,11 @@ hIncT = Handler
             App (Var "k'" 2) (Var "s'" 0))))
     _ -> Nothing)
   ("f", "p", "k", Return . LamA "s" Tint $ App (Var "f" 3) (Vpair
-    ( LamA "y" (Any) $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction (Any) (Tfunction Tint (Tpair (Any) Tint)))$
+    ( LamA "y" (Any) $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tint Any)$
                 App (Var "p'" 0) (Var "s" 2)
-    , LamA "zs" (Tpair (Any) (Tint)) $ DoA "z" (Unop Fst (Var "zs" 0)) (TValVar "tIncA") $
+    , LamA "zs" (Tpair (Any) (Tint)) $ DoA "z" (Unop Fst (Var "zs" 0)) Any $
                  DoA "s'" (Unop Snd (Var "zs" 1)) Tint $
-                 DoA "k'" (App (Var "k" 4) (Var "z" 1)) (Tfunction Tint (Tpair (TValVar "tIncA") Tint)) $
+                 DoA "k'" (App (Var "k" 4) (Var "z" 1)) (Tfunction Tint Any) $
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
@@ -195,4 +195,61 @@ tCutSig = Map.fromList([
 tCutComp = HandleA (URet (UList UNone)) hCutT cCutT
 
 tCut = checkFile tCutGam tCutSig tCutComp (Tret (Tlist (TValVar "tCutA")))
+
+
+----------------------------------------------------------------
+
+hExceptT :: Handler
+hExceptT = Handler
+  "hExcept" ["raise"] ["catch"] []
+  ("x", Return $ Vsum (Right (Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "raise" -> Just ("e", "_", Return $ Vsum (Left (Var "e" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "catch" -> Just ("e", "p", "k",
+      DoA "x" (App (Var "p" 1) (Vbool True)) (Tsum Any Any) $
+      -- NOTE: A little different from the paper.
+      -- We assume Eq is defined for |String + alpha| for simplicity.
+      DoA "b" (Binop Eq (Var "x" 0) (Vsum (Left (Var "e" 3)))) Tbool $
+      If (Var "b" 0)
+        (DoA "y" (App (Var "p" 3) (Vbool False)) (Tsum Any Any) $ app2 exceptMapT (Var "y" 0) (Var "k" 3))
+        (app2 exceptMapT (Var "x" 1) (Var "k" 2)))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  (lift2fwd ("k", "z", app2 exceptMapT (Var "z" 0) (Var "k" 1)))
+
+-- | @exceptMap@ refers to the @exceptMap@ function in Section 7.3
+exceptMapT :: Value
+exceptMapT = LamA "z" Any . Return . LamA "k" Any $
+  Case (Var "z" 1) "e" (Return (Vsum (Left (Var "e" 0))))
+                   "x" (App (Var "k" 1) (Var "x" 0))
+
+-- | @cRaise@ refers to the @_raise@ program in Section 7.3
+cRaiseT :: Comp
+cRaiseT = DoA "x" (op "inc" Vunit Any) Tint $
+         DoA "b" (Binop Larger (Var "x" 0) (Vint 10)) Tbool $
+         If (Var "b" 0) (OpA "raise" (Vstr "Overflow") (DotA "y" Any (absurd (Var "y" 0))))
+                        (Return (Var "x" 0))
+
+-- | @cCatch@ refers to the @c_catch@ program in Section 7.3
+cCatchT :: Comp
+cCatchT = sc "catch" (Vstr "Overflow") "b" Tbool (If (Var "b" 0) cRaiseT (Return (Vint 10))) Tint
+
+runIncT2 :: Int -> Comp -> Comp
+runIncT2 s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tsum Tstr (Tpair Tint Tint))) $ App (Var "c'" 0) (Vint s)
+
+-- TODO: add tests
+
+tCatchGam1 = Map.fromList([
+  ("tCatchA", Tint),
+  ("tIncA", Tint)])
+tCatchSig1 = Map.fromList([
+  ("raise", Lop "raise" Tstr Any),
+  ("catch", Lsc "catch" Tstr Tint),
+  ("inc", Lop "inc" Tunit Tint)])
+tCatchComp1 = HandleA (USum UNone UNone) hExceptT (runIncT2 42 cCatchT)
+tCatch1 = checkFile tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint))
+
 

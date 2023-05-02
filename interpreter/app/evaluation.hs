@@ -344,8 +344,8 @@ eval1' (HandleA t h (ScA l v (DotA y a c1) (DotA z b c2))) = case hsc h l of -- 
     (f, p, k, c) -> ("E-FwdSc", return $ shiftC (-3) $ subst c
       [ (shiftV 3 $ LamA y a (HandleA t h c1), 1)
       , (shiftV 3 $ LamA z b (HandleA t h c2), 0)
-      , (LamA "pk" (Tpair a Any) $ 
-          DoA "p" (Unop Fst (Var "pk" 0)) a $
+      , (LamA "pk" (Tpair Any Any) $ 
+          DoA "p" (Unop Fst (Var "pk" 0)) Any $
           DoA "k" (Unop Snd (Var "pk" 1)) Any $
           ScA l (shiftV 3 v) (DotA y a (App (Var p 2) (Var y 0))) (DotA z Any (App (Var k 1) (Var z 0))), 2)
       ])

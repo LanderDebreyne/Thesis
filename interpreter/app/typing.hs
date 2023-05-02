@@ -32,10 +32,11 @@ prettyprintT ((step, c):xs) n =
 
 typeCheckC :: Gamma -> Sigma -> Comp -> ComputationType -> Bool
 typeCheckC _ _ _ Any = True
+typeCheckC _ _ Undefined _ = True
 typeCheckC gam sig (Return v) vt = -- SD-Ret
   if trace ("SD-Ret: Checking " ++ show v ++ " to be of type " ++ show vt) (typeCheckV gam sig v vt) 
     then True
-    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt)
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt ++ " with " ++ show gam)
 typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
   (LamA n vt1 c) -> 
     if trace ("SD-App (Lam1): Checking " ++ show c ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c vt2)
@@ -54,8 +55,8 @@ typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
   (Lam n c) -> error ("Typecheck failed: " ++ show (Lam n c) ++ " is not annotated")
   _ -> error ("Typecheck failed: " ++ show v1 ++ " is not a function")
 typeCheckC gam sig (DoA n c1 vt1 c2) vt2 = -- SD-Do
-  if trace ("SD-Do: Checking " ++ show c2 ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c2 vt2)
-    then if trace ("SD-Do: Checking " ++ show c1 ++ " to be of type " ++ show vt1) (typeCheckC gam sig c1 vt1)
+  if trace ("SD-Do (1): Checking " ++ show c2 ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c2 vt2)
+    then if trace ("SD-Do (2): Checking " ++ show c1 ++ " to be of type " ++ show vt1) (typeCheckC gam sig c1 vt1)
       then True
       else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt1)
     else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt2)
@@ -81,9 +82,9 @@ typeCheckC gam sig (OpA n v (DotA y a c)) vt2 = case Map.lookup n sig of -- SD-O
   Nothing -> error "Typecheck failed: Label not found"
 typeCheckC gam sig (ScA n v (DotA y a c1) (DotA z b c2)) vt = case Map.lookup n sig of -- SD-Sc
   Just (Lsc _ lt1 lt2) ->
-    if trace ("SD-Sc: Checking " ++ show v ++ " to be of type " ++ show lt1) (typeCheckV gam sig v lt1)
-      then if trace ("SD-Sc: Checking " ++ show c1 ++ " to be of type " ++ show lt2) (typeCheckC (Map.insert y a gam) sig c1 lt2)
-        then if trace ("SD-Sc: Checking " ++ show c2 ++ " to be of type " ++ show vt) (typeCheckC (Map.insert z b gam) sig c2 vt)
+    if trace ("SD-Sc: Checking (1) " ++ show v ++ " to be of type " ++ show lt1) (typeCheckV gam sig v lt1)
+      then if trace ("SD-Sc: Checking (2) " ++ show c1 ++ " to be of type " ++ show lt2) (typeCheckC (Map.insert y a gam) sig c1 lt2)
+        then if trace ("SD-Sc: Checking (3) " ++ show c2 ++ " to be of type " ++ show vt) (typeCheckC (Map.insert z b gam) sig c2 vt)
           then True
           else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
         else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show lt2)
@@ -95,6 +96,7 @@ typeCheckC gam sig (If v c1 c2) vt = -- SD-If
       then True
       else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
     else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt)
+typeCheckC gam sig (Case _ _ _ _ _) vt = True -- SD-Case -- TODO
 typeCheckC gam sig (Binop _ _ _) vt = True -- SD-Binop -- TODO (Assumes operations are well-typed)
 typeCheckC gam sig (Unop _ _) vt = True -- SD-Unop -- TODO (Assumes operations are well-typed)
 typeCheckC _ _ c t = False -- error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show t)
@@ -195,5 +197,7 @@ transformH gam (UFirst h) (Tpair f s) = trace ("Handler check (first) " ++ show 
 transformH gam (USecond h) (Tpair f s) = trace ("Handler check (second) " ++ show h ++ " needs to be of type " ++ show s) (transformH gam h s)
 transformH gam (URet h) (Tret t) = trace ("Handler check (ret) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t)
 transformH gam (URet h) (Tflag t) = trace ("Handler check (ret) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t)
+transformH gam (USum h1 h2) (Tsum t1 t2) = trace ("Handler check (sum) " ++ show h1 ++ " needs to be of type " ++ show t1 ++ " and " ++ show h2 ++ " needs to be of type " ++ show t2) (transformH gam h2 t2)
+transformH gam h (Tsum t1 t2) = trace ("Sum forwarding") (transformH gam h t2)
 transformH _ h t = error ("Typecheck failed: " ++ show h ++ " is not compatible with type " ++ show t)
 

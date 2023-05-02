@@ -261,4 +261,5 @@ data HTransform = UNone
   | USecond HTransform 
   | UFunction HTransform
   | URet HTransform 
+  | USum HTransform HTransform
   deriving (Eq, Show)

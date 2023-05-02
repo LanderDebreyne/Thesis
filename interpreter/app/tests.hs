@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -111,6 +111,11 @@ catchTestsData7 = Tdata "catch_7" (hExcept # runInc 42 cCatch2) (Return (Vsum (L
 catchTestsData8 = Tdata "catch_8" (runInc 42 (hExcept # cCatch2)) (Return (Vpair (Vsum (Left (Vstr "Overflow")), Vint 43)))
 catchTestsData = [catchTestsData1, catchTestsData2, catchTestsData3, catchTestsData4, catchTestsData5, catchTestsData6, catchTestsData7, catchTestsData8]
 catchTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) catchTestsData
+
+-- Catch typechecking
+catchType1 = typeCheckGen "catch_1" tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint)) 1
+
+catchTypeTests = catchType1
 
 -- | State tests
 
