@@ -55,7 +55,7 @@ typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
   _ -> error ("Typecheck failed: " ++ show v1 ++ " is not a function")
 typeCheckC gam sig (DoA n c1 vt1 c2) vt2 = -- SD-Do
   if trace ("SD-Do: Checking " ++ show c2 ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c2 vt2)
-    then if trace ("SD-Do: Checking " ++ show c1 ++ "to be of type " ++ show vt1) (typeCheckC gam sig c1 vt1)
+    then if trace ("SD-Do: Checking " ++ show c1 ++ " to be of type " ++ show vt1) (typeCheckC gam sig c1 vt1)
       then True
       else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt1)
     else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt2)
@@ -142,6 +142,14 @@ typeCheckV gam sig (Vflag v) (Tflag t) = -- SD-Flag
   if typeCheckV gam sig v t 
     then True
     else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t)
+typeCheckV gam sig (Vflag v) (Tret t) = -- SD-Ret -- TODO
+  if typeCheckV gam sig v t 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t)
+typeCheckV gam sig (Vret v) (Tflag t) = -- SD-Flag -- TODO
+  if typeCheckV gam sig v t 
+    then True
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show t)
 typeCheckV gam sig (Vmem m) (Tmem) = True -- SD-Mem
 typeCheckV gam sig (Vkey k) (Tkey) = True -- SD-Key
 -- SD-Rec
@@ -162,6 +170,8 @@ typeEq Tchar Tchar = True
 typeEq Tstr Tstr = True
 typeEq (Tret t) (Tret t') = typeEq t t'
 typeEq (Tflag t) (Tflag t') = typeEq t t'
+typeEq (Tflag t) (Tret t') = typeEq t t'
+typeEq (Tret t) (Tflag t') = typeEq t t'
 typeEq Tmem Tmem = True
 typeEq Tkey Tkey = True
 typeEq (Tfunction t1 t2) (Tfunction t1' t2') = typeEq t1 t1' && typeEq t2 t2'
@@ -183,5 +193,7 @@ transformH gam UNone t = t
 transformH gam (UList h) (Tlist t) = trace ("Handler check (function) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t) 
 transformH gam (UFirst h) (Tpair f s) = trace ("Handler check (first) " ++ show h ++ " needs to be of type " ++ show f) (transformH gam h f) 
 transformH gam (USecond h) (Tpair f s) = trace ("Handler check (second) " ++ show h ++ " needs to be of type " ++ show s) (transformH gam h s)
+transformH gam (URet h) (Tret t) = trace ("Handler check (ret) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t)
+transformH gam (URet h) (Tflag t) = trace ("Handler check (ret) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t)
 transformH _ h t = error ("Typecheck failed: " ++ show h ++ " is not compatible with type " ++ show t)
 

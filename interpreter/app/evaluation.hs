@@ -219,13 +219,13 @@ evalBinop ConcatMap (Vlist xs) f = return $ case xs of
             Binop Append (Var "as" 1) (Var "as'" 0)
 evalBinop ConcatMapCutList (Vret (Vlist xs)) f = return $ case xs of
   [] -> Return . Vret . Vlist $ []
-  (x:xs) -> Do "as" (App f x) $
-            Do "as'" (Binop ConcatMapCutList (shiftV 1 $ Vret (Vlist xs)) (shiftV 1 f)) $
+  (x:xs) -> DoA "as" (App f x) Any $
+            DoA "as'" (Binop ConcatMapCutList (shiftV 1 $ Vret (Vlist xs)) (shiftV 1 f)) Any $
             Binop AppendCut (Var "as" 1) (Var "as'" 0)
 evalBinop ConcatMapCutList (Vflag (Vlist xs)) f = return $ case xs of
   [] -> Return . Vflag . Vlist $ []
-  (x:xs) -> Do "as" (App f x) $
-            Do "as'" (Binop ConcatMapCutList (shiftV 1 $ Vflag (Vlist xs)) (shiftV 1 f)) $
+  (x:xs) -> DoA "as" (App f x) Any $
+            DoA "as'" (Binop ConcatMapCutList (shiftV 1 $ Vflag (Vlist xs)) (shiftV 1 f)) Any $
             Binop AppendCut (Var "as" 1) (Var "as'" 0)
 evalBinop AppendCut (Vret (Vlist xs)) (Vret (Vlist ys))  = return . Return . Vret  . Vlist $ xs ++ ys
 evalBinop AppendCut (Vret (Vlist xs)) (Vflag (Vlist ys)) = return . Return . Vflag . Vlist $ xs ++ ys

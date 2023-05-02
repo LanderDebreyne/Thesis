@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -93,6 +93,9 @@ runCutTests = runTestTT $ TestList cutTests
 
 cutTestsData = Tdata "cut" (hCut # cCut) (Return (Vret (Vlist [Vstr "heads"])))
 cutTests = testCaseGen (name cutTestsData) (testC cutTestsData) (result cutTestsData)
+
+-- Cut typechecking
+cutTypeTests = typeCheckGen "cut" tCutGam tCutSig tCutComp (Tret (Tlist Tstr)) 1
 
 -- | Catch tests
 

@@ -255,4 +255,10 @@ type EffectType = Set.Set Label
 -- | Computation type syntax
 type ComputationType = ValueType
 
-data HTransform = UNone | UList HTransform | UFirst HTransform | USecond HTransform | UFunction HTransform deriving (Eq, Show)
+data HTransform = UNone 
+  | UList HTransform 
+  | UFirst HTransform 
+  | USecond HTransform 
+  | UFunction HTransform
+  | URet HTransform 
+  deriving (Eq, Show)

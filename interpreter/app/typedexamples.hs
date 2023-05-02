@@ -21,8 +21,8 @@ op :: Name -> Value -> ValueType -> Comp
 op l x t = OpA l x (DotA "y" t (Return (Var "y" 0)))
 
 -- | Generic Scoped Operation.
-sc :: Name -> Value -> Dot Name Comp -> Comp
-sc l x p = Sc l x p ("z" :. Return (Var "z" 0))
+sc :: Name -> Value -> Name -> ValueType -> Comp -> ValueType -> Comp
+sc l x n vt c t = ScA l x (DotA n vt c) (DotA "z" t (Return (Var "z" 0)))
 
 -- | @absurd@ is a function that takes a value and returns an undefined computation.
 --   The Undefined computation is used as opposed to the undefined haskell primitive to be able to 
@@ -143,10 +143,6 @@ cOnceT :: Comp
 cOnceT = ScA "once" Vunit (DotA "_" Any (op "choose" Vunit Any))
                         (DotA "b" Tbool (If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails"))))
 
--- Handling @cOnce@:
--- >>> evalFile $ hOnce # cOnce
--- Return (Vlist [Vstr "heads"])
-
 tOnceGam = Map.fromList([
   ("tOnceA", Tstr)])
 tOnceSig = Map.fromList([
@@ -154,3 +150,49 @@ tOnceSig = Map.fromList([
   ("once", Lsc "once" Tunit Tbool)])
 tOnceComp = HandleA (UList UNone) hOnceT cOnceT
 tOnce = checkFile tOnceGam tOnceSig tOnceComp (Tlist (TValVar "tOnceA"))
+
+
+----------------------------------------------------------------
+
+hCutT :: Handler
+hCutT = Handler
+  "hCut" ["choose", "fail", "cut"] ["call"] []
+  ("x", Return . Vret $ Vlist [Var "x" 0])
+  (\ oplabel -> case oplabel of
+    "fail" -> Just ("_", "_", Return . Vret $ Vlist [])
+    "choose" -> Just ("x", "k",
+      DoA "xs" (App (Var "k" 0) (Vbool True)) (Tret (Tlist Any)) $
+      DoA "ys" (App (Var "k" 1) (Vbool False)) (Tret (Tlist Any)) $
+      Binop AppendCut (Var "xs" 1) (Var "ys" 0))
+    "cut" -> Just ("_", "k", DoA "x" (App (Var "k" 0) Vunit) (Tflag (Tlist Any)) $ Unop Close (Var "x" 0))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "call" -> Just ("_", "p", "k",
+      DoA "x" (App (Var "p" 1) Vunit) (Tret (Tlist Any)) $
+      DoA "x'" (Unop Open (Var "x" 0)) (Tret (Tlist Any)) $
+      Binop ConcatMapCutList (Var "x'" 0) (Var "k" 2))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
+  (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
+
+
+-- | A simple program simulates the behavior of @cOnce@ using @cut@ and @call@.
+cCutT :: Comp
+cCutT = DoA "b" (sc "call" Vunit "_" Tunit
+          (DoA "y" (op "choose" Vunit Tbool) (Tbool) $
+          If (Var "y" 0) (DoA "_" (op "cut" Vunit Any) (Any) $ Return (Vbool True))
+                         (Return (Vbool False))) Tbool) Tbool $
+       If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails"))
+
+
+tCutGam = Map.fromList([
+  ("tCutA", Tstr)])
+tCutSig = Map.fromList([
+  ("choose", Lop "choose" Tunit Tbool),
+  ("cut", Lop "cut" Tunit Tunit),
+  ("call", Lsc "call" Tunit Tbool)])
+tCutComp = HandleA (URet (UList UNone)) hCutT cCutT
+
+tCut = checkFile tCutGam tCutSig tCutComp (Tret (Tlist (TValVar "tCutA")))
+
