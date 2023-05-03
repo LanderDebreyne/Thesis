@@ -30,6 +30,8 @@ sc l x n vt c t = ScA l x (DotA n vt c) (DotA "z'" t (Return (Var "z'" 0)))
 absurd :: Value -> Comp
 absurd _ = Undefined
 
+failure :: Comp
+failure = OpA "fail" Vunit (DotA "y" Any (absurd (Var "y" 0)))
 
 ----------------------------------------------------------------
 -- * Section 2.1 & Section 5: Inc
@@ -288,4 +290,290 @@ tCatch7 = checkFile tCatchGam1 tCatchSig2 tCatchComp7 (Tsum Tstr (Tpair Tstr Tin
 
 tCatchComp8 = runIncT 42 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
 tCatch8 = checkFile tCatchGam1 tCatchSig2 tCatchComp8 (Tpair (Tsum Tstr Tstr) Tint)
+
+
+----------------------------------------------
+
+hStateT :: Handler
+hStateT = Handler
+  "hState" ["get", "put"] ["local"] []
+  ("x", Return . LamA "m" Tmem $ Return (Vpair (Var "x" 1, Var "m" 0)))
+  (\ oplabel -> case oplabel of
+    "get" -> Just ("x", "k",
+      Return . LamA "m" Tmem $ DoA "v" (Binop Retrieve (Var "x" 2) (Var "m" 0)) Any $
+                         DoA "k'" (App (Var "k" 2) (Var "v" 0)) (Tfunction Tmem (Tpair Any Tmem)) $
+                         App (Var "k'" 0) (Var "m" 2))
+    "put" -> Just ("pa", "k",
+      Return . LamA "m" Tmem $ DoA "k'" (App (Var "k" 1) Vunit) Any $
+                         DoA "m'" (Binop Update (Var "pa" 3) (Var "m" 1)) Tmem $
+                         App (Var "k'" 1) (Var "m'" 0))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "local" -> Just ("xv", "p", "k",
+      Return . LamA "m" Tmem $ DoA "x" (Unop Fst (Var "xv" 3)) Any $
+                         DoA "v" (Unop Snd (Var "xv" 4)) Any $
+                         DoA "um" (Binop Update (Var "xv" 5) (Var "m" 2)) Tmem $
+                         DoA "p'" (App (Var "p" 5) Vunit) Any $
+                         DoA "tm" (App (Var "p'" 0) (Var "um" 1)) Any $
+                         DoA "t" (Unop Fst (Var "tm" 0)) Any$
+                         DoA "m'" (Unop Snd (Var "tm" 1)) Tmem $
+                         DoA "k'" (App (Var "k" 8) (Var "t" 1)) (Tfunction Tmem (Any))$
+                         DoA "oldv" (Binop Retrieve (Var "x" 7) (Var "m" 8)) (TValVar "hStateA") $
+                         DoA "newm" (Binop Update (Vpair (Var "x" 8, Var "oldv" 0)) (Var "m'" 2)) Tmem $
+                         App (Var "k'" 2) (Var "newm" 0))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", Return . LamA "m" Tint $ App (Var "f" 3) (Vpair
+    ( LamA "y" (Any) $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tint Any)$
+                App (Var "p'" 0) (Var "m" 2)
+    , LamA "zs" (Tpair (Any) (Tint)) $ DoA "z" (Unop Fst (Var "zs" 0)) Any $
+                 DoA "s'" (Unop Snd (Var "zs" 1)) Tint $
+                 DoA "k'" (App (Var "k" 4) (Var "z" 1)) (Tfunction Tint Any) $
+                 App (Var "k'" 0) (Var "s'" 1)
+    )))
+
+-- | @cState@ refers to the @c_state@ program in Section 7.4
+cStateT :: Comp
+cStateT = DoA "_" (op "put" (Vpair (Vstr "x", Vint 10)) Any) Any $
+         DoA "x1" (sc "local" (Vpair (Vstr "x", Vint 42)) "_" Any (op "get" (Vstr "x") Tint) Tint) Tint $
+         DoA "x2" (op "get" (Vstr "x") Tint) Tint $
+         Return (Vpair (Var "x1" 1, Var "x2" 0))
+
+
+tStateGam = Map.fromList [("hStateA", Tint)]
+tStateSig = Map.fromList [("get", Lop "get" Tstr (Tfunction Tmem (Tpair Tstr Tmem))),
+                          ("put", Lop "put" (Tpair Tstr Tint) (Tfunction Tmem (Tpair Tunit Tmem))),
+                          ("local", Lsc "local" (Tpair Tstr Tint) Tint)]
+
+-- Handling @cState@:
+handle_cStateT :: Comp
+handle_cStateT = DoA "m" (Unop Newmem Vunit) Tmem $ 
+                DoA "c" (HandleA (UFunction (UFirst UNone)) hStateT cStateT) (Tfunction Tmem (Tpair (Tpair Tint Tint) Tmem))$
+                DoA "x" (App (Var "c" 0) (Var "m" 1)) (Tpair (Tpair Tint Tint) Tmem) $
+                Unop Fst (Var "x" 0)
+
+tState = checkFile tStateGam tStateSig handle_cStateT (Tpair Tint Tint)
+
+----------------------------------------------
+
+hDepthT :: Handler
+hDepthT = Handler
+  "hDepth" ["choose", "fail"] ["depth"] []
+  ("x", Return . LamA "d" Tint $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
+  (\ oplabel -> case oplabel of
+    "fail" -> Just ("_", "_", Return (Vlist []))
+    "choose" -> Just ("x", "k", Return . LamA "d" Tint $
+      DoA "b" (Binop Eq (Var "d" 0) (Vint 0)) Tbool $
+      If (Var "b" 0) (Return (Vlist []))
+                     (DoA "k1" (App (Var "k" 2) (Vbool True)) (Tfunction Tint Any)$
+                      DoA "k2" (App (Var "k" 3) (Vbool False)) (Tfunction Tint Any)$
+                      DoA "d'" (Binop Add (Var "d" 3) (Vint (-1))) Tint $
+                      DoA "xs" (App (Var "k1" 2) (Var "d'" 0)) Any $
+                      DoA "ys" (App (Var "k2" 2) (Var "d'" 1)) Any $
+                      Binop Append (Var "xs" 1) (Var "ys" 0) ))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "depth" -> Just ("d'", "p", "k", Return . LamA "d" Tint $
+      DoA "p'" (App (Var "p" 2) Vunit) Any $
+      DoA "xs" (App (Var "p'" 0) (Var "d'" 4)) Any $
+      Binop ConcatMap (Var "xs" 0) (LamA "v_" (Tpair Any Any) $ DoA "v" (Unop Fst (Var "v_" 0)) Any $
+                                         DoA "k'" (App (Var "k" 5) (Var "v" 0)) (Tfunction Tint Any)$
+                                         App (Var "k'" 0) (Var "d" 5)))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
+  ("f", "p", "k", Return . LamA "d" Tint $ App (Var "f" 3) (Vpair
+    ( LamA "y" Any $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tint Any) $
+                App (Var "p'" 0) (Var "d" 2)
+    , LamA "vs" Any $ Binop ConcatMap (Var "vs" 0) (Lam "vd" $
+        DoA "v" (Unop Fst (Var "vd" 0)) Any $
+        DoA "d" (Unop Snd (Var "vd" 1)) Tint $
+        DoA "k'" (App (Var "k" 5) (Var "v" 1)) (Tfunction Tint Any) $
+        App (Var "k'" 0) (Var "d" 1))
+    )))
+
+-- | @hDepth2@ is another handler for @depth@.
+-- The depth consumed by the scoped computation is also counted in the global depth bound.
+hDepth2T :: Handler
+hDepth2T = Handler
+  "hDepth" ["choose", "fail"] ["depth"] []
+  ("x", Return . LamA "d" Tint $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
+  (\ oplabel -> case oplabel of
+    "fail" -> Just ("_", "_", Return (Vlist []))
+    "choose" -> Just ("x", "k", Return . LamA "d" Tint $
+      DoA "b" (Binop Eq (Var "d" 0) (Vint 0)) Tbool $
+      If (Var "b" 0) (Return (Vlist []))
+                     (DoA "k1" (App (Var "k" 2) (Vbool True)) (Tfunction Tint Any) $
+                      DoA "k2" (App (Var "k" 3) (Vbool False)) (Tfunction Tint Any)$
+                      DoA "d'" (Binop Add (Var "d" 3) (Vint (-1))) Tint $
+                      DoA "xs" (App (Var "k1" 2) (Var "d'" 0)) Any $
+                      DoA "ys" (App (Var "k2" 2) (Var "d'" 1)) Any $
+                      Binop Append (Var "xs" 1) (Var "ys" 0) ))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "depth" -> Just ("d'", "p", "k", Return . LamA "d" Tint $
+      DoA "p'" (App (Var "p" 2) Vunit) Any $
+      DoA "md" (Binop Min (Var "d'" 4) (Var "d" 1)) Tint $
+      DoA "xs" (App (Var "p'" 1) (Var "md" 0)) (Tlist Any) $
+      Binop ConcatMap (Var "xs" 0) (LamA "vd" (Tpair Any Tint) $ DoA "v" (Unop Fst (Var "vd" 0)) Any $
+                                         DoA "rd" (Unop Snd (Var "vd" 1)) Tint $
+                                         DoA "consumed" (Binop Minus (Var "md" 4) (Var "rd" 0)) Tint $
+                                         DoA "trued" (Binop Minus (Var "d" 7) (Var "consumed" 0)) Tint $
+                                         DoA "k'" (App (Var "k" 9) (Var "v" 3)) (Tfunction Tint Any)$
+                                         App (Var "k'" 0) (Var "trued" 1)))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", Return . LamA "d" Tint $ App (Var "f" 3) (Vpair
+    ( LamA "y" Any $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tint Any) $
+                App (Var "p'" 0) (Var "d" 2)
+    , LamA "vs" (Any) $ Binop ConcatMap (Var "vs" 0) (LamA "vd" (Tpair Any Tint) $
+        DoA "v" (Unop Fst (Var "vd" 0)) Any $
+        DoA "d" (Unop Snd (Var "vd" 1)) Tint $
+        DoA "k'" (App (Var "k" 5) (Var "v" 1)) (Tfunction Tint Any) $
+        App (Var "k'" 0) (Var "d" 1))
+    )))
+
+
+cDepthT :: Comp
+cDepthT = ScA "depth" (Vint 1) (DotA "_" Any
+ (DoA "b" (op "choose" Vunit Tbool) Tbool $
+ If (Var "b" 0) (Return (Vint 1))
+                ( DoA "b'" (op "choose" Vunit Tbool) Tbool $
+                  If (Var "b'" 0)
+                     (Return (Vint 2))
+                     (Return (Vint 3)))))
+  (DotA "x" Tint (DoA "b" (op "choose" Vunit Tbool) Tbool $
+   If (Var "b" 0) (Return (Var "x" 1))
+                  ( DoA "b'" (op "choose" Vunit Tbool) Tbool $
+                    If (Var "b'" 0)
+                       (Return (Vint 4))
+                       (DoA "b''" (op "choose" Vunit Tbool) Tbool $
+                         If (Var "b''" 0)
+                            (Return (Vint 5))
+                            (Return (Vint 6))))))
+
+tDepthGam = Map.empty
+tDepthSig = Map.fromList([
+  ("depth", Lsc "depth" Tint Tint),
+  ("choose", Lop "choose" Tunit Tbool),
+  ("fail", Lop "fail" Any Any)
+  ])
+
+tDepthComp1 = DoA "f" (HandleA (UFunction (UList (UFirst UNone))) hDepthT cDepthT) (Tfunction Tint (Tlist (Tpair Tint Tint))) $ App (Var "f" 0) (Vint 2)
+tDepth1 = checkFile tDepthGam tDepthSig tDepthComp1 (Tlist (Tpair Tint Tint))
+
+tDepthComp2 = DoA "f" (HandleA (UFunction (UList (UFirst UNone))) hDepth2T cDepthT) (Tfunction Tint (Tlist (Tpair Tint Tint))) $ App (Var "f" 0) (Vint 2)
+tDepth2 = checkFile tDepthGam tDepthSig tDepthComp2 (Tlist (Tpair Tint Tint))
+
+--------------------------------------------------------------------------------
+-- TODO
+-- hTokenT :: Handler
+-- hTokenT = Handler
+--   "hToken" ["token"] [] []
+--   ("x", Return . LamA "s" Tstr $ Return (Vpair (Var "x" 1, Var "s" 0)))
+--   (\ oplabel -> case oplabel of
+--     "token" -> Just ("x", "k", Return . LamA "s" Tstr $
+--       DoA "b" (Binop Eq (Var "s" 0) (Vstr "")) Tbool $
+--       If (Var "b" 0) failure
+--                      ( DoA "x'" (Unop HeadS (Var "s" 1)) Tstr $
+--                        DoA "xs" (Unop TailS (Var "s" 2)) Tstr $
+--                        DoA "b" (Binop Eq (Var "x" 5) (Var "x'" 1)) Tbool $
+--                        If (Var "b" 0) (app2 (Var "k" 5) (Var "x" 6) (Var "xs" 1)) failure))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", Return . LamA "s" Tstr $ App (Var "f" 3) (Vpair
+--     ( LamA "y" Any $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tstr Any) $
+--                 App (Var "p'" 0) (Var "s" 2)
+--     , LamA "zs" (Tpair Any Tstr) $ DoA "z" (Unop Fst (Var "zs" 0)) Any $
+--                  DoA "s'" (Unop Snd (Var "zs" 1)) Tstr $
+--                  DoA "k'" (App (Var "k" 4) (Var "z" 1)) Any $
+--                  App (Var "k'" 0) (Var "s'" 1)
+--     )))
+
+-- -- | @<>@ refers to the syntactic sugar @<>@ in Section 7.6
+-- (<>) :: Comp -> Comp -> Comp
+-- x <> y = OpA "choose" Vunit (DotA "b" Tbool (If (Var "b" 0) (shiftC 1 x) (shiftC 1 y)))
+
+-- -- Parsers defined in Fig. 7 :
+-- digit :: Value
+-- digit =  LamA "_" Any $ 
+--          op "token" (Vchar '0') Any
+--       <> op "token" (Vchar '1') Any
+--       <> op "token" (Vchar '2') Any
+--       <> op "token" (Vchar '3') Any
+--       <> op "token" (Vchar '4') Any
+--       <> op "token" (Vchar '5') Any
+--       <> op "token" (Vchar '6') Any
+--       <> op "token" (Vchar '7') Any
+--       <> op "token" (Vchar '8') Any
+--       <> op "token" (Vchar '9') Any
+-- -- | For simplicity, we directly use Haskell's recursion to implement the recursive function @many1@.
+-- many1 :: Value -> Comp
+-- many1 p = DoA "a" (App p Vunit) Any $
+--           DoA "as" (many1 p <> Return (Vstr "")) Any $
+--           DoA "x" (Binop ConsS (Var "a" 1) (Var "as" 0)) Any $
+--           Return (Var "x" 0)
+-- expr :: Value
+-- expr = LamA "_" Any $
+--        (DoA "i" (App term Vunit) Any $
+--         DoA "_" (op "token" (Vchar '+') Any) Any $
+--         DoA "j" (App expr Vunit) Any $
+--         DoA "x" (Binop Add (Var "i" 2) (Var "j" 0)) Any $
+--         Return (Var "x" 0))
+--     <> (DoA "i" (App term Vunit) Any $ Return (Var "i" 0))
+-- term :: Value
+-- term = LamA "_" Any $
+--        (DoA "i" (App factor Vunit) Any $
+--         DoA "_" (op "token" (Vchar '*') Any) Any $
+--         DoA "j" (App term Vunit) Any $
+--         DoA "x" (Binop Mul (Var "i" 2) (Var "j" 0)) Any $
+--         Return (Var "x" 0))
+--     <> (DoA "i" (App factor Vunit) Any $ Return (Var "i" 0))
+-- factor :: Value
+-- factor = LamA "_" Any $
+--          (DoA "ds" (many1 digit) Any $
+--           DoA "x" (Unop Read (Var "ds" 0)) Any $
+--           Return (Var "x" 0))
+--       <> (DoA "_" (op "token" (Vchar '(') Any) Any $
+--           DoA "i" (App expr Vunit) Any $
+--           DoA "_" (op "token" (Vchar ')') Any) Any $
+--           Return (Var "i" 1))
+
+-- -- | @expr1@ refers to the @expr_1@ parser in Section 7.6
+-- expr1 :: Value
+-- expr1 = LamA "_" Any $
+--         DoA "i" (App term Vunit) Tint $
+--         sc "call" Vunit "_" Any  (DoA "_" (op "token" (Vchar '+') Any) Any $
+--                                   DoA "_" (op "cut" Vunit Any) Any $
+--                                   DoA "j" (App expr1 Vunit) Tint $
+--                                   DoA "x" (Binop Add (Var "i" 4) (Var "j" 0)) Tint $
+--                                   Return (Var "x" 0) <> Return (Var "i" 1)) Any
+
+
+-- -- Handling @expr1@:
+-- handle_expr1T :: Comp
+-- handle_expr1T = hCutT # (DoA "c" (hTokenT # App expr1 Vunit) (Tfunction Tstr Any) $
+--                        App (Var "c" 0) (Vstr "(2+5)*8"))
+
+-- -- Handling @expr@:
+-- handle_exprT :: Comp
+-- handle_exprT = hCutT # (DoA "c" (hTokenT # App expr Vunit) (Tfunction Tstr Any) $
+--                       App (Var "c" 0) (Vstr "(2+5)*8"))
+
+-- tParseGam = Map.empty
+-- tParseSig = Map.fromList([
+--   ("token", Lop "token" (Tpair Tstr Any) (Tfunction Tstr Any)),
+--   ("cut", Lop "cut" Tunit (Tfunction Tunit Any)),
+--   ("call", Lop "call" Tunit (Tfunction Tunit Any))
+--   ])
+-- tParse1 = checkFile tParseGam tParseSig handle_expr1T (Tret (Tlist (Tpair Tint Tstr)))
+
+------------------------------------------------------------------------
+
+
 

@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -130,6 +130,9 @@ runStateTests = runTestTT $ TestList stateTests
 stateTestsData = Tdata "state" (handle_cState) (Return (Vpair (Vint 42,Vint 10)))
 stateTests = testCaseGen (name stateTestsData) (testC stateTestsData) (result stateTestsData)
 
+-- State typechecking
+stateTypeTests = typeCheckGen "state" tStateGam tStateSig handle_cStateT (Tpair Tint Tint) 1
+
 -- | Depth bounded search tests
 
 runDepthTests = runTestTT $ TestList depthTests
@@ -139,6 +142,11 @@ depthTestsData2 = Tdata "depth_2" (Do "f" (hDepth2 # cDepth) $ App (Var "f" 0) (
 depthTestsData = [depthTestsData1, depthTestsData2]
 depthTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) depthTestsData
 
+-- Depth typechecking
+depthTypeTest1 = typeCheckGen "depth_1" tDepthGam tDepthSig tDepthComp1 (Tlist (Tpair Tint Tint)) 1
+depthTypeTest2 = typeCheckGen "depth_2" tDepthGam tDepthSig tDepthComp2 (Tlist (Tpair Tint Tint)) 1
+depthTypeTests = depthTypeTest1 ++ depthTypeTest2
+
 -- | Parser tests
 
 runParserTests = runTestTT $ TestList parserTests
@@ -147,6 +155,9 @@ parserTestsData1 = Tdata "parser_1" (handle_expr1) (Return (Vret (Vlist [Vpair (
 parserTestsData2 = Tdata "parser_2" (handle_expr) (Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")])))
 parserTestsData = [parserTestsData1, parserTestsData2]
 parserTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) parserTestsData
+
+-- Parser typechecking
+-- TODO
 
 -- | Reader tests
 

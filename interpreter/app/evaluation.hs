@@ -214,8 +214,8 @@ evalBinop Min (Vint x) (Vint y) = return . Return . Vint $ min x y
 evalBinop Mul (Vint x) (Vint y) = return . Return . Vint $ x * y
 evalBinop ConcatMap (Vlist xs) f = return $ case xs of
   [] -> Return . Vlist $ []
-  (x:xs) -> Do "as" (App f x) $
-            Do "as'" (Binop ConcatMap (shiftV 1 $ Vlist xs) (shiftV 1 f)) $
+  (x:xs) -> DoA "as" (App f x) Any $
+            DoA "as'" (Binop ConcatMap (shiftV 1 $ Vlist xs) (shiftV 1 f)) Any $
             Binop Append (Var "as" 1) (Var "as'" 0)
 evalBinop ConcatMapCutList (Vret (Vlist xs)) f = return $ case xs of
   [] -> Return . Vret . Vlist $ []
@@ -278,6 +278,7 @@ eval1' (Do x c1 c2) = case (eval1' c1) of
 -- Annotated Do
 eval1' (DoA x (Return v) _ c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
 eval1' (DoA x (OpA l v (DotA y a c1)) t c2) = ("E-DoOp", return $ OpA l v (DotA y a (DoA x c1 t c2))) -- E-DoOp
+eval1' (DoA x (Op l v (y :. c1)) t c2) = ("E-DoOp", return $ Op l v (y :. (Do x c1 c2))) -- E-DoOp
 eval1' (DoA x (ScA l v (DotA y a c1) (DotA z b c2)) t c3) = ("E-DoSc", return $ ScA l v (DotA y a c1) (DotA z b (DoA x c2 t c3))) -- E-DoSc
 eval1' (DoA x (ForA l v (DotA y a c1) (DotA z b c2)) t c3) = ("E-DoFor", return $ ForA l v (DotA y a c1) (DotA z b (DoA x c2 t c3))) -- E-DoFor
 eval1' (DoA x c1 t c2) = case (eval1' c1) of 
