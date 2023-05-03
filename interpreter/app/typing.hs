@@ -36,7 +36,7 @@ typeCheckC _ _ Undefined _ = True
 typeCheckC gam sig (Return v) vt = -- SD-Ret
   if trace ("SD-Ret: Checking " ++ show v ++ " to be of type " ++ show vt) (typeCheckV gam sig v vt) 
     then True
-    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt ++ " with " ++ show gam)
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt)
 typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
   (LamA n vt1 c) -> 
     if trace ("SD-App (Lam1): Checking " ++ show c ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c vt2)

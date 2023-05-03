@@ -72,11 +72,9 @@ hIncT = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
-
-
--- | @runInc@ is a macro to help applying the initial count value
-runIncT :: Int -> Comp -> Comp
-runIncT s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tpair (Tlist Tint) Tint)) $ App (Var "c'" 0) (Vint s)
+-- | @runIncT@ is a macro to help apply the initial value
+runIncT :: Int -> Comp -> ValueType -> Comp
+runIncT s c vt = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint vt) $ App (Var "c'" 0) (Vint s)
 
 -- | @cInc@ refers to the @c_inc@ program in Section 2.1
 cIncT :: Comp
@@ -89,20 +87,20 @@ tInc1Gam = Map.fromList([
 tInc1Sig = Map.fromList([
   ("inc", Lop "inc" Tunit Tunit), 
   ("choose", Lop "choose" Tunit Tbool)])
-tInc1Comp = (HandleA (UList UNone) (hOnceT) (runIncT 0 cIncT))
+tInc1Comp = (HandleA (UList UNone) (hOnceT) (runIncT 0 cIncT (Tpair (Tlist Tint) Tint)))
 tInc1 = checkFile tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint))
 
 tInc2Gam = Map.fromList([
   ("tIncA", Tlist Tint), 
   ("tOnceA", Tint)])
-tInc2Comp = runIncT 0 (HandleA (UList UNone) (hOnceT) (cIncT))
+tInc2Comp = runIncT 0 (HandleA (UList UNone) (hOnceT) (cIncT)) (Tpair (Tlist Tint) Tint)
 tInc2 = checkFile tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint)
 
 tInc3Sig = Map.fromList([
   ("inc", Lop "inc" Tunit Tunit), 
   ("choose", Lop "choose" Tunit Tbool),
   ("once", Lsc "once" Tunit Tint)])
-tInc3Comp = HandleA (UList UNone) (hOnceT) (runIncT 0 cFwdT)
+tInc3Comp = HandleA (UList UNone) (hOnceT) (runIncT 0 cFwdT (Tpair (Tlist Tint) Tint))
 tInc3 = checkFile tInc1Gam tInc3Sig tInc3Comp (Tlist (Tpair Tint Tint))
 
 cIncForT :: Comp
@@ -237,9 +235,6 @@ cRaiseT = DoA "x" (op "inc" Vunit Any) Tint $
 cCatchT :: Comp
 cCatchT = sc "catch" (Vstr "Overflow") "b" Tbool (If (Var "b" 0) cRaiseT (Return (Vint 10))) Tint
 
-runIncT2 :: Int -> Comp -> Comp
-runIncT2 s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tsum Tstr (Tpair Tint Tint))) $ App (Var "c'" 0) (Vint s)
-
 
 tCatchGam1 = Map.fromList([
   ("tCatchA", Tint),
@@ -248,13 +243,49 @@ tCatchSig1 = Map.fromList([
   ("raise", Lop "raise" Tstr Any),
   ("catch", Lsc "catch" Tstr Tint),
   ("inc", Lop "inc" Tunit Tint)])
-tCatchComp1 = HandleA (USum UNone UNone) hExceptT (runIncT2 42 cCatchT)
+tCatchComp1 = HandleA (USum UNone UNone) hExceptT (runIncT 42 cCatchT (Tsum Tstr (Tpair Tint Tint)))
 tCatch1 = checkFile tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint))
 
-runIncT3 :: Int -> Comp -> Comp
-runIncT3 s c = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint (Tpair (Tsum Tstr Tint) Tint)) $ App (Var "c'" 0) (Vint s)
-
-tCatchComp2 = runIncT3 42 (HandleA (USum UNone UNone) hExceptT cCatchT)
+tCatchComp2 = runIncT 42 (HandleA (USum UNone UNone) hExceptT cCatchT) (Tpair (Tsum Tstr Tint) Tint)
 tCatch2 = checkFile tCatchGam1 tCatchSig1 tCatchComp2 (Tpair (Tsum Tstr Tint) Tint)
 
+cIncrT :: Comp
+cIncrT = DoA "x" (op "inc" Vunit Tint) Tint $
+       DoA "b" (Binop Larger (Var "x" 0) (Vint 10)) Tbool $
+       If (Var "b" 0) (op "raise" (Vstr "Overflow") Tint) (Return (Var "x" 1))
+
+
+cExT :: Comp
+cExT = DoA "_" cIncrT Any $
+      DoA "_" cIncrT Any $
+      DoA "_" cIncrT Any $
+      Return (Vstr "success")
+
+tCatchSig2 = Map.fromList([
+  ("raise", Lop "raise" Tstr Any),
+  ("catch", Lsc "catch" Tstr Tstr),
+  ("inc", Lop "inc" Tunit Tint)])
+
+cCatch2T :: Comp
+cCatch2T = DoA "_" (cIncrT) Any $
+      sc "catch" (Vstr "Overflow") "b" Tbool (If (Var "b" 0) cExT (Return (Vstr "fail"))) Tstr
+
+tCatchComp3 = HandleA (USum UNone UNone) hExceptT (runIncT 1 cCatch2T (Tsum Tstr (Tpair Tstr Tint)))
+tCatch3 = checkFile tCatchGam1 tCatchSig2 tCatchComp3 (Tsum Tstr (Tpair Tstr Tint))
+
+
+tCatchComp4 = runIncT 1 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
+tCatch4 = checkFile tCatchGam1 tCatchSig2 tCatchComp4 (Tpair (Tsum Tstr Tstr) Tint)
+
+tCatchComp5 = HandleA (USum UNone UNone) hExceptT (runIncT 8 cCatch2T (Tsum Tstr (Tpair Tstr Tint)))
+tCatch5 = checkFile tCatchGam1 tCatchSig2 tCatchComp5 (Tsum Tstr (Tpair Tstr Tint))
+
+tCatchComp6 = runIncT 8 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
+tCatch6 = checkFile tCatchGam1 tCatchSig2 tCatchComp6 (Tpair (Tsum Tstr Tstr) Tint)
+
+tCatchComp7 = HandleA (USum UNone UNone) hExceptT (runIncT 42 cCatch2T (Tsum Tstr (Tpair Tstr Tint)))
+tCatch7 = checkFile tCatchGam1 tCatchSig2 tCatchComp7 (Tsum Tstr (Tpair Tstr Tint))
+
+tCatchComp8 = runIncT 42 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
+tCatch8 = checkFile tCatchGam1 tCatchSig2 tCatchComp8 (Tpair (Tsum Tstr Tstr) Tint)
 
