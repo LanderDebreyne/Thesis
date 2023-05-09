@@ -575,5 +575,124 @@ tDepth2 = checkFile tDepthGam tDepthSig tDepthComp2 (Tlist (Tpair Tint Tint))
 
 ------------------------------------------------------------------------
 
+-- TODO
+-- hReaderT :: Handler
+-- hReaderT = Handler
+--   "hReader" ["ask"] ["local"] []
+--   ("x", Return . LamA "m" Tmem $ Return (Vpair (Var "x" 1, Var "m" 0)))
+--   (\ oplabel -> case oplabel of
+--     "ask" -> Just ("_", "k",
+--       Return . LamA "m" Tmem $ DoA "env" (Binop Retrieve (Vstr "readerEnv") (Var "m" 0)) Any $
+--                          DoA "k'" (App (Var "k" 2) (Var "env" 0)) (Tfunction Tmem Any) $
+--                          App (Var "k'" 0) (Var "m" 2))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "local" -> Just ("x", "p", "k",
+--       Return . LamA "m" Tmem $ DoA "envKey" (Return (Vstr "readerEnv")) Tstr $
+--                          DoA "oldEnv" (Binop Retrieve (Var "envKey" 0) (Var "m" 1)) Any $
+--                          DoA "newEnv" (App (Var "x" 5) (Var "oldEnv" 0)) Any $ 
+--                          DoA "um" (Binop Update (Vpair ((Var "envKey" 2), (Var "newEnv" 0))) (Var "m" 3)) Tmem $
+--                          DoA "p'" (App (Var "p" 6) Vunit) Any $
+--                          DoA "tm" (App (Var "p'" 0) (Var "um" 1)) (Tpair Any Any) $
+--                          DoA "t" (Unop Fst (Var "tm" 0)) Any $
+--                          DoA "m'" (Unop Snd (Var "tm" 1)) Tmem $
+--                          DoA "k'" (App (Var "k" 9) (Var "t" 1)) Any $
+--                          DoA "newm" (Binop Update (Vpair ((Var "envKey" 8), (Var "oldEnv" 7))) (Var "m'" 1)) Tmem $
+--                          App (Var "k'" 1) (Var "newm" 0))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", Return . LamA "m" Tmem $
+--         DoA "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) (Tpair Any Any) $
+--         App (Var "f" 4) (Var "pk" 0)
+--   )
+
+-- cReaderT :: Comp
+-- cReaderT = DoA "x1" (op "ask" Vunit Any) Any $
+--           DoA "x2" ((sc "local" (Lam "x" (Binop Append (Var "x" 0) (Vlist [Vint 5])))) "_" Any (op "ask" Vunit Any) Any) Any $
+--           DoA "x3" (op "ask" Vunit Any) Any $ 
+--           Return (Vpair ((Vpair (Var "x1" 0, Var "x3" 1)), (Var "x3" 2)))
+
+-- runReaderT :: Value -> Comp -> Comp
+-- runReaderT s c = sc "local" s "_" Any c Any
+
+-- handle_cReaderT :: Value -> Comp
+-- handle_cReaderT c = DoA "m" (Unop Newmem (Vunit)) Tmem $
+--                    DoA "c" (HandleA (UFunction (UFirst UNone)) hReaderT (runReaderT (c) cReaderT)) (Tfunction Tmem Any) $
+--                    DoA "x" (App (Var "c" 0) (Var "m" 1)) (Tlist Any) $
+--                    Unop Fst (Var "x" 0)
+
+-- -- @cReader@ example:
+-- example_cReaderT :: Comp
+-- example_cReaderT = handle_cReaderT (LamA "x" Any (Return (Vlist [(Vint 1), (Vint 2), (Vint 3), (Vint 4)])))
+
+
+-- tReaderGam = Map.empty
+-- tReaderSig = Map.fromList([
+--   ("ask", Lop "ask" Tunit (Tfunction Tmem Any)),
+--   ("local", Lop "local" (Tfunction Tmem Any) (Tfunction Tmem Any))
+--   ])
+
+-- tReader = checkFile tReaderGam tReaderSig example_cReaderT (Tret (Tpair (Tpair (Tlist Tint) (Tlist Tint)) (Tlist Tint)))
+
+hAccumT :: Handler
+hAccumT = Handler
+  "hAccum" ["accum"] [] ["for"]
+  ("x", Return (Vpair (Vint 0, Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist Tunit)) $
+      DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tlist Tunit) $
+      DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" ->      (Just ("list", "l", "k", 
+          DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair Tint Tunit)) $
+          DoA "first" (Binop Map (Var "pairs" 0) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Fst (Var "l'" 0)))) (Tlist Tint) $
+          DoA "second" (Binop Map (Var "pairs" 1) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Snd (Var "l'" 0)))) (Tlist Tunit) $
+          DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tint (Tlist Tunit)) $
+          LetrecA "reduce" (Tfunction (Tlist Tint) Tint) (LamA "l" (Tlist Tint) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+                                    If (Var "n" 0) (Return (Vint 0)) (DoA "h" (Unop Head (Var "l" 1)) Tint $
+                                                                      DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tint)$
+                                                                      DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tint $
+                                                                      DoA "x" (Binop Add (Var "h" 2) (Var "y" 0)) Tint $
+                                                                      Return (Var "x" 0))) 
+            (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tint $
+            DoA "base" (Unop Fst (Var "k'" 2)) Tint $
+            DoA "k''" (Unop Snd (Var "k'" 3)) (Tlist Tunit) $
+            DoA "res" (Binop Add (Var "base" 1) (Var "rest" 2)) Tint $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+hPureT :: Handler
+hPureT = Parallel
+  (("list", "p", "k", 
+      DoA "result" (Binop Map (Var "list" 2) (Var "p" 1)) (Tlist Any) $
+      App (Var "k" 1) (Var "result" 0)))
+  (("x", Return (Var "x" 0)))
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+cAccumT :: Comp
+cAccumT = ForA "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) (DotA "y" Tint (op "accum" (Var "y" 0) Any)) (DotA "z" Any (Return (Var "z" 0)))
+
+
+tAccumGam = Map.empty
+tAccumSig = Map.fromList([
+  ("accum", Lop "accum" Tint (Tpair Tint Any)),
+  ("for", Lfor "for" Any)
+  ])
+tAccumComp1 = HandleA UNone hPureT (HandleA  (USecond UNone) hAccumT cAccumT)
+tAccum1 = checkFile tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit))
 
 

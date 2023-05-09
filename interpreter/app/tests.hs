@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -177,6 +177,10 @@ accumTestsData4 = Tdata "accum_scoped_2" (exForSc2) (Return (Vpair (Vint 15,Vlis
 accumTestsData5 = Tdata "accum_no_for_scoped" (exNoForSc) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
 accumTestsData = [accumTestsData1, accumTestsData2, accumTestsData3, accumTestsData4, accumTestsData5]
 accumTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) accumTestsData
+
+-- Accum typechecking
+accumTypeTest1 = typeCheckGen "accum" tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit)) 1
+accumTypeTests = accumTypeTest1
 
 -- | Weak exception tests
 

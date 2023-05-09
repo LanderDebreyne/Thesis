@@ -53,6 +53,7 @@ typeCheckC gam sig (App v1 v2) vt2 = case v1 of -- SD-App
     Just x -> error ("Typecheck failed: " ++ show x ++ " is not a function")
     Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
   (Lam n c) -> error ("Typecheck failed: " ++ show (Lam n c) ++ " is not annotated")
+  (Vrec n v1 v2) -> True -- SD-AppRec TODO
   _ -> error ("Typecheck failed: " ++ show v1 ++ " is not a function")
 typeCheckC gam sig (DoA n c1 vt1 c2) vt2 = -- SD-Do
   if trace ("SD-Do (1): Checking " ++ show c2 ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c2 vt2)
@@ -90,12 +91,29 @@ typeCheckC gam sig (ScA n v (DotA y a c1) (DotA z b c2)) vt = case Map.lookup n 
         else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show lt2)
       else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show lt1)
   Nothing -> error "Typecheck failed: Label not found"
+typeCheckC gam sig (ForA n v (DotA y a c1) (DotA z b c2)) vt = case Map.lookup n sig of -- SD-For
+  Just (Lfor _ lt) ->
+    if trace ("SD-For: Checking (1) " ++ show v ++ " to be of type " ++ show (Tlist lt)) (typeCheckV gam sig v (Tlist lt))
+      then if trace ("SD-For: Checking (2) " ++ show c1 ++ " to be of type " ++ show lt) (typeCheckC (Map.insert y a gam) sig c1 lt)
+        then if trace ("SD-For: Checking (3) " ++ show c2 ++ " to be of type " ++ show vt) (typeCheckC (Map.insert z b gam) sig c2 vt)
+          then True
+        else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
+      else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show lt)
+    else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show (Tlist lt))
+  Nothing -> error "Typecheck failed: Label not found"
 typeCheckC gam sig (If v c1 c2) vt = -- SD-If
   if trace ("SD-If: Checking " ++ show c1 ++ " to be of type " ++ show vt) (typeCheckC gam sig c1 vt) 
     then if trace ("SD-If: Checking " ++ show c2 ++ " to be of type " ++ show vt) (typeCheckC gam sig c2 vt)
       then True
       else error ("Typecheck failed: " ++ show c2 ++ " is not of type " ++ show vt)
     else error ("Typecheck failed: " ++ show c1 ++ " is not of type " ++ show vt)
+typeCheckC gam sig (LetrecA n vt1 v c) vt2 = -- SD-Letrec
+  if trace ("SD-Letrec: Checking (1) " ++ show v ++ " to be of type " ++ show vt1) (typeCheckV (Map.insert n vt1 gam) sig v vt1)
+    then if trace ("SD-Letrec: Checking (2) " ++ show c ++ " to be of type " ++ show vt2) (typeCheckC (Map.insert n vt1 gam) sig c vt2) 
+      then True
+    else error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show vt2)
+  else error ("Typecheck failed: " ++ show v ++ " is not of type " ++ show vt1)
+typeCheckC gam sig (Rec n c1 c2) vt = True -- SD-Rec -- TODO
 typeCheckC gam sig (Case _ _ _ _ _) vt = True -- SD-Case -- TODO
 typeCheckC gam sig (Binop _ _ _) vt = True -- SD-Binop -- TODO (Assumes operations are well-typed)
 typeCheckC gam sig (Unop _ _) vt = True -- SD-Unop -- TODO (Assumes operations are well-typed)

@@ -106,7 +106,8 @@ data Comp
   | App Value Value                                 -- ^ v1 v2
   | Let Name Value Comp                             -- ^ let x = v in c
   | LetA Name Value ValueType Comp                  -- ^ let x : t = v in c
-  | Letrec Name Value Comp                          -- ^ letrec x = c in c
+  | Letrec Name Value Comp                          -- ^ letrec x = v in c
+  | LetrecA Name ValueType Value Comp               -- ^ letrec x : t = v in c
   -- extensions:
   -- We implement most functions in the paper as built-in functions
   -- because the interpreter doesn't support pattern matching and recursive functions.
@@ -133,6 +134,7 @@ instance Show Comp where
     show (Let x v c) = "let " ++ x ++ " = " ++ show v ++ "\n in " ++ show c
     show (LetA x v t c) = "let " ++ x ++ " : " ++ show t ++ " = " ++ show v ++ "\n in " ++ show c
     show (Letrec x v c) = "letrec " ++ x ++ " = " ++ show v ++ "\n in " ++ show c    
+    show (LetrecA x t v c) = "letrec " ++ x ++ " : " ++ show t ++ " = " ++ show v ++ "\n in " ++ show c    
     show (If v c1 c2) = "\nif " ++ show v ++ "\n then " ++ show c1 ++ "\n else " ++ show c2
     show (Case v x c1 y c2) = "case " ++ show v ++ " of\n " ++ x ++ " -> " ++ show c1 ++ " \n| " ++ y ++ " -> " ++ show c2
     show (Unop op v) = show op ++ " " ++ show v

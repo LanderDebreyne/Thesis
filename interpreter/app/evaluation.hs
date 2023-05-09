@@ -65,6 +65,7 @@ eval1 (App (LamA x t c) v) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] --
 
 eval1 (Let x v c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-Let
 eval1 (Letrec x v c) = return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)] -- E-LetRec
+eval1 (LetrecA x t v c) = return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)] -- E-LetRec
 eval1 (App (Vrec x v1 v2) v) = return . shiftC (-1) $ subst (App v2 v) [(shiftV 1 (Vrec x v1 v2), 0)] -- E-AppRec
 
 eval1 (Do x (Return v) c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
@@ -145,7 +146,7 @@ eval1 (HandleA t h (ScA l v (DotA y a c1) (DotA z b c2))) = return $ case hsc h 
       ]
 eval1 (HandleA t h (ForA label v (DotA y a c1) (DotA z b c2))) = return $ case hfor h label of -- E-HandFor
     Just (x, l, k, c) -> shiftC (-3) $ subst c [ (shiftV 3 v, 2)
-                                                 , (shiftV 3 $ LamA l a (ForA label (Var l 0) (DotA y a (HandleA t h c1)) (DotA z b (Return (Var z 0)))), 1)
+                                                 , (shiftV 3 $ LamA l (Tlist a) (ForA label (Var l 0) (DotA y a (HandleA t h c1)) (DotA z b (Return (Var z 0)))), 1)
                                                  , (shiftV 3 $ LamA z b (HandleA t h c2), 0) ]
     Nothing -> case hfwd h of -- E-FwdFor
       (f, p, k, c) -> shiftC (-3) $ subst c
@@ -240,8 +241,8 @@ evalBinop Retrieve (Vstr name) (Vmem m) = return . Return $ retrieve name m
 evalBinop Update (Vpair (Vstr x, v)) (Vmem m) = return . Return $ Vmem (update (x, v) m)
 evalBinop Map (Vlist xs) f = return $ case xs of
   [] -> Return . Vlist $ [] -- E-MapNil
-  (x:xs) -> Do "y" (App f x) $ -- E-Map
-            Do "ys'" (Binop Map (shiftV 1 $ Vlist xs) (shiftV 1 f)) $
+  (x:xs) -> DoA "y" (App f x) Any $ -- E-Map
+            DoA "ys'" (Binop Map (shiftV 1 $ Vlist xs) (shiftV 1 f)) (Tlist Any) $
             Binop Append (Vlist [Var "y" 1]) (Var "ys" 0)
 evalBinop SplitKey (Vkey g) (Vlist list) = let n = length list in
   return . Return $ Vlist $ map (\x -> Vkey x) (splitTo g n) where
@@ -265,6 +266,7 @@ eval1' (App (LamA x t c) v) = ("E-AppAbs", return . shiftC (-1) $ subst c [(shif
 -- 
 eval1' (Let x v c) = ("E-Let", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-Let
 eval1' (Letrec x v c) = ("E-LetRec", return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)]) -- E-LetRec
+eval1' (LetrecA x vt v c) = ("E-LetRec", return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)]) -- E-LetRec
 eval1' (App (Vrec x v1 v2) v) = ("E-AppRec", return . shiftC (-1) $ subst (App v2 v) [(shiftV 1 (Vrec x v1 v2), 0)]) -- E-AppRec
 
 eval1' (Do x (Return v) c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
@@ -352,7 +354,7 @@ eval1' (HandleA t h (ScA l v (DotA y a c1) (DotA z b c2))) = case hsc h l of -- 
       ])
 eval1' (HandleA t h (ForA label v (DotA y a c1) (DotA z b c2))) = case hfor h label of -- E-HandFor
     Just (x, l, k, c) -> ("E-HandFor", return $ shiftC (-3) $ subst c [ (shiftV 3 v, 2)
-                                                 , (shiftV 3 $ LamA l a (ForA label (Var l 0) (DotA y a (HandleA t h c1)) (DotA z b (Return (Var z 0)))), 1)
+                                                 , (shiftV 3 $ LamA l (Tlist a) (ForA label (Var l 0) (DotA y a (HandleA t h c1)) (DotA z b (Return (Var z 0)))), 1)
                                                  , (shiftV 3 $ LamA z b (HandleA t h c2), 0) ])
     Nothing -> ("E-FwdFor", return $ case hfwd h of -- E-FwdFor
       (f, p, k, c) -> shiftC (-3) $ subst c
@@ -410,6 +412,7 @@ mapC fc fv c = case c of
   Let x v c  -> Let x (fv v) (fc c)
   LetA x v t c -> LetA x (fv v) t (fc c)
   Letrec x v c -> Letrec x (fv v) (fc c)
+  LetrecA x t v c -> LetrecA x t (fv v) (fc c)
   If v c1 c2 -> If (fv v) (fc c1) (fc c2)
   Binop op v1 v2 -> Binop op (fv v1) (fv v2)
   Unop op v -> Unop op (fv v)
@@ -462,6 +465,7 @@ varmapC onvar cur c = case c of
     Let x v c  -> Let x (fv cur v) (fc (cur+1) c)
     LetA x v t c -> LetA x (fv cur v) t (fc (cur+1) c)
     Letrec x v c -> Letrec x (fv (cur+1) v) (fc (cur+1) c)
+    LetrecA x t v c -> LetrecA x t (fv (cur+1) v) (fc (cur+1) c)
     Case v x c1 y c2 -> Case (fv cur v) x (fc (cur+1) c1) y (fc (cur+1) c2)
     oth -> mapC (fc cur) (fv cur) oth
   where
