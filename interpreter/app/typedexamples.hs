@@ -668,7 +668,7 @@ hAccumT = Handler
             Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
     _ -> Nothing)
   ("f", "p", "k", 
-        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
         App (Var "f" 3) (Var "pk" 0)
   )
 
@@ -687,6 +687,28 @@ cAccumT :: Comp
 cAccumT = ForA "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) (DotA "y" Tint (op "accum" (Var "y" 0) Any)) (DotA "z" Any (Return (Var "z" 0)))
 
 
+hAccumNoForT :: Handler
+hAccumNoForT = Handler
+  "hAccum" ["accum"] [] []
+  ("x", Return (Vpair (Vint 0, Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist (Tpair Tint Tunit))) $
+      DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tlist (Tpair Tint Tunit)) $
+      DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+
 tAccumGam = Map.empty
 tAccumSig = Map.fromList([
   ("accum", Lop "accum" Tint (Tpair Tint Any)),
@@ -694,5 +716,260 @@ tAccumSig = Map.fromList([
   ])
 tAccumComp1 = HandleA UNone hPureT (HandleA  (USecond UNone) hAccumT cAccumT)
 tAccum1 = checkFile tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit))
+
+tAccumComp2 = HandleA UNone hPureT (HandleA (USecond UNone) hAccumNoForT cAccumT)
+tAccum2 = checkFile tAccumGam tAccumSig tAccumComp2 (Tpair Tint (Tlist (Tpair Tint Tunit)))
+
+tAccumSigSc = Map.fromList([
+  ("accum", Lop "accum" Tint (Tpair Tint Any)),
+  ("for", Lsc "for" Any Any)
+  ])
+tAccumComp3 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumSc1T cAccumScT)
+tAccum3 = checkFile tAccumGam tAccumSigSc tAccumComp3 (Tpair Tint (Tlist Tunit))
+
+tAccumComp4 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumScNoForT cAccumScT)
+tAccum4 = checkFile tAccumGam tAccumSigSc tAccumComp4 (Tpair Tint (Tlist (Tpair Tint Tunit)))
+
+
+hAccumSc1T :: Handler
+hAccumSc1T = Handler
+  "hAccumSc" ["accum"] ["for"] []
+  ("x", Return (Vpair (Vint 0, Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist (Tpair Tint Tunit))) $
+      DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tlist (Tpair Tint Tunit)) $
+      DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" ->      (Just ("list", "l", "k", 
+          DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Tint (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair Tint Tunit)) $
+          DoA "first" (Binop Map (Var "pairs" 0) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Fst (Var "l'" 0)))) (Tlist Tint) $
+          DoA "second" (Binop Map (Var "pairs" 1) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Snd (Var "l'" 0)))) (Tlist Tunit) $
+          DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tint (Tlist Tunit)) $
+          LetrecA "reduce" (Tfunction (Tlist Tint) Tint) (LamA "l" (Tlist Tint) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+                                    If (Var "n" 0) (Return (Vint 0)) (DoA "h" (Unop Head (Var "l" 1)) Tint $
+                                                                      DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tint)$
+                                                                      DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tint $
+                                                                      DoA "x" (Binop Add (Var "h" 2) (Var "y" 0)) Tint $
+                                                                      Return (Var "x" 0))) 
+            (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tint $
+            DoA "base" (Unop Fst (Var "k'" 2)) Tint $
+            DoA "k''" (Unop Snd (Var "k'" 3)) (Tlist Tunit) $
+            DoA "res" (Binop Add (Var "base" 1) (Var "rest" 2)) Tint $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+hPureScT :: Handler
+hPureScT = Handler
+  "hPureSc" [] ["for"] []
+  ("x", Return (Var "x" 0))
+  (\ oplabel -> case oplabel of
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", 
+              DoA "results" (Binop Map (Var "x" 2) (Var "p" 1)) Any $
+              App (Var "k" 1) (Var "results" 0))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+cAccumScT :: Comp
+cAccumScT = ScA "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) (DotA "y" Tint (op "accum" (Var "y" 0) Any)) (DotA "z" Any (Return (Var "z" 0)))
+
+hAccumScNoForT :: Handler
+hAccumScNoForT = Handler
+  "hAccumSc" ["accum"] [] []
+  ("x", Return (Vpair (Vint 0, Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist (Tpair Tint Tunit))) $
+      DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tlist (Tpair Tint Tunit)) $
+      DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+
+hAccumST :: Handler
+hAccumST = Handler
+  "hAccum" ["accum"] [] ["for"]
+  ("x", Return (Vpair (Vstr "", Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tstr (Tsum Tstr Tunit))$
+      DoA "m'" (Unop Fst (Var "k'" 0)) Tstr $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tsum Tstr Tunit) $
+      DoA "m''" (Binop AppendS (Var "x" 4) (Var "m'" 1)) Tstr $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" -> (Just ("list", "l", "k", 
+          DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair Tstr (Tsum Tstr Tunit))) $
+          DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Fst (Var "l" 0)))) (Tlist Tstr) $
+          DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Snd (Var "l" 0)))) (Tlist (Tsum Tstr Tunit)) $
+          DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tstr (Tsum Tstr Tunit)) $
+          LetrecA "reduce" (Tfunction (Tlist Tstr) Tstr) (LamA "l" (Tlist Tstr) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+                                If (Var "n" 0) (Return (Vstr "")) (DoA "h" (Unop Head (Var "l" 1)) Tstr $
+                                                                  DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tstr) $
+                                                                  DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tstr $
+                                                                  DoA "x" (Binop AppendS (Var "h" 2) (Var "y" 0)) Tstr $
+                                                                  Return (Var "x" 0))) 
+            (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tstr $
+            DoA "base" (Unop Fst (Var "k'" 2)) Tstr $
+            DoA "k''" (Unop Snd (Var "k'" 3)) (Tsum Tstr Tunit) $
+            DoA "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) Tstr $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
+  ("f", "p", "k", 
+      DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+      App (Var "f" 3) (Var "pk" 0)
+  )
+
+
+hWeakT :: Handler
+hWeakT = Handler
+  "hWeak" ["throw"] [] ["for"]
+  ("x", Return (Vsum (Right (Var "x" 0))))
+  (\ oplabel -> case oplabel of
+    "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" -> (Just ("list", "l", "k",
+          DoA "results" (App (Var "l" 1) (Var "list" 2)) Any $ 
+          DoA "FirstFail" (Unop FirstFail (Var "results" 0)) (Tsum Tstr Tunit) $
+          Case (Var "FirstFail" 0) 
+            "error" (Return $ Vsum $ Left (Var "error" 0))
+            "t" (App (Var "k" 3) (Var "t" 0))
+        ))
+    _ -> Nothing)
+  ("f", "p", "k", 
+      DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+      App (Var "f" 3) (Var "pk" 0)
+  )
+
+
+cWeakT :: Comp
+cWeakT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Any (Return (Var "y" 0)))) Any $ 
+         (ForA "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+         (DotA "y" Tstr (Do "eq2" (Binop Eq (Var "y" 0) (Vstr "2")) $
+         If (Var "eq2" 0)   (DoA "_" (OpA "accum" (Vstr "!") (DotA "y" Any (Return (Var "y" 0)))) Any $
+                            DoA "_" (OpA "throw" (Vstr "error") (DotA "y" Any (Return (Var "y" 0)))) Any $
+                            OpA "accum" (Vstr "unreachable") (DotA "y" Any (Return (Var "y" 0))))
+        (OpA "accum" (Var "y" 1) (DotA "y" Any (Return (Var "y" 0))))))
+        (DotA "z" Any (Return (Var "z" 0))))
+
+tWeakGam = Map.empty
+tWeakSig = Map.fromList([
+  ("accum", Lop "accum" Tstr (Tpair Tstr Any)),
+  ("throw", Lop "throw" Tstr (Tpair Tstr Any)),
+  ("for", Lfor "for" Any)
+  ])
+tWeakComp1 = HandleA UNone hPureT (HandleA (USecond UNone) hAccumST (HandleA (USum UNone UNone) hWeakT cWeakT))
+tWeak1 = checkFile tWeakGam tWeakSig tWeakComp1 (Tpair Tstr (Tsum Tstr Tunit))
+
+
+hAccumSScT :: Handler
+hAccumSScT = Handler
+  "hAccumSc" ["accum"] ["for"] [] 
+  ("x", Return (Vpair (Vstr "", Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tstr (Tsum Tstr Tunit))$
+      DoA "m'" (Unop Fst (Var "k'" 0)) Tstr $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tsum Tstr Tunit) $
+      DoA "m''" (Binop AppendS (Var "x" 4) (Var "m'" 1)) Tstr $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", 
+              DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair Tstr (Tsum Tstr Tunit)))  $
+              DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Fst (Var "l" 0)))) (Tlist Tstr) $
+              DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Snd (Var "l" 0)))) (Tlist (Tsum Tstr Tunit)) $
+              DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tstr (Tsum Tstr Tunit)) $
+              LetrecA "reduce" (Tfunction (Tlist Tstr) Tstr) (LamA "l" (Tlist Tstr) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+                                    If (Var "n" 0) (Return (Vstr "")) (DoA "h" (Unop Head (Var "l" 1)) Tstr $
+                                                                      DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tstr) $
+                                                                      DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tstr $
+                                                                      DoA "x" (Binop AppendS (Var "h" 2) (Var "y" 0)) Tstr $
+                                                                      Return (Var "x" 0))) 
+                (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tstr $
+                DoA "base" (Unop Fst (Var "k'" 2)) Tstr $
+                DoA "k''" (Unop Snd (Var "k'" 3)) (Tsum Tstr Tunit) $
+                DoA "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) Tstr $
+                Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+      DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+      App (Var "f" 3) (Var "pk" 0)
+  )
+
+
+hWeakScT :: Handler
+hWeakScT = Handler
+  "hWeak" ["throw"] ["for"] []
+  ("x", Return (Vsum (Right (Var "x" 0))))
+  (\ oplabel -> case oplabel of
+    "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k",
+      DoA "results" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) Any $ 
+      DoA "FirstFail" (Unop FirstFail (Var "results" 0)) (Tsum Tstr Tunit) $
+      Case (Var "FirstFail" 0) 
+        "error" (Return $ Vsum $ Left (Var "error" 0))
+        "t" (App (Var "k" 3) (Var "t" 0)))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+cWeakScT :: Comp
+cWeakScT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Any (Return (Var "y" 0)))) Any $ 
+         (ScA "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+         (DotA "y" Tstr (Do "eq2" (Binop Eq (Var "y" 0) (Vstr "2")) $
+         If (Var "eq2" 0)   (DoA "_" (OpA "accum" (Vstr "!") (DotA "y" Any (Return (Var "y" 0)))) Any $
+                            DoA "_" (OpA "throw" (Vstr "error") (DotA "y" Any (Return (Var "y" 0)))) Any $
+                            OpA "accum" (Vstr "unreachable") (DotA "y" Any (Return (Var "y" 0))))
+        (OpA "accum" (Var "y" 1) (DotA "y" Any (Return (Var "y" 0))))))
+        (DotA "z" Any (Return (Var "z" 0))))
+
+tWeakSigSc = Map.fromList([
+  ("accum", Lop "accum" Tstr (Tpair Tstr Any)),
+  ("throw", Lop "throw" Tstr (Tpair Tstr Any)),
+  ("for", Lsc "for" Any Any)
+  ])
+
+tWeakComp2 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumSScT (HandleA (USum UNone UNone) hWeakScT cWeakScT))
+tWeak2 = checkFile tWeakGam tWeakSigSc tWeakComp2 (Tpair Tstr (Tsum Tstr Tunit))
 
 

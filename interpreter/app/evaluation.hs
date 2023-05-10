@@ -152,9 +152,9 @@ eval1 (HandleA t h (ForA label v (DotA y a c1) (DotA z b c2))) = return $ case h
       (f, p, k, c) -> shiftC (-3) $ subst c
         [ (shiftV 3 $ LamA y a (HandleA t h c1), 1)
         , (shiftV 3 $ LamA z b (HandleA t h c2), 0)
-        , (LamA "pk" (Tpair a b) $ 
-            Do "p" (Unop Fst (Var "pk" 0)) $
-            Do "k" (Unop Snd (Var "pk" 1)) $
+        , (LamA "pk" (Tpair (Tfunction a Any) (Tfunction b Any)) $ 
+            DoA "p" (Unop Fst (Var "pk" 0)) (Tfunction a Any) $
+            DoA "k" (Unop Snd (Var "pk" 1)) (Tfunction b Any)$
             ForA label (shiftV 3 v) (DotA y a (App (Var p 2) (Var y 0))) (DotA z b (App (Var k 1) (Var z 0))), 2)
         ]
 eval1 (HandleA t h c) = do c' <- eval1 c; return $ HandleA t h c' -- E-Hand 
@@ -360,9 +360,9 @@ eval1' (HandleA t h (ForA label v (DotA y a c1) (DotA z b c2))) = case hfor h la
       (f, p, k, c) -> shiftC (-3) $ subst c
         [ (shiftV 3 $ LamA y a (HandleA t h c1), 1)
         , (shiftV 3 $ LamA z b (HandleA t h c2), 0)
-        , (LamA "pk" (Tpair a b) $ 
-            Do "p" (Unop Fst (Var "pk" 0)) $
-            Do "k" (Unop Snd (Var "pk" 1)) $
+        , (LamA "pk" (Tpair (Tfunction a Any) (Tfunction b Any)) $ 
+            DoA "p" (Unop Fst (Var "pk" 0)) (Tfunction a Any) $
+            DoA "k" (Unop Snd (Var "pk" 1)) (Tfunction b Any) $
             ForA label (shiftV 3 v) (DotA y a (App (Var p 2) (Var y 0))) (DotA z b (App (Var k 1) (Var z 0))), 2)
         ]) -- E-FwdFor
 eval1' (HandleA t h c) = case eval1' c of 

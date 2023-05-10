@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -166,6 +166,9 @@ runReaderTests = runTestTT $ TestList readerTests
 readerTestsData = Tdata "reader" (example_cReader) (Return (Vpair (Vpair (Vlist [Vint 1,Vint 2,Vint 3,Vint 4],Vlist [Vint 1,Vint 2,Vint 3,Vint 4,Vint 5]),Vlist [Vint 1,Vint 2,Vint 3,Vint 4])))
 readerTests = testCaseGen (name readerTestsData) (testC readerTestsData) (result readerTestsData)
 
+-- Reader typechecking
+-- TODO
+
 -- | Accum tests
 
 runAccumTests = runTestTT $ TestList accumTests
@@ -180,7 +183,10 @@ accumTests = concat $ map (\(Tdata name test result) -> testCaseGen name test re
 
 -- Accum typechecking
 accumTypeTest1 = typeCheckGen "accum" tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit)) 1
-accumTypeTests = accumTypeTest1
+accumTypeTest2 = typeCheckGen "accum_no_for" tAccumGam tAccumSig tAccumComp2 (Tpair Tint (Tlist (Tpair Tint Tunit))) 1
+accumTypeTest3 = typeCheckGen "accum_scoped_1" tAccumGam tAccumSigSc tAccumComp3 (Tpair Tint (Tlist Tunit)) 1
+accumTypeTest4 = typeCheckGen "accum_scoped_2" tAccumGam tAccumSigSc tAccumComp4 (Tpair Tint (Tlist (Tpair Tint Tunit))) 1
+accumTypeTests = accumTypeTest1 ++ accumTypeTest2 ++ accumTypeTest3 ++ accumTypeTest4
 
 -- | Weak exception tests
 
@@ -190,6 +196,11 @@ weakExceptionTestsData1 = Tdata "weak_exception_1" (exWeak) (Return (Vpair (Vstr
 weakExceptionTestsData2 = Tdata "weak_exception_2" (exWeakSc) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
 weakExceptionTestsData = [weakExceptionTestsData1, weakExceptionTestsData2]
 weakExceptionTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) weakExceptionTestsData
+
+-- Weak exception typechecking
+weakTypeTest1 = typeCheckGen "weak_1" tWeakGam tWeakSig tWeakComp1 (Tpair Tstr (Tsum Tstr Tunit)) 1
+weakTypeTest2 = typeCheckGen "weak_2" tWeakGam tWeakSigSc tWeakComp2 (Tpair Tstr (Tsum Tstr Tunit)) 1
+weakTypeTests = weakTypeTest1 ++ weakTypeTest2
 
 -- | PRNG tests
 
