@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -213,6 +213,13 @@ prngTestsData4 = Tdata "prng_4" (exPRNGseqSc) (Return (Vlist [Vint 48, Vint 23, 
 prngTestsData = [prngTestsData1, prngTestsData2, prngTestsData3, prngTestsData4]
 prngTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) prngTestsData
 
+-- PRNG typechecking
+prngTypeTest1 = typeCheckGen "prng_1" tPRNGGam tPRNGSig tPRNGComp1 (Tlist Tint) 1
+prngTypeTest2 = typeCheckGen "prng_2" tPRNGGam tPRNGSig tPRNGComp2 (Tlist Tint) 1
+prngTypeTest3 = typeCheckGen "prng_3" tPRNGGam tPRNGSigSc tPRNGComp3 (Tlist Tint) 1
+prngTypeTest4 = typeCheckGen "prng_4" tPRNGGam tPRNGSigSc tPRNGComp4 (Tlist Tint) 1
+prngTypeTests = prngTypeTest1 ++ prngTypeTest2 ++ prngTypeTest3 ++ prngTypeTest4
+
 -- | Amb tests
 
 runAmbTests = runTestTT $ TestList ambTests
@@ -245,6 +252,13 @@ combTestsData2 = Tdata "comb_2" (exCombSc) (Return (Vlist [
             Vlist [Vlist [Vstr "THH", Vstr "THT"], Vlist [Vstr "TTH", Vstr "TTT"]]]))
 ambTestsData = [ambTestsData1, ambTestsData2, combTestsData1, combTestsData2]
 ambTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) ambTestsData 
+
+-- Amb typechecking
+ambTypeTest1 = typeCheckGen "amb_1" tAmbGam tAmbSig tAmbComp1 (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
+ambTypeTest2 = typeCheckGen "amb_2" tAmbGam tAmbSig tAmbComp2 (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
+ambTypeTest3 = typeCheckGen "comb_1" tAmbGam tAmbSig tAmbComp3 (Tlist (Tlist (Tlist Tstr))) 1
+ambTypeTest4 = typeCheckGen "comb_2" tAmbGam tAmbSig tAmbComp4 (Tlist (Tlist (Tlist Tstr))) 1
+ambTypeTests = ambTypeTest1 ++ ambTypeTest2 ++ ambTypeTest3 ++ ambTypeTest4
 
 
 -- | Depth and Amb tests

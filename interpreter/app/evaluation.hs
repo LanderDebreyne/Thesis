@@ -253,8 +253,8 @@ evalBinop Zip (Vlist xs) (Vlist ys) =  return $ case xs of
   [] -> Return . Vlist $ []
   (x:xs) -> case ys of
     [] -> Return . Vlist $ []
-    (y:ys) -> Do "z" (App x y) $
-              Do "zs" (Binop Zip (shiftV 1 $ Vlist xs) (shiftV 1 $ Vlist ys)) $
+    (y:ys) -> DoA "z" (App x y) Any $
+              DoA "zs" (Binop Zip (shiftV 1 $ Vlist xs) (shiftV 1 $ Vlist ys)) (Tlist Any) $
               Binop Append (Vlist [Var "z" 1]) (Var "zs" 0)
 evalBinop _ _ _ = Nothing
 
