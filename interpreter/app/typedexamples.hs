@@ -1152,7 +1152,7 @@ hAccumLT = Handler
           DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
           DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Snd (Var "l" 0)))) (Tlist (Tlist Tunit)) $
           DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
-          LetrecA "reduce" (Tfunction (Nested Any) (Tlist Any)) (LamA "l" (Nested Any) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+          LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
                                     If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
                                                                       DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
                                                                       DoA "y" (App (Var "reduce" 4) (Var "t" 0)) (Tlist Any) $
