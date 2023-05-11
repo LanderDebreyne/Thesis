@@ -386,7 +386,7 @@ hDepthT = Handler
   ("f", "p", "k", Return . LamA "d" Tint $ App (Var "f" 3) (Vpair
     ( LamA "y" Any $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tint Any) $
                 App (Var "p'" 0) (Var "d" 2)
-    , LamA "vs" Any $ Binop ConcatMap (Var "vs" 0) (Lam "vd" $
+    , LamA "vs" Any $ Binop ConcatMap (Var "vs" 0) (LamA "vd" (Tpair Any Tint) $
         DoA "v" (Unop Fst (Var "vd" 0)) Any $
         DoA "d" (Unop Snd (Var "vd" 1)) Tint $
         DoA "k'" (App (Var "k" 5) (Var "v" 1)) (Tfunction Tint Any) $
@@ -1148,11 +1148,11 @@ hAccumLT = Handler
     _ -> Nothing)
   (\ forlabel -> case forlabel of
     "for" ->     (Just ("list", "l", "k", 
-          DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair (Tlist Any) (Tsum Tstr Tunit))) $
-          DoA "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
-          DoA "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) (Tlist (Tsum Tstr Tunit)) $
-          DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Tsum Tstr Tunit)) $
-          LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+          DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair (Tlist Any) (Tlist Tunit))) $
+          DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
+          DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Snd (Var "l" 0)))) (Tlist (Tlist Tunit)) $
+          DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
+          LetrecA "reduce" (Tfunction (Nested Any) (Tlist Any)) (LamA "l" (Nested Any) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
                                     If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
                                                                       DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
                                                                       DoA "y" (App (Var "reduce" 4) (Var "t" 0)) (Tlist Any) $
@@ -1160,7 +1160,7 @@ hAccumLT = Handler
                                                                       Return (Var "x" 0)))
             (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) (Tlist Any) $
             DoA "base" (Unop Fst (Var "k'" 2)) (Tlist Any) $
-            DoA "k''" (Unop Snd (Var "k'" 3)) (Tlist (Tlist Tunit))$
+            DoA "k''" (Unop Snd (Var "k'" 3)) (Nested Tunit)$
             DoA "res" (Binop Append (Var "base" 1) (Var "rest" 2)) (Tlist Any) $
             Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
     _ -> Nothing)
@@ -1193,7 +1193,14 @@ cCombT = DoA "d1" (OpA "amb" (Vlist [Vstr "H", Vstr "T"]) (DotA "y" Any (Return 
             DoA "l1" (Binop AppendS (Var "d1" 2) (Var "d2" 1)) (Tlist Tstr) $
             Binop AppendS (Var "l1" 0) (Var "d3" 1)
 
-tCombComb = HandleA UNone hPureT (HandleA (UList UList UNone) hAmbT cCombT)
+
+tCombSig = Map.fromList([
+  ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Any) (Tlist Tunit))),
+  ("amb", Lop "amb" (Tlist Tstr) Tstr),
+  ("for", Lfor "for" Any)
+  ])
+tCombComp = HandleA UNone hPureT (HandleA (UList UNone) hAmbT cCombT)
+tComb = checkFile tAmbGam tCombSig tCombComp (Tlist (Tlist (Tlist Tstr)))
 
 
 hAmbScT :: Handler
@@ -1213,7 +1220,7 @@ hAmbScT = Handler
   (\ forlabel -> case forlabel of
     _ -> Nothing)
   ("f", "p", "k", 
-        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any) $
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
         App (Var "f" 3) (Var "pk" 0)
   )
 
@@ -1232,10 +1239,10 @@ hAccumScLT = Handler
     _ -> Nothing)
   (\ sclabel -> case sclabel of
     "for" -> Just ("x", "p", "k",
-              DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair (Tlist Any) (Tsum Tstr Tunit))) $
-              DoA "first" (Binop Map (Var "pairs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
-              DoA "second" (Binop Map (Var "pairs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) (Tlist (Tsum Tstr Tunit)) $
-              DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Tsum Tstr Tunit)) $
+              DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair (Tlist Any) (Nested Tunit))) $
+              DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Nested Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
+              DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Nested Tunit)) (Unop Snd (Var "l" 0)))) (Nested Tunit) $
+              DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
               LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
                                         If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
                                                                           DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
@@ -1244,7 +1251,7 @@ hAccumScLT = Handler
                                                                           Return (Var "x" 0)))
                 (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) (Tlist Any) $
                 DoA "base" (Unop Fst (Var "k'" 2)) (Tlist Any) $
-                DoA "k''" (Unop Snd (Var "k'" 3)) (Tlist (Tlist Tunit))$
+                DoA "k''" (Unop Snd (Var "k'" 3)) (Nested Tunit)$
                 DoA "res" (Binop Append (Var "base" 1) (Var "rest" 2)) (Tlist Any) $
                 Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
     _ -> Nothing)
@@ -1255,12 +1262,23 @@ hAccumScLT = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
+tAmbScSig = Map.fromList([
+  ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Any) (Tlist Tunit))),
+  ("amb", Lop "amb" (Tlist Tint) Tint),
+  ("for", Lsc "for" Any Any)
+  ])
 
 tAmbScComp = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumScLT (HandleA (UList (UList UNone)) hAmbScT cAmbT))
-tAmbSc = checkFile tAmbGam tAmbSig tAmbScComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit)))
+tAmbSc = checkFile tAmbGam tAmbScSig tAmbScComp (Tpair (Nested (Tpair Tint Tint)) (Nested Tunit))
 
-tCombScComp = HandleA UNone hPureScT (HandleA (UList UList UNone) hAmbScT cCombT)
-tCombSc = checkFile tAmbGam tAmbSig tCombScComp (Tlist Tstr)
+tCombScSig = Map.fromList([
+  ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Any) (Tlist Tunit))),
+  ("amb", Lop "amb" (Tlist Tstr) Tstr),
+  ("for", Lsc "for" Any Any)
+  ])
+
+tCombScComp = HandleA UNone hPureScT (HandleA (UList UNone) hAmbScT cCombT)
+tCombSc = checkFile tAmbGam tCombScSig tCombScComp (Nested Tstr)
 
 
 hDepthAmbT :: Handler
@@ -1281,8 +1299,8 @@ hDepthAmbT = Handler
     "depth" -> Just ("d'", "p", "k", Return . LamA "d" Tint $
       DoA "p'" (App (Var "p" 2) Vunit) (Tfunction Tint (Tlist Any)) $
       DoA "xs" (App (Var "p'" 0) (Var "d'" 4)) (Tlist Any) $
-      Binop ConcatMap (Var "xs" 0) (LamA "v_" (Tpair Any) $ DoA "v" (Unop Fst (Var "v_" 0)) Any $
-                                         Do "k'" (App (Var "k" 5) (Var "v" 0)) (Tfunction Tint Any) $
+      Binop ConcatMap (Var "xs" 0) (LamA "v_" (Tpair Any Any) $ DoA "v" (Unop Fst (Var "v_" 0)) Any $
+                                         DoA "k'" (App (Var "k" 5) (Var "v" 0)) (Tfunction Tint Any) $
                                          App (Var "k'" 0) (Var "d" 5)))
     _ -> Nothing)
   (\ forlabel -> case forlabel of 
@@ -1303,8 +1321,8 @@ hDepthAmb2T = Handler
   ("x", Return . LamA "d" Tint $ Return (Vlist [Vpair (Var "x" 1, Var "d" 0)]))
   (\ oplabel -> case oplabel of
     "fail" -> Just ("_", "_", Return (Vlist []))
-    "choose" -> Just ("x", "k", Return . Lam "d" $
-      DoA "b" (Binop Eq (Var "d" 0) (Vint 0)) Tint $
+    "choose" -> Just ("x", "k", Return . LamA "d" Tint $
+      DoA "b" (Binop Eq (Var "d" 0) (Vint 0)) Tbool $
       If (Var "b" 0) (Return (Vlist []))
                      (DoA "b1" (OpA "amb" (Vlist [Vbool True, Vbool False]) (DotA "y" Any (Return (Var "y" 0)))) Tbool $
                       DoA "k1" (App (Var "k" 3) (Var "b1" 0)) (Tfunction Tint Any) $
@@ -1335,10 +1353,15 @@ hDepthAmb2T = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
+tDepthAmbSig = Map.fromList([
+  ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Any) (Tlist Tunit))),
+  ("amb", Lop "amb" (Tlist Tbool) Tint),
+  ("for", Lfor "for" Any)
+  ])
 
-tDepthAmbComp1 = HandleA UNone hPureT (HandleA (UList (UList UNone) hAmbT (DoA "f" (HandleA (UList UNone) hDepthAmbT (DoA "f" (HandleA (UList UNone) hDepthAmbT cDepthT)) (Tfunction Tint Any) $ App (Var "f" 0) (Vint 2)))))
-tDepthAmb1 = checkFile tAmbGam tAmbSig tDepthAmbComp (Tlist (Tpair Tint Tint))
+tDepthAmbComp1 = HandleA UNone hPureT (HandleA (UList UNone) hAmbT (DoA "f" (HandleA (UList UNone) hDepthAmbT cDepthT) (Tfunction Tint Any) $ App (Var "f" 0) (Vint 2)))
+tDepthAmb1 = checkFile tAmbGam tDepthAmbSig tDepthAmbComp1 (Nested (Tpair Tint Tint))
 
-tDepthAmbComp2 = HandleA UNone hPureT (HandleA (UList (UList UNone) hAmbT (DoA "f" (HandleA (UList UNone) hDepthAmb2T (DoA "f" (HandleA (UList UNone) hDepthAmb2 cDepthT)) (Tfunction Tint Any) $ App (Var "f" 0) (Vint 2)))))
-tDepthAmb2 = checkFile tAmbGam tAmbSig tDepthAmbComp2 (Tlist (Tpair Tint Tint))
+tDepthAmbComp2 = HandleA UNone hPureT (HandleA (UList UNone) hAmbT (DoA "f" (HandleA (UList UNone) hDepthAmb2T cDepthT) (Tfunction Tint Any) $ App (Var "f" 0) (Vint 2)))
+tDepthAmb2 = checkFile tAmbGam tDepthAmbSig tDepthAmbComp2 (Nested (Tpair Tint Tint))
 

@@ -248,6 +248,7 @@ data ValueType = Tunit
             | Tret ValueType
             | Tmem
             | Tkey
+            | Nested ValueType
             | Any
             deriving (Eq, Show)
 

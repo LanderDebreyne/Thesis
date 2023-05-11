@@ -25,7 +25,7 @@ testCaseGen name test result = [TestCase (assertEqual (name ++ " NVL") (last (ev
 
 typeCheckGen :: String -> Gamma -> Sigma -> Comp -> ComputationType -> Int -> [Test]
 typeCheckGen name gam sig test result n = x : y
-    where x = TestCase (assertEqual (name ++ ".type_check."++ (show n)) (typeCheckC gam sig test result) True)
+    where x = TestCase (assertEqual (name ++ ".type_check."++ (show n)) (typeCheckC gam sig test result False) True)
           y = case (eval1' test) of
             (step, Just c') -> typeCheckGen name gam sig c' result (n+1)
             (step, Nothing) -> []
@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -254,10 +254,10 @@ ambTestsData = [ambTestsData1, ambTestsData2, combTestsData1, combTestsData2]
 ambTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) ambTestsData 
 
 -- Amb typechecking
-ambTypeTest1 = typeCheckGen "amb_1" tAmbGam tAmbSig tAmbComp1 (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
-ambTypeTest2 = typeCheckGen "amb_2" tAmbGam tAmbSig tAmbComp2 (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
-ambTypeTest3 = typeCheckGen "comb_1" tAmbGam tAmbSig tAmbComp3 (Tlist (Tlist (Tlist Tstr))) 1
-ambTypeTest4 = typeCheckGen "comb_2" tAmbGam tAmbSig tAmbComp4 (Tlist (Tlist (Tlist Tstr))) 1
+ambTypeTest1 = typeCheckGen "amb_1" tAmbGam tAmbSig tAmbComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
+ambTypeTest2 = typeCheckGen "comb_1" tAmbGam tCombSig tCombComp (Nested Tstr) 1
+ambTypeTest3 = typeCheckGen "amb_2" tAmbGam tAmbScSig tAmbScComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
+ambTypeTest4 = typeCheckGen "comb_2" tAmbGam tCombScSig tCombScComp (Nested Tstr) 1
 ambTypeTests = ambTypeTest1 ++ ambTypeTest2 ++ ambTypeTest3 ++ ambTypeTest4
 
 
@@ -269,3 +269,10 @@ depthAmbTestsData1 = Tdata "depth_amb_1" (exDepthAmb1) (Return (Vlist [Vlist [Vl
 depthAmbTestsData2 = Tdata "depth_amb_2" (exDepthAmb2) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 0)], Vlist []], Vlist []]))
 depthAmbTestsData = [depthAmbTestsData1, depthAmbTestsData2]
 depthAmbTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) depthAmbTestsData
+
+-- Depth and Amb typechecking
+depthAmbTypeTest1 = typeCheckGen "depth_amb_1" tAmbGam tDepthAmbSig tDepthAmbComp1 (Nested (Tpair Tint Tint)) 1
+depthAmbTypeTest2 = typeCheckGen "depth_amb_2" tAmbGam tDepthAmbSig tDepthAmbComp2 (Nested (Tpair Tint Tint)) 1
+depthAmbTypeTests = depthAmbTypeTest1 ++ depthAmbTypeTest2
+
+
