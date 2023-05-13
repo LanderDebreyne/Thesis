@@ -1,47 +1,47 @@
-parallel{} * handler{hAccum} * handler{hWeak} * do _ <- (op accum : Tunit -> Tunit "start " (y. Return y)
- in for for : Tunit ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
+parallel{} * handler{hAccum} * handler{hWeak} * do _ <- (op "accum" "start " (y. Return y)
+ in for "for" ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x))
 
 1.
 {-- E-Hand and E-Hand and E-Hand and E-DoOp --}
 
-parallel{} * handler{hAccum} * handler{hWeak} * op accum : Tunit -> Tunit "start " (y. do _ <- (Return y
- in for for : Tunit ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
+parallel{} * handler{hAccum} * handler{hWeak} * op "accum" "start " (y. do _ <- (Return y
+ in for "for" ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x)))
 
 2.
 {-- E-Hand and E-Hand and E-FwdOp --}
 
-parallel{} * handler{hAccum} * op accum : Tunit -> Tunit "start " (y. handler{hWeak} * do _ <- (Return y
- in for for : Tunit ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
+parallel{} * handler{hAccum} * op "accum" "start " (y. handler{hWeak} * do _ <- (Return y
+ in for "for" ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x)))
 
 3.
 {-- E-Hand and E-HandOp --}
 
 parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * do _ <- (Return y
- in for for : Tunit ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
+ in for "for" ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x)) ()
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x)) ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("start ") (m')
@@ -51,13 +51,13 @@ if eq2
 {-- E-Hand and E-Do and E-AppAbs --}
 
 parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * do _ <- (Return ()
- in for for : Tunit ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
+ in for "for" ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x))
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("start ") (m')
@@ -66,13 +66,13 @@ if eq2
 5.
 {-- E-Hand and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * for for : Tunit ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * for "for" ["1","2","3","4","5"] (x. do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x)
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x)
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("start ") (m')
@@ -81,13 +81,13 @@ if eq2
 6.
 {-- E-Hand and E-Do and E-Hand and E-HandFor --}
 
-parallel{} * do k' <- (handler{hAccum} * do results <- (\ l. for for : Tunit l (x. handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (handler{hAccum} * do results <- (\ l. for "for" l (x. handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x) ["1","2","3","4","5"]
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x) ["1","2","3","4","5"]
  in do FirstFail <- (FirstFail results
  in case FirstFail of
  error -> Return Left error 
@@ -100,13 +100,13 @@ if eq2
 7.
 {-- E-Hand and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (handler{hAccum} * do results <- (for for : Tunit ["1","2","3","4","5"] (x. handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (handler{hAccum} * do results <- (for "for" ["1","2","3","4","5"] (x. handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x)
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x)
  in do FirstFail <- (FirstFail results
  in case FirstFail of
  error -> Return Left error 
@@ -119,13 +119,13 @@ if eq2
 8.
 {-- E-Hand and E-Do and E-Hand and E-DoFor --}
 
-parallel{} * do k' <- (handler{hAccum} * for for : Tunit ["1","2","3","4","5"] (x. handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (handler{hAccum} * for "for" ["1","2","3","4","5"] (x. handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. do results <- (Return x
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. do results <- (Return x
  in do FirstFail <- (FirstFail results
  in case FirstFail of
  error -> Return Left error 
@@ -138,13 +138,13 @@ if eq2
 9.
 {-- E-Hand and E-Do and E-HandFor --}
 
-parallel{} * do k' <- (do pairs <- (\ l. for for : Tunit l (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (do pairs <- (\ l. for "for" l (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x) ["1","2","3","4","5"]
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x) ["1","2","3","4","5"]
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -174,13 +174,13 @@ if n
 10.
 {-- E-Hand and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do pairs <- (for for : Tunit ["1","2","3","4","5"] (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (do pairs <- (for "for" ["1","2","3","4","5"] (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. Return x)
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. Return x)
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -210,13 +210,13 @@ if n
 11.
 {-- E-Hand and E-Do and E-DoFor --}
 
-parallel{} * do k' <- (for for : Tunit ["1","2","3","4","5"] (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * do k' <- (for "for" ["1","2","3","4","5"] (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. do pairs <- (Return x
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -246,13 +246,13 @@ if n
 12.
 {-- E-Hand and E-DoFor --}
 
-parallel{} * for for : Tunit ["1","2","3","4","5"] (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+parallel{} * for "for" ["1","2","3","4","5"] (x. handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y))) (x. do k' <- (do pairs <- (Return x
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) (x. do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -285,10 +285,10 @@ if n
 do result <- (Map (["1","2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
@@ -319,20 +319,20 @@ if n
 14.
 {-- E-Do and E-Binop --}
 
-do result <- (do y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)) "1"
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y)) "1" : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -364,20 +364,20 @@ if n
 15.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("1") ("2")
+do result <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("1") ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "1" (y. Return y))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "1" (y. Return y)) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -409,20 +409,20 @@ if n
 16.
 {-- E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-Do and E-Binop --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
+do result <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "1" (y. Return y))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "1" (y. Return y)) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -454,19 +454,19 @@ if n
 17.
 {-- E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
+do result <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
 if False
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "1" (y. Return y)
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "1" (y. Return y) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -498,14 +498,14 @@ if n
 18.
 {-- E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-IfTrue --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * op accum : Tunit -> Tunit "1" (y. Return y)
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * op "accum" "1" (y. Return y) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -537,14 +537,14 @@ if n
 19.
 {-- E-Do and E-Do and E-Hand and E-Hand and E-FwdOp --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit "1" (y. handler{hWeak} * Return y)
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (parallel{} * handler{hAccum} * op "accum" "1" (y. handler{hWeak} * Return y) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -576,18 +576,18 @@ if n
 20.
 {-- E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
+do result <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("1") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -619,18 +619,18 @@ if n
 21.
 {-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
+do result <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("1") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -662,18 +662,18 @@ if n
 22.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Hand and E-HandRet --}
 
-do result <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
+do result <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("1") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -705,18 +705,18 @@ if n
 23.
 {-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do y <- (parallel{} * do k' <- (Return ("", Right ())
+do result <- (doA y <- (parallel{} * do k' <- (Return ("", Right ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("1") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -748,17 +748,17 @@ if n
 24.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * do m' <- (Fst ("", Right ())
+do result <- (doA y <- (parallel{} * do m' <- (Fst ("", Right ())
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("1") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -790,17 +790,17 @@ if n
 25.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do y <- (parallel{} * do m' <- (Return ""
+do result <- (doA y <- (parallel{} * do m' <- (Return ""
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("1") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -832,16 +832,16 @@ if n
 26.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * do s <- (Snd ("", Right ())
+do result <- (doA y <- (parallel{} * do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("1") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -873,16 +873,16 @@ if n
 27.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do y <- (parallel{} * do s <- (Return Right ()
+do result <- (doA y <- (parallel{} * do s <- (Return Right ()
  in do m'' <- (AppendS ("1") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -914,15 +914,15 @@ if n
 28.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * do m'' <- (AppendS ("1") ("")
- in Return (m'', Right ()))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (parallel{} * do m'' <- (AppendS ("1") ("")
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -954,15 +954,15 @@ if n
 29.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do y <- (parallel{} * do m'' <- (Return "1"
- in Return (m'', Right ()))
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (parallel{} * do m'' <- (Return "1"
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -994,14 +994,14 @@ if n
 30.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * Return ("1", Right ())
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (parallel{} * Return ("1", Right ()) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1033,14 +1033,14 @@ if n
 31.
 {-- E-Do and E-Do and E-HandRet --}
 
-do result <- (do y <- (Return ("1", Right ())
- in do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA y <- (Return ("1", Right ()) : Any
+ in doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([y]) (ys)))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1072,13 +1072,13 @@ if n
 32.
 {-- E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (Map (["2","3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1110,21 +1110,21 @@ if n
 33.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)) "2"
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y)) "2" : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1156,21 +1156,21 @@ if n
 34.
 {-- E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("2") ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("2") ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "2" (y. Return y))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "2" (y. Return y)) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1202,21 +1202,21 @@ if n
 35.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return True
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return True
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "2" (y. Return y))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "2" (y. Return y)) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1248,20 +1248,20 @@ if n
 36.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
 if True
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "2" (y. Return y)
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "2" (y. Return y) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1293,17 +1293,17 @@ if n
 37.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-IfTrue --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1335,17 +1335,17 @@ if n
 38.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-DoOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * op accum : Tunit -> Tunit "!" (y. do _ <- (Return y
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * op "accum" "!" (y. do _ <- (Return y
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1377,17 +1377,17 @@ if n
 39.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Hand and E-FwdOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit "!" (y. handler{hWeak} * do _ <- (Return y
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" "!" (y. handler{hWeak} * do _ <- (Return y
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1419,21 +1419,21 @@ if n
 40.
 {-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * do _ <- (Return y
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y))) ()
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * do _ <- (Return y
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y))) ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1465,21 +1465,21 @@ if n
 41.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * do _ <- (Return ()
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * do _ <- (Return ()
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1511,20 +1511,20 @@ if n
 42.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y))
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y))
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1556,20 +1556,20 @@ if n
 43.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * op throw : Tunit -> Tunit "error" (y. do _ <- (Return y
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * op "throw" "error" (y. do _ <- (Return y
+ in op "accum" "unreachable" (y. Return y)))
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1601,19 +1601,19 @@ if n
 44.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return Left "error"
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return Left "error"
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1645,19 +1645,19 @@ if n
 45.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (Return ("", Left "error")
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return ("", Left "error")
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1689,18 +1689,18 @@ if n
 46.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst ("", Left "error")
+do result <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst ("", Left "error")
  in do s <- (Snd ("", Left "error")
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1732,18 +1732,18 @@ if n
 47.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Return ""
+do result <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return ""
  in do s <- (Snd ("", Left "error")
  in do m'' <- (AppendS ("!") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1775,17 +1775,17 @@ if n
 48.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do s <- (Snd ("", Left "error")
+do result <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd ("", Left "error")
  in do m'' <- (AppendS ("!") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1817,17 +1817,17 @@ if n
 49.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do s <- (Return Left "error"
+do result <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return Left "error"
  in do m'' <- (AppendS ("!") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1859,16 +1859,16 @@ if n
 50.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (AppendS ("!") ("")
- in Return (m'', Left "error"))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (AppendS ("!") ("")
+ in Return (m'', Left "error")) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1900,16 +1900,16 @@ if n
 51.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return "!"
- in Return (m'', Left "error"))
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return "!"
+ in Return (m'', Left "error")) : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1941,15 +1941,15 @@ if n
 52.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * Return ("!", Left "error")
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (parallel{} * Return ("!", Left "error") : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1981,15 +1981,15 @@ if n
 53.
 {-- E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do y <- (Return ("!", Left "error")
- in do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA y <- (Return ("!", Left "error") : Any
+ in doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2021,14 +2021,14 @@ if n
 54.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (Map (["3","4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2060,22 +2060,22 @@ if n
 55.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)) "3"
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y)) "3" : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2107,22 +2107,22 @@ if n
 56.
 {-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("3") ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("3") ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "3" (y. Return y))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "3" (y. Return y)) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2154,22 +2154,22 @@ if n
 57.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "3" (y. Return y))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "3" (y. Return y)) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2201,21 +2201,21 @@ if n
 58.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
 if False
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "3" (y. Return y)
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "3" (y. Return y) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2247,16 +2247,16 @@ if n
 59.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-IfTrue --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * op accum : Tunit -> Tunit "3" (y. Return y)
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * op "accum" "3" (y. Return y) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2288,16 +2288,16 @@ if n
 60.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-FwdOp --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit "3" (y. handler{hWeak} * Return y)
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" "3" (y. handler{hWeak} * Return y) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2329,20 +2329,20 @@ if n
 61.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("3") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2374,20 +2374,20 @@ if n
 62.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("3") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2419,20 +2419,20 @@ if n
 63.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Hand and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("3") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2464,20 +2464,20 @@ if n
 64.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return ("", Right ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("3") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2509,19 +2509,19 @@ if n
 65.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst ("", Right ())
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("3") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2553,19 +2553,19 @@ if n
 66.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return ""
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return ""
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("3") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2597,18 +2597,18 @@ if n
 67.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("3") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2640,18 +2640,18 @@ if n
 68.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return Right ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return Right ()
  in do m'' <- (AppendS ("3") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2683,17 +2683,17 @@ if n
 69.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (AppendS ("3") ("")
- in Return (m'', Right ()))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (AppendS ("3") ("")
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2725,17 +2725,17 @@ if n
 70.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return "3"
- in Return (m'', Right ()))
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return "3"
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2767,16 +2767,16 @@ if n
 71.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return ("3", Right ())
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return ("3", Right ()) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2808,16 +2808,16 @@ if n
 72.
 {-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (Return ("3", Right ())
- in do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA y <- (Return ("3", Right ()) : Any
+ in doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2849,15 +2849,15 @@ if n
 73.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Map (["4","5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2889,23 +2889,23 @@ if n
 74.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)) "4"
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y)) "4" : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2937,23 +2937,23 @@ if n
 75.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("4") ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("4") ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "4" (y. Return y))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "4" (y. Return y)) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2985,23 +2985,23 @@ if n
 76.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "4" (y. Return y))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "4" (y. Return y)) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3033,22 +3033,22 @@ if n
 77.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
 if False
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "4" (y. Return y)
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "4" (y. Return y) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3080,17 +3080,17 @@ if n
 78.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-IfTrue --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * op accum : Tunit -> Tunit "4" (y. Return y)
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * op "accum" "4" (y. Return y) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3122,17 +3122,17 @@ if n
 79.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-FwdOp --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit "4" (y. handler{hWeak} * Return y)
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" "4" (y. handler{hWeak} * Return y) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3164,21 +3164,21 @@ if n
 80.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("4") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3210,21 +3210,21 @@ if n
 81.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("4") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3256,21 +3256,21 @@ if n
 82.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Hand and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("4") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3302,21 +3302,21 @@ if n
 83.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return ("", Right ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("4") (m')
- in Return (m'', s)))))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3348,20 +3348,20 @@ if n
 84.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst ("", Right ())
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("4") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3393,20 +3393,20 @@ if n
 85.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return ""
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return ""
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("4") (m')
- in Return (m'', s))))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3438,19 +3438,19 @@ if n
 86.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("4") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3482,19 +3482,19 @@ if n
 87.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return Right ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return Right ()
  in do m'' <- (AppendS ("4") ("")
- in Return (m'', s)))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3526,18 +3526,18 @@ if n
 88.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (AppendS ("4") ("")
- in Return (m'', Right ()))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (AppendS ("4") ("")
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3569,18 +3569,18 @@ if n
 89.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return "4"
- in Return (m'', Right ()))
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return "4"
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3612,17 +3612,17 @@ if n
 90.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return ("4", Right ())
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return ("4", Right ()) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3654,17 +3654,17 @@ if n
 91.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return ("4", Right ())
- in do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return ("4", Right ()) : Any
+ in doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3696,16 +3696,16 @@ if n
 92.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map (["5"]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3737,24 +3737,24 @@ if n
 93.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)) "5"
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y)) "5" : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3786,24 +3786,24 @@ if n
 94.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("5") ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq ("5") ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "5" (y. Return y))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "5" (y. Return y)) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3835,24 +3835,24 @@ if n
 95.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Return False
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "5" (y. Return y))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "5" (y. Return y)) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3884,23 +3884,23 @@ if n
 96.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * 
 if False
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit "5" (y. Return y)
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" "5" (y. Return y) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3932,18 +3932,18 @@ if n
 97.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-Hand and E-IfTrue --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * handler{hWeak} * op accum : Tunit -> Tunit "5" (y. Return y)
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * handler{hWeak} * op "accum" "5" (y. Return y) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -3975,18 +3975,18 @@ if n
 98.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Hand and E-FwdOp --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit "5" (y. handler{hWeak} * Return y)
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" "5" (y. handler{hWeak} * Return y) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4018,22 +4018,22 @@ if n
 99.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * handler{hWeak} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("5") (m')
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4065,22 +4065,22 @@ if n
 100.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * handler{hWeak} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("5") (m')
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4112,22 +4112,22 @@ if n
 101.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Hand and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return Right ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("5") (m')
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4159,22 +4159,22 @@ if n
 102.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return ("", Right ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (AppendS ("5") (m')
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4206,21 +4206,21 @@ if n
 103.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst ("", Right ())
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("5") (m')
- in Return (m'', s))))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4252,21 +4252,21 @@ if n
 104.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return ""
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return ""
  in do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("5") (m')
- in Return (m'', s))))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4298,20 +4298,20 @@ if n
 105.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd ("", Right ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd ("", Right ())
  in do m'' <- (AppendS ("5") ("")
- in Return (m'', s)))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4343,20 +4343,20 @@ if n
 106.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return Right ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return Right ()
  in do m'' <- (AppendS ("5") ("")
- in Return (m'', s)))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4388,19 +4388,19 @@ if n
 107.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (AppendS ("5") ("")
- in Return (m'', Right ()))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (AppendS ("5") ("")
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4432,19 +4432,19 @@ if n
 108.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return "5"
- in Return (m'', Right ()))
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return "5"
+ in Return (m'', Right ())) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4476,18 +4476,18 @@ if n
 109.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return ("5", Right ())
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return ("5", Right ()) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4519,18 +4519,18 @@ if n
 110.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return ("5", Right ())
- in do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return ("5", Right ()) : Any
+ in doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([y]) (ys)))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4562,17 +4562,17 @@ if n
 111.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ x. parallel{} * handler{hAccum} * handler{hWeak} * do eq2 <- (Eq (x) ("2")
  in 
 if eq2
- then do _ <- (op accum : Tunit -> Tunit "!" (y. Return y)
- in do _ <- (op throw : Tunit -> Tunit "error" (y. Return y)
- in op accum : Tunit -> Tunit "unreachable" (y. Return y)))
- else op accum : Tunit -> Tunit x (y. Return y)))
- in Append ([("5", Right ())]) (ys))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+ then do _ <- (op "accum" "!" (y. Return y)
+ in do _ <- (op "throw" "error" (y. Return y)
+ in op "accum" "unreachable" (y. Return y)))
+ else op "accum" x (y. Return y))) : Tlist Any
+ in Append ([("5", Right ())]) (ys)) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4604,11 +4604,11 @@ if n
 112.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append ([("5", Right ())]) (ys))
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append ([("5", Right ())]) (ys)) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4640,10 +4640,10 @@ if n
 113.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([("5", Right ())]) ([])
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([("5", Right ())]) ([]) : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4675,10 +4675,10 @@ if n
 114.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [("5", Right ())]
- in Append ([("4", Right ())]) (ys))
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [("5", Right ())] : Tlist Any
+ in Append ([("4", Right ())]) (ys)) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4710,9 +4710,9 @@ if n
 115.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Append ([("4", Right ())]) ([("5", Right ())])
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([("4", Right ())]) ([("5", Right ())]) : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4744,9 +4744,9 @@ if n
 116.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Return [("4", Right ()),("5", Right ())]
- in Append ([("3", Right ())]) (ys))
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [("4", Right ()),("5", Right ())] : Tlist Any
+ in Append ([("3", Right ())]) (ys)) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4778,8 +4778,8 @@ if n
 117.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Append ([("3", Right ())]) ([("4", Right ()),("5", Right ())])
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (Append ([("3", Right ())]) ([("4", Right ()),("5", Right ())]) : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4811,8 +4811,8 @@ if n
 118.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (Return [("3", Right ()),("4", Right ()),("5", Right ())]
- in Append ([("!", Left "error")]) (ys))
+do result <- (doA ys' <- (doA ys' <- (Return [("3", Right ()),("4", Right ()),("5", Right ())] : Tlist Any
+ in Append ([("!", Left "error")]) (ys)) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4844,7 +4844,7 @@ if n
 119.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Append ([("!", Left "error")]) ([("3", Right ()),("4", Right ()),("5", Right ())])
+do result <- (doA ys' <- (Append ([("!", Left "error")]) ([("3", Right ()),("4", Right ()),("5", Right ())]) : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -4876,7 +4876,7 @@ if n
 120.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (Return [("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]
+do result <- (doA ys' <- (Return [("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())] : Tlist Any
  in Append ([("1", Right ())]) (ys))
  in \ x. parallel{} * do k' <- (do pairs <- (Return x
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -5059,8 +5059,8 @@ if n
 126.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do y <- (\ l. Fst l ("1", Right ())
- in do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
+parallel{} * do k' <- (do first <- (doA y <- (\ l. Fst l ("1", Right ()) : Any
+ in doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
  in Append ([y]) (ys)))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5090,8 +5090,8 @@ if n
 127.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do first <- (do y <- (Fst ("1", Right ())
- in do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
+parallel{} * do k' <- (do first <- (doA y <- (Fst ("1", Right ()) : Any
+ in doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
  in Append ([y]) (ys)))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5121,8 +5121,8 @@ if n
 128.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do first <- (do y <- (Return "1"
- in do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
+parallel{} * do k' <- (do first <- (doA y <- (Return "1" : Any
+ in doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
  in Append ([y]) (ys)))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5152,7 +5152,7 @@ if n
 129.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
+parallel{} * do k' <- (do first <- (doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5182,9 +5182,9 @@ if n
 130.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do y <- (\ l. Fst l ("!", Left "error")
- in do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA y <- (\ l. Fst l ("!", Left "error") : Any
+ in doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5214,9 +5214,9 @@ if n
 131.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do y <- (Fst ("!", Left "error")
- in do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA y <- (Fst ("!", Left "error") : Any
+ in doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5246,9 +5246,9 @@ if n
 132.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do y <- (Return "!"
- in do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA y <- (Return "!" : Any
+ in doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5278,8 +5278,8 @@ if n
 133.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5309,10 +5309,10 @@ if n
 134.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l ("3", Right ())
- in do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Fst l ("3", Right ()) : Any
+ in doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5342,10 +5342,10 @@ if n
 135.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do y <- (Fst ("3", Right ())
- in do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA y <- (Fst ("3", Right ()) : Any
+ in doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5375,10 +5375,10 @@ if n
 136.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do y <- (Return "3"
- in do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA y <- (Return "3" : Any
+ in doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5408,9 +5408,9 @@ if n
 137.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l)
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5440,11 +5440,11 @@ if n
 138.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l ("4", Right ())
- in do ys' <- (Map ([("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Fst l ("4", Right ()) : Any
+ in doA ys' <- (Map ([("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5474,11 +5474,11 @@ if n
 139.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Fst ("4", Right ())
- in do ys' <- (Map ([("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Fst ("4", Right ()) : Any
+ in doA ys' <- (Map ([("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5508,11 +5508,11 @@ if n
 140.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return "4"
- in do ys' <- (Map ([("5", Right ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return "4" : Any
+ in doA ys' <- (Map ([("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5542,10 +5542,10 @@ if n
 141.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([("5", Right ())]) (\ l. Fst l)
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([("5", Right ())]) (\ l. Fst l) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5575,12 +5575,12 @@ if n
 142.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l ("5", Right ())
- in do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Fst l ("5", Right ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5610,12 +5610,12 @@ if n
 143.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Fst ("5", Right ())
- in do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Fst ("5", Right ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5645,12 +5645,12 @@ if n
 144.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return "5"
- in do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return "5" : Any
+ in doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5680,11 +5680,11 @@ if n
 145.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ l. Fst l)
- in Append (["5"]) (ys))
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append (["5"]) (ys)) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5714,11 +5714,11 @@ if n
 146.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append (["5"]) (ys))
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append (["5"]) (ys)) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5748,10 +5748,10 @@ if n
 147.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append (["5"]) ([])
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append (["5"]) ([]) : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5781,10 +5781,10 @@ if n
 148.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return ["5"]
- in Append (["4"]) (ys))
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return ["5"] : Tlist Any
+ in Append (["4"]) (ys)) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5814,9 +5814,9 @@ if n
 149.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (Append (["4"]) (["5"])
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (Append (["4"]) (["5"]) : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5846,9 +5846,9 @@ if n
 150.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (do ys' <- (Return ["4","5"]
- in Append (["3"]) (ys))
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (doA ys' <- (Return ["4","5"] : Tlist Any
+ in Append (["3"]) (ys)) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5878,8 +5878,8 @@ if n
 151.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (Append (["3"]) (["4","5"])
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (Append (["3"]) (["4","5"]) : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5909,8 +5909,8 @@ if n
 152.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (do ys' <- (Return ["3","4","5"]
- in Append (["!"]) (ys))
+parallel{} * do k' <- (do first <- (doA ys' <- (doA ys' <- (Return ["3","4","5"] : Tlist Any
+ in Append (["!"]) (ys)) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5940,7 +5940,7 @@ if n
 153.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (Append (["!"]) (["3","4","5"])
+parallel{} * do k' <- (do first <- (doA ys' <- (Append (["!"]) (["3","4","5"]) : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -5970,7 +5970,7 @@ if n
 154.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do first <- (do ys' <- (Return ["!","3","4","5"]
+parallel{} * do k' <- (do first <- (doA ys' <- (Return ["!","3","4","5"] : Tlist Any
  in Append (["1"]) (ys))
  in do second <- (Map ([("1", Right ()),("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
@@ -6086,8 +6086,8 @@ if n
 158.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do y <- (\ l. Snd l ("1", Right ())
- in do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
+parallel{} * do k' <- (do second <- (doA y <- (\ l. Snd l ("1", Right ()) : Any
+ in doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
  in Append ([y]) (ys)))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6116,8 +6116,8 @@ if n
 159.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do second <- (do y <- (Snd ("1", Right ())
- in do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
+parallel{} * do k' <- (do second <- (doA y <- (Snd ("1", Right ()) : Any
+ in doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
  in Append ([y]) (ys)))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6146,8 +6146,8 @@ if n
 160.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do second <- (do y <- (Return Right ()
- in do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
+parallel{} * do k' <- (do second <- (doA y <- (Return Right () : Any
+ in doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
  in Append ([y]) (ys)))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6176,7 +6176,7 @@ if n
 161.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
+parallel{} * do k' <- (do second <- (doA ys' <- (Map ([("!", Left "error"),("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6205,9 +6205,9 @@ if n
 162.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do y <- (\ l. Snd l ("!", Left "error")
- in do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA y <- (\ l. Snd l ("!", Left "error") : Any
+ in doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6236,9 +6236,9 @@ if n
 163.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do y <- (Snd ("!", Left "error")
- in do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA y <- (Snd ("!", Left "error") : Any
+ in doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6267,9 +6267,9 @@ if n
 164.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do y <- (Return Left "error"
- in do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA y <- (Return Left "error" : Any
+ in doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6298,8 +6298,8 @@ if n
 165.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (Map ([("3", Right ()),("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6328,10 +6328,10 @@ if n
 166.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l ("3", Right ())
- in do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Snd l ("3", Right ()) : Any
+ in doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6360,10 +6360,10 @@ if n
 167.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do y <- (Snd ("3", Right ())
- in do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA y <- (Snd ("3", Right ()) : Any
+ in doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6392,10 +6392,10 @@ if n
 168.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do y <- (Return Right ()
- in do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA y <- (Return Right () : Any
+ in doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6424,9 +6424,9 @@ if n
 169.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l)
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([("4", Right ()),("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6455,11 +6455,11 @@ if n
 170.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l ("4", Right ())
- in do ys' <- (Map ([("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Snd l ("4", Right ()) : Any
+ in doA ys' <- (Map ([("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6488,11 +6488,11 @@ if n
 171.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Snd ("4", Right ())
- in do ys' <- (Map ([("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Snd ("4", Right ()) : Any
+ in doA ys' <- (Map ([("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6521,11 +6521,11 @@ if n
 172.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return Right ()
- in do ys' <- (Map ([("5", Right ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return Right () : Any
+ in doA ys' <- (Map ([("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6554,10 +6554,10 @@ if n
 173.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([("5", Right ())]) (\ l. Snd l)
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([("5", Right ())]) (\ l. Snd l) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6586,12 +6586,12 @@ if n
 174.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l ("5", Right ())
- in do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Snd l ("5", Right ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6620,12 +6620,12 @@ if n
 175.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Snd ("5", Right ())
- in do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Snd ("5", Right ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6654,12 +6654,12 @@ if n
 176.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return Right ()
- in do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return Right () : Any
+ in doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6688,11 +6688,11 @@ if n
 177.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6721,11 +6721,11 @@ if n
 178.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6754,10 +6754,10 @@ if n
 179.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([Right ()]) ([])
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([Right ()]) ([]) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6786,10 +6786,10 @@ if n
 180.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [Right ()]
- in Append ([Right ()]) (ys))
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [Right ()] : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6818,9 +6818,9 @@ if n
 181.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (Append ([Right ()]) ([Right ()])
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([Right ()]) ([Right ()]) : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6849,9 +6849,9 @@ if n
 182.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (do ys' <- (Return [Right (),Right ()]
- in Append ([Right ()]) (ys))
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [Right (),Right ()] : Tlist Any
+ in Append ([Right ()]) (ys)) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6880,8 +6880,8 @@ if n
 183.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (Append ([Right ()]) ([Right (),Right ()])
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (Append ([Right ()]) ([Right (),Right ()]) : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6910,8 +6910,8 @@ if n
 184.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (do ys' <- (Return [Right (),Right (),Right ()]
- in Append ([Left "error"]) (ys))
+parallel{} * do k' <- (do second <- (doA ys' <- (doA ys' <- (Return [Right (),Right (),Right ()] : Tlist Any
+ in Append ([Left "error"]) (ys)) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6940,7 +6940,7 @@ if n
 185.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (Append ([Left "error"]) ([Right (),Right (),Right ()])
+parallel{} * do k' <- (do second <- (doA ys' <- (Append ([Left "error"]) ([Right (),Right (),Right ()]) : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results
@@ -6969,7 +6969,7 @@ if n
 186.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do k' <- (do second <- (do ys' <- (Return [Left "error",Right (),Right (),Right ()]
+parallel{} * do k' <- (do second <- (doA ys' <- (Return [Left "error",Right (),Right (),Right ()] : Tlist Any
  in Append ([Right ()]) (ys))
  in do k' <- (\ x. handler{hAccum} * do results <- (Return x
  in do FirstFail <- (FirstFail results

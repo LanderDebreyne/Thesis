@@ -1,998 +1,998 @@
-handler{hPureSc} * handler{hAccumSc} * sc for : Tunit -> Tunit [1,2,3,4,5] (y. op accum : Tunit -> Tunit y (y. Return y)) (z. Return z)
+handler{hPureSc} * handler{hAccumSc} * sc "for" [1,2,3,4,5] (y. op "accum" y (y. Return y)) (z. Return z)
 
 1.
 {-- E-Hand and E-FwdSc --}
 
-handler{hPureSc} * do pk <- (Return (\ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccumSc} * Return z)
+handler{hPureSc} * do pk <- (Return (\ y. handler{hAccumSc} * op "accum" y (y. Return y), \ z. handler{hAccumSc} * Return z)
  in \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in sc for : Tunit -> Tunit [1,2,3,4,5] (y. p y) (z. k z))) pk)
+ in sc "for" [1,2,3,4,5] (y. p y) (z. k z))) pk)
 
 2.
 {-- E-Hand and E-DoRet --}
 
 handler{hPureSc} * \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in sc for : Tunit -> Tunit [1,2,3,4,5] (y. p y) (z. k z))) (\ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccumSc} * Return z)
+ in sc "for" [1,2,3,4,5] (y. p y) (z. k z))) (\ y. handler{hAccumSc} * op "accum" y (y. Return y), \ z. handler{hAccumSc} * Return z)
 
 3.
 {-- E-Hand and E-AppAbs --}
 
-handler{hPureSc} * do p <- (Fst (\ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccumSc} * Return z)
- in do k <- (Snd (\ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccumSc} * Return z)
- in sc for : Tunit -> Tunit [1,2,3,4,5] (y. p y) (z. k z)))
+handler{hPureSc} * do p <- (Fst (\ y. handler{hAccumSc} * op "accum" y (y. Return y), \ z. handler{hAccumSc} * Return z)
+ in do k <- (Snd (\ y. handler{hAccumSc} * op "accum" y (y. Return y), \ z. handler{hAccumSc} * Return z)
+ in sc "for" [1,2,3,4,5] (y. p y) (z. k z)))
 
 4.
 {-- E-Hand and E-Do and E-Unop --}
 
-handler{hPureSc} * do p <- (Return \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y)
- in do k <- (Snd (\ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccumSc} * Return z)
- in sc for : Tunit -> Tunit [1,2,3,4,5] (y. p y) (z. k z)))
+handler{hPureSc} * do p <- (Return \ y. handler{hAccumSc} * op "accum" y (y. Return y)
+ in do k <- (Snd (\ y. handler{hAccumSc} * op "accum" y (y. Return y), \ z. handler{hAccumSc} * Return z)
+ in sc "for" [1,2,3,4,5] (y. p y) (z. k z)))
 
 5.
 {-- E-Hand and E-DoRet --}
 
-handler{hPureSc} * do k <- (Snd (\ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y), \ z. handler{hAccumSc} * Return z)
- in sc for : Tunit -> Tunit [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y) (z. k z))
+handler{hPureSc} * do k <- (Snd (\ y. handler{hAccumSc} * op "accum" y (y. Return y), \ z. handler{hAccumSc} * Return z)
+ in sc "for" [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) (z. k z))
 
 6.
 {-- E-Hand and E-Do and E-Unop --}
 
 handler{hPureSc} * do k <- (Return \ z. handler{hAccumSc} * Return z
- in sc for : Tunit -> Tunit [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y) (z. k z))
+ in sc "for" [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) (z. k z))
 
 7.
 {-- E-Hand and E-DoRet --}
 
-handler{hPureSc} * sc for : Tunit -> Tunit [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y) (z. \ z. handler{hAccumSc} * Return z z)
+handler{hPureSc} * sc "for" [1,2,3,4,5] (y. \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) (z. \ z. handler{hAccumSc} * Return z z)
 
 8.
 {-- E-HandSc --}
 
-do results <- (Map ([1,2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (Map ([1,2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y)
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 9.
 {-- E-Do and E-Binop --}
 
-do results <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y 1
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y 1 : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 10.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do results <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) 1
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) 1 : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 11.
 {-- E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do results <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum : Tunit -> Tunit 1 (y. Return y)
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (handler{hPureSc} * handler{hAccumSc} * op "accum" 1 (y. Return y) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 12.
 {-- E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+do results <- (doA y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
- in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 13.
 {-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do results <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+do results <- (doA y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
- in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 14.
 {-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do results <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+do results <- (doA y <- (handler{hPureSc} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
- in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 15.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+do results <- (doA y <- (handler{hPureSc} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (1)
- in Return (m'', s))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 16.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+do results <- (doA y <- (handler{hPureSc} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (1)
- in Return (m'', s))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 17.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+do results <- (doA y <- (handler{hPureSc} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (1)
- in Return (m'', s)))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 18.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do y <- (handler{hPureSc} * do s <- (Return ()
+do results <- (doA y <- (handler{hPureSc} * do s <- (Return ()
  in do m'' <- (Add (0) (1)
- in Return (m'', s)))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 19.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (1)
- in Return (m'', ()))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (handler{hPureSc} * do m'' <- (Add (0) (1)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 20.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do results <- (do y <- (handler{hPureSc} * do m'' <- (Return 1
- in Return (m'', ()))
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (handler{hPureSc} * do m'' <- (Return 1
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 21.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do y <- (handler{hPureSc} * Return (1, ())
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (handler{hPureSc} * Return (1, ()) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 22.
 {-- E-Do and E-Do and E-HandRet --}
 
-do results <- (do y <- (Return (1, ())
- in do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA y <- (Return (1, ()) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 23.
 {-- E-Do and E-DoRet --}
 
-do results <- (do ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
+do results <- (doA ys' <- (Map ([2,3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 24.
 {-- E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y 2
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y 2 : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 25.
 {-- E-Do and E-Do and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) 2
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) 2 : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 26.
 {-- E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum : Tunit -> Tunit 2 (y. Return y)
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * handler{hAccumSc} * op "accum" 2 (y. Return y) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 27.
 {-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
- in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 28.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
- in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 29.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
- in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 30.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (2)
- in Return (m'', s))))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 31.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (2)
- in Return (m'', s))))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 32.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (2)
- in Return (m'', s)))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 33.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Return ()
  in do m'' <- (Add (0) (2)
- in Return (m'', s)))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 34.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (2)
- in Return (m'', ()))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Add (0) (2)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 35.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 2
- in Return (m'', ()))
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Return 2
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 36.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do y <- (handler{hPureSc} * Return (2, ())
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (handler{hPureSc} * Return (2, ()) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 37.
 {-- E-Do and E-Do and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do y <- (Return (2, ())
- in do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
+do results <- (doA ys' <- (doA y <- (Return (2, ()) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 38.
 {-- E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (Map ([3,4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 39.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y 3
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y 3 : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 40.
 {-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) 3
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) 3 : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 41.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum : Tunit -> Tunit 3 (y. Return y)
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * handler{hAccumSc} * op "accum" 3 (y. Return y) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 42.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
- in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 43.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
- in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 44.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
- in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 45.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (3)
- in Return (m'', s))))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 46.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (3)
- in Return (m'', s))))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 47.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (3)
- in Return (m'', s)))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 48.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Return ()
  in do m'' <- (Add (0) (3)
- in Return (m'', s)))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 49.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (3)
- in Return (m'', ()))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Add (0) (3)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 50.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 3
- in Return (m'', ()))
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Return 3
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 51.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return (3, ())
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * Return (3, ()) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 52.
 {-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do ys' <- (do y <- (Return (3, ())
- in do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA y <- (Return (3, ()) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 53.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([4,5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 54.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y 4
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y 4 : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 55.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) 4
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) 4 : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 56.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum : Tunit -> Tunit 4 (y. Return y)
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * handler{hAccumSc} * op "accum" 4 (y. Return y) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 57.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
- in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 58.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
- in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 59.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
- in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 60.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (4)
- in Return (m'', s))))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 61.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (4)
- in Return (m'', s))))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 62.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (4)
- in Return (m'', s)))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 63.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Return ()
  in do m'' <- (Add (0) (4)
- in Return (m'', s)))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 64.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (4)
- in Return (m'', ()))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Add (0) (4)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 65.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 4
- in Return (m'', ()))
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Return 4
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 66.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return (4, ())
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * Return (4, ()) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 67.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (4, ())
- in do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return (4, ()) : Any
+ in doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 68.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([5]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 69.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y 5
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y 5 : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 70.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) 5
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) 5 : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 71.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * handler{hAccumSc} * op accum : Tunit -> Tunit 5 (y. Return y)
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * handler{hAccumSc} * op "accum" 5 (y. Return y) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 72.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (\ y. handler{hAccumSc} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 73.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (handler{hAccumSc} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 74.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do k' <- (Return (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 75.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Fst (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (5)
- in Return (m'', s))))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 76.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m' <- (Return 0
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (5)
- in Return (m'', s))))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 77.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Snd (0, ())
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (5)
- in Return (m'', s)))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 78.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do s <- (Return ()
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do s <- (Return ()
  in do m'' <- (Add (0) (5)
- in Return (m'', s)))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 79.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Add (0) (5)
- in Return (m'', ()))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Add (0) (5)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 80.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * do m'' <- (Return 5
- in Return (m'', ()))
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * do m'' <- (Return 5
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 81.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (handler{hPureSc} * Return (5, ())
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (handler{hPureSc} * Return (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 82.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (5, ())
- in do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 83.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op accum : Tunit -> Tunit y (y. Return y) y)
- in Append ([(5, ())]) (ys))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ y. handler{hPureSc} * \ y. handler{hAccumSc} * op "accum" y (y. Return y) y) : Tlist Any
+ in Append ([(5, ())]) (ys)) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 84.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append ([(5, ())]) (ys))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append ([(5, ())]) (ys)) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 85.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([(5, ())]) ([])
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([(5, ())]) ([]) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 86.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [(5, ())]
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [(5, ())] : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 87.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (Append ([(4, ())]) ([(5, ())])
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([(4, ())]) ([(5, ())]) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 88.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (do ys' <- (Return [(4, ()),(5, ())]
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [(4, ()),(5, ())] : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 89.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (do ys' <- (Append ([(3, ())]) ([(4, ()),(5, ())])
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (Append ([(3, ())]) ([(4, ()),(5, ())]) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 90.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (do ys' <- (Return [(3, ()),(4, ()),(5, ())]
- in Append ([(2, ())]) (ys))
+do results <- (doA ys' <- (doA ys' <- (Return [(3, ()),(4, ()),(5, ())] : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 91.
 {-- E-Do and E-Do and E-DoRet --}
 
-do results <- (do ys' <- (Append ([(2, ())]) ([(3, ()),(4, ()),(5, ())])
+do results <- (doA ys' <- (Append ([(2, ())]) ([(3, ()),(4, ()),(5, ())]) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 
 92.
 {-- E-Do and E-Do and E-Binop --}
 
-do results <- (do ys' <- (Return [(2, ()),(3, ()),(4, ()),(5, ())]
+do results <- (doA ys' <- (Return [(2, ()),(3, ()),(4, ()),(5, ())] : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. handler{hPureSc} * \ z. handler{hAccumSc} * Return z z results)
 

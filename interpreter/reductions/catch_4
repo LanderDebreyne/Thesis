@@ -1,28 +1,28 @@
-do c' <- (handler{hInc} * handler{hExcept} * do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+do c' <- (handler{hInc} * handler{hExcept} * do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -31,31 +31,31 @@ if b
 1.
 {-- E-Do and E-Hand and E-Hand and E-Do and E-DoOp --}
 
-do c' <- (handler{hInc} * handler{hExcept} * do _ <- (op inc : Tunit -> Tunit () (y. do x <- (Return y
+do c' <- (handler{hInc} * handler{hExcept} * do _ <- (op "inc" () (y. do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x)))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -64,31 +64,31 @@ if b
 2.
 {-- E-Do and E-Hand and E-Hand and E-DoOp --}
 
-do c' <- (handler{hInc} * handler{hExcept} * op inc : Tunit -> Tunit () (y. do _ <- (do x <- (Return y
+do c' <- (handler{hInc} * handler{hExcept} * op "inc" () (y. do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z)))
@@ -97,31 +97,31 @@ if b
 3.
 {-- E-Do and E-Hand and E-FwdOp --}
 
-do c' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. handler{hExcept} * do _ <- (do x <- (Return y
+do c' <- (handler{hInc} * op "inc" () (y. handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z)))
@@ -134,27 +134,27 @@ do c' <- (Return \ s. do k' <- (\ y. handler{hInc} * handler{hExcept} * do _ <- 
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z)) s
@@ -169,27 +169,27 @@ if b
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z)) s
@@ -203,27 +203,27 @@ do k' <- (\ y. handler{hInc} * handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z)) 1
@@ -237,27 +237,27 @@ do k' <- (handler{hInc} * handler{hExcept} * do _ <- (do x <- (Return 1
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -270,27 +270,27 @@ if b
 do k' <- (handler{hInc} * handler{hExcept} * do _ <- (do b <- (Larger (1) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 1)
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -303,27 +303,27 @@ if b
 do k' <- (handler{hInc} * handler{hExcept} * do _ <- (do b <- (Return False
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 1)
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -335,27 +335,27 @@ if b
 
 do k' <- (handler{hInc} * handler{hExcept} * do _ <- (
 if False
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 1
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -366,25 +366,25 @@ if b
 {-- E-Do and E-Hand and E-Hand and E-Do and E-IfTrue --}
 
 do k' <- (handler{hInc} * handler{hExcept} * do _ <- (Return 1
- in sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+ in sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z))
@@ -394,25 +394,25 @@ if b
 12.
 {-- E-Do and E-Hand and E-Hand and E-DoRet --}
 
-do k' <- (handler{hInc} * handler{hExcept} * sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+do k' <- (handler{hInc} * handler{hExcept} * sc "catch" "Overflow" (b. 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail") (z. Return z)
@@ -424,23 +424,23 @@ if b
 
 do k' <- (handler{hInc} * do x <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" True
@@ -449,23 +449,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -485,23 +485,23 @@ if b
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * 
 if True
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail"
@@ -510,23 +510,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -544,23 +544,23 @@ if b
 15.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -568,23 +568,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -602,23 +602,23 @@ if b
 16.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (op inc : Tunit -> Tunit () (y. do x <- (Return y
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (op "inc" () (y. do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x)))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -626,23 +626,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -660,23 +660,23 @@ if b
 17.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * op inc : Tunit -> Tunit () (y. do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * op "inc" () (y. do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))))
  in do b <- (Eq (x) (Left "Overflow")
@@ -684,23 +684,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -718,23 +718,23 @@ if b
 18.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do k' <- (handler{hInc} * do x <- (op inc : Tunit -> Tunit () (y. handler{hExcept} * do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * do x <- (op "inc" () (y. handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))))
  in do b <- (Eq (x) (Left "Overflow")
@@ -742,23 +742,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -776,23 +776,23 @@ if b
 19.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. do x <- (handler{hExcept} * do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * op "inc" () (y. do x <- (handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -800,23 +800,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -838,19 +838,19 @@ do k' <- (Return \ s. do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} *
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -858,23 +858,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -899,19 +899,19 @@ do s' <- (Add (1) (1)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -919,23 +919,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -958,19 +958,19 @@ do s' <- (Return 2
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -978,23 +978,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1016,19 +1016,19 @@ if b
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1036,23 +1036,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1074,19 +1074,19 @@ do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (Ret
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1094,23 +1094,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1132,19 +1132,19 @@ do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (Return 2
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1152,23 +1152,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1189,19 +1189,19 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do b <- (Larger (2) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 2)
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1209,23 +1209,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1246,19 +1246,19 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do b <- (Return False
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 2)
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1266,23 +1266,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1302,19 +1302,19 @@ if b
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (
 if False
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 2
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1322,23 +1322,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1357,17 +1357,17 @@ if b
 {-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-IfTrue --}
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (Return 2
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1375,23 +1375,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1409,17 +1409,17 @@ if b
 30.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-DoRet --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1427,23 +1427,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1461,17 +1461,17 @@ if b
 31.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (op inc : Tunit -> Tunit () (y. do x <- (Return y
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (op "inc" () (y. do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x)))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1479,23 +1479,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1513,17 +1513,17 @@ if b
 32.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * op inc : Tunit -> Tunit () (y. do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * op "inc" () (y. do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1531,23 +1531,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1565,17 +1565,17 @@ if b
 33.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do k' <- (handler{hInc} * do x <- (op inc : Tunit -> Tunit () (y. handler{hExcept} * do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * do x <- (op "inc" () (y. handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1583,23 +1583,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1617,17 +1617,17 @@ if b
 34.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. do x <- (handler{hExcept} * do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * op "inc" () (y. do x <- (handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1635,23 +1635,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1673,13 +1673,13 @@ do k' <- (Return \ s. do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} *
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1687,23 +1687,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1728,13 +1728,13 @@ do s' <- (Add (2) (1)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1742,23 +1742,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1781,13 +1781,13 @@ do s' <- (Return 3
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1795,23 +1795,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1833,13 +1833,13 @@ if b
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1847,23 +1847,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1885,13 +1885,13 @@ do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (Ret
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1899,23 +1899,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1937,13 +1937,13 @@ do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (Return 3
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -1951,23 +1951,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -1988,13 +1988,13 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do b <- (Larger (3) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 3)
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -2002,23 +2002,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2039,13 +2039,13 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do b <- (Return False
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 3)
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -2053,23 +2053,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2089,13 +2089,13 @@ if b
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (
 if False
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 3
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -2103,23 +2103,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2138,11 +2138,11 @@ if b
 {-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-IfTrue --}
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (Return 3
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -2150,23 +2150,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2184,11 +2184,11 @@ if b
 45.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-DoRet --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2196,23 +2196,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2230,11 +2230,11 @@ if b
 46.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-Do and E-DoOp --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (op inc : Tunit -> Tunit () (y. do x <- (Return y
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (op "inc" () (y. do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x)))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2242,23 +2242,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2276,11 +2276,11 @@ if b
 47.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * op inc : Tunit -> Tunit () (y. do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * op "inc" () (y. do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -2288,23 +2288,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2322,11 +2322,11 @@ if b
 48.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do k' <- (handler{hInc} * do x <- (op inc : Tunit -> Tunit () (y. handler{hExcept} * do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * do x <- (op "inc" () (y. handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success"))
  in do b <- (Eq (x) (Left "Overflow")
@@ -2334,23 +2334,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2368,11 +2368,11 @@ if b
 49.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do k' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. do x <- (handler{hExcept} * do _ <- (do x <- (Return y
+do k' <- (handler{hInc} * op "inc" () (y. do x <- (handler{hExcept} * do _ <- (do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2380,23 +2380,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2418,7 +2418,7 @@ do k' <- (Return \ s. do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} *
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2426,23 +2426,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2467,7 +2467,7 @@ do s' <- (Add (3) (1)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2475,23 +2475,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2514,7 +2514,7 @@ do s' <- (Return 4
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2522,23 +2522,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2560,7 +2560,7 @@ if b
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2568,23 +2568,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2606,7 +2606,7 @@ do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (Ret
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2614,23 +2614,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2652,7 +2652,7 @@ do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do x <- (Return 4
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2660,23 +2660,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2697,7 +2697,7 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do b <- (Larger (4) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 4)
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2705,23 +2705,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2742,7 +2742,7 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (do b <- (Return False
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 4)
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2750,23 +2750,23 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2786,7 +2786,7 @@ if b
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (
 if False
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return 4
  in Return "success")
  in do b <- (Eq (x) (Left "Overflow")
@@ -2794,23 +2794,23 @@ if False
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2835,23 +2835,23 @@ do k' <- (handler{hInc} * do x <- (handler{hExcept} * do _ <- (Return 4
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2875,23 +2875,23 @@ do k' <- (handler{hInc} * do x <- (handler{hExcept} * Return "success"
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2915,23 +2915,23 @@ do k' <- (handler{hInc} * do x <- (Return Right "success"
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2954,23 +2954,23 @@ do k' <- (handler{hInc} * do b <- (Eq (Right "success") (Left "Overflow")
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -2993,23 +2993,23 @@ do k' <- (handler{hInc} * do b <- (Return False
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False
@@ -3031,23 +3031,23 @@ do k' <- (handler{hInc} *
 if False
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
- in do _ <- (do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ in do _ <- (do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. Return y)
+ then op "raise" "Overflow" (y. Return y)
  else Return x))
  in Return "success")))
  else Return "fail" False

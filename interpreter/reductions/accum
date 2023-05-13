@@ -1,9 +1,9 @@
-parallel{} * handler{hAccum} * for for : Tunit [1,2,3,4,5] (y. op accum : Tunit -> Tunit y (y. Return y)) (z. Return z)
+parallel{} * handler{hAccum} * for "for" [1,2,3,4,5] (y. op "accum" y (y. Return y)) (z. Return z)
 
 1.
 {-- E-Hand and E-HandFor --}
 
-parallel{} * do pairs <- (\ l. for for : Tunit l (y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y)) (z. Return z) [1,2,3,4,5]
+parallel{} * do pairs <- (\ l. for "for" l (y. handler{hAccum} * op "accum" y (y. Return y)) (z. Return z) [1,2,3,4,5]
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -25,7 +25,7 @@ if n
 2.
 {-- E-Hand and E-Do and E-AppAbs --}
 
-parallel{} * do pairs <- (for for : Tunit [1,2,3,4,5] (y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y)) (z. Return z)
+parallel{} * do pairs <- (for "for" [1,2,3,4,5] (y. handler{hAccum} * op "accum" y (y. Return y)) (z. Return z)
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -47,7 +47,7 @@ if n
 3.
 {-- E-Hand and E-DoFor --}
 
-parallel{} * for for : Tunit [1,2,3,4,5] (y. handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y)) (z. do pairs <- (Return z
+parallel{} * for "for" [1,2,3,4,5] (y. handler{hAccum} * op "accum" y (y. Return y)) (z. do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -69,7 +69,7 @@ if n
 4.
 {-- E-Traverse --}
 
-do result <- (Map ([1,2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (Map ([1,2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
  in do second <- (Map (pairs) (\ l. Snd l)
@@ -92,8 +92,8 @@ if n
 5.
 {-- E-Do and E-Binop --}
 
-do result <- (do y <- (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 1
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA y <- (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y) 1 : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -117,8 +117,8 @@ if n
 6.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 1 (y. Return y)
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA y <- (parallel{} * handler{hAccum} * op "accum" 1 (y. Return y) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -142,12 +142,12 @@ if n
 7.
 {-- E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+do result <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
- in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -171,12 +171,12 @@ if n
 8.
 {-- E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+do result <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
- in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -200,12 +200,12 @@ if n
 9.
 {-- E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do y <- (parallel{} * do k' <- (Return (0, ())
+do result <- (doA y <- (parallel{} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (1)
- in Return (m'', s)))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -229,11 +229,11 @@ if n
 10.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+do result <- (doA y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (1)
- in Return (m'', s))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -257,11 +257,11 @@ if n
 11.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do y <- (parallel{} * do m' <- (Return 0
+do result <- (doA y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (1)
- in Return (m'', s))))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -285,10 +285,10 @@ if n
 12.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * do s <- (Snd (0, ())
+do result <- (doA y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (1)
- in Return (m'', s)))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -312,10 +312,10 @@ if n
 13.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do y <- (parallel{} * do s <- (Return ()
+do result <- (doA y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (1)
- in Return (m'', s)))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -339,9 +339,9 @@ if n
 14.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * do m'' <- (Add (0) (1)
- in Return (m'', ()))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA y <- (parallel{} * do m'' <- (Add (0) (1)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -365,9 +365,9 @@ if n
 15.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do y <- (parallel{} * do m'' <- (Return 1
- in Return (m'', ()))
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA y <- (parallel{} * do m'' <- (Return 1
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -391,8 +391,8 @@ if n
 16.
 {-- E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do y <- (parallel{} * Return (1, ())
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA y <- (parallel{} * Return (1, ()) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -416,8 +416,8 @@ if n
 17.
 {-- E-Do and E-Do and E-HandRet --}
 
-do result <- (do y <- (Return (1, ())
- in do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA y <- (Return (1, ()) : Any
+ in doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -441,7 +441,7 @@ if n
 18.
 {-- E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
+do result <- (doA ys' <- (Map ([2,3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -465,9 +465,9 @@ if n
 19.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 2
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y) 2 : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -491,9 +491,9 @@ if n
 20.
 {-- E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 2 (y. Return y)
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" 2 (y. Return y) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -517,13 +517,13 @@ if n
 21.
 {-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
- in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -547,13 +547,13 @@ if n
 22.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
- in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -577,13 +577,13 @@ if n
 23.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+do result <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (2)
- in Return (m'', s)))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -607,12 +607,12 @@ if n
 24.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+do result <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (2)
- in Return (m'', s))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -636,12 +636,12 @@ if n
 25.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+do result <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (2)
- in Return (m'', s))))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -665,11 +665,11 @@ if n
 26.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+do result <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (2)
- in Return (m'', s)))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -693,11 +693,11 @@ if n
 27.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+do result <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (2)
- in Return (m'', s)))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -721,10 +721,10 @@ if n
 28.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (2)
- in Return (m'', ()))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Add (0) (2)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -748,10 +748,10 @@ if n
 29.
 {-- E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 2
- in Return (m'', ()))
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return 2
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -775,9 +775,9 @@ if n
 30.
 {-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do y <- (parallel{} * Return (2, ())
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (parallel{} * Return (2, ()) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -801,9 +801,9 @@ if n
 31.
 {-- E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do y <- (Return (2, ())
- in do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (Return (2, ()) : Any
+ in doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -827,8 +827,8 @@ if n
 32.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (Map ([3,4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -852,10 +852,10 @@ if n
 33.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 3
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y) 3 : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -879,10 +879,10 @@ if n
 34.
 {-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 3 (y. Return y)
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" 3 (y. Return y) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -906,14 +906,14 @@ if n
 35.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
- in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -937,14 +937,14 @@ if n
 36.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
- in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -968,14 +968,14 @@ if n
 37.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (3)
- in Return (m'', s)))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -999,13 +999,13 @@ if n
 38.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (3)
- in Return (m'', s))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1029,13 +1029,13 @@ if n
 39.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (3)
- in Return (m'', s))))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1059,12 +1059,12 @@ if n
 40.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (3)
- in Return (m'', s)))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1088,12 +1088,12 @@ if n
 41.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (3)
- in Return (m'', s)))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1117,11 +1117,11 @@ if n
 42.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (3)
- in Return (m'', ()))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Add (0) (3)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1145,11 +1145,11 @@ if n
 43.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 3
- in Return (m'', ()))
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return 3
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1173,10 +1173,10 @@ if n
 44.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (3, ())
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return (3, ()) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1200,10 +1200,10 @@ if n
 45.
 {-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (Return (3, ())
- in do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (Return (3, ()) : Any
+ in doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1227,9 +1227,9 @@ if n
 46.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([4,5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1253,11 +1253,11 @@ if n
 47.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 4
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y) 4 : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1281,11 +1281,11 @@ if n
 48.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 4 (y. Return y)
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" 4 (y. Return y) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1309,15 +1309,15 @@ if n
 49.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
- in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1341,15 +1341,15 @@ if n
 50.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
- in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1373,15 +1373,15 @@ if n
 51.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (4)
- in Return (m'', s)))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1405,14 +1405,14 @@ if n
 52.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (4)
- in Return (m'', s))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1436,14 +1436,14 @@ if n
 53.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (4)
- in Return (m'', s))))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1467,13 +1467,13 @@ if n
 54.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (4)
- in Return (m'', s)))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1497,13 +1497,13 @@ if n
 55.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (4)
- in Return (m'', s)))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1527,12 +1527,12 @@ if n
 56.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (4)
- in Return (m'', ()))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Add (0) (4)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1556,12 +1556,12 @@ if n
 57.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 4
- in Return (m'', ()))
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return 4
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1585,11 +1585,11 @@ if n
 58.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (4, ())
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return (4, ()) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1613,11 +1613,11 @@ if n
 59.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (4, ())
- in do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return (4, ()) : Any
+ in doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1641,10 +1641,10 @@ if n
 60.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([5]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1668,12 +1668,12 @@ if n
 61.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y) 5
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y) 5 : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1697,12 +1697,12 @@ if n
 62.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hAccum} * op accum : Tunit -> Tunit 5 (y. Return y)
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hAccum} * op "accum" 5 (y. Return y) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1726,16 +1726,16 @@ if n
 63.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (\ y. handler{hAccum} * Return y ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1759,16 +1759,16 @@ if n
 64.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (handler{hAccum} * Return ()
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1792,16 +1792,16 @@ if n
 65.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do k' <- (Return (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do k' <- (Return (0, ())
  in do m' <- (Fst k'
  in do s <- (Snd k'
  in do m'' <- (Add (m') (5)
- in Return (m'', s)))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1825,15 +1825,15 @@ if n
 66.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Fst (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Fst (0, ())
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (5)
- in Return (m'', s))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1857,15 +1857,15 @@ if n
 67.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m' <- (Return 0
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m' <- (Return 0
  in do s <- (Snd (0, ())
  in do m'' <- (Add (m') (5)
- in Return (m'', s))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s)))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1889,14 +1889,14 @@ if n
 68.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Snd (0, ())
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Snd (0, ())
  in do m'' <- (Add (0) (5)
- in Return (m'', s)))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1920,14 +1920,14 @@ if n
 69.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Unop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do s <- (Return ()
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do s <- (Return ()
  in do m'' <- (Add (0) (5)
- in Return (m'', s)))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+ in Return (m'', s))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1951,13 +1951,13 @@ if n
 70.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Add (0) (5)
- in Return (m'', ()))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Add (0) (5)
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -1981,13 +1981,13 @@ if n
 71.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * do m'' <- (Return 5
- in Return (m'', ()))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * do m'' <- (Return 5
+ in Return (m'', ())) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2011,12 +2011,12 @@ if n
 72.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return (5, ())
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2040,12 +2040,12 @@ if n
 73.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return (5, ())
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([y]) (ys)))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2069,11 +2069,11 @@ if n
 74.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op accum : Tunit -> Tunit y (y. Return y))
- in Append ([(5, ())]) (ys))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ y. parallel{} * handler{hAccum} * op "accum" y (y. Return y)) : Tlist Any
+ in Append ([(5, ())]) (ys)) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2097,11 +2097,11 @@ if n
 75.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append ([(5, ())]) (ys))
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append ([(5, ())]) (ys)) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2125,10 +2125,10 @@ if n
 76.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([(5, ())]) ([])
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([(5, ())]) ([]) : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2152,10 +2152,10 @@ if n
 77.
 {-- E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [(5, ())]
- in Append ([(4, ())]) (ys))
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [(5, ())] : Tlist Any
+ in Append ([(4, ())]) (ys)) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2179,9 +2179,9 @@ if n
 78.
 {-- E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Append ([(4, ())]) ([(5, ())])
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([(4, ())]) ([(5, ())]) : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2205,9 +2205,9 @@ if n
 79.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Return [(4, ()),(5, ())]
- in Append ([(3, ())]) (ys))
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [(4, ()),(5, ())] : Tlist Any
+ in Append ([(3, ())]) (ys)) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2231,8 +2231,8 @@ if n
 80.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Append ([(3, ())]) ([(4, ()),(5, ())])
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (Append ([(3, ())]) ([(4, ()),(5, ())]) : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2256,8 +2256,8 @@ if n
 81.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (Return [(3, ()),(4, ()),(5, ())]
- in Append ([(2, ())]) (ys))
+do result <- (doA ys' <- (doA ys' <- (Return [(3, ()),(4, ()),(5, ())] : Tlist Any
+ in Append ([(2, ())]) (ys)) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2281,7 +2281,7 @@ if n
 82.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Append ([(2, ())]) ([(3, ()),(4, ()),(5, ())])
+do result <- (doA ys' <- (Append ([(2, ())]) ([(3, ()),(4, ()),(5, ())]) : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2305,7 +2305,7 @@ if n
 83.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (Return [(2, ()),(3, ()),(4, ()),(5, ())]
+do result <- (doA ys' <- (Return [(2, ()),(3, ()),(4, ()),(5, ())] : Tlist Any
  in Append ([(1, ())]) (ys))
  in \ z. parallel{} * do pairs <- (Return z
  in do first <- (Map (pairs) (\ l. Fst l)
@@ -2440,8 +2440,8 @@ if n
 89.
 {-- E-Hand and E-Do and E-Binop --}
 
-parallel{} * do first <- (do y <- (\ l. Fst l (1, ())
- in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+parallel{} * do first <- (doA y <- (\ l. Fst l (1, ()) : Any
+ in doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
  in Append ([y]) (ys)))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2463,8 +2463,8 @@ if n
 90.
 {-- E-Hand and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do first <- (do y <- (Fst (1, ())
- in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+parallel{} * do first <- (doA y <- (Fst (1, ()) : Any
+ in doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
  in Append ([y]) (ys)))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2486,8 +2486,8 @@ if n
 91.
 {-- E-Hand and E-Do and E-Do and E-Unop --}
 
-parallel{} * do first <- (do y <- (Return 1
- in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+parallel{} * do first <- (doA y <- (Return 1 : Any
+ in doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
  in Append ([y]) (ys)))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2509,7 +2509,7 @@ if n
 92.
 {-- E-Hand and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
+parallel{} * do first <- (doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2531,9 +2531,9 @@ if n
 93.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do y <- (\ l. Fst l (2, ())
- in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
+parallel{} * do first <- (doA ys' <- (doA y <- (\ l. Fst l (2, ()) : Any
+ in doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2555,9 +2555,9 @@ if n
 94.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do first <- (do ys' <- (do y <- (Fst (2, ())
- in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
+parallel{} * do first <- (doA ys' <- (doA y <- (Fst (2, ()) : Any
+ in doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2579,9 +2579,9 @@ if n
 95.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do first <- (do ys' <- (do y <- (Return 2
- in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
+parallel{} * do first <- (doA ys' <- (doA y <- (Return 2 : Any
+ in doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2603,8 +2603,8 @@ if n
 96.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2626,10 +2626,10 @@ if n
 97.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l (3, ())
- in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Fst l (3, ()) : Any
+ in doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2651,10 +2651,10 @@ if n
 98.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do y <- (Fst (3, ())
- in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA y <- (Fst (3, ()) : Any
+ in doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2676,10 +2676,10 @@ if n
 99.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do y <- (Return 3
- in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA y <- (Return 3 : Any
+ in doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2701,9 +2701,9 @@ if n
 100.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l)
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2725,11 +2725,11 @@ if n
 101.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l (4, ())
- in do ys' <- (Map ([(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Fst l (4, ()) : Any
+ in doA ys' <- (Map ([(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2751,11 +2751,11 @@ if n
 102.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Fst (4, ())
- in do ys' <- (Map ([(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Fst (4, ()) : Any
+ in doA ys' <- (Map ([(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2777,11 +2777,11 @@ if n
 103.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return 4
- in do ys' <- (Map ([(5, ())]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return 4 : Any
+ in doA ys' <- (Map ([(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2803,10 +2803,10 @@ if n
 104.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([(5, ())]) (\ l. Fst l)
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([(5, ())]) (\ l. Fst l) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2828,12 +2828,12 @@ if n
 105.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Fst l (5, ())
- in do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Fst l (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2855,12 +2855,12 @@ if n
 106.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Fst (5, ())
- in do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Fst (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2882,12 +2882,12 @@ if n
 107.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return 5
- in do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([y]) (ys)))
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return 5 : Any
+ in doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2909,11 +2909,11 @@ if n
 108.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ l. Fst l)
- in Append ([5]) (ys))
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ l. Fst l) : Tlist Any
+ in Append ([5]) (ys)) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2935,11 +2935,11 @@ if n
 109.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append ([5]) (ys))
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append ([5]) (ys)) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2961,10 +2961,10 @@ if n
 110.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([5]) ([])
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([5]) ([]) : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -2986,10 +2986,10 @@ if n
 111.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [5]
- in Append ([4]) (ys))
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [5] : Tlist Any
+ in Append ([4]) (ys)) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3011,9 +3011,9 @@ if n
 112.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (Append ([4]) ([5])
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([4]) ([5]) : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3035,9 +3035,9 @@ if n
 113.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (do ys' <- (Return [4,5]
- in Append ([3]) (ys))
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [4,5] : Tlist Any
+ in Append ([3]) (ys)) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3059,8 +3059,8 @@ if n
 114.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (Append ([3]) ([4,5])
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (Append ([3]) ([4,5]) : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3082,8 +3082,8 @@ if n
 115.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (do ys' <- (Return [3,4,5]
- in Append ([2]) (ys))
+parallel{} * do first <- (doA ys' <- (doA ys' <- (Return [3,4,5] : Tlist Any
+ in Append ([2]) (ys)) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3105,7 +3105,7 @@ if n
 116.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do first <- (do ys' <- (Append ([2]) ([3,4,5])
+parallel{} * do first <- (doA ys' <- (Append ([2]) ([3,4,5]) : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3127,7 +3127,7 @@ if n
 117.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do first <- (do ys' <- (Return [2,3,4,5]
+parallel{} * do first <- (doA ys' <- (Return [2,3,4,5] : Tlist Any
  in Append ([1]) (ys))
  in do second <- (Map ([(1, ()),(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
  in do k' <- (\ z. handler{hAccum} * Return z second
@@ -3211,8 +3211,8 @@ if n
 121.
 {-- E-Hand and E-Do and E-Binop --}
 
-parallel{} * do second <- (do y <- (\ l. Snd l (1, ())
- in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+parallel{} * do second <- (doA y <- (\ l. Snd l (1, ()) : Any
+ in doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
  in Append ([y]) (ys)))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3233,8 +3233,8 @@ if n
 122.
 {-- E-Hand and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do second <- (do y <- (Snd (1, ())
- in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+parallel{} * do second <- (doA y <- (Snd (1, ()) : Any
+ in doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
  in Append ([y]) (ys)))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3255,8 +3255,8 @@ if n
 123.
 {-- E-Hand and E-Do and E-Do and E-Unop --}
 
-parallel{} * do second <- (do y <- (Return ()
- in do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+parallel{} * do second <- (doA y <- (Return () : Any
+ in doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
  in Append ([y]) (ys)))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3277,7 +3277,7 @@ if n
 124.
 {-- E-Hand and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
+parallel{} * do second <- (doA ys' <- (Map ([(2, ()),(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3298,9 +3298,9 @@ if n
 125.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do y <- (\ l. Snd l (2, ())
- in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
+parallel{} * do second <- (doA ys' <- (doA y <- (\ l. Snd l (2, ()) : Any
+ in doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3321,9 +3321,9 @@ if n
 126.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do second <- (do ys' <- (do y <- (Snd (2, ())
- in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
+parallel{} * do second <- (doA ys' <- (doA y <- (Snd (2, ()) : Any
+ in doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3344,9 +3344,9 @@ if n
 127.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do second <- (do ys' <- (do y <- (Return ()
- in do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
+parallel{} * do second <- (doA ys' <- (doA y <- (Return () : Any
+ in doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3367,8 +3367,8 @@ if n
 128.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (Map ([(3, ()),(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3389,10 +3389,10 @@ if n
 129.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l (3, ())
- in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Snd l (3, ()) : Any
+ in doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3413,10 +3413,10 @@ if n
 130.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do y <- (Snd (3, ())
- in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA y <- (Snd (3, ()) : Any
+ in doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3437,10 +3437,10 @@ if n
 131.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do y <- (Return ()
- in do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA y <- (Return () : Any
+ in doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3461,9 +3461,9 @@ if n
 132.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l)
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([(4, ()),(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3484,11 +3484,11 @@ if n
 133.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l (4, ())
- in do ys' <- (Map ([(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Snd l (4, ()) : Any
+ in doA ys' <- (Map ([(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3509,11 +3509,11 @@ if n
 134.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Snd (4, ())
- in do ys' <- (Map ([(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Snd (4, ()) : Any
+ in doA ys' <- (Map ([(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3534,11 +3534,11 @@ if n
 135.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return ()
- in do ys' <- (Map ([(5, ())]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return () : Any
+ in doA ys' <- (Map ([(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3559,10 +3559,10 @@ if n
 136.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([(5, ())]) (\ l. Snd l)
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([(5, ())]) (\ l. Snd l) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3583,12 +3583,12 @@ if n
 137.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (\ l. Snd l (5, ())
- in do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (\ l. Snd l (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3609,12 +3609,12 @@ if n
 138.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Snd (5, ())
- in do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Snd (5, ()) : Any
+ in doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3635,12 +3635,12 @@ if n
 139.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do y <- (Return ()
- in do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([y]) (ys)))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA y <- (Return () : Any
+ in doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3661,11 +3661,11 @@ if n
 140.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ l. Snd l)
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ l. Snd l) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3686,11 +3686,11 @@ if n
 141.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return []
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3711,10 +3711,10 @@ if n
 142.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Append ([()]) ([])
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([()]) ([]) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3735,10 +3735,10 @@ if n
 143.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (do ys' <- (Return [()]
- in Append ([()]) (ys))
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [()] : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3759,9 +3759,9 @@ if n
 144.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (Append ([()]) ([()])
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (Append ([()]) ([()]) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3782,9 +3782,9 @@ if n
 145.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (do ys' <- (Return [(),()]
- in Append ([()]) (ys))
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [(),()] : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3805,8 +3805,8 @@ if n
 146.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (Append ([()]) ([(),()])
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (Append ([()]) ([(),()]) : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3827,8 +3827,8 @@ if n
 147.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (do ys' <- (Return [(),(),()]
- in Append ([()]) (ys))
+parallel{} * do second <- (doA ys' <- (doA ys' <- (Return [(),(),()] : Tlist Any
+ in Append ([()]) (ys)) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3849,7 +3849,7 @@ if n
 148.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do second <- (do ys' <- (Append ([()]) ([(),(),()])
+parallel{} * do second <- (doA ys' <- (Append ([()]) ([(),(),()]) : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l
@@ -3870,7 +3870,7 @@ if n
 149.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do second <- (do ys' <- (Return [(),(),(),()]
+parallel{} * do second <- (doA ys' <- (Return [(),(),(),()] : Tlist Any
  in Append ([()]) (ys))
  in do k' <- (\ z. handler{hAccum} * Return z second
  in letrec reduce = \ l. do n <- (Empty l

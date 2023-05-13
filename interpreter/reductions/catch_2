@@ -1,10 +1,10 @@
-do c' <- (handler{hInc} * handler{hExcept} * sc catch : Tsum Tstr Tunit -> Tunit "Overflow" (b. 
+do c' <- (handler{hInc} * handler{hExcept} * sc "catch" "Overflow" (b. 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10) (z. Return z)
  in c' 42)
@@ -14,11 +14,11 @@ if b
 
 do c' <- (handler{hInc} * do x <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 True
  in do b <- (Eq (x) (Left "Overflow")
@@ -26,11 +26,11 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -48,11 +48,11 @@ if b
 
 do c' <- (handler{hInc} * do x <- (handler{hExcept} * 
 if True
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10
  in do b <- (Eq (x) (Left "Overflow")
@@ -60,11 +60,11 @@ if b
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -80,22 +80,22 @@ if b
 3.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do c' <- (handler{hInc} * do x <- (handler{hExcept} * do x <- (op inc : Tunit -> Tunit () (y. Return y)
+do c' <- (handler{hInc} * do x <- (handler{hExcept} * do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -111,22 +111,22 @@ if b
 4.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-DoOp --}
 
-do c' <- (handler{hInc} * do x <- (handler{hExcept} * op inc : Tunit -> Tunit () (y. do x <- (Return y
+do c' <- (handler{hInc} * do x <- (handler{hExcept} * op "inc" () (y. do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x)))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -142,22 +142,22 @@ if b
 5.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do c' <- (handler{hInc} * do x <- (op inc : Tunit -> Tunit () (y. handler{hExcept} * do x <- (Return y
+do c' <- (handler{hInc} * do x <- (op "inc" () (y. handler{hExcept} * do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x)))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -173,22 +173,22 @@ if b
 6.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do c' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. do x <- (handler{hExcept} * do x <- (Return y
+do c' <- (handler{hInc} * op "inc" () (y. do x <- (handler{hExcept} * do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -208,18 +208,18 @@ do c' <- (Return \ s. do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} *
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -241,18 +241,18 @@ if b
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -273,18 +273,18 @@ do k' <- (\ y. handler{hInc} * do x <- (handler{hExcept} * do x <- (Return y
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -305,18 +305,18 @@ do k' <- (handler{hInc} * do x <- (handler{hExcept} * do x <- (Return 42
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -336,18 +336,18 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do b <- (Larger (42) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x)
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -367,18 +367,18 @@ if b
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * do b <- (Return True
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x)
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -397,18 +397,18 @@ if b
 
 do k' <- (handler{hInc} * do x <- (handler{hExcept} * 
 if True
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return True
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -425,17 +425,17 @@ if b
 14.
 {-- E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do k' <- (handler{hInc} * do x <- (handler{hExcept} * op raise : Tstr -> Tunit "Overflow" (y. undefined)
+do k' <- (handler{hInc} * do x <- (handler{hExcept} * op "raise" "Overflow" (y. undefined)
  in do b <- (Eq (x) (Left "Overflow")
  in 
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -458,11 +458,11 @@ do k' <- (handler{hInc} * do x <- (Return Left "Overflow"
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -484,11 +484,11 @@ do k' <- (handler{hInc} * do b <- (Eq (Left "Overflow") (Left "Overflow")
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -510,11 +510,11 @@ do k' <- (handler{hInc} * do b <- (Return True
 if b
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -535,11 +535,11 @@ do k' <- (handler{hInc} *
 if True
  then do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -558,11 +558,11 @@ if b
 
 do k' <- (handler{hInc} * do y <- (\ b. handler{hExcept} * 
 if b
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10 False
  in do f' <- (\ z. Return \ k. case z of
@@ -577,11 +577,11 @@ if b
 
 do k' <- (handler{hInc} * do y <- (handler{hExcept} * 
 if False
- then do x <- (op inc : Tunit -> Tunit () (y. Return y)
+ then do x <- (op "inc" () (y. Return y)
  in do b <- (Larger (x) (10)
  in 
 if b
- then op raise : Tstr -> Tunit "Overflow" (y. undefined)
+ then op "raise" "Overflow" (y. undefined)
  else Return x))
  else Return 10
  in do f' <- (\ z. Return \ k. case z of

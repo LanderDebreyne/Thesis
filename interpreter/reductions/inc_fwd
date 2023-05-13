@@ -1,7 +1,7 @@
-handler{hOnce} * do c' <- (handler{hInc} * sc once : Tunit -> Tunit () (_. op choose : Tunit -> Tbool () (b. 
+handler{hOnce} * do c' <- (handler{hInc} * sc "once" () (_. op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y))) (x. op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y))) (x. op "inc" () (y. do z <- (Add (x) (y)
  in Return z)))
  in c' 0)
 
@@ -10,13 +10,13 @@ if b
 
 handler{hOnce} * do c' <- (Return \ s. \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in sc once : Tunit -> Tunit () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in sc "once" () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' s), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))))
  in c' 0)
@@ -26,13 +26,13 @@ if b
 
 handler{hOnce} * \ s. \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in sc once : Tunit -> Tunit () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in sc "once" () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' s), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s')))) 0
 
@@ -41,74 +41,74 @@ if b
 
 handler{hOnce} * \ pk. do p <- (Fst pk
  in do k <- (Snd pk
- in sc once : Tunit -> Tunit () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in sc "once" () (_. p _) (x. k x))) (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))))
 
 4.
 {-- E-Hand and E-AppAbs --}
 
-handler{hOnce} * do p <- (Fst (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+handler{hOnce} * do p <- (Fst (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))))
- in do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))))
- in sc once : Tunit -> Tunit () (_. p _) (x. k x)))
+ in sc "once" () (_. p _) (x. k x)))
 
 5.
 {-- E-Hand and E-Do and E-Unop --}
 
-handler{hOnce} * do p <- (Return \ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+handler{hOnce} * do p <- (Return \ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0)
- in do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))))
- in sc once : Tunit -> Tunit () (_. p _) (x. k x)))
+ in sc "once" () (_. p _) (x. k x)))
 
 6.
 {-- E-Hand and E-DoRet --}
 
-handler{hOnce} * do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+handler{hOnce} * do k <- (Snd (\ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0), \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))))
- in sc once : Tunit -> Tunit () (_. \ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in sc "once" () (_. \ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0) _) (x. k x))
 
 7.
@@ -116,115 +116,115 @@ if b
 
 handler{hOnce} * do k <- (Return \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s')))
- in sc once : Tunit -> Tunit () (_. \ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+ in sc "once" () (_. \ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0) _) (x. k x))
 
 8.
 {-- E-Hand and E-DoRet --}
 
-handler{hOnce} * sc once : Tunit -> Tunit () (_. \ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+handler{hOnce} * sc "once" () (_. \ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0) _) (x. \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x)
 
 9.
 {-- E-HandSc --}
 
-do ts <- (\ _. handler{hOnce} * \ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+do ts <- (\ _. handler{hOnce} * \ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0) _ ()
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 10.
 {-- E-Do and E-AppAbs --}
 
-do ts <- (handler{hOnce} * \ y. do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+do ts <- (handler{hOnce} * \ y. do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) y
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) y
  in p' 0) ()
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 11.
 {-- E-Do and E-Hand and E-AppAbs --}
 
-do ts <- (handler{hOnce} * do p' <- (\ _. handler{hInc} * op choose : Tunit -> Tbool () (b. 
+do ts <- (handler{hOnce} * do p' <- (\ _. handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)) ()
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)) ()
  in p' 0)
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 12.
 {-- E-Do and E-Hand and E-Do and E-AppAbs --}
 
-do ts <- (handler{hOnce} * do p' <- (handler{hInc} * op choose : Tunit -> Tbool () (b. 
+do ts <- (handler{hOnce} * do p' <- (handler{hInc} * op "choose" () (b. 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y))
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y))
  in p' 0)
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 13.
 {-- E-Do and E-Hand and E-Do and E-FwdOp --}
 
-do ts <- (handler{hOnce} * do p' <- (op choose : Tunit -> Tbool () (b. handler{hInc} * 
+do ts <- (handler{hOnce} * do p' <- (op "choose" () (b. handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y))
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y))
  in p' 0)
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 14.
 {-- E-Do and E-Hand and E-DoOp --}
 
-do ts <- (handler{hOnce} * op choose : Tunit -> Tbool () (b. do p' <- (handler{hInc} * 
+do ts <- (handler{hOnce} * op "choose" () (b. do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -233,19 +233,19 @@ if b
 
 do ts <- (do xs <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) True
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -254,37 +254,37 @@ if b
 
 do ts <- (do xs <- (handler{hOnce} * do p' <- (handler{hInc} * 
 if True
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0)
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 17.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do ts <- (do xs <- (handler{hOnce} * do p' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. Return y)
+do ts <- (do xs <- (handler{hOnce} * do p' <- (handler{hInc} * op "inc" () (y. Return y)
  in p' 0)
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -297,14 +297,14 @@ do ts <- (do xs <- (handler{hOnce} * do p' <- (Return \ s. do k' <- (\ y. handle
  in p' 0)
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -316,14 +316,14 @@ do ts <- (do xs <- (handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * Return 
  in k' s')) 0
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -335,14 +335,14 @@ do ts <- (do xs <- (handler{hOnce} * do k' <- (\ y. handler{hInc} * Return y 0
  in k' s'))
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -354,14 +354,14 @@ do ts <- (do xs <- (handler{hOnce} * do k' <- (handler{hInc} * Return 0
  in k' s'))
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -373,14 +373,14 @@ do ts <- (do xs <- (handler{hOnce} * do k' <- (Return \ s. Return (0, s)
  in k' s'))
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -391,14 +391,14 @@ do ts <- (do xs <- (handler{hOnce} * do s' <- (Add (0) (1)
  in \ s. Return (0, s) s')
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -409,14 +409,14 @@ do ts <- (do xs <- (handler{hOnce} * do s' <- (Return 1
  in \ s. Return (0, s) s')
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -426,14 +426,14 @@ if b
 do ts <- (do xs <- (handler{hOnce} * \ s. Return (0, s) 1
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -443,14 +443,14 @@ if b
 do ts <- (do xs <- (handler{hOnce} * Return (0, 1)
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -460,14 +460,14 @@ if b
 do ts <- (do xs <- (Return [(0, 1)]
  in do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append (xs) (ys)))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -476,14 +476,14 @@ if b
 
 do ts <- (do ys <- (\ b. handler{hOnce} * do p' <- (handler{hInc} * 
 if b
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0) False
  in Append ([(0, 1)]) (ys))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -492,27 +492,27 @@ if b
 
 do ts <- (do ys <- (handler{hOnce} * do p' <- (handler{hInc} * 
 if False
- then op inc : Tunit -> Tunit () (y. Return y)
- else op inc : Tunit -> Tunit () (y. Return y)
+ then op "inc" () (y. Return y)
+ else op "inc" () (y. Return y)
  in p' 0)
  in Append ([(0, 1)]) (ys))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
 30.
 {-- E-Do and E-Do and E-Hand and E-Do and E-Hand and E-IfTrue --}
 
-do ts <- (do ys <- (handler{hOnce} * do p' <- (handler{hInc} * op inc : Tunit -> Tunit () (y. Return y)
+do ts <- (do ys <- (handler{hOnce} * do p' <- (handler{hInc} * op "inc" () (y. Return y)
  in p' 0)
  in Append ([(0, 1)]) (ys))
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -527,7 +527,7 @@ do ts <- (do ys <- (handler{hOnce} * do p' <- (Return \ s. do k' <- (\ y. handle
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -541,7 +541,7 @@ do ts <- (do ys <- (handler{hOnce} * \ s. do k' <- (\ y. handler{hInc} * Return 
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -555,7 +555,7 @@ do ts <- (do ys <- (handler{hOnce} * do k' <- (\ y. handler{hInc} * Return y 0
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -569,7 +569,7 @@ do ts <- (do ys <- (handler{hOnce} * do k' <- (handler{hInc} * Return 0
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -583,7 +583,7 @@ do ts <- (do ys <- (handler{hOnce} * do k' <- (Return \ s. Return (0, s)
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -596,7 +596,7 @@ do ts <- (do ys <- (handler{hOnce} * do s' <- (Add (0) (1)
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -609,7 +609,7 @@ do ts <- (do ys <- (handler{hOnce} * do s' <- (Return 1
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -621,7 +621,7 @@ do ts <- (do ys <- (handler{hOnce} * \ s. Return (0, s) 1
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -633,7 +633,7 @@ do ts <- (do ys <- (handler{hOnce} * Return (0, 1)
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -645,7 +645,7 @@ do ts <- (do ys <- (Return [(0, 1)]
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -656,7 +656,7 @@ do ts <- (Append ([(0, 1)]) ([(0, 1)])
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -667,7 +667,7 @@ do ts <- (Return [(0, 1),(0, 1)]
  in do t <- (Head ts
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t))
 
@@ -677,7 +677,7 @@ do ts <- (Return [(0, 1),(0, 1)]
 do t <- (Head [(0, 1),(0, 1)]
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t)
 
@@ -687,7 +687,7 @@ do t <- (Head [(0, 1),(0, 1)]
 do t <- (Return (0, 1)
  in \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x t)
 
@@ -696,7 +696,7 @@ do t <- (Return (0, 1)
 
 \ x. handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) x (0, 1)
 
@@ -705,7 +705,7 @@ do t <- (Return (0, 1)
 
 handler{hOnce} * \ zs. do z <- (Fst zs
  in do s' <- (Snd zs
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s'))) (0, 1)
 
@@ -714,7 +714,7 @@ handler{hOnce} * \ zs. do z <- (Fst zs
 
 handler{hOnce} * do z <- (Fst (0, 1)
  in do s' <- (Snd (0, 1)
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s')))
 
@@ -723,7 +723,7 @@ handler{hOnce} * do z <- (Fst (0, 1)
 
 handler{hOnce} * do z <- (Return 0
  in do s' <- (Snd (0, 1)
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) z
  in k' s')))
 
@@ -731,7 +731,7 @@ handler{hOnce} * do z <- (Return 0
 {-- E-Hand and E-DoRet --}
 
 handler{hOnce} * do s' <- (Snd (0, 1)
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) 0
  in k' s'))
 
@@ -739,21 +739,21 @@ handler{hOnce} * do s' <- (Snd (0, 1)
 {-- E-Hand and E-Do and E-Unop --}
 
 handler{hOnce} * do s' <- (Return 1
- in do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+ in do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) 0
  in k' s'))
 
 51.
 {-- E-Hand and E-DoRet --}
 
-handler{hOnce} * do k' <- (\ x. handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (x) (y)
+handler{hOnce} * do k' <- (\ x. handler{hInc} * op "inc" () (y. do z <- (Add (x) (y)
  in Return z)) 0
  in k' 1)
 
 52.
 {-- E-Hand and E-Do and E-AppAbs --}
 
-handler{hOnce} * do k' <- (handler{hInc} * op inc : Tint -> Tunit () (y. do z <- (Add (0) (y)
+handler{hOnce} * do k' <- (handler{hInc} * op "inc" () (y. do z <- (Add (0) (y)
  in Return z))
  in k' 1)
 

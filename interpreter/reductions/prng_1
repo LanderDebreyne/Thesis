@@ -1,11 +1,11 @@
 parallel{} * do key <- (Return StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
- in do ex <- (parallel{} * handler{hPRNG} * for for : Tunit [(),(),()] (y. op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y)
+ in do ex <- (parallel{} * handler{hPRNG} * for "for" [(),(),()] (y. op "sampleUniform" () (y. Return y)) (y. Return y)
  in ex key))
 
 1.
 {-- E-Hand and E-DoRet --}
 
-parallel{} * do ex <- (parallel{} * handler{hPRNG} * for for : Tunit [(),(),()] (y. op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y)
+parallel{} * do ex <- (parallel{} * handler{hPRNG} * for "for" [(),(),()] (y. op "sampleUniform" () (y. Return y)) (y. Return y)
  in ex StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413})
 
 2.
@@ -15,7 +15,7 @@ parallel{} * do ex <- (parallel{} * Return \ key. do keys <- (SplitKeyPair key
  in do key1 <- (Fst keys
  in do key2 <- (Snd keys
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2)))))))
@@ -28,7 +28,7 @@ parallel{} * do ex <- (Return \ key. do keys <- (SplitKeyPair key
  in do key1 <- (Fst keys
  in do key2 <- (Snd keys
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2)))))))
@@ -41,7 +41,7 @@ parallel{} * \ key. do keys <- (SplitKeyPair key
  in do key1 <- (Fst keys
  in do key2 <- (Snd keys
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2))))))) StdGen {unStdGen = SMGen 9297814886316923340 13679457532755275413}
@@ -53,7 +53,7 @@ parallel{} * do keys <- (SplitKeyPair StdGen {unStdGen = SMGen 92978148863169233
  in do key1 <- (Fst keys
  in do key2 <- (Snd keys
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2)))))))
@@ -65,7 +65,7 @@ parallel{} * do keys <- (Return (StdGen {unStdGen = SMGen 18209985878117922550 1
  in do key1 <- (Fst keys
  in do key2 <- (Snd keys
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2)))))))
@@ -76,7 +76,7 @@ parallel{} * do keys <- (Return (StdGen {unStdGen = SMGen 18209985878117922550 1
 parallel{} * do key1 <- (Fst (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
  in do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2))))))
@@ -87,7 +87,7 @@ parallel{} * do key1 <- (Fst (StdGen {unStdGen = SMGen 18209985878117922550 1367
 parallel{} * do key1 <- (Return StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}
  in do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
  in do key1s <- (SplitKey (key1) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2))))))
@@ -97,7 +97,7 @@ parallel{} * do key1 <- (Return StdGen {unStdGen = SMGen 18209985878117922550 13
 
 parallel{} * do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}, StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})
  in do key1s <- (SplitKey (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2)))))
@@ -107,7 +107,7 @@ parallel{} * do key2 <- (Snd (StdGen {unStdGen = SMGen 18209985878117922550 1367
 
 parallel{} * do key2 <- (Return StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}
  in do key1s <- (SplitKey (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont key2)))))
@@ -116,7 +116,7 @@ parallel{} * do key2 <- (Return StdGen {unStdGen = SMGen 1275548033995301424 105
 {-- E-Hand and E-DoRet --}
 
 parallel{} * do key1s <- (SplitKey (StdGen {unStdGen = SMGen 18209985878117922550 13679457532755275413}) ([(),(),()])
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))))
@@ -125,7 +125,7 @@ parallel{} * do key1s <- (SplitKey (StdGen {unStdGen = SMGen 1820998587811792255
 {-- E-Hand and E-Do and E-Binop --}
 
 parallel{} * do key1s <- (Return [StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]
- in do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+ in do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) (key1s)
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))))
@@ -133,7 +133,7 @@ parallel{} * do key1s <- (Return [StdGen {unStdGen = SMGen 8675412796209370144 1
 13.
 {-- E-Hand and E-DoRet --}
 
-parallel{} * do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y) [(),(),()]
+parallel{} * do for <- (\ l. for "for" l (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y) [(),(),()]
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})))
@@ -141,7 +141,7 @@ parallel{} * do for <- (\ l. for for : Tunit l (y. handler{hPRNG} * op sampleUni
 14.
 {-- E-Hand and E-Do and E-AppAbs --}
 
-parallel{} * do for <- (for for : Tunit [(),(),()] (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. Return y)
+parallel{} * do for <- (for "for" [(),(),()] (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. Return y)
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313})))
@@ -149,7 +149,7 @@ parallel{} * do for <- (for for : Tunit [(),(),()] (y. handler{hPRNG} * op sampl
 15.
 {-- E-Hand and E-DoFor --}
 
-parallel{} * for for : Tunit [(),(),()] (y. handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)) (y. do for <- (Return y
+parallel{} * for "for" [(),(),()] (y. handler{hPRNG} * op "sampleUniform" () (y. Return y)) (y. do for <- (Return y
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))))
@@ -157,7 +157,7 @@ parallel{} * for for : Tunit [(),(),()] (y. handler{hPRNG} * op sampleUniform : 
 16.
 {-- E-Traverse --}
 
-do result <- (Map ([(),(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+do result <- (Map ([(),(),()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y))
  in \ y. parallel{} * do for <- (Return y
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
  in do cont <- (\ y. handler{hPRNG} * Return y results
@@ -166,8 +166,8 @@ do result <- (Map ([(),(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUnif
 17.
 {-- E-Do and E-Binop --}
 
-do result <- (do y <- (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y) ()
- in do ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+do result <- (doA y <- (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y) () : Any
+ in doA ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ y. parallel{} * do for <- (Return y
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
@@ -177,8 +177,8 @@ do result <- (do y <- (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tun
 18.
 {-- E-Do and E-Do and E-AppAbs --}
 
-do result <- (do y <- (parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)
- in do ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+do result <- (doA y <- (parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y) : Any
+ in doA ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ y. parallel{} * do for <- (Return y
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
@@ -188,12 +188,12 @@ do result <- (do y <- (parallel{} * handler{hPRNG} * op sampleUniform : Tunit ->
 19.
 {-- E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do y <- (parallel{} * Return \ key. do pair <- (Rand key
+do result <- (doA y <- (parallel{} * Return \ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+ in cont key)))) : Any
+ in doA ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ y. parallel{} * do for <- (Return y
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
@@ -203,12 +203,12 @@ do result <- (do y <- (parallel{} * Return \ key. do pair <- (Rand key
 20.
 {-- E-Do and E-Do and E-HandRet --}
 
-do result <- (do y <- (Return \ key. do pair <- (Rand key
+do result <- (doA y <- (Return \ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+ in cont key)))) : Any
+ in doA ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([y]) (ys)))
  in \ y. parallel{} * do for <- (Return y
  in do results <- (Zip (for) ([StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413},StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
@@ -218,7 +218,7 @@ do result <- (do y <- (Return \ key. do pair <- (Rand key
 21.
 {-- E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+do result <- (doA ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -232,9 +232,9 @@ do result <- (do ys' <- (Map ([(),()]) (\ y. parallel{} * handler{hPRNG} * op sa
 22.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do y <- (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y) ()
- in do ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y) () : Any
+ in doA ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -248,9 +248,9 @@ do result <- (do ys' <- (do y <- (\ y. parallel{} * handler{hPRNG} * op sampleUn
 23.
 {-- E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do y <- (parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)
- in do ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA y <- (parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y) : Any
+ in doA ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -264,13 +264,13 @@ do result <- (do ys' <- (do y <- (parallel{} * handler{hPRNG} * op sampleUniform
 24.
 {-- E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do y <- (parallel{} * Return \ key. do pair <- (Rand key
+do result <- (doA ys' <- (doA y <- (parallel{} * Return \ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+ in cont key)))) : Any
+ in doA ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -284,13 +284,13 @@ do result <- (do ys' <- (do y <- (parallel{} * Return \ key. do pair <- (Rand ke
 25.
 {-- E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do y <- (Return \ key. do pair <- (Rand key
+do result <- (doA ys' <- (doA y <- (Return \ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+ in cont key)))) : Any
+ in doA ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -304,12 +304,12 @@ do result <- (do ys' <- (do y <- (Return \ key. do pair <- (Rand key
 26.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+do result <- (doA ys' <- (doA ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -323,14 +323,14 @@ do result <- (do ys' <- (do ys' <- (Map ([()]) (\ y. parallel{} * handler{hPRNG}
 27.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y) ()
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y) () : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -344,14 +344,14 @@ do result <- (do ys' <- (do ys' <- (do y <- (\ y. parallel{} * handler{hPRNG} * 
 28.
 {-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y)
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -365,18 +365,18 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * handler{hPRNG} * op sa
 29.
 {-- E-Do and E-Do and E-Do and E-Do and E-Hand and E-HandOp --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return \ key. do pair <- (Rand key
+do result <- (doA ys' <- (doA ys' <- (doA y <- (parallel{} * Return \ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+ in cont key)))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -390,18 +390,18 @@ do result <- (do ys' <- (do ys' <- (do y <- (parallel{} * Return \ key. do pair 
 30.
 {-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-do result <- (do ys' <- (do ys' <- (do y <- (Return \ key. do pair <- (Rand key
+do result <- (doA ys' <- (doA ys' <- (doA y <- (Return \ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
- in Append ([y]) (ys)))
+ in cont key)))) : Any
+ in doA ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
+ in Append ([y]) (ys))) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -415,17 +415,17 @@ do result <- (do ys' <- (do ys' <- (do y <- (Return \ key. do pair <- (Rand key
 31.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op sampleUniform : Tunit -> Tunit () (y. Return y))
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Map ([]) (\ y. parallel{} * handler{hPRNG} * op "sampleUniform" () (y. Return y)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -439,17 +439,17 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (Map ([]) (\ y. parallel{} * handl
 32.
 {-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (do ys' <- (Return []
+do result <- (doA ys' <- (doA ys' <- (doA ys' <- (Return [] : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -463,16 +463,16 @@ do result <- (do ys' <- (do ys' <- (do ys' <- (Return []
 33.
 {-- E-Do and E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (do ys' <- (Append ([\ key. do pair <- (Rand key
+do result <- (doA ys' <- (doA ys' <- (Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([])
+ in cont key))))]) ([]) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -486,16 +486,16 @@ do result <- (do ys' <- (do ys' <- (Append ([\ key. do pair <- (Rand key
 34.
 {-- E-Do and E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (do ys' <- (Return [\ key. do pair <- (Rand key
+do result <- (doA ys' <- (doA ys' <- (Return [\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]
+ in cont key))))] : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) (ys))
+ in cont key))))]) (ys)) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -509,7 +509,7 @@ do result <- (do ys' <- (do ys' <- (Return [\ key. do pair <- (Rand key
 35.
 {-- E-Do and E-Do and E-DoRet --}
 
-do result <- (do ys' <- (Append ([\ key. do pair <- (Rand key
+do result <- (doA ys' <- (Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -517,7 +517,7 @@ do result <- (do ys' <- (Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))])
+ in cont key))))]) : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -531,7 +531,7 @@ do result <- (do ys' <- (Append ([\ key. do pair <- (Rand key
 36.
 {-- E-Do and E-Do and E-Binop --}
 
-do result <- (do ys' <- (Return [\ key. do pair <- (Rand key
+do result <- (doA ys' <- (Return [\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -539,7 +539,7 @@ do result <- (do ys' <- (Return [\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]
+ in cont key))))] : Tlist Any
  in Append ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
@@ -654,12 +654,12 @@ parallel{} * do results <- (Zip ([\ key. do pair <- (Rand key
 42.
 {-- E-Hand and E-Do and E-Binop --}
 
-parallel{} * do results <- (do z <- (\ key. do pair <- (Rand key
+parallel{} * do results <- (doA z <- (\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))) StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413}
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)))) StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413} : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -667,7 +667,7 @@ parallel{} * do results <- (do z <- (\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -675,12 +675,12 @@ parallel{} * do results <- (do z <- (\ key. do pair <- (Rand key
 43.
 {-- E-Hand and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413}
+parallel{} * do results <- (doA z <- (do pair <- (Rand StdGen {unStdGen = SMGen 8675412796209370144 13679457532755275413}
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -688,7 +688,7 @@ parallel{} * do results <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 8
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -696,12 +696,12 @@ parallel{} * do results <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 8
 44.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do z <- (do pair <- (Return (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+parallel{} * do results <- (doA z <- (do pair <- (Return (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -709,7 +709,7 @@ parallel{} * do results <- (do z <- (do pair <- (Return (80, StdGen {unStdGen = 
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -717,11 +717,11 @@ parallel{} * do results <- (do z <- (do pair <- (Return (80, StdGen {unStdGen = 
 45.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do z <- (do val <- (Fst (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+parallel{} * do results <- (doA z <- (do val <- (Fst (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
  in do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -729,7 +729,7 @@ parallel{} * do results <- (do z <- (do val <- (Fst (80, StdGen {unStdGen = SMGe
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -737,11 +737,11 @@ parallel{} * do results <- (do z <- (do val <- (Fst (80, StdGen {unStdGen = SMGe
 46.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do z <- (do val <- (Return 80
+parallel{} * do results <- (doA z <- (do val <- (Return 80
  in do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -749,7 +749,7 @@ parallel{} * do results <- (do z <- (do val <- (Return 80
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -757,10 +757,10 @@ parallel{} * do results <- (do z <- (do val <- (Return 80
 47.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do z <- (do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
+parallel{} * do results <- (doA z <- (do key <- (Snd (80, StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
  in do cont <- (\ y. handler{hPRNG} * Return y 80
- in cont key))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -768,7 +768,7 @@ parallel{} * do results <- (do z <- (do key <- (Snd (80, StdGen {unStdGen = SMGe
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -776,10 +776,10 @@ parallel{} * do results <- (do z <- (do key <- (Snd (80, StdGen {unStdGen = SMGe
 48.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}
+parallel{} * do results <- (doA z <- (do key <- (Return StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}
  in do cont <- (\ y. handler{hPRNG} * Return y 80
- in cont key))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -787,7 +787,7 @@ parallel{} * do results <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -795,9 +795,9 @@ parallel{} * do results <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 
 49.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do z <- (do cont <- (\ y. handler{hPRNG} * Return y 80
- in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA z <- (do cont <- (\ y. handler{hPRNG} * Return y 80
+ in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -805,7 +805,7 @@ parallel{} * do results <- (do z <- (do cont <- (\ y. handler{hPRNG} * Return y 
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -813,9 +813,9 @@ parallel{} * do results <- (do z <- (do cont <- (\ y. handler{hPRNG} * Return y 
 50.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do z <- (do cont <- (handler{hPRNG} * Return 80
- in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA z <- (do cont <- (handler{hPRNG} * Return 80
+ in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -823,7 +823,7 @@ parallel{} * do results <- (do z <- (do cont <- (handler{hPRNG} * Return 80
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -831,9 +831,9 @@ parallel{} * do results <- (do z <- (do cont <- (handler{hPRNG} * Return 80
 51.
 {-- E-Hand and E-Do and E-Do and E-Do and E-HandRet --}
 
-parallel{} * do results <- (do z <- (do cont <- (Return \ key. Return 80
- in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413})
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA z <- (do cont <- (Return \ key. Return 80
+ in cont StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -841,7 +841,7 @@ parallel{} * do results <- (do z <- (do cont <- (Return \ key. Return 80
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -849,8 +849,8 @@ parallel{} * do results <- (do z <- (do cont <- (Return \ key. Return 80
 52.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do z <- (\ key. Return 80 StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413}
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA z <- (\ key. Return 80 StdGen {unStdGen = SMGen 3908126255255093941 13679457532755275413} : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -858,7 +858,7 @@ parallel{} * do results <- (do z <- (\ key. Return 80 StdGen {unStdGen = SMGen 3
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -866,8 +866,8 @@ parallel{} * do results <- (do z <- (\ key. Return 80 StdGen {unStdGen = SMGen 3
 53.
 {-- E-Hand and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do z <- (Return 80
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA z <- (Return 80 : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -875,7 +875,7 @@ parallel{} * do results <- (do z <- (Return 80
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([z]) (zs)))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -883,7 +883,7 @@ parallel{} * do results <- (do z <- (Return 80
 54.
 {-- E-Hand and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
@@ -891,7 +891,7 @@ parallel{} * do results <- (do zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
+ in cont key))))]) ([StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781},StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -899,17 +899,17 @@ parallel{} * do results <- (do zs <- (Zip ([\ key. do pair <- (Rand key
 55.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do results <- (do zs <- (do z <- (\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA z <- (\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))) StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781}
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)))) StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781} : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -917,17 +917,17 @@ parallel{} * do results <- (do zs <- (do z <- (\ key. do pair <- (Rand key
 56.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do zs <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781}
+parallel{} * do results <- (doA zs <- (doA z <- (do pair <- (Rand StdGen {unStdGen = SMGen 6817541009070185961 2352410948740611781}
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -935,17 +935,17 @@ parallel{} * do results <- (do zs <- (do z <- (do pair <- (Rand StdGen {unStdGen
 57.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do zs <- (do z <- (do pair <- (Return (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+parallel{} * do results <- (doA zs <- (doA z <- (do pair <- (Return (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -953,16 +953,16 @@ parallel{} * do results <- (do zs <- (do z <- (do pair <- (Return (38, StdGen {u
 58.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do z <- (do val <- (Fst (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+parallel{} * do results <- (doA zs <- (doA z <- (do val <- (Fst (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
  in do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -970,16 +970,16 @@ parallel{} * do results <- (do zs <- (do z <- (do val <- (Fst (38, StdGen {unStd
 59.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do zs <- (do z <- (do val <- (Return 38
+parallel{} * do results <- (doA zs <- (doA z <- (do val <- (Return 38
  in do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key))) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -987,15 +987,15 @@ parallel{} * do results <- (do zs <- (do z <- (do val <- (Return 38
 60.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do z <- (do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
+parallel{} * do results <- (doA zs <- (doA z <- (do key <- (Snd (38, StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
  in do cont <- (\ y. handler{hPRNG} * Return y 38
- in cont key))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1003,15 +1003,15 @@ parallel{} * do results <- (do zs <- (do z <- (do key <- (Snd (38, StdGen {unStd
 61.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do zs <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}
+parallel{} * do results <- (doA zs <- (doA z <- (do key <- (Return StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}
  in do cont <- (\ y. handler{hPRNG} * Return y 38
- in cont key))
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+ in cont key)) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1019,14 +1019,14 @@ parallel{} * do results <- (do zs <- (do z <- (do key <- (Return StdGen {unStdGe
 62.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do z <- (do cont <- (\ y. handler{hPRNG} * Return y 38
- in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA z <- (do cont <- (\ y. handler{hPRNG} * Return y 38
+ in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1034,14 +1034,14 @@ parallel{} * do results <- (do zs <- (do z <- (do cont <- (\ y. handler{hPRNG} *
 63.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do zs <- (do z <- (do cont <- (handler{hPRNG} * Return 38
- in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA z <- (do cont <- (handler{hPRNG} * Return 38
+ in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1049,14 +1049,14 @@ parallel{} * do results <- (do zs <- (do z <- (do cont <- (handler{hPRNG} * Retu
 64.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-parallel{} * do results <- (do zs <- (do z <- (do cont <- (Return \ key. Return 38
- in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781})
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA z <- (do cont <- (Return \ key. Return 38
+ in cont StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}) : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1064,13 +1064,13 @@ parallel{} * do results <- (do zs <- (do z <- (do cont <- (Return \ key. Return 
 65.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do z <- (\ key. Return 38 StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781}
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA z <- (\ key. Return 38 StdGen {unStdGen = SMGen 9169951957810797742 2352410948740611781} : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1078,13 +1078,13 @@ parallel{} * do results <- (do zs <- (do z <- (\ key. Return 38 StdGen {unStdGen
 66.
 {-- E-Hand and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do zs <- (do z <- (Return 38
- in do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA z <- (Return 38 : Any
+ in doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([z]) (zs)))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1092,12 +1092,12 @@ parallel{} * do results <- (do zs <- (do z <- (Return 38
 67.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (Zip ([\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA zs <- (Zip ([\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}])
- in Append ([38]) (zs))
+ in cont key))))]) ([StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}]) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1105,14 +1105,14 @@ parallel{} * do results <- (do zs <- (do zs <- (Zip ([\ key. do pair <- (Rand ke
 68.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (\ key. do pair <- (Rand key
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (\ key. do pair <- (Rand key
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))) StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key)))) StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469} : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1120,14 +1120,14 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (\ key. do pair <- (Rand
 69.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do pair <- (Rand StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do pair <- (Rand StdGen {unStdGen = SMGen 5989081304699287701 4566015425465335469}
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key)))) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1135,14 +1135,14 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do pair <- (Rand StdGen
 70.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do pair <- (Return (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do pair <- (Return (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
  in do val <- (Fst pair
  in do key <- (Snd pair
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key))))
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key)))) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1150,13 +1150,13 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do pair <- (Return (7, 
 71.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do val <- (Fst (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do val <- (Fst (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
  in do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key))) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1164,13 +1164,13 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do val <- (Fst (7, StdG
 72.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do val <- (Return 7
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do val <- (Return 7
  in do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
  in do cont <- (\ y. handler{hPRNG} * Return y val
- in cont key)))
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key))) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1178,12 +1178,12 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do val <- (Return 7
 73.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do key <- (Snd (7, StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
  in do cont <- (\ y. handler{hPRNG} * Return y 7
- in cont key))
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key)) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1191,12 +1191,12 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do key <- (Snd (7, StdG
 74.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-Unop --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do key <- (Return StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do key <- (Return StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}
  in do cont <- (\ y. handler{hPRNG} * Return y 7
- in cont key))
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+ in cont key)) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1204,11 +1204,11 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do key <- (Return StdGe
 75.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (\ y. handler{hPRNG} * Return y 7
- in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do cont <- (\ y. handler{hPRNG} * Return y 7
+ in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1216,11 +1216,11 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (\ y. handle
 76.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (handler{hPRNG} * Return 7
- in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do cont <- (handler{hPRNG} * Return 7
+ in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1228,11 +1228,11 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (handler{hPR
 77.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Do and E-HandRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (Return \ key. Return 7
- in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469})
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (do cont <- (Return \ key. Return 7
+ in cont StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}) : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1240,10 +1240,10 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (do cont <- (Return \ ke
 78.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (\ key. Return 7 StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469}
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (\ key. Return 7 StdGen {unStdGen = SMGen 10555096730164623170 4566015425465335469} : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1251,10 +1251,10 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (\ key. Return 7 StdGen 
 79.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do z <- (Return 7
- in do zs <- (Zip ([]) ([])
- in Append ([z]) (zs)))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA z <- (Return 7 : Any
+ in doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([z]) (zs))) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1262,9 +1262,9 @@ parallel{} * do results <- (do zs <- (do zs <- (do z <- (Return 7
 80.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do zs <- (Zip ([]) ([])
- in Append ([7]) (zs))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA zs <- (Zip ([]) ([]) : Tlist Any
+ in Append ([7]) (zs)) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1272,9 +1272,9 @@ parallel{} * do results <- (do zs <- (do zs <- (do zs <- (Zip ([]) ([])
 81.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do results <- (do zs <- (do zs <- (do zs <- (Return []
- in Append ([7]) (zs))
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (doA zs <- (Return [] : Tlist Any
+ in Append ([7]) (zs)) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1282,8 +1282,8 @@ parallel{} * do results <- (do zs <- (do zs <- (do zs <- (Return []
 82.
 {-- E-Hand and E-Do and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (do zs <- (Append ([7]) ([])
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (Append ([7]) ([]) : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1291,8 +1291,8 @@ parallel{} * do results <- (do zs <- (do zs <- (Append ([7]) ([])
 83.
 {-- E-Hand and E-Do and E-Do and E-Do and E-Binop --}
 
-parallel{} * do results <- (do zs <- (do zs <- (Return [7]
- in Append ([38]) (zs))
+parallel{} * do results <- (doA zs <- (doA zs <- (Return [7] : Tlist Any
+ in Append ([38]) (zs)) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1300,7 +1300,7 @@ parallel{} * do results <- (do zs <- (do zs <- (Return [7]
 84.
 {-- E-Hand and E-Do and E-Do and E-DoRet --}
 
-parallel{} * do results <- (do zs <- (Append ([38]) ([7])
+parallel{} * do results <- (doA zs <- (Append ([38]) ([7]) : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))
@@ -1308,7 +1308,7 @@ parallel{} * do results <- (do zs <- (Append ([38]) ([7])
 85.
 {-- E-Hand and E-Do and E-Do and E-Binop --}
 
-parallel{} * do results <- (do zs <- (Return [38,7]
+parallel{} * do results <- (doA zs <- (Return [38,7] : Tlist Any
  in Append ([80]) (zs))
  in do cont <- (\ y. handler{hPRNG} * Return y results
  in cont StdGen {unStdGen = SMGen 1275548033995301424 10514482549683702313}))

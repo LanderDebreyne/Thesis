@@ -1,0 +1,1286 @@
+do m <- (Newmem ()
+ in do m <- (Update (("readerEnv", [1,2,3,4])) (m)
+ in do c <- (handler{hReader} * do x3 <- (sc "local" \ x. Return [1,2,3,4] (_. do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))) (z. Return z)
+ in Return x3)
+ in do x <- (c m
+ in Fst x))))
+
+1.
+{-- E-Do and E-Unop --}
+
+do m <- (Return <memory>
+ in do m <- (Update (("readerEnv", [1,2,3,4])) (m)
+ in do c <- (handler{hReader} * do x3 <- (sc "local" \ x. Return [1,2,3,4] (_. do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))) (z. Return z)
+ in Return x3)
+ in do x <- (c m
+ in Fst x))))
+
+2.
+{-- E-DoRet --}
+
+do m <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in do c <- (handler{hReader} * do x3 <- (sc "local" \ x. Return [1,2,3,4] (_. do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))) (z. Return z)
+ in Return x3)
+ in do x <- (c m
+ in Fst x)))
+
+3.
+{-- E-Do and E-Binop --}
+
+do m <- (Return <memory>
+ in do c <- (handler{hReader} * do x3 <- (sc "local" \ x. Return [1,2,3,4] (_. do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))) (z. Return z)
+ in Return x3)
+ in do x <- (c m
+ in Fst x)))
+
+4.
+{-- E-DoRet --}
+
+do c <- (handler{hReader} * do x3 <- (sc "local" \ x. Return [1,2,3,4] (_. do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))) (z. Return z)
+ in Return x3)
+ in do x <- (c <memory>
+ in Fst x))
+
+5.
+{-- E-Do and E-Hand and E-DoSc --}
+
+do c <- (handler{hReader} * sc "local" \ x. Return [1,2,3,4] (_. do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))) (z. do x3 <- (Return z
+ in Return x3))
+ in do x <- (c <memory>
+ in Fst x))
+
+6.
+{-- E-Do and E-HandSc --}
+
+do c <- (Return \ m. do envKey <- (Return "readerEnv"
+ in do oldEnv <- (Retrieve (envKey) (m)
+ in do newEnv <- (\ x. Return [1,2,3,4] oldEnv
+ in do um <- (Update ((envKey, newEnv)) (m)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update ((envKey, oldEnv)) (m')
+ in k' newm))))))))))
+ in do x <- (c <memory>
+ in Fst x))
+
+7.
+{-- E-DoRet --}
+
+do x <- (\ m. do envKey <- (Return "readerEnv"
+ in do oldEnv <- (Retrieve (envKey) (m)
+ in do newEnv <- (\ x. Return [1,2,3,4] oldEnv
+ in do um <- (Update ((envKey, newEnv)) (m)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update ((envKey, oldEnv)) (m')
+ in k' newm)))))))))) <memory>
+ in Fst x)
+
+8.
+{-- E-Do and E-AppAbs --}
+
+do x <- (do envKey <- (Return "readerEnv"
+ in do oldEnv <- (Retrieve (envKey) (<memory>)
+ in do newEnv <- (\ x. Return [1,2,3,4] oldEnv
+ in do um <- (Update ((envKey, newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update ((envKey, oldEnv)) (m')
+ in k' newm))))))))))
+ in Fst x)
+
+9.
+{-- E-Do and E-DoRet --}
+
+do x <- (do oldEnv <- (Retrieve ("readerEnv") (<memory>)
+ in do newEnv <- (\ x. Return [1,2,3,4] oldEnv
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", oldEnv)) (m')
+ in k' newm)))))))))
+ in Fst x)
+
+10.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do oldEnv <- (Return [1,2,3,4]
+ in do newEnv <- (\ x. Return [1,2,3,4] oldEnv
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", oldEnv)) (m')
+ in k' newm)))))))))
+ in Fst x)
+
+11.
+{-- E-Do and E-DoRet --}
+
+do x <- (do newEnv <- (\ x. Return [1,2,3,4] [1,2,3,4]
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))))
+ in Fst x)
+
+12.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do newEnv <- (Return [1,2,3,4]
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))))
+ in Fst x)
+
+13.
+{-- E-Do and E-DoRet --}
+
+do x <- (do um <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))))
+ in Fst x)
+
+14.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do um <- (Return <memory>
+ in do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))))
+ in Fst x)
+
+15.
+{-- E-Do and E-DoRet --}
+
+do x <- (do p' <- (\ _. handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) ()
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in Fst x)
+
+16.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do p' <- (handler{hReader} * do x1 <- (op "ask" () (y. Return y)
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in Fst x)
+
+17.
+{-- E-Do and E-Do and E-Hand and E-DoOp --}
+
+do x <- (do p' <- (handler{hReader} * op "ask" () (y. do x1 <- (Return y
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))))
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in Fst x)
+
+18.
+{-- E-Do and E-Do and E-HandOp --}
+
+do x <- (do p' <- (Return \ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * do x1 <- (Return y
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) env
+ in k' m))
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in Fst x)
+
+19.
+{-- E-Do and E-DoRet --}
+
+do x <- (do tm <- (\ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * do x1 <- (Return y
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) env
+ in k' m)) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+20.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do env <- (Retrieve ("readerEnv") (<memory>)
+ in do k' <- (\ y. handler{hReader} * do x1 <- (Return y
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) env
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+21.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do env <- (Return [1,2,3,4]
+ in do k' <- (\ y. handler{hReader} * do x1 <- (Return y
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) env
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+22.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (\ y. handler{hReader} * do x1 <- (Return y
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3)))) [1,2,3,4]
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+23.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * do x1 <- (Return [1,2,3,4]
+ in do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), x3))))
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+24.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * do x2 <- (sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. Return z)
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4])))
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+25.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoSc --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * sc "local" \ x. Append (x) ([5]) (_. op "ask" () (y. Return y)) (z. do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))))
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+26.
+{-- E-Do and E-Do and E-Do and E-HandSc --}
+
+do x <- (do tm <- (do k' <- (Return \ m. do envKey <- (Return "readerEnv"
+ in do oldEnv <- (Retrieve (envKey) (m)
+ in do newEnv <- (\ x. Append (x) ([5]) oldEnv
+ in do um <- (Update ((envKey, newEnv)) (m)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update ((envKey, oldEnv)) (m')
+ in k' newm))))))))))
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+27.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (\ m. do envKey <- (Return "readerEnv"
+ in do oldEnv <- (Retrieve (envKey) (m)
+ in do newEnv <- (\ x. Append (x) ([5]) oldEnv
+ in do um <- (Update ((envKey, newEnv)) (m)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update ((envKey, oldEnv)) (m')
+ in k' newm)))))))))) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+28.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do envKey <- (Return "readerEnv"
+ in do oldEnv <- (Retrieve (envKey) (<memory>)
+ in do newEnv <- (\ x. Append (x) ([5]) oldEnv
+ in do um <- (Update ((envKey, newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update ((envKey, oldEnv)) (m')
+ in k' newm))))))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+29.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do oldEnv <- (Retrieve ("readerEnv") (<memory>)
+ in do newEnv <- (\ x. Append (x) ([5]) oldEnv
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", oldEnv)) (m')
+ in k' newm)))))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+30.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do oldEnv <- (Return [1,2,3,4]
+ in do newEnv <- (\ x. Append (x) ([5]) oldEnv
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", oldEnv)) (m')
+ in k' newm)))))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+31.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do newEnv <- (\ x. Append (x) ([5]) [1,2,3,4]
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+32.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do newEnv <- (Append ([1,2,3,4]) ([5])
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+33.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do newEnv <- (Return [1,2,3,4,5]
+ in do um <- (Update (("readerEnv", newEnv)) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+34.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do um <- (Update (("readerEnv", [1,2,3,4,5])) (<memory>)
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+35.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do um <- (Return <memory>
+ in do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' um
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+36.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do p' <- (\ _. handler{hReader} * op "ask" () (y. Return y) ()
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+37.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do p' <- (handler{hReader} * op "ask" () (y. Return y)
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+38.
+{-- E-Do and E-Do and E-Do and E-HandOp --}
+
+do x <- (do tm <- (do p' <- (Return \ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * Return y env
+ in k' m))
+ in do tm <- (p' <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+39.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do tm <- (\ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * Return y env
+ in k' m)) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+40.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do tm <- (do env <- (Retrieve ("readerEnv") (<memory>)
+ in do k' <- (\ y. handler{hReader} * Return y env
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+41.
+{-- E-Do and E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do tm <- (do env <- (Return [1,2,3,4,5]
+ in do k' <- (\ y. handler{hReader} * Return y env
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+42.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do tm <- (do k' <- (\ y. handler{hReader} * Return y [1,2,3,4,5]
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+43.
+{-- E-Do and E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do tm <- (do k' <- (handler{hReader} * Return [1,2,3,4,5]
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+44.
+{-- E-Do and E-Do and E-Do and E-Do and E-HandRet --}
+
+do x <- (do tm <- (do tm <- (do k' <- (Return \ m. Return ([1,2,3,4,5], m)
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+45.
+{-- E-Do and E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do tm <- (\ m. Return ([1,2,3,4,5], m) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+46.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do tm <- (Return ([1,2,3,4,5], <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+47.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do t <- (Fst ([1,2,3,4,5], <memory>)
+ in do m' <- (Snd ([1,2,3,4,5], <memory>)
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+48.
+{-- E-Do and E-Do and E-Do and E-Unop --}
+
+do x <- (do tm <- (do t <- (Return [1,2,3,4,5]
+ in do m' <- (Snd ([1,2,3,4,5], <memory>)
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+49.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do m' <- (Snd ([1,2,3,4,5], <memory>)
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) [1,2,3,4,5]
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+50.
+{-- E-Do and E-Do and E-Do and E-Unop --}
+
+do x <- (do tm <- (do m' <- (Return <memory>
+ in do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) [1,2,3,4,5]
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+51.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (\ z. handler{hReader} * do x2 <- (Return z
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4]))) [1,2,3,4,5]
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+52.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * do x2 <- (Return [1,2,3,4,5]
+ in do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, x3), [1,2,3,4])))
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+53.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * do x3 <- (op "ask" () (y. Return y)
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4]))
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+54.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoOp --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * op "ask" () (y. do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])))
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+55.
+{-- E-Do and E-Do and E-Do and E-HandOp --}
+
+do x <- (do tm <- (do k' <- (Return \ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) env
+ in k' m))
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+56.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in \ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) env
+ in k' m)) newm)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+57.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do newm <- (Return <memory>
+ in \ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) env
+ in k' m)) newm)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+58.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (\ m. do env <- (Retrieve ("readerEnv") (m)
+ in do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) env
+ in k' m)) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+59.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do env <- (Retrieve ("readerEnv") (<memory>)
+ in do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) env
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+60.
+{-- E-Do and E-Do and E-Do and E-Binop --}
+
+do x <- (do tm <- (do env <- (Return [1,2,3,4]
+ in do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) env
+ in k' <memory>))
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+61.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (\ y. handler{hReader} * do x3 <- (Return y
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4])) [1,2,3,4]
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+62.
+{-- E-Do and E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * do x3 <- (Return [1,2,3,4]
+ in Return ((x1, [1,2,3,4,5]), [1,2,3,4]))
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+63.
+{-- E-Do and E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do tm <- (do k' <- (handler{hReader} * Return (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+64.
+{-- E-Do and E-Do and E-Do and E-HandRet --}
+
+do x <- (do tm <- (do k' <- (Return \ m. Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), m)
+ in k' <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+65.
+{-- E-Do and E-Do and E-DoRet --}
+
+do x <- (do tm <- (\ m. Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), m) <memory>
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+66.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do tm <- (Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+ in do t <- (Fst tm
+ in do m' <- (Snd tm
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))))
+ in Fst x)
+
+67.
+{-- E-Do and E-DoRet --}
+
+do x <- (do t <- (Fst ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+ in do m' <- (Snd ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))
+ in Fst x)
+
+68.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do t <- (Return (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in do m' <- (Snd ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) t
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm))))
+ in Fst x)
+
+69.
+{-- E-Do and E-DoRet --}
+
+do x <- (do m' <- (Snd ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))
+ in Fst x)
+
+70.
+{-- E-Do and E-Do and E-Unop --}
+
+do x <- (do m' <- (Return <memory>
+ in do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (m')
+ in k' newm)))
+ in Fst x)
+
+71.
+{-- E-Do and E-DoRet --}
+
+do x <- (do k' <- (\ z. handler{hReader} * do x3 <- (Return z
+ in Return x3) (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in Fst x)
+
+72.
+{-- E-Do and E-Do and E-AppAbs --}
+
+do x <- (do k' <- (handler{hReader} * do x3 <- (Return (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in Return x3)
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in Fst x)
+
+73.
+{-- E-Do and E-Do and E-Hand and E-DoRet --}
+
+do x <- (do k' <- (handler{hReader} * Return (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in Fst x)
+
+74.
+{-- E-Do and E-Do and E-HandRet --}
+
+do x <- (do k' <- (Return \ m. Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), m)
+ in do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in k' newm))
+ in Fst x)
+
+75.
+{-- E-Do and E-DoRet --}
+
+do x <- (do newm <- (Update (("readerEnv", [1,2,3,4])) (<memory>)
+ in \ m. Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), m) newm)
+ in Fst x)
+
+76.
+{-- E-Do and E-Do and E-Binop --}
+
+do x <- (do newm <- (Return <memory>
+ in \ m. Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), m) newm)
+ in Fst x)
+
+77.
+{-- E-Do and E-DoRet --}
+
+do x <- (\ m. Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), m) <memory>
+ in Fst x)
+
+78.
+{-- E-Do and E-AppAbs --}
+
+do x <- (Return ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+ in Fst x)
+
+79.
+{-- E-DoRet --}
+
+Fst ((([1,2,3,4], [1,2,3,4,5]), [1,2,3,4]), <memory>)
+
+80.
+{-- E-Unop --}
+
+Return (([1,2,3,4], [1,2,3,4,5]), [1,2,3,4])
+
+81.
+{-- Nothing --}
+
