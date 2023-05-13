@@ -114,13 +114,13 @@ catchTests = concat $ map (\(Tdata name test result) -> testCaseGen name test re
 
 -- Catch typechecking
 catchType1 = typeCheckGen "catch_1" tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint)) 1
-catchType2 = typeCheckGen "catch_2" tCatchGam1 tCatchSig1 tCatchComp2 (Tpair (Tsum Tstr Tint) Tint) 1
-catchType3 = typeCheckGen "catch_3" tCatchGam1 tCatchSig2 tCatchComp3 (Tsum Tstr (Tpair Tstr Tint)) 1
-catchType4 = typeCheckGen "catch_4" tCatchGam1 tCatchSig2 tCatchComp4 (Tpair (Tsum Tstr Tstr) Tint) 1
-catchType5 = typeCheckGen "catch_5" tCatchGam1 tCatchSig2 tCatchComp5 (Tsum Tstr (Tpair Tstr Tint)) 1
-catchType6 = typeCheckGen "catch_6" tCatchGam1 tCatchSig2 tCatchComp6 (Tpair (Tsum Tstr Tstr) Tint) 1
-catchType7 = typeCheckGen "catch_7" tCatchGam1 tCatchSig2 tCatchComp7 (Tsum Tstr (Tpair Tstr Tint)) 1
-catchType8 = typeCheckGen "catch_8" tCatchGam1 tCatchSig2 tCatchComp8 (Tpair (Tsum Tstr Tstr) Tint) 1
+catchType2 = typeCheckGen "catch_2" tCatchGam2 tCatchSig1 tCatchComp2 (Tpair (Tsum Tstr Tint) Tint) 1
+catchType3 = typeCheckGen "catch_3" tCatchGam3 tCatchSig2 tCatchComp3 (Tsum Tstr (Tpair Tstr Tint)) 1
+catchType4 = typeCheckGen "catch_4" tCatchGam4 tCatchSig2 tCatchComp4 (Tpair (Tsum Tstr Tstr) Tint) 1
+catchType5 = typeCheckGen "catch_5" tCatchGam3 tCatchSig2 tCatchComp5 (Tsum Tstr (Tpair Tstr Tint)) 1
+catchType6 = typeCheckGen "catch_6" tCatchGam4 tCatchSig2 tCatchComp6 (Tpair (Tsum Tstr Tstr) Tint) 1
+catchType7 = typeCheckGen "catch_7" tCatchGam3 tCatchSig2 tCatchComp7 (Tsum Tstr (Tpair Tstr Tint)) 1
+catchType8 = typeCheckGen "catch_8" tCatchGam4 tCatchSig2 tCatchComp8 (Tpair (Tsum Tstr Tstr) Tint) 1
 catchTypeTests = catchType1 ++ catchType2 ++ catchType3 ++ catchType4 ++ catchType5 ++ catchType6 ++ catchType7 ++ catchType8
 
 -- | State tests
@@ -167,7 +167,7 @@ readerTestsData = Tdata "reader" (example_cReader) (Return (Vpair (Vpair (Vlist 
 readerTests = testCaseGen (name readerTestsData) (testC readerTestsData) (result readerTestsData)
 
 -- Reader typechecking
-readerTypeTests = typeCheckGen "reader" tReaderGam tReaderSig example_cReaderT (Tpair (Tpair (Tlist Tint) (Tlist Tint)) (Tlist Tint)) 1
+readerTypeTests = typeCheckGen "reader" tReaderGam tReaderSig handle_cReaderT (Tpair (Tpair (Tlist Tint) (Tlist Tint)) (Tlist Tint)) 1
 
 -- | Accum tests
 
