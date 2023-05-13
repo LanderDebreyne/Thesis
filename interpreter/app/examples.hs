@@ -483,7 +483,6 @@ expr1 = Lam "_" $
                                   Do "x" (Binop Add (Var "i" 4) (Var "j" 0)) $
                                   Return (Var "x" 0)) <> Return (Var "i" 1))
 
-
 -- Handling @expr1@:
 handle_expr1 :: Comp
 handle_expr1 = hCut # (Do "c" (hToken # App expr1 Vunit) $
@@ -551,16 +550,17 @@ runReader s c = Do "x3" ((sc "local" s) ("_" :. c)) $
 -- Handling @cReader@:
 handle_cReader :: Value -> Comp
 handle_cReader c = Do "m" (Unop Newmem (Vunit)) $
+                   Do "m" (Binop Update (Vpair ((Vstr "readerEnv"), (Vlist [Vint 1, Vint 2, Vint 3, Vint 4]))) (Var "m" 0)) $
                    Do "c" (hReader # (runReader (c) cReader)) $
                    Do "x" (App (Var "c" 0) (Var "m" 1)) $
                    Unop Fst (Var "x" 0)
 
 -- @cReader@ example:
 example_cReader :: Comp
-example_cReader = handle_cReader (Lam "x" (Return (Vlist [(Vint 1), (Vint 2), (Vint 3), (Vint 4)])))
+example_cReader = handle_cReader (Lam "x" (Return (Vlist [Vint 1, Vint 2, Vint 3, Vint 4])))
 
 -- Usage:
--- >>> evalP example_cReader
+-- >>> evalFile example_cReader
 -- Return (Vpair (Vpair (Vlist [Vint 1,Vint 2,Vint 3,Vint 4],Vlist [Vint 1,Vint 2,Vint 3,Vint 4,Vint 5]),Vlist [Vint 1,Vint 2,Vint 3,Vint 4]))
 
 ----------------------------------------------------------------

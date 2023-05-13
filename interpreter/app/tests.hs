@@ -18,7 +18,7 @@ data Tdata = Tdata { name :: String, testC :: Comp, result :: Comp } deriving (S
 testCaseGen :: String -> Comp -> Comp -> [Test]
 testCaseGen name test result = [TestCase (assertEqual (name ++ " NVL") (last (eval test)) result)
     , TestCase (assertEqual (name ++ " VL") (snd $ last (eval' test)) result)
-    , TestCase (assertEqual (name ++ " NV") (evalP test) result)]
+    , TestCase (assertEqual (name ++ " NV") (snd (evalP (1, test))) result)]
 
 
 -- | Unit test generator for typechecking a computation
@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests ++ readerTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -58,8 +58,8 @@ allTestsData = fastTestsData ++ slowTestsData
 fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
 slowTestsData = ambTestsData ++ parserTestsData 
 
--- Parser and reader tests do not work as reduction because parser uses haskell recursion and tries to print an infinite list
-reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData
+-- Parser tests do not work as reduction because parser uses haskell recursion and tries to print an infinite list
+reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData ++ depthAmbTestsData ++ [readerTestsData]
 
 -- | Inc tests
 
@@ -157,7 +157,7 @@ parserTestsData = [parserTestsData1, parserTestsData2]
 parserTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) parserTestsData
 
 -- Parser typechecking
--- TODO
+parserTypeTest1 = typeCheckGen "parser_1" tParseGam tParseSig handle_expr1T (Tret (Tlist (Tpair Tint Tstr))) 1
 
 -- | Reader tests
 
@@ -167,7 +167,7 @@ readerTestsData = Tdata "reader" (example_cReader) (Return (Vpair (Vpair (Vlist 
 readerTests = testCaseGen (name readerTestsData) (testC readerTestsData) (result readerTestsData)
 
 -- Reader typechecking
--- TODO
+readerTypeTests = typeCheckGen "reader" tReaderGam tReaderSig example_cReaderT (Tpair (Tpair (Tlist Tint) (Tlist Tint)) (Tlist Tint)) 1
 
 -- | Accum tests
 

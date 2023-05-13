@@ -13,10 +13,10 @@ eval c = case eval1 c of
   Nothing -> [c]
 
 -- | Evaluation for parser (due to recursive defintions we can not evaluate/show intermediate steps)
-evalP :: Comp ->  Comp
-evalP c = case eval1 c of
-  Just c' -> evalP c'
-  Nothing -> c
+evalP :: (Int, Comp) ->  (Int, Comp)
+evalP (s, c) = case eval1 c of
+  Just c' -> evalP (s+1, c')
+  Nothing -> (s+1, c)
 
 -- | Evaluation with steps
 evalFile :: Comp -> IO ()
@@ -30,7 +30,7 @@ evalFileFlat c = do
   let steps = eval' c
   writeFile "reductionFlat" (prettyprint steps 1)
   appendFile "reductionFlat" "-- Flatten result: \n"
-  let stepsFlat = eval' (Do "c" (evalP (snd (last steps))) $ App (Lam "c" $ Unop Flatten (Var "c" 0)) (Var "c" 0))
+  let stepsFlat = eval' (Do "c" (snd (evalP (1, (snd (last steps))))) $ App (Lam "c" $ Unop Flatten (Var "c" 0)) (Var "c" 0))
   appendFile "reductionFlat" (prettyprint stepsFlat 1)
 
 -- | Evaluation without steps

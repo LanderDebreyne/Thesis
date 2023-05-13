@@ -9,6 +9,10 @@ import qualified Data.Set as Set
 type Gamma = Map.Map Name ValueType
 type Sigma = Map.Map Name Label
 
+
+typeCheckParser :: Gamma -> Sigma -> Comp -> ComputationType -> [String] 
+typeCheckParser gam sig c ct = map fst (typeCheckEval gam sig c ct False)
+
 typeCheckEval :: Gamma -> Sigma -> Comp -> ComputationType -> Bool -> [(String, Comp)]
 typeCheckEval gam sig c ct tr = 
   if check "---- New step ----" (typeCheckC gam sig c ct tr) tr
@@ -128,7 +132,7 @@ typeCheckC _ _ c t _ = False -- error ("Typecheck failed: " ++ show c ++ " is no
 
 typeCheckV :: Gamma -> Sigma -> Value -> ValueType -> Bool -> Bool
 typeCheckV _ _ _ Any _ = True
-typeCheckV gam sig v (TValVar n) tr = case Map.lookup n gam of -- SD-ValVar
+typeCheckV gam sig v (TVar n) tr = case Map.lookup n gam of -- SD-ValVar
   Just vt -> check ("SD-Var: Checking " ++ show v ++ " to be of type " ++ show vt) (typeCheckV gam sig v vt tr) tr
   Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
 typeCheckV gam sig (Var n i) vt tr = case Map.lookup n gam of -- SD-Var
@@ -209,8 +213,8 @@ typeEq (Tret t) (Tflag t') = typeEq t t'
 typeEq Tmem Tmem = True
 typeEq Tkey Tkey = True
 typeEq (Tfunction t1 t2) (Tfunction t1' t2') = typeEq t1 t1' && typeEq t2 t2'
-typeEq (TValVar _) t = True
-typeEq t (TValVar _) = True
+typeEq (TVar _) t = True
+typeEq t (TVar _) = True
 typeEq _ _ = False
 
 rowEq :: EffectType -> EffectType -> Bool
@@ -218,7 +222,7 @@ rowEq x y = Set.null (Set.difference x y) && Set.null (Set.difference y x)
 
 transformH :: Gamma -> HTransform -> ValueType -> Bool -> ValueType
 transformH gam _ Any _ = Any
-transformH gam h (TValVar n) tr = case Map.lookup n gam of 
+transformH gam h (TVar n) tr = case Map.lookup n gam of 
   Just t -> check ("Handler check (var) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t tr) tr
   Nothing -> error ("Typecheck failed: " ++ show n ++ " is not in the environment")
 transformH gam (UFunction h) (Tfunction _ t) tr = check ("Handler check (function) " ++ show h ++ " needs to be of type " ++ show t) (transformH gam h t tr) tr

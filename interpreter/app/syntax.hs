@@ -236,7 +236,7 @@ data ValueType = Tunit
             | Tfunction ValueType ComputationType
             | THandler ComputationType ComputationType
             | Tlist ValueType
-            | TValVar Name
+            | TVar Name
             | TOpAbs Name ValueType
             | Tapp ValueType ValueType
             | Tsum ValueType ValueType
