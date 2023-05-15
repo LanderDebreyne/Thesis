@@ -10,8 +10,13 @@ type Gamma = Map.Map Name ValueType
 type Sigma = Map.Map Name Label
 
 
-typeCheckParser :: Gamma -> Sigma -> Comp -> ComputationType -> [String] 
-typeCheckParser gam sig c ct = map fst (typeCheckEval gam sig c ct False)
+typeCheckParser :: Gamma -> Sigma -> Comp -> ComputationType -> Bool -> Maybe Comp
+typeCheckParser gam sig c ct tr =
+  if typeCheckC gam sig c ct tr
+    then case eval1 c of 
+      Just c' -> typeCheckParser gam sig c' ct tr
+      Nothing -> Just c
+  else Nothing
 
 typeCheckEval :: Gamma -> Sigma -> Comp -> ComputationType -> Bool -> [(String, Comp)]
 typeCheckEval gam sig c ct tr = 
@@ -33,7 +38,7 @@ prettyprintT [] _ = ""
 prettyprintT ((step, c):xs) n = 
   "\n Step " ++ show n ++ ": " ++ step ++ "\n" ++ show c ++ "\n" ++ prettyprintT xs (n+1) ++ "\n"
 
-
+-- | Trace step if needed
 check :: String -> a -> Bool -> a
 check s ch tr = 
   if tr 

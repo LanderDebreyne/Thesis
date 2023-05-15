@@ -49,7 +49,7 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests ++ readerTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests ++ readerTypeTests ++ parserTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
@@ -158,6 +158,8 @@ parserTests = concat $ map (\(Tdata name test result) -> testCaseGen name test r
 
 -- Parser typechecking
 parserTypeTest1 = typeCheckGen "parser_1" tParseGam tParseSig handle_expr1T (Tret (Tlist (Tpair Tint Tstr))) 1
+parserTypeTest2 = typeCheckGen "parser_2" tParseGam tParseSig handle_exprT (Tret (Tlist (Tpair Tint Tstr))) 1
+parserTypeTests = parserTypeTest1 ++ parserTypeTest2
 
 -- | Reader tests
 

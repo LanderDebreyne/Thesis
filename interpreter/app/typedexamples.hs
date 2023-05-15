@@ -465,7 +465,7 @@ hTokenT = Handler
     "token" -> Just ("x", "k", Return . LamA "s" Tstr $
       DoA "b" (Binop Eq (Var "s" 0) (Vstr "")) Tbool $
       If (Var "b" 0) failure
-                     ( DoA "x'" (Unop HeadS (Var "s" 1)) Tstr $
+                     ( DoA "x'" (Unop HeadS (Var "s" 1)) Tchar $
                        DoA "xs" (Unop TailS (Var "s" 2)) Tstr $
                        DoA "b" (Binop Eq (Var "x" 5) (Var "x'" 1)) Tbool $
                        If (Var "b" 0) (app2 (Var "k" 5) (Var "x" 6) (Var "xs" 1)) failure))
@@ -489,77 +489,79 @@ x <> y = OpA "choose" Vunit (DotA "b" Tbool (If (Var "b" 0) (shiftC 1 x) (shiftC
 
 -- Parsers defined in Fig. 7 :
 digit :: Value
-digit =  LamA "_" Any $ 
-         op "token" (Vchar '0') Any
-      <> op "token" (Vchar '1') Any
-      <> op "token" (Vchar '2') Any
-      <> op "token" (Vchar '3') Any
-      <> op "token" (Vchar '4') Any
-      <> op "token" (Vchar '5') Any
-      <> op "token" (Vchar '6') Any
-      <> op "token" (Vchar '7') Any
-      <> op "token" (Vchar '8') Any
-      <> op "token" (Vchar '9') Any
+digit =  LamA "_" Tunit $ 
+         op "token" (Vchar '0') Tunit
+      <> op "token" (Vchar '1') Tunit
+      <> op "token" (Vchar '2') Tunit
+      <> op "token" (Vchar '3') Tunit
+      <> op "token" (Vchar '4') Tunit
+      <> op "token" (Vchar '5') Tunit
+      <> op "token" (Vchar '6') Tunit
+      <> op "token" (Vchar '7') Tunit
+      <> op "token" (Vchar '8') Tunit
+      <> op "token" (Vchar '9') Tunit
 -- | For simplicity, we directly use Haskell's recursion to implement the recursive function @many1@.
 many1 :: Value -> Comp
-many1 p = DoA "a" (App p Vunit) Any $
-          DoA "as" (many1 p <> Return (Vstr "")) Any $
-          DoA "x" (Binop ConsS (Var "a" 1) (Var "as" 0)) Any $
+many1 p = DoA "a" (App p Vunit) Tstr $
+          DoA "as" (many1 p <> Return (Vstr "")) Tstr $
+          DoA "x" (Binop ConsS (Var "a" 1) (Var "as" 0)) Tstr $
           Return (Var "x" 0)
 expr :: Value
-expr = LamA "_" Any $
-       (DoA "i" (App term Vunit) Any $
-        DoA "_" (op "token" (Vchar '+') Any) Any $
-        DoA "j" (App expr Vunit) Any $
-        DoA "x" (Binop Add (Var "i" 2) (Var "j" 0)) Any $
+expr = LamA "_" Tunit $
+       (DoA "i" (App term Vunit) Tint $
+        DoA "_" (op "token" (Vchar '+') Tunit) Tunit $
+        DoA "j" (App expr Vunit) Tint $
+        DoA "x" (Binop Add (Var "i" 2) (Var "j" 0)) Tint $
         Return (Var "x" 0))
-    <> (DoA "i" (App term Vunit) Any $ Return (Var "i" 0))
+    <> (DoA "i" (App term Vunit) Tint $ Return (Var "i" 0))
 term :: Value
-term = LamA "_" Any $
-       (DoA "i" (App factor Vunit) Any $
-        DoA "_" (op "token" (Vchar '*') Any) Any $
-        DoA "j" (App term Vunit) Any $
-        DoA "x" (Binop Mul (Var "i" 2) (Var "j" 0)) Any $
+term = LamA "_" Tunit $
+       (DoA "i" (App factor Vunit) Tint $
+        DoA "_" (op "token" (Vchar '*') Tunit) Tunit $
+        DoA "j" (App term Vunit) Tint $
+        DoA "x" (Binop Mul (Var "i" 2) (Var "j" 0)) Tint $
         Return (Var "x" 0))
-    <> (DoA "i" (App factor Vunit) Any $ Return (Var "i" 0))
+    <> (DoA "i" (App factor Vunit) Tint $ Return (Var "i" 0))
 factor :: Value
-factor = LamA "_" Any $
-         (DoA "ds" (many1 digit) Any $
-          DoA "x" (Unop Read (Var "ds" 0)) Any $
+factor = LamA "_" Tunit $
+         (DoA "ds" (many1 digit) Tstr $
+          DoA "x" (Unop Read (Var "ds" 0)) Tint $
           Return (Var "x" 0))
-      <> (DoA "_" (op "token" (Vchar '(') Any) Any $
-          DoA "i" (App expr Vunit) Any $
-          DoA "_" (op "token" (Vchar ')') Any) Any $
+      <> (DoA "_" (op "token" (Vchar '(') Tunit) Tunit $
+          DoA "i" (App expr Vunit) Tint $
+          DoA "_" (op "token" (Vchar ')') Tunit) Tunit $
           Return (Var "i" 1))
 
--- | @expr1@ refers to the @expr_1@ parser in Section 7.6
 expr1 :: Value
-expr1 = LamA "_" Any $
+expr1 = LamA "_" Tunit $
         DoA "i" (App term Vunit) Tint $
-        sc "call" Vunit "_" Any  (DoA "_" (op "token" (Vchar '+') Any) Any $
-                                  DoA "_" (op "cut" Vunit Any) Any $
-                                  DoA "j" (App expr1 Vunit) Tint $
-                                  DoA "x" (Binop Add (Var "i" 4) (Var "j" 0)) Tint $
-                                  Return (Var "x" 0) <> Return (Var "i" 1)) Any
+        ScA "call" Vunit (DotA "_" Tunit ((DoA "_" (op "token" (Vchar '+') Tunit) Tunit $ 
+                                            DoA "_" (op "cut" Vunit Tunit) Tunit $ 
+                                            DoA "j" (App expr1 Vunit) Tint $ 
+                                            DoA "x" (Binop Add (Var "i" 4) (Var "j" 0)) Tint $ 
+                                            Return (Var "x" 0)) <> Return (Var "i" 1))) 
+                          (DotA "z" Any (Return (Var "z" 0)))
 
-
--- Handling @expr1@:
 handle_expr1T :: Comp
-handle_expr1T = hCutT # (DoA "c" (hTokenT # App expr1 Vunit) (Tfunction Tstr Any) $
+handle_expr1T = HandleA (URet (UList UNone)) hCutT (DoA "c" (HandleA (UFunction (UFirst UNone)) hTokenT (App expr1 Vunit)) (Tfunction Tstr Any) $
                        App (Var "c" 0) (Vstr "(2+5)*8"))
 
--- Handling @expr@:
 handle_exprT :: Comp
-handle_exprT = hCutT # (DoA "c" (hTokenT # App expr Vunit) (Tfunction Tstr Any) $
+handle_exprT = HandleA (URet (UList UNone)) hCutT (DoA "c" (HandleA (UFunction (UFirst UNone)) hTokenT (App expr Vunit)) (Tfunction Tstr Any) $
                       App (Var "c" 0) (Vstr "(2+5)*8"))
 
-tParseGam = Map.empty
+tParseGam = Map.fromList([
+  ("tCutA", (Tpair Tint Tstr))])
 tParseSig = Map.fromList([
-  ("token", Lop "token" (Tpair Tstr Any) (Tfunction Tstr Any)),
+  ("token", Lop "token" (Tpair Tstr Any) (Tfunction Tchar Any)),
   ("cut", Lop "cut" Tunit (Tfunction Tunit Any)),
-  ("call", Lsc "call" Tunit (Tfunction Tunit Any))
+  ("call", Lsc "call" Tunit (Tfunction Tunit Any)),
+  ("choose", Lop "choose" Tunit Tbool),
+  ("fail", Lop "fail" Tunit Tunit)
   ])
-tParse1 = checkFile tParseGam tParseSig handle_expr1T (Tret (Tlist (Tpair Tint Tstr)))
+
+tParse1 = checkFile tParseGam tParseSig handle_expr1T (Tret (Tlist (Tpair Tint Tstr))) 
+tParse2 = checkFile tParseGam tParseSig handle_exprT (Tret (Tlist (Tpair Tint Tstr))) 
 
 ------------------------------------------------------------------------
 

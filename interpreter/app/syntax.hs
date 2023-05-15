@@ -121,9 +121,11 @@ data Comp
 instance Show Comp where
     show (Return v) = "Return " ++ show v
     show (Op l v (x :. c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c ++ ")"
-    show (OpA l v (DotA x t c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c ++ ")"
+    -- show (OpA l v (DotA x t c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c ++ ")"
+    show (OpA l v (DotA x t c)) = "op " ++ (show l) ++ " " ++ show v ++ " (" ++ show t ++ ")"
     show (Sc l v (x :. c1) (y :. c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
-    show (ScA l v (DotA x t c1) (DotA y t' c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c1 ++ ") (" ++ y ++ " : " ++ show t' ++ ". " ++ show c2 ++ ")"
+    -- show (ScA l v (DotA x t c1) (DotA y t' c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c1 ++ ") (" ++ y ++ " : " ++ show t' ++ ". " ++ show c2 ++ ")"
+    show (ScA l v (DotA x t c1) (DotA y t' c2)) = "sc " ++ (show l) ++ " " ++ show v ++ " (" ++ show t ++ ") (" ++ show t' ++ ")"
     show (For l v (x :. c1) (y :. c2)) = "for " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ ". " ++ show c1 ++ ") (" ++ y ++ ". " ++ show c2 ++ ")"
     show (ForA l v (DotA x t c1) (DotA y t' c2)) = "for " ++ (show l) ++ " " ++ show v ++ " (" ++ x ++ " : " ++ show t ++ ". " ++ show c1 ++ ") (" ++ y ++ " : " ++ show t' ++ ". " ++ show c2 ++ ")"
     show (Handle h c) = show h ++ " * " ++ show c

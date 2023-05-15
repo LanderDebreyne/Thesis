@@ -18,6 +18,11 @@ evalP (s, c) = case eval1 c of
   Just c' -> evalP (s+1, c')
   Nothing -> (s+1, c)
 
+evalP' :: (Int, Comp) ->  (Int, Comp)
+evalP' (s, c) = case eval1' c of
+  (_, Just c') -> evalP' (s+1, c')
+  (_, Nothing) -> (s+1, c)
+
 -- | Evaluation with steps
 evalFile :: Comp -> IO ()
 evalFile c = do
@@ -76,9 +81,12 @@ eval1 (Do x c1 c2) = do c1' <- eval1 c1; return $ Do x c1' c2 -- E-Do
 
 -- Annotated Do
 eval1 (DoA x (Return v) _ c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
-eval1 (DoA x (Op l v (y :. c1)) t c2) = return $ Op l v (y :. DoA x c1 t c2) -- E-DoOp
-eval1 (DoA x (Sc l v (y :. c1) (z :. c2)) t c3) = return $ Sc l v (y :. c1) (z :. DoA x c2 t c3) -- E-DoSc
-eval1 (DoA x (For l v (y :. c1) (z :. c2)) t c3) = return $ For l v (y :. c1) (z :. DoA x c2 t c3) -- E-DoFor
+eval1 (DoA x (OpA l v (DotA y t1 c1)) t c2) = return $ OpA l v (DotA y t1 (DoA x c1 t c2)) -- E-DoOp
+eval1 (DoA x (ScA l v (DotA y t1 c1) (DotA z t2 c2)) t c3) = return $ ScA l v (DotA y t1 c1) (DotA z t2 (DoA x c2 t c3)) -- E-DoSc
+eval1 (DoA x (ForA l v (DotA y t1 c1) (DotA z t2 c2)) t c3) = return $ ForA l v (DotA y t1 c1) (DotA z t2 (DoA x c2 t c3)) -- E-DoFor
+eval1 (DoA x (Op l v (y :. c1)) t c2) = return $ Op l v (y :. (DoA x c1 t c2)) -- E-DoOp
+eval1 (DoA x (Sc l v (y :. c1) (z :. c2)) t c3) = return $ Sc l v (y :. c1) (z :. (DoA x c2 t c3)) -- E-DoSc
+eval1 (DoA x (For l v (y :. c1) (z :. c2)) t c3) = return $ For l v (y :. c1) (z :. (DoA x c2 t c3)) -- E-DoFor
 eval1 (DoA x c1 t c2) = do c1' <- eval1 c1; return $ DoA x c1' t c2 -- E-Do
 --
 
