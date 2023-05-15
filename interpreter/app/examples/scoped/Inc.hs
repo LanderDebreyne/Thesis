@@ -1,0 +1,152 @@
+module Inc where
+
+import Syntax
+import Once
+import Evaluation
+import Shared
+import qualified Data.Map as Map
+import Typing
+
+
+----------------------------------------------------------------
+-- Inc Effect, incrementing counter state (Untyped)
+
+-- Inc effect handler
+hInc :: Handler
+hInc = Handler
+  "hInc" ["inc"] [] []
+  ("x", Return . Lam "s" $ Return (Vpair (Var "x" 1, Var "s" 0)))
+  (\ oplabel -> case oplabel of
+    "inc" -> Just ("_", "k",
+      Return . Lam "s" $ Do "k'" (App (Var "k" 1) (Var "s" 0)) $
+                         Do "s'" (Binop Add (Var "s" 1) (Vint 1)) $
+                         App (Var "k'" 1) (Var "s'" 0))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" ->   (Just ("list", "l", "k", Return . Lam "s" $ 
+          Do "xs" (App (Var "l" 2) (Var "list" 3)) $
+          Do "first" (Binop Map (Var "xs" 0) (Lam "l" (Unop Fst (Var "l" 0)))) $
+          Do "second" (Binop Map (Var "xs" 1) (Lam "l" (Unop Snd (Var "l" 0)))) $
+          Do "k'" (App (Var "k" 4) (Var "first" 1)) $
+          Letrec "reduce" (Lam "l" . Do "n" (Unop Empty (Var "l" 0)) $
+                                    If (Var "n" 0) (Return (Vint 0)) 
+                                    (Do "h" (Unop Head (Var "l" 1)) $
+                                      Do "t" (Unop Tail (Var "l" 2)) $
+                                      Do "y" (App (Var "reduce" 4) (Var "t" 0)) $
+                                      Do "x" (Binop Add (Var "h" 2) (Var "y" 0)) $
+                                      Return (Var "x" 0))) 
+            (Do "s'" (App (Var "reduce" 0) (Var "second" 2)) $
+            App (Var "k'" 2) (Var "s'" 0))))
+    _ -> Nothing)
+  ("f", "p", "k", Return . Lam "s" $ App (Var "f" 3) (Vpair
+    ( Lam "y" $ Do "p'" (App (Var "p" 3) (Var "y" 0)) $
+                App (Var "p'" 0) (Var "s" 2)
+    , Lam "zs" $ Do "z" (Unop Fst (Var "zs" 0)) $
+                 Do "s'" (Unop Snd (Var "zs" 1)) $
+                 Do "k'" (App (Var "k" 4) (Var "z" 1)) $
+                 App (Var "k'" 0) (Var "s'" 1)
+    )))
+
+-- Applying initial counter value
+runInc :: Int -> Comp -> Comp
+runInc s c = Do "c'" (hInc # c) $ App (Var "c'" 0) (Vint s)
+
+-- Example program
+cInc :: Comp
+cInc = Op "choose" Vunit ("b" :.
+        If (Var "b" 0) (op "inc" Vunit) (op "inc" Vunit))
+
+-- Example program using for 
+cIncFor :: Comp
+cIncFor = For "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit) ("z" :. Return (Var "z" 0))
+
+-- Handling @cInc@:
+-- >>> evalFile $ hOnce # runInc 0 cInc
+-- >>> evalFile $ runInc 0 (hOnce # cInc)
+-- Return (Vlist [Vpair (Vint 0,Vint 1),Vpair (Vint 0,Vint 1)])
+-- Return (Vpair (Vlist [Vint 0,Vint 1],Vint 2))
+
+-- Example program that uses forwarding in the evaluation
+cFwd :: Comp
+cFwd = Sc "once" Vunit ("_" :. cInc) ("x" :. Op "inc" Vunit ("y" :. 
+        Do "z" (Binop Add (Var "x" 1) (Var "y" 0)) $ Return (Var "z" 0)))
+
+-- Handling @cFwd@:
+-- >>> evalFile $ hOnce # runInc 0 cFwd
+-- Return (Vlist [Vpair (Vint 1,Vint 2)])
+
+----------------------------------------------------------------
+-- Inc Effect, incrementing counter state (Untyped)
+
+
+-- Inc effect handler
+-- Increments and passes counter state
+hIncT :: Handler
+hIncT = Handler
+  "hInc" ["inc"] [] []
+  ("x", Return . LamA "s" Tint $ Return (Vpair (Var "x" 1, Var "s" 0)))
+  (\ oplabel -> case oplabel of
+    "inc" -> Just ("_", "k",
+      Return . LamA "s" Tint $ DoA "k'" (App (Var "k" 1) (Var "s" 0)) (Tfunction Tint (Tpair (TVar "tIncA") Tint)) $
+                         DoA "s'" (Binop Add (Var "s" 1) (Vint 1)) (Tint) $
+                         App (Var "k'" 1) (Var "s'" 0))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", Return . LamA "s" Tint $ App (Var "f" 3) (Vpair
+    ( LamA "y" Any $ DoA "p'" (App (Var "p" 3) (Var "y" 0)) (Tfunction Tint (Tpair Any Tint))$
+                App (Var "p'" 0) (Var "s" 2)
+    , LamA "zs" (Tpair Any Tint) $ DoA "z" (Unop Fst (Var "zs" 0)) Any $
+                 DoA "s'" (Unop Snd (Var "zs" 1)) Tint $
+                 DoA "k'" (App (Var "k" 4) (Var "z" 1)) (Tfunction Tint (Tpair Any Tint)) $
+                 App (Var "k'" 0) (Var "s'" 1)
+    )))
+
+-- Apply initial value
+runIncT :: Int -> Comp -> ValueType -> Comp
+runIncT s c vt = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint vt) $ App (Var "c'" 0) (Vint s)
+
+-- Typed inc example computation
+cIncT :: Comp
+cIncT = OpA "choose" Vunit (DotA "b" Tbool
+        (If (Var "b" 0) (opT "inc" Vunit (TVar "tIncB")) (opT "inc" Vunit (TVar "tIncB"))))
+
+-- First inc example
+tInc1Gam = Map.fromList([
+  ("tIncA", Tint), 
+  ("tIncB", (Tlist Tint)),
+  ("tOnceA", Tpair Tint Tint)])
+tInc1Sig = Map.fromList([
+  ("inc", Lop "inc" Tunit Tunit), 
+  ("choose", Lop "choose" Tunit Tbool)])
+tInc1Comp = (HandleA (UList UNone) (hOnceT) (runIncT 0 cIncT (Tpair (Tlist Tint) Tint)))
+tInc1 = checkFile tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint))
+
+-- Second inc example
+tInc2Gam = Map.fromList([
+  ("tIncA", Tlist Tint), 
+  ("tIncB", Tint),
+  ("tOnceA", Tint)])
+tInc2Comp = runIncT 0 (HandleA (UList UNone) (hOnceT) (cIncT)) (Tpair (Tlist Tint) Tint)
+tInc2 = checkFile tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint)
+
+-- Third inc example
+tInc3Sig = Map.fromList([
+  ("inc", Lop "inc" Tunit Tunit), 
+  ("choose", Lop "choose" Tunit Tbool),
+  ("once", Lsc "once" Tunit Tint)])
+tInc3Comp = HandleA (UList UNone) (hOnceT) (runIncT 0 cFwdT (Tpair (Tlist Tint) Tint))
+tInc3 = checkFile tInc1Gam tInc3Sig tInc3Comp (Tlist (Tpair Tint Tint))
+
+-- Typed inc example computation using parallel effect
+cIncForT :: Comp
+cIncForT = ForA "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) (DotA "y" Tunit (opT "inc" Vunit (TVar "tIncB"))) (DotA "z" Any (Return (Var "z" 0)))
+
+-- Typed example of inc that uses forwarding
+cFwdT :: Comp
+cFwdT = ScA "once" Vunit (DotA "_" Tunit cIncT) (DotA "x" Tint (OpA "inc" Vunit (DotA "y" Tint
+        (DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) Any $ Return (Var "z" 0)))))

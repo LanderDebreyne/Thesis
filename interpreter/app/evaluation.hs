@@ -75,6 +75,7 @@ eval1 (App (Vrec x v1 v2) v) = return . shiftC (-1) $ subst (App v2 v) [(shiftV 
 
 eval1 (Do x (Return v) c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
 eval1 (Do x (Op l v (y :. c1)) c2) = return $ Op l v (y :. Do x c1 c2) -- E-DoOp
+eval1 (Do x (OpA l v (DotA y t c1)) c2) = return $ OpA l v (DotA y t (Do x c1 c2)) -- E-DoOp
 eval1 (Do x (Sc l v (y :. c1) (z :. c2)) c3) = return $ Sc l v (y :. c1) (z :. Do x c2 c3) -- E-DoSc
 eval1 (Do x (For l v (y :. c1) (z :. c2)) c3) = return $ For l v (y :. c1) (z :. Do x c2 c3) -- E-DoFor
 eval1 (Do x c1 c2) = do c1' <- eval1 c1; return $ Do x c1' c2 -- E-Do
@@ -100,6 +101,10 @@ eval1 (Handle h (Op l v (y :. c1))) = return $ case hop h l of -- E-HandOp
   Just (x, k, c) -> shiftC (-2) $ subst c [ (shiftV 2 v, 1)
                                           , (shiftV 2 $ Lam y (Handle h c1), 0) ]
   Nothing -> Op l v (y :. Handle h c1) -- E-FwdOp
+eval1 (Handle h (OpA l v (DotA y t c1))) = return $ case hop h l of -- E-HandOp
+  Just (x, k, c) -> shiftC (-2) $ subst c [ (shiftV 2 v, 1)
+                                          , (shiftV 2 $ Lam y (Handle h c1), 0) ]
+  Nothing -> OpA l v (DotA y t (Handle h c1)) -- E-FwdOp
 eval1 (Handle h (Sc l v (y :. c1) (z :. c2))) = return $ case hsc h l of -- E-HandSc
   Just (x, p, k, c) -> shiftC (-3) $ subst c [ (shiftV 3 v, 2)
                                              , (shiftV 3 $ Lam y (Handle h c1), 1)
@@ -279,6 +284,7 @@ eval1' (App (Vrec x v1 v2) v) = ("E-AppRec", return . shiftC (-1) $ subst (App v
 
 eval1' (Do x (Return v) c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
 eval1' (Do x (Op l v (y :. c1)) c2) = ("E-DoOp", return $ Op l v (y :. Do x c1 c2)) -- E-DoOp
+eval1' (Do x (OpA l v (DotA y t c1)) c2) = ("E-DoOp", return $ OpA l v (DotA y t (Do x c1 c2))) -- E-DoOp
 eval1' (Do x (Sc l v (y :. c1) (z :. c2)) c3) = ("E-DoSc", return $ Sc l v (y :. c1) (z :. Do x c2 c3)) -- E-DoSc
 eval1' (Do x (For l v (y :. c1) (z :. c2)) c3) = ("E-DoFor", return $ For l v (y :. c1) (z :. Do x c2 c3)) -- E-DoFor
 eval1' (Do x c1 c2) = case (eval1' c1) of 
@@ -306,6 +312,10 @@ eval1' (Handle h (Op l v (y :. c1))) = case hop h l of -- E-HandOp
   Just (x, k, c) -> ("E-HandOp", return $ shiftC (-2) $ subst c [ (shiftV 2 v, 1)
                                           , (shiftV 2 $ Lam y (Handle h c1), 0) ])
   Nothing -> ("E-FwdOp", return $ Op l v (y :. Handle h c1)) -- E-FwdOp
+eval1' (Handle h (OpA l v (DotA y t c1))) = case hop h l of -- E-HandOp
+  Just (x, k, c) -> ("E-HandOp", return $ shiftC (-2) $ subst c [ (shiftV 2 v, 1)
+                                          , (shiftV 2 $ Lam y (Handle h c1), 0) ])
+  Nothing -> ("E-FwdOp", return $ OpA l v (DotA y t (Handle h c1))) -- E-FwdOp
 eval1' (Handle h (Sc l v (y :. c1) (z :. c2))) = case hsc h l of -- E-HandSc
   Just (x, p, k, c) -> ("E-HandSc", return $ shiftC (-3) $ subst c [ (shiftV 3 v, 2)
                                              , (shiftV 3 $ Lam y (Handle h c1), 1)

@@ -1,0 +1,733 @@
+module TypedPar where
+
+-- import Syntax
+-- import TypedShared
+-- import Evaluation
+-- import Prelude hiding ((<>))
+-- import Data.Text.IO
+-- import System.Random
+-- import TypedScoped
+-- import qualified Data.Set as Set
+-- import qualified Data.Map as Map
+-- import Typing
+
+-- ---------------------------------------------------------------------------------------------------------------
+-- -- Typed parallel Accum effect
+
+-- -- Typed Accum handler for integers
+-- -- Pass, access and alter an accumulated value
+-- -- Parallel effect
+-- hAccumT :: Handler
+-- hAccumT = Handler
+--   "hAccum" ["accum"] [] ["for"]
+--   ("x", Return (Vpair (Vint 0, Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist Tunit)) $
+--       DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tlist Tunit) $
+--       DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     "for" ->      (Just ("list", "l", "k", 
+--           DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair Tint Tunit)) $
+--           DoA "first" (Binop Map (Var "pairs" 0) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Fst (Var "l'" 0)))) (Tlist Tint) $
+--           DoA "second" (Binop Map (Var "pairs" 1) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Snd (Var "l'" 0)))) (Tlist Tunit) $
+--           DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tint (Tlist Tunit)) $
+--           LetrecA "reduce" (Tfunction (Tlist Tint) Tint) (LamA "l" (Tlist Tint) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+--                                     If (Var "n" 0) (Return (Vint 0)) (DoA "h" (Unop Head (Var "l" 1)) Tint $
+--                                                                       DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tint)$
+--                                                                       DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tint $
+--                                                                       DoA "x" (Binop Add (Var "h" 2) (Var "y" 0)) Tint $
+--                                                                       Return (Var "x" 0))) 
+--             (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tint $
+--             DoA "base" (Unop Fst (Var "k'" 2)) Tint $
+--             DoA "k''" (Unop Snd (Var "k'" 3)) (Tlist Tunit) $
+--             DoA "res" (Binop Add (Var "base" 1) (Var "rest" 2)) Tint $
+--             Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Pure parallel handler
+-- -- Handles remaining computation in parallel
+-- hPureT :: Handler
+-- hPureT = Parallel
+--   (("list", "p", "k", 
+--       DoA "result" (Binop Map (Var "list" 2) (Var "p" 1)) (Tlist Any) $
+--       App (Var "k" 1) (Var "result" 0)))
+--   (("x", Return (Var "x" 0)))
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed example accum computation
+-- cAccumT :: Comp
+-- cAccumT = ForA "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) (DotA "y" Tint (op "accum" (Var "y" 0) Tint)) (DotA "z" Any (Return (Var "z" 0)))
+
+-- -- Typed Accum handler for integers without defined for
+-- -- Pass, access and alter an accumulated value
+-- -- Without the parallel effect to illustrate the impact of the effect
+-- hAccumNoForT :: Handler
+-- hAccumNoForT = Handler
+--   "hAccum" ["accum"] [] []
+--   ("x", Return (Vpair (Vint 0, Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist (Tpair Tint Tunit))) $
+--       DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tlist (Tpair Tint Tunit)) $
+--       DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Accum example
+-- tAccumGam = Map.empty
+-- tAccumSig = Map.fromList([
+--   ("accum", Lop "accum" Tint (Tpair Tint Tunit)),
+--   ("for", Lfor "for" Any)
+--   ])
+-- tAccumComp1 = HandleA UNone hPureT (HandleA  (USecond UNone) hAccumT cAccumT)
+-- tAccum1 = checkFile tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit))
+
+-- -- Accum example without parallel effect
+-- tAccumComp2 = HandleA UNone hPureT (HandleA (USecond UNone) hAccumNoForT cAccumT)
+-- tAccum2 = checkFile tAccumGam tAccumSig tAccumComp2 (Tpair Tint (Tlist (Tpair Tint Tunit)))
+
+-- tAccumSigSc = Map.fromList([
+--   ("accum", Lop "accum" Tint (Tpair Tint Tunit)),
+--   ("for", Lsc "for" (Tlist Any)  Any)
+--   ])
+
+-- -- Accum example as scoped effect
+-- tAccumComp3 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumSc1T cAccumScT)
+-- tAccum3 = checkFile tAccumGam tAccumSigSc tAccumComp3 (Tpair Tint (Tlist Tunit))
+
+-- -- Accum example as scoped effect without parallel effect
+-- tAccumComp4 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumScNoForT cAccumScT)
+-- tAccum4 = checkFile tAccumGam tAccumSigSc tAccumComp4 (Tpair Tint (Tlist (Tpair Tint Tunit)))
+
+
+-- -- Typed Accum handler for integers as scoped effect
+-- -- Pass, access and alter an accumulated value
+-- -- Parallel effect
+-- hAccumSc1T :: Handler
+-- hAccumSc1T = Handler
+--   "hAccumSc" ["accum"] ["for"] []
+--   ("x", Return (Vpair (Vint 0, Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist (Tpair Tint Tunit))) $
+--       DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tlist (Tpair Tint Tunit)) $
+--       DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" ->      (Just ("list", "l", "k", 
+--           DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Tint (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair Tint Tunit)) $
+--           DoA "first" (Binop Map (Var "pairs" 0) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Fst (Var "l'" 0)))) (Tlist Tint) $
+--           DoA "second" (Binop Map (Var "pairs" 1) (LamA "l'" (Tlist (Tpair Tint Tunit)) (Unop Snd (Var "l'" 0)))) (Tlist Tunit) $
+--           DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tint (Tlist Tunit)) $
+--           LetrecA "reduce" (Tfunction (Tlist Tint) Tint) (LamA "l" (Tlist Tint) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+--                                     If (Var "n" 0) (Return (Vint 0)) (DoA "h" (Unop Head (Var "l" 1)) Tint $
+--                                                                       DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tint)$
+--                                                                       DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tint $
+--                                                                       DoA "x" (Binop Add (Var "h" 2) (Var "y" 0)) Tint $
+--                                                                       Return (Var "x" 0))) 
+--             (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tint $
+--             DoA "base" (Unop Fst (Var "k'" 2)) Tint $
+--             DoA "k''" (Unop Snd (Var "k'" 3)) (Tlist Tunit) $
+--             DoA "res" (Binop Add (Var "base" 1) (Var "rest" 2)) Tint $
+--             Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of 
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Handler to function as parallel handler but as scoped effect
+-- hPureScT :: Handler
+-- hPureScT = Handler
+--   "hPureSc" [] ["for"] []
+--   ("x", Return (Var "x" 0))
+--   (\ oplabel -> case oplabel of
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k", 
+--               DoA "results" (Binop Map (Var "x" 2) (Var "p" 1)) Any $
+--               App (Var "k" 1) (Var "results" 0))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Example Accum computation as scoped effect
+-- cAccumScT :: Comp
+-- cAccumScT = ScA "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) (DotA "y" Tint (op "accum" (Var "y" 0) Tint)) (DotA "z" Any (Return (Var "z" 0)))
+
+-- -- Typed Accum handler for integers as scoped effect
+-- -- Pass, access and alter an accumulated value
+-- -- Without parallel effect
+-- hAccumScNoForT :: Handler
+-- hAccumScNoForT = Handler
+--   "hAccumSc" ["accum"] [] []
+--   ("x", Return (Vpair (Vint 0, Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tint (Tlist (Tpair Tint Tunit))) $
+--       DoA "m'" (Unop Fst (Var "k'" 0)) Tint $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tlist (Tpair Tint Tunit)) $
+--       DoA "m''" (Binop Add (Var "m'" 1) (Var "x" 4)) Tint $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -------------------------------------------------------------------------------
+-- -- Typed weak exceptions example
+
+-- -- Typed Accum handler for strings
+-- -- Pass, access and alter an accumulated value
+-- -- Parallel effect
+-- hAccumST :: Handler
+-- hAccumST = Handler
+--   "hAccum" ["accum"] [] ["for"]
+--   ("x", Return (Vpair (Vstr "", Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tstr (Tsum Tstr Tunit))$
+--       DoA "m'" (Unop Fst (Var "k'" 0)) Tstr $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tsum Tstr Tunit) $
+--       DoA "m''" (Binop AppendS (Var "x" 4) (Var "m'" 1)) Tstr $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     "for" -> (Just ("list", "l", "k", 
+--           DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair Tstr (Tsum Tstr Tunit))) $
+--           DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Fst (Var "l" 0)))) (Tlist Tstr) $
+--           DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Snd (Var "l" 0)))) (Tlist (Tsum Tstr Tunit)) $
+--           DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tstr (Tsum Tstr Tunit)) $
+--           LetrecA "reduce" (Tfunction (Tlist Tstr) Tstr) (LamA "l" (Tlist Tstr) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+--                                 If (Var "n" 0) (Return (Vstr "")) (DoA "h" (Unop Head (Var "l" 1)) Tstr $
+--                                                                   DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tstr) $
+--                                                                   DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tstr $
+--                                                                   DoA "x" (Binop AppendS (Var "h" 2) (Var "y" 0)) Tstr $
+--                                                                   Return (Var "x" 0))) 
+--             (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tstr $
+--             DoA "base" (Unop Fst (Var "k'" 2)) Tstr $
+--             DoA "k''" (Unop Snd (Var "k'" 3)) (Tsum Tstr Tunit) $
+--             DoA "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) Tstr $
+--             Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--       DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--       App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed weak exceptions handler
+-- -- Implements exceptions as a parallel effect
+-- -- If a computation running in parallel with other computation encounters an exception
+-- -- Other computation don't immediately stop computation
+-- -- But they do not run their continuation
+-- hWeakT :: Handler
+-- hWeakT = Handler
+--   "hWeak" ["throw"] [] ["for"]
+--   ("x", Return (Vsum (Right (Var "x" 0))))
+--   (\ oplabel -> case oplabel of
+--     "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     "for" -> (Just ("list", "l", "k",
+--           DoA "results" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tsum Tstr Tunit)) $ 
+--           DoA "FirstFail" (Unop FirstFail (Var "results" 0)) (Tsum Tstr Tunit) $
+--           Case (Var "FirstFail" 0) 
+--             "error" (Return $ Vsum $ Left (Var "error" 0))
+--             "t" (App (Var "k" 3) (Var "t" 0))
+--         ))
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--       DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--       App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed weak exceptions example computation
+-- cWeakT :: Comp
+-- cWeakT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Tunit (Return (Var "y" 0)))) Tunit $ 
+--          (ForA "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+--          (DotA "y" Tstr (Do "eq2" (Binop Eq (Var "y" 0) (Vstr "2")) $
+--          If (Var "eq2" 0)   (DoA "_" (OpA "accum" (Vstr "!") (DotA "y" Tunit (Return (Var "y" 0)))) Tunit $
+--                             DoA "_" (OpA "throw" (Vstr "error") (DotA "y" Tunit (Return (Var "y" 0)))) Tunit $
+--                             OpA "accum" (Vstr "unreachable") (DotA "y" Tunit (Return (Var "y" 0))))
+--         (OpA "accum" (Var "y" 1) (DotA "y" Tunit (Return (Var "y" 0))))))
+--         (DotA "z" Any (Return (Var "z" 0))))
+
+-- -- Typed weak exceptions 
+-- tWeakGam = Map.empty
+-- tWeakSig = Map.fromList([
+--   ("accum", Lop "accum" Tstr (Tpair Tstr Tunit)),
+--   ("throw", Lop "throw" Tstr (Tpair Tstr Tunit)),
+--   ("for", Lfor "for" Any)
+--   ])
+-- tWeakComp1 = HandleA UNone hPureT (HandleA (USecond UNone) hAccumST (HandleA (USum UNone UNone) hWeakT cWeakT))
+-- tWeak1 = checkFile tWeakGam tWeakSig tWeakComp1 (Tpair Tstr (Tsum Tstr Tunit))
+
+-- -- Typed Accum handler for strings as scoped effect
+-- -- Pass, access and alter an accumulated value
+-- -- Parallel effect
+-- hAccumSScT :: Handler
+-- hAccumSScT = Handler
+--   "hAccumSc" ["accum"] ["for"] [] 
+--   ("x", Return (Vpair (Vstr "", Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair Tstr (Tsum Tstr Tunit))$
+--       DoA "m'" (Unop Fst (Var "k'" 0)) Tstr $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tsum Tstr Tunit) $
+--       DoA "m''" (Binop AppendS (Var "x" 4) (Var "m'" 1)) Tstr $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k", 
+--               DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair Tstr (Tsum Tstr Tunit)))  $
+--               DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Fst (Var "l" 0)))) (Tlist Tstr) $
+--               DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tlist (Tpair Tstr (Tsum Tstr Tunit))) (Unop Snd (Var "l" 0)))) (Tlist (Tsum Tstr Tunit)) $
+--               DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair Tstr (Tsum Tstr Tunit)) $
+--               LetrecA "reduce" (Tfunction (Tlist Tstr) Tstr) (LamA "l" (Tlist Tstr) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+--                                     If (Var "n" 0) (Return (Vstr "")) (DoA "h" (Unop Head (Var "l" 1)) Tstr $
+--                                                                       DoA "t" (Unop Tail (Var "l" 2)) (Tlist Tstr) $
+--                                                                       DoA "y" (App (Var "reduce" 4) (Var "t" 0)) Tstr $
+--                                                                       DoA "x" (Binop AppendS (Var "h" 2) (Var "y" 0)) Tstr $
+--                                                                       Return (Var "x" 0))) 
+--                 (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) Tstr $
+--                 DoA "base" (Unop Fst (Var "k'" 2)) Tstr $
+--                 DoA "k''" (Unop Snd (Var "k'" 3)) (Tsum Tstr Tunit) $
+--                 DoA "res" (Binop AppendS (Var "base" 1) (Var "rest" 2)) Tstr $
+--                 Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--       DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--       App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed weak exceptions handler as scoped effect
+-- -- Implements exceptions as a parallel effect
+-- -- If a computation running in parallel with other computation encounters an exception
+-- -- Other computation don't immediately stop computation
+-- -- But they do not run their continuation
+-- hWeakScT :: Handler
+-- hWeakScT = Handler
+--   "hWeak" ["throw"] ["for"] []
+--   ("x", Return (Vsum (Right (Var "x" 0))))
+--   (\ oplabel -> case oplabel of
+--     "throw" -> Just ("x", "k", Return (Vsum (Left (Var "x" 1))))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k",
+--       DoA "results" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) Any $ 
+--       DoA "FirstFail" (Unop FirstFail (Var "results" 0)) (Tsum Tstr Tunit) $
+--       Case (Var "FirstFail" 0) 
+--         "error" (Return $ Vsum $ Left (Var "error" 0))
+--         "t" (App (Var "k" 3) (Var "t" 0)))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of 
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed weak exceptions as scoped effect example computation
+-- cWeakScT :: Comp
+-- cWeakScT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Any (Return (Var "y" 0)))) Any $ 
+--          (ScA "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
+--          (DotA "y" Tstr (Do "eq2" (Binop Eq (Var "y" 0) (Vstr "2")) $
+--          If (Var "eq2" 0)   (DoA "_" (OpA "accum" (Vstr "!") (DotA "y" Any (Return (Var "y" 0)))) Any $
+--                             DoA "_" (OpA "throw" (Vstr "error") (DotA "y" Any (Return (Var "y" 0)))) Any $
+--                             OpA "accum" (Vstr "unreachable") (DotA "y" Any (Return (Var "y" 0))))
+--         (OpA "accum" (Var "y" 1) (DotA "y" Any (Return (Var "y" 0))))))
+--         (DotA "z" Any (Return (Var "z" 0))))
+
+-- -- Typed weak exceptions as scoped effect example
+-- tWeakSigSc = Map.fromList([
+--   ("accum", Lop "accum" Tstr (Tpair Tstr Tunit)),
+--   ("throw", Lop "throw" Tstr (Tpair Tstr Tunit)),
+--   ("for", Lsc "for" Any Any)
+--   ])
+
+-- tWeakComp2 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumSScT (HandleA (USum UNone UNone) hWeakScT cWeakScT))
+-- tWeak2 = checkFile tWeakGam tWeakSigSc tWeakComp2 (Tpair Tstr (Tsum Tstr Tunit))
+
+
+-- ---------------------------------------------------------------------------------------------------------------------------------------
+-- -- Typed Pseudo Random Number Generator Example
+
+-- -- Typed prng handler
+-- -- Outputs pseudo random numbers
+-- -- Works in parallel computations by splitting the keys
+-- hPRNGT :: Handler
+-- hPRNGT = Handler
+--   "hPRNG" ["sampleUniform"] [] ["for"]
+--   ("x", Return . LamA "key" Tkey $ Return (Var "x" 1))
+--   (\ oplabel -> case oplabel of
+--     "sampleUniform" -> Just ("x", "k", Return . LamA "key" Tkey $ 
+--       DoA "pair" (Unop Rand (Var "key" 0)) (Tpair Tint Tkey) $
+--       DoA "val" (Unop Fst (Var "pair" 0)) Tint $
+--       DoA "key" (Unop Snd (Var "pair" 1)) Tkey $
+--       DoA "cont" (App (Var "k" 4) (Var "val" 1)) (Tfunction Tkey (Nested Tint)) $ 
+--       App (Var "cont" 0) (Var "key" 1))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of 
+--     "for" ->   (Just ("list", "l", "k", Return . LamA "key" Tkey $ 
+--         DoA "keys" (Unop SplitKeyPair (Var "key" 0)) (Tpair Tkey Tkey) $
+--         DoA "key1" (Unop Fst (Var "keys" 0)) Tkey $
+--         DoA "key2" (Unop Snd (Var "keys" 1)) Tkey $
+--         DoA "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) (Tlist Tkey) $
+--         DoA "for" (App (Var "l" 6) (Var "list" 7)) (Tlist (Tfunction Tkey (Tlist Tint)))$
+--         DoA "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) (Tlist Tint) $
+--         DoA "cont" (App (Var "k" 7) (Var "results" 0)) (Tfunction Tkey (Tlist Tint)) $
+--         App (Var "cont" 0) (Var "key2" 4)))
+--     _ -> Nothing
+--   )
+--   ("f", "p", "k", Return . LamA "key" Tkey $
+--         DoA "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) (Tpair Any Any) $
+--         App (Var "f" 4) (Var "pk" 0)
+--   )
+
+-- -- Typed parallel prng example computation
+-- cPRNGT :: Comp
+-- cPRNGT = ForA "for" (Vlist [Vunit, Vunit, Vunit]) (DotA "y" Tunit (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0))))) (DotA "z" Any (Return (Var "z" 0)))
+
+-- -- Typed sequential prng example computation
+-- cPRNGseqT :: Comp
+-- cPRNGseqT = DoA "1" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--             DoA "2" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--             DoA "3" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
+
+-- -- Typed pure parallel handler that also threads prng keys through
+-- hPureKT :: Handler
+-- hPureKT = Parallel
+--   (("list", "p", "k", Return . LamA "keys" (Tlist Tkey) $
+--       DoA "results" (Binop Map (Var "list" 2) (Var "p" 1)) (Tlist (Tfunction Tkey Any))$
+--       DoA "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) (Tlist Any) $
+--       App (Var "k" 3) (Var "resultskeys" 0)))
+--   (("x", Return (Var "x" 0)))
+--   ("f", "p", "k", Return . LamA "key" Tkey $
+--         DoA "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) (Tpair Any Any) $
+--         App (Var "f" 4) (Var "pk" 0)
+--   )
+
+-- -- Typed parallel prng example
+-- tPRNGGam = Map.empty
+-- tPRNGSig = Map.fromList([
+--   ("sampleUniform", Lop "sampleUniform" Tunit (Tfunction Tkey (Nested Tint))),
+--   ("for", Lfor "for" Any)
+--   ])
+-- tPRNGComp1 = HandleA UNone hPureT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureKT (HandleA (UFunction UNone) hPRNGT cPRNGT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
+-- tPRNG1 = checkFile tPRNGGam tPRNGSig tPRNGComp1 (Tlist Tint)
+
+-- -- Typed sequential prng example
+-- tPRNGComp2 = HandleA UNone hPureT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureT (HandleA (UFunction UNone) hPRNGT cPRNGseqT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
+-- tPRNG2 = checkFile tPRNGGam tPRNGSig tPRNGComp2 (Tlist Tint)
+
+-- -- Typed prng handler as scoped effect
+-- -- Outputs pseudo random numbers
+-- -- Works in parallel computations by splitting the keys
+-- hPRNGScT :: Handler
+-- hPRNGScT = Handler
+--   "hPRNGSc" ["sampleUniform"] ["for"] []
+--   ("x", Return . LamA "key" Tkey $ Return (Var "x" 1))
+--   (\ oplabel -> case oplabel of
+--     "sampleUniform" -> Just ("x", "k", Return . LamA "key" Tkey $ 
+--       DoA "pair" (Unop Rand (Var "key" 0)) (Tpair Tint Tkey) $
+--       DoA "val" (Unop Fst (Var "pair" 0)) Tint $
+--       DoA "key" (Unop Snd (Var "pair" 1)) Tkey $
+--       DoA "cont" (App (Var "k" 4) (Var "val" 1)) (Tfunction Tkey (Nested Tint)) $ 
+--       App (Var "cont" 0) (Var "key" 1))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k", Return . LamA "key" Tkey $ 
+--         DoA "keys" (Unop SplitKeyPair (Var "key" 0)) (Tpair Tkey Tkey) $
+--         DoA "key1" (Unop Fst (Var "keys" 0)) Tkey $
+--         DoA "key2" (Unop Snd (Var "keys" 1)) Tkey $
+--         DoA "key1s" (Binop SplitKey (Var "key1" 1) (Var "list" 6)) (Tlist Tkey) $
+--         DoA "for" (ScA "for" (Var "x" 7) (DotA "y" Any (App (Var "p" 7) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tfunction Tkey (Tlist Tint)))$
+--         DoA "results" (Binop Zip (Var "for" 0) (Var "key1s" 1)) (Tlist Tint) $
+--         DoA "cont" (App (Var "k" 7) (Var "results" 0)) (Tfunction Tkey (Nested Tint)) $
+--         App (Var "cont" 0) (Var "key2" 4))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", Return . LamA "keys" (Tlist Tkey) $
+--         DoA "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) (Tpair Any Any) $
+--         App (Var "f" 4) (Var "pk" 0)
+--   )
+
+-- -- Typed parallel prng as scoped effect example
+-- cPRNGScT :: Comp
+-- cPRNGScT = ScA "for" (Vlist [Vunit, Vunit, Vunit]) (DotA "y" Tint (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0))))) (DotA "z" Any (Return (Var "z" 0)))
+
+-- -- Typed sequential prng as scoped effect example
+-- cPRNGseqScT :: Comp
+-- cPRNGseqScT =  DoA "1" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--             DoA "2" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--             DoA "3" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
+
+-- -- Typed pure handler as scoped effect that also threads prng keys through
+-- hPureKScT :: Handler
+-- hPureKScT = Handler
+--   "hPureSc" [] ["for"] []
+--   ("x", Return (Var "x" 0))
+--   (\ oplabel -> case oplabel of
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k", Return . LamA "keys" (Tlist Tkey) $
+--                 DoA "results" (Binop Map (Var "x" 3) (Var "p" 2)) (Tlist Tint) $
+--                 DoA "resultskeys" (Binop Map (Var "results" 0) (Var "keys" 1)) (Tlist Tint) $
+--                 App (Var "k" 3) (Var "resultskeys" 0))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", Return . LamA "keys" (Tlist Tkey) $
+--         DoA "pk" (Return (Vpair (Var "p" 2, Var "k" 1))) (Tpair Any Any) $
+--         App (Var "f" 4) (Var "pk" 0)
+--   )
+
+-- -- Typed parallel prng as scoped effect example
+-- tPRNGGamSc = Map.empty
+-- tPRNGSigSc = Map.fromList([
+--   ("sampleUniform", Lop "sampleUniform" Tunit (Tfunction Tkey (Nested Tint))),
+--   ("for", Lsc "for" Any Any)
+--   ])
+-- tPRNGComp3 = HandleA UNone hPureScT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureKScT (HandleA (UFunction UNone) hPRNGScT cPRNGScT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
+-- tPRNG3 = checkFile tPRNGGamSc tPRNGSigSc tPRNGComp3 (Tlist Tint)
+
+-- -- Typed sequential prng as scoped effect example
+-- tPRNGComp4 = HandleA UNone hPureT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureScT (HandleA (UFunction UNone) hPRNGScT cPRNGseqScT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
+-- tPRNG4 = checkFile tPRNGGamSc tPRNGSigSc tPRNGComp4 (Tlist Tint)
+
+
+-- ------------------------------------------------------------------------------------------------------------------  
+-- -- Typed Amb Effect (List Effect)
+
+
+-- -- Typed amb handler
+-- -- Evaluates for every value in the input list of values
+-- hAmbT :: Handler
+-- hAmbT = Handler
+--   "hAmb" ["amb"][] ["for"]
+--   ("x", Return (Var "x" 0))
+--   (\ oplabel -> case oplabel of
+--     "amb" -> Just ("x", "k",
+--       ForA "for" (Var "x" 1) (DotA "y" Tint (App (Var "k" 1) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0))))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of 
+--     "for" ->   (Just ("list", "l", "k",
+--         DoA "results" (App (Var "l" 1) (Var "list" 2)) (Tlist Tint) $ 
+--         DoA "productElts" (Unop CartesianProd (Var "results" 0)) (Tlist Tint) $
+--         ForA "for" (Var "productElts" 0) (DotA "y" Tint (App (Var "k" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))
+--       ))
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed Accum handler for lists
+-- -- Pass, access and alter an accumulated value
+-- -- Parallel effect
+-- hAccumLT :: Handler
+-- hAccumLT = Handler
+--   "hAccumL" ["accum"] [] ["for"]
+--   ("x", Return (Vpair (Vlist [], Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair (Tlist Any) (Tlist Tunit)) $
+--       DoA "m'" (Unop Fst (Var "k'" 0)) (Tlist Any) $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tlist Tunit) $
+--       DoA "m''" (Binop Append (Var "x" 4) (Var "m'" 1)) (Tlist Any) $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     "for" ->     (Just ("list", "l", "k", 
+--           DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair (Tlist Any) (Tlist Tunit))) $
+--           DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
+--           DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Snd (Var "l" 0)))) (Tlist (Tlist Tunit)) $
+--           DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
+--           LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+--                                     If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
+--                                                                       DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
+--                                                                       DoA "y" (App (Var "reduce" 4) (Var "t" 0)) (Tlist Any) $
+--                                                                       DoA "x" (Binop Append (Var "h" 2) (Var "y" 0)) (Tlist Any) $
+--                                                                       Return (Var "x" 0)))
+--             (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) (Tlist Any) $
+--             DoA "base" (Unop Fst (Var "k'" 2)) (Tlist Any) $
+--             DoA "k''" (Unop Snd (Var "k'" 3)) (Nested Tunit)$
+--             DoA "res" (Binop Append (Var "base" 1) (Var "rest" 2)) (Tlist Any) $
+--             Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed amb example computation
+-- cAmbT :: Comp
+-- cAmbT = 
+--   DoA "d1" (OpA "amb" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--   DoA "d2" (OpA "amb" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5, Vint 6, Vint 7, Vint 8, Vint 9]) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
+--   DoA "res" (Binop Add (Var "d1" 1) (Var "d2" 0)) Tint $
+--   DoA "eq" (Binop Eq (Var "res" 0) (Vint 13)) Tbool $
+--   If (Var "eq" 0) (OpA "accum" (Vpair (Var "d1" 3, Var "d2" 2)) (DotA "y" Tunit (Return Vunit))) (Return Vunit)
+
+-- -- Typed amb example
+-- tAmbGam = Map.empty
+-- tAmbSig = Map.fromList([
+--   ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Tint) (Tlist Tunit))),
+--   ("amb", Lop "amb" (Tlist Tint) Tint),
+--   ("for", Lfor "for" Any)
+--   ])
+-- tAmbComp = HandleA UNone hPureT (HandleA (USecond UNone) hAccumLT (HandleA (UList (UList UNone)) hAmbT cAmbT))
+-- tAmb = checkFile tAmbGam tAmbSig tAmbComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit)))
+
+-- -- Typed amb example computation
+-- cCombT = DoA "d1" (OpA "amb" (Vlist [Vstr "H", Vstr "T"]) (DotA "y" Any (Return (Var "y" 0)))) Tstr $ 
+--             DoA "d2" (OpA "amb" (Vlist [Vstr "H", Vstr "T"]) (DotA "y" Any (Return (Var "y" 0)))) Tstr $
+--             DoA "d3" (OpA "amb" (Vlist [Vstr "H", Vstr "T"]) (DotA "y" Any (Return (Var "y" 0)))) Tstr $
+--             DoA "l1" (Binop AppendS (Var "d1" 2) (Var "d2" 1)) (Tlist Tstr) $
+--             Binop AppendS (Var "l1" 0) (Var "d3" 1)
+
+-- -- Typed amb example
+-- tCombSig = Map.fromList([
+--   ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Tstr) (Tlist Tunit))),
+--   ("amb", Lop "amb" (Tlist Tstr) Tstr),
+--   ("for", Lfor "for" Any)
+--   ])
+-- tCombComp = HandleA UNone hPureT (HandleA (UList UNone) hAmbT cCombT)
+-- tComb = checkFile tAmbGam tCombSig tCombComp (Tlist (Tlist (Tlist Tstr)))
+
+
+-- -- Typed amb handler as scoped effect
+-- -- Evaluates for every value in the input list of values
+-- hAmbScT :: Handler
+-- hAmbScT = Handler
+--   "hAmbSc" ["amb"] ["for"] []
+--   ("x", Return (Var "x" 0))
+--   (\ oplabel -> case oplabel of
+--     "amb" -> Just ("x", "k",
+--       ScA "for" (Var "x" 1) (DotA "y" Tint (App (Var "k" 1) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0))))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k", 
+--               DoA "results" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist Any) $ 
+--               DoA "productElts" (Unop CartesianProd (Var "results" 0)) (Tlist Any) $
+--               ScA "for" (Var "productElts" 0) (DotA "y" Any (App (Var "k" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0))))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed Accum handler for lists as scoped effect
+-- -- Pass, access and alter an accumulated value
+-- -- Parallel effect
+-- hAccumScLT :: Handler
+-- hAccumScLT = Handler
+--   "hAccumScL" ["accum"] ["for"] []
+--   ("x", Return (Vpair (Vlist [], Var "x" 0)))
+--   (\ oplabel -> case oplabel of
+--     "accum" -> Just ("x", "k",
+--       DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair (Tlist Tint) (Tlist Tunit)) $
+--       DoA "m'" (Unop Fst (Var "k'" 0)) (Tlist Tint) $
+--       DoA "s" (Unop Snd (Var "k'" 1)) (Tlist Tunit) $
+--       DoA "m''" (Binop Append (Var "x" 4) (Var "m'" 1)) (Tlist Any) $
+--       Return (Vpair (Var "m''" 0, Var "s" 1)))
+--     _ -> Nothing)
+--   (\ sclabel -> case sclabel of
+--     "for" -> Just ("x", "p", "k",
+--               DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair (Tlist Any) (Nested Tunit))) $
+--               DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Nested Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
+--               DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Nested Tunit)) (Unop Snd (Var "l" 0)))) (Nested Tunit) $
+--               DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
+--               LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+--                                         If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
+--                                                                           DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
+--                                                                           DoA "y" (App (Var "reduce" 4) (Var "t" 0)) (Tlist Any) $
+--                                                                           DoA "x" (Binop Append (Var "h" 2) (Var "y" 0)) (Tlist Any) $
+--                                                                           Return (Var "x" 0)))
+--                 (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) (Tlist Any) $
+--                 DoA "base" (Unop Fst (Var "k'" 2)) (Tlist Any) $
+--                 DoA "k''" (Unop Snd (Var "k'" 3)) (Nested Tunit)$
+--                 DoA "res" (Binop Append (Var "base" 1) (Var "rest" 2)) (Tlist Any) $
+--                 Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
+--     _ -> Nothing)
+--   (\ forlabel -> case forlabel of 
+--     _ -> Nothing)
+--   ("f", "p", "k", 
+--         DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+--         App (Var "f" 3) (Var "pk" 0)
+--   )
+
+-- -- Typed amb as scoped effect example computation
+-- tAmbScSig = Map.fromList([
+--   ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Tint) (Tlist Tunit))),
+--   ("amb", Lop "amb" (Tlist Tint) Tint),
+--   ("for", Lsc "for" Any Any)
+--   ])
+
+-- -- Typed amb example 
+-- tAmbScComp = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumScLT (HandleA (UList (UList UNone)) hAmbScT cAmbT))
+-- tAmbSc = checkFile tAmbGam tAmbScSig tAmbScComp (Tpair (Nested (Tpair Tint Tint)) (Nested Tunit))
+
+-- -- Typed amb example computation
+-- tCombScSig = Map.fromList([
+--   ("accum", Lop "accum" (Tpair Tint Tint) (Tpair (Tlist Any) (Tlist Tunit))),
+--   ("amb", Lop "amb" (Tlist Tstr) Tstr),
+--   ("for", Lsc "for" Any Any)
+--   ])
+
+-- -- Typed amb example 
+-- tCombScComp = HandleA UNone hPureScT (HandleA (UList UNone) hAmbScT cCombT)
+-- tCombSc = checkFile tAmbGam tCombScSig tCombScComp (Nested Tstr)
+
