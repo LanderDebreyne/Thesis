@@ -20,4 +20,16 @@ interpreter/typecheck
 diag.png 
 pres.pptx
 poster_lander_debreyne_dtai.*
-/dist-newstyle/*
+dist-newstyle/*
+Thesis.pdf
+accum
+forMap
+forWeakExcep
+landerscoped.hs
+oldWeakExceptReduc
+planning_semester_2.*
+reduction*
+structuur
+thesis.cabal
+veranderingen
+weakException*
