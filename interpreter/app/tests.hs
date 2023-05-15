@@ -9,6 +9,11 @@ import State
 import Depth
 import Parser
 import Reader
+import Accum
+import Weak
+import Prng
+import Amb
+import DepthWithAmb
 import Evaluation
 import Syntax
 import Typing
@@ -55,17 +60,17 @@ allTests = testsFromData allTestsData
 fastTests = testsFromData fastTestsData
 slowTests = testsFromData slowTestsData
 
-typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ parserTypeTests ++ readerTypeTests -- ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests
+typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ parserTypeTests ++ readerTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests
 
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
 
 allTestsData = fastTestsData ++ slowTestsData
-fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] -- ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
-slowTestsData = parserTestsData -- ++ ambTestsData  
+fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
+slowTestsData = parserTestsData ++ ambTestsData  
 
 -- Parser tests do not work as reduction because parser uses haskell recursion and tries to print an infinite list
-reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] -- ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData ++ depthAmbTestsData 
+reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData ++ depthAmbTestsData 
 
 ---------------------------------------------------------
 -- | Inc tests
@@ -186,110 +191,113 @@ readerTests = testCaseGen (name readerTestsData) (testC readerTestsData) (result
 readerTypeTests = typeCheckGen "reader" tReaderGam tReaderSig handle_cReaderT (Tpair (Tpair (Tlist Tint) (Tlist Tint)) (Tlist Tint)) 1
 
 ---------------------------------------------------------
--- -- | Accum tests
+-- | Accum tests
 
--- runAccumTests = runTestTT $ TestList accumTests
+runAccumTests = runTestTT $ TestList accumTests
 
--- accumTestsData1 = Tdata "accum" (exFor) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
--- accumTestsData2 = Tdata "accum_no_for" (exNoFor) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
--- accumTestsData3 = Tdata "accum_scoped_1" (exForSc1) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
--- accumTestsData4 = Tdata "accum_scoped_2" (exForSc2) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
--- accumTestsData5 = Tdata "accum_no_for_scoped" (exNoForSc) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
--- accumTestsData = [accumTestsData1, accumTestsData2, accumTestsData3, accumTestsData4, accumTestsData5]
--- accumTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) accumTestsData
+accumTestsData1 = Tdata "accum" (exFor) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
+accumTestsData2 = Tdata "accum_no_for" (exNoFor) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
+accumTestsData3 = Tdata "accum_scoped_1" (exForSc1) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
+accumTestsData4 = Tdata "accum_scoped_2" (exForSc2) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
+accumTestsData5 = Tdata "accum_no_for_scoped" (exNoForSc) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
+accumTestsData = [accumTestsData1, accumTestsData2, accumTestsData3, accumTestsData4, accumTestsData5]
+accumTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) accumTestsData
 
--- -- Accum typechecking
--- accumTypeTest1 = typeCheckGen "accum" tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit)) 1
--- accumTypeTest2 = typeCheckGen "accum_no_for" tAccumGam tAccumSig tAccumComp2 (Tpair Tint (Tlist (Tpair Tint Tunit))) 1
--- accumTypeTest3 = typeCheckGen "accum_scoped_1" tAccumGam tAccumSigSc tAccumComp3 (Tpair Tint (Tlist Tunit)) 1
--- accumTypeTest4 = typeCheckGen "accum_scoped_2" tAccumGam tAccumSigSc tAccumComp4 (Tpair Tint (Tlist (Tpair Tint Tunit))) 1
--- accumTypeTests = accumTypeTest1 ++ accumTypeTest2 ++ accumTypeTest3 ++ accumTypeTest4
+-- Accum typechecking
+accumTypeTest1 = typeCheckGen "accum" tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit)) 1
+accumTypeTest2 = typeCheckGen "accum_no_for" tAccumGam tAccumSig tAccumComp2 (Tpair Tint (Tlist (Tpair Tint Tunit))) 1
+accumTypeTest3 = typeCheckGen "accum_scoped_1" tAccumGam tAccumSigSc tAccumComp3 (Tpair Tint (Tlist Tunit)) 1
+accumTypeTest4 = typeCheckGen "accum_scoped_2" tAccumGam tAccumSigSc tAccumComp4 (Tpair Tint (Tlist (Tpair Tint Tunit))) 1
+accumTypeTests = accumTypeTest1 ++ accumTypeTest2 ++ accumTypeTest3 ++ accumTypeTest4
 
--- -- | Weak exception tests
+---------------------------------------------------------
+-- | Weak exception tests
 
--- runWeakExceptionTests = runTestTT $ TestList weakExceptionTests
+runWeakExceptionTests = runTestTT $ TestList weakExceptionTests
 
--- weakExceptionTestsData1 = Tdata "weak_exception_1" (exWeak) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
--- weakExceptionTestsData2 = Tdata "weak_exception_2" (exWeakSc) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
--- weakExceptionTestsData = [weakExceptionTestsData1, weakExceptionTestsData2]
--- weakExceptionTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) weakExceptionTestsData
+weakExceptionTestsData1 = Tdata "weak_exception_1" (exWeak) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
+weakExceptionTestsData2 = Tdata "weak_exception_2" (exWeakSc) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
+weakExceptionTestsData = [weakExceptionTestsData1, weakExceptionTestsData2]
+weakExceptionTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) weakExceptionTestsData
 
--- -- Weak exception typechecking
--- weakTypeTest1 = typeCheckGen "weak_1" tWeakGam tWeakSig tWeakComp1 (Tpair Tstr (Tsum Tstr Tunit)) 1
--- weakTypeTest2 = typeCheckGen "weak_2" tWeakGam tWeakSigSc tWeakComp2 (Tpair Tstr (Tsum Tstr Tunit)) 1
--- weakTypeTests = weakTypeTest1 ++ weakTypeTest2
+-- Weak exception typechecking
+weakTypeTest1 = typeCheckGen "weak_1" tWeakGam tWeakSig tWeakComp1 (Tpair Tstr (Tsum Tstr Tunit)) 1
+weakTypeTest2 = typeCheckGen "weak_2" tWeakGam tWeakSigSc tWeakComp2 (Tpair Tstr (Tsum Tstr Tunit)) 1
+weakTypeTests = weakTypeTest1 ++ weakTypeTest2
 
--- -- | PRNG tests
+---------------------------------------------------------
+-- | PRNG tests
 
--- runPRNGTests = runTestTT $ TestList prngTests
+runPRNGTests = runTestTT $ TestList prngTests
 
--- prngTestsData1 = Tdata "prng_1" (exPRNGpar) (Return (Vlist [Vint 80, Vint 38, Vint 7]))
--- prngTestsData2 = Tdata "prng_2" (exPRNGseq) (Return (Vlist [Vint 48, Vint 23, Vint 95]))
--- prngTestsData3 = Tdata "prng_3" (exPRNGparSc) (Return (Vlist [Vint 80, Vint 38, Vint 7]))
--- prngTestsData4 = Tdata "prng_4" (exPRNGseqSc) (Return (Vlist [Vint 48, Vint 23, Vint 95]))
--- prngTestsData = [prngTestsData1, prngTestsData2, prngTestsData3, prngTestsData4]
--- prngTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) prngTestsData
+prngTestsData1 = Tdata "prng_1" (exPRNGpar) (Return (Vlist [Vint 80, Vint 38, Vint 7]))
+prngTestsData2 = Tdata "prng_2" (exPRNGseq) (Return (Vlist [Vint 48, Vint 23, Vint 95]))
+prngTestsData3 = Tdata "prng_3" (exPRNGparSc) (Return (Vlist [Vint 80, Vint 38, Vint 7]))
+prngTestsData4 = Tdata "prng_4" (exPRNGseqSc) (Return (Vlist [Vint 48, Vint 23, Vint 95]))
+prngTestsData = [prngTestsData1, prngTestsData2, prngTestsData3, prngTestsData4]
+prngTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) prngTestsData
 
--- -- PRNG typechecking
--- prngTypeTest1 = typeCheckGen "prng_1" tPRNGGam tPRNGSig tPRNGComp1 (Tlist Tint) 1
--- prngTypeTest2 = typeCheckGen "prng_2" tPRNGGam tPRNGSig tPRNGComp2 (Tlist Tint) 1
--- prngTypeTest3 = typeCheckGen "prng_3" tPRNGGam tPRNGSigSc tPRNGComp3 (Tlist Tint) 1
--- prngTypeTest4 = typeCheckGen "prng_4" tPRNGGam tPRNGSigSc tPRNGComp4 (Tlist Tint) 1
--- prngTypeTests = prngTypeTest1 ++ prngTypeTest2 ++ prngTypeTest3 ++ prngTypeTest4
+-- PRNG typechecking
+prngTypeTest1 = typeCheckGen "prng_1" tPRNGGam tPRNGSig tPRNGComp1 (Tlist Tint) 1
+prngTypeTest2 = typeCheckGen "prng_2" tPRNGGam tPRNGSig tPRNGComp2 (Tlist Tint) 1
+prngTypeTest3 = typeCheckGen "prng_3" tPRNGGam tPRNGSigSc tPRNGComp3 (Tlist Tint) 1
+prngTypeTest4 = typeCheckGen "prng_4" tPRNGGam tPRNGSigSc tPRNGComp4 (Tlist Tint) 1
+prngTypeTests = prngTypeTest1 ++ prngTypeTest2 ++ prngTypeTest3 ++ prngTypeTest4
 
--- -- | Amb tests
+---------------------------------------------------------
+-- | Amb tests
 
--- runAmbTests = runTestTT $ TestList ambTests
+runAmbTests = runTestTT $ TestList ambTests
 
--- ambTestsData1 = Tdata "amb_1" (exAmb) (Return (Vpair ( Vlist [Vpair (Vint 4, Vint 9), Vpair (Vint 5, Vint 8), Vpair (Vint 6, Vint 7), Vpair (Vint 7, Vint 6), Vpair (Vint 8, Vint 5), Vpair (Vint 9, Vint 4)],
---     Vlist [ Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit]])))
--- ambTestsData2 = Tdata "amb_2" (exAmbSc) (Return (Vpair ( Vlist [Vpair (Vint 4, Vint 9), Vpair (Vint 5, Vint 8), Vpair (Vint 6, Vint 7), Vpair (Vint 7, Vint 6), Vpair (Vint 8, Vint 5), Vpair (Vint 9, Vint 4)],
---     Vlist [ Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
---             Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit]])))
--- combTestsData1 = Tdata "comb_1" (exComb) (Return (Vlist [
---             Vlist [Vlist [Vstr "HHH", Vstr "HHT"], Vlist [Vstr "HTH", Vstr "HTT"]],
---             Vlist [Vlist [Vstr "THH", Vstr "THT"], Vlist [Vstr "TTH", Vstr "TTT"]]]))
--- combTestsData2 = Tdata "comb_2" (exCombSc) (Return (Vlist [
---             Vlist [Vlist [Vstr "HHH", Vstr "HHT"], Vlist [Vstr "HTH", Vstr "HTT"]],
---             Vlist [Vlist [Vstr "THH", Vstr "THT"], Vlist [Vstr "TTH", Vstr "TTT"]]]))
--- ambTestsData = [ambTestsData1, ambTestsData2, combTestsData1, combTestsData2]
--- ambTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) ambTestsData 
+ambTestsData1 = Tdata "amb_1" (exAmb) (Return (Vpair ( Vlist [Vpair (Vint 4, Vint 9), Vpair (Vint 5, Vint 8), Vpair (Vint 6, Vint 7), Vpair (Vint 7, Vint 6), Vpair (Vint 8, Vint 5), Vpair (Vint 9, Vint 4)],
+    Vlist [ Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit]])))
+ambTestsData2 = Tdata "amb_2" (exAmbSc) (Return (Vpair ( Vlist [Vpair (Vint 4, Vint 9), Vpair (Vint 5, Vint 8), Vpair (Vint 6, Vint 7), Vpair (Vint 7, Vint 6), Vpair (Vint 8, Vint 5), Vpair (Vint 9, Vint 4)],
+    Vlist [ Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit],
+            Vlist [Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit, Vunit]])))
+combTestsData1 = Tdata "comb_1" (exComb) (Return (Vlist [
+            Vlist [Vlist [Vstr "HHH", Vstr "HHT"], Vlist [Vstr "HTH", Vstr "HTT"]],
+            Vlist [Vlist [Vstr "THH", Vstr "THT"], Vlist [Vstr "TTH", Vstr "TTT"]]]))
+combTestsData2 = Tdata "comb_2" (exCombSc) (Return (Vlist [
+            Vlist [Vlist [Vstr "HHH", Vstr "HHT"], Vlist [Vstr "HTH", Vstr "HTT"]],
+            Vlist [Vlist [Vstr "THH", Vstr "THT"], Vlist [Vstr "TTH", Vstr "TTT"]]]))
+ambTestsData = [ambTestsData1, ambTestsData2, combTestsData1, combTestsData2]
+ambTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) ambTestsData 
 
--- -- Amb typechecking
--- ambTypeTest1 = typeCheckGen "amb_1" tAmbGam tAmbSig tAmbComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
--- ambTypeTest2 = typeCheckGen "comb_1" tAmbGam tCombSig tCombComp (Nested Tstr) 1
--- ambTypeTest3 = typeCheckGen "amb_2" tAmbGam tAmbScSig tAmbScComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
--- ambTypeTest4 = typeCheckGen "comb_2" tAmbGam tCombScSig tCombScComp (Nested Tstr) 1
--- ambTypeTests = ambTypeTest1 ++ ambTypeTest2 ++ ambTypeTest3 ++ ambTypeTest4
+-- Amb typechecking
+ambTypeTest1 = typeCheckGen "amb_1" tAmbGam tAmbSig tAmbComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
+ambTypeTest2 = typeCheckGen "comb_1" tAmbGam tCombSig tCombComp (Nested Tstr) 1
+ambTypeTest3 = typeCheckGen "amb_2" tAmbGam tAmbScSig tAmbScComp (Tpair (Tlist (Tpair Tint Tint)) (Tlist (Tlist Tunit))) 1
+ambTypeTest4 = typeCheckGen "comb_2" tAmbGam tCombScSig tCombScComp (Nested Tstr) 1
+ambTypeTests = ambTypeTest1 ++ ambTypeTest2 ++ ambTypeTest3 ++ ambTypeTest4
 
+---------------------------------------------------------
+-- | Depth and Amb tests
 
--- -- | Depth and Amb tests
+runDepthAmbTests = runTestTT $ TestList depthAmbTests
 
--- runDepthAmbTests = runTestTT $ TestList depthAmbTests
+depthAmbTestsData1 = Tdata "depth_amb_1" (exDepthAmb1) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 1)], Vlist [Vlist [Vpair (Vint 4, Vint 0)], Vlist []]], Vlist []]))
+depthAmbTestsData2 = Tdata "depth_amb_2" (exDepthAmb2) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 0)], Vlist []], Vlist []]))
+depthAmbTestsData = [depthAmbTestsData1, depthAmbTestsData2]
+depthAmbTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) depthAmbTestsData
 
--- depthAmbTestsData1 = Tdata "depth_amb_1" (exDepthAmb1) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 1)], Vlist [Vlist [Vpair (Vint 4, Vint 0)], Vlist []]], Vlist []]))
--- depthAmbTestsData2 = Tdata "depth_amb_2" (exDepthAmb2) (Return (Vlist [Vlist [Vlist [Vpair (Vint 1, Vint 0)], Vlist []], Vlist []]))
--- depthAmbTestsData = [depthAmbTestsData1, depthAmbTestsData2]
--- depthAmbTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) depthAmbTestsData
-
--- -- Depth and Amb typechecking
--- depthAmbTypeTest1 = typeCheckGen "depth_amb_1" Map.empty tDepthAmbSig tDepthAmbComp1 (Nested (Tpair Tint Tint)) 1
--- depthAmbTypeTest2 = typeCheckGen "depth_amb_2" Map.empty tDepthAmbSig tDepthAmbComp2 (Nested (Tpair Tint Tint)) 1
--- depthAmbTypeTests = depthAmbTypeTest1 ++ depthAmbTypeTest2
+-- Depth and Amb typechecking
+depthAmbTypeTest1 = typeCheckGen "depth_amb_1" Map.empty tDepthAmbSig tDepthAmbComp1 (Nested (Tpair Tint Tint)) 1
+depthAmbTypeTest2 = typeCheckGen "depth_amb_2" Map.empty tDepthAmbSig tDepthAmbComp2 (Nested (Tpair Tint Tint)) 1
+depthAmbTypeTests = depthAmbTypeTest1 ++ depthAmbTypeTest2
 
 

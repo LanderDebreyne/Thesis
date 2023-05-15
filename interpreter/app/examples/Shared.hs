@@ -48,3 +48,67 @@ scT l x n vt c t = ScA l x (DotA n vt c) (DotA "z'" t (Return (Var "z'" 0)))
 failureT :: Comp
 failureT = OpA "fail" Vunit (DotA "y" Any (absurd (Var "y" 0)))
 
+-- Pure handler for parallel effects
+hPure :: Handler
+hPure = Parallel
+  (("list", "p", "k", 
+      Do "result" (Binop Map (Var "list" 2) (Var "p" 1)) $
+      App (Var "k" 1) (Var "result" 0)))
+  (("x", Return (Var "x" 0)))
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+  
+-- Pure parallel handler
+-- Handles remaining computation in parallel
+hPureT :: Handler
+hPureT = Parallel
+  (("list", "p", "k", 
+      DoA "result" (Binop Map (Var "list" 2) (Var "p" 1)) (Tlist Any) $
+      App (Var "k" 1) (Var "result" 0)))
+  (("x", Return (Var "x" 0)))
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+
+-- Pure parallel handler as scoped effect
+hPureSc :: Handler
+hPureSc = Handler
+  "hPureSc" [] ["for"] []
+  ("x", Return (Var "x" 0))
+  (\ oplabel -> case oplabel of
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", 
+              Do "results" (Binop Map (Var "x" 2) (Var "p" 1)) $
+              App (Var "k" 1) (Var "results" 0))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+        Do "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+-- Handler to function as parallel handler but as scoped effect
+hPureScT :: Handler
+hPureScT = Handler
+  "hPureSc" [] ["for"] []
+  ("x", Return (Var "x" 0))
+  (\ oplabel -> case oplabel of
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k", 
+              DoA "results" (Binop Map (Var "x" 2) (Var "p" 1)) Any $
+              App (Var "k" 1) (Var "results" 0))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
