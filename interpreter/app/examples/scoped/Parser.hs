@@ -106,17 +106,17 @@ expr1 = Lam "_" $
                                   Return (Var "x" 0)) <> Return (Var "i" 1))
 
 -- Handling @expr1@:
-handle_expr1 :: Comp
-handle_expr1 = hCut # (Do "c" (hToken # App expr1 Vunit) $
+exParse1 :: Comp
+exParse1 = hCut # (Do "c" (hToken # App expr1 Vunit) $
                        App (Var "c" 0) (Vstr "(2+5)*8"))
--- >>> evalP handle_expr1
+-- >>> evalP exParse1
 -- Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")]))
 
 -- Handling @expr@:
-handle_expr :: Comp
-handle_expr = hCut # (Do "c" (hToken # App expr Vunit) $
+exParse2 :: Comp
+exParse2 = hCut # (Do "c" (hToken # App expr Vunit) $
                       App (Var "c" 0) (Vstr "(2+5)*8"))
--- >>> evalP handle_expr
+-- >>> evalP exParse2
 -- Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")]))
 
 --------------------------------------------------------------------------------------------------------------------------------

@@ -233,3 +233,6 @@ tDepth1 = checkFile tDepthGam tDepthSig tDepthComp1 (Tlist (Tpair Tint Tint))
 -- Second typed depth example
 tDepthComp2 = DoA "f" (HandleA (UFunction (UList (UFirst UNone))) hDepth2T cDepthT) (Tfunction Tint (Tlist (Tpair Tint Tint))) $ App (Var "f" 0) (Vint 2)
 tDepth2 = checkFile tDepthGam tDepthSig tDepthComp2 (Tlist (Tpair Tint Tint))
+
+exDepth1 = Do "f" (hDepth # cDepth) $ App (Var "f" 0) (Vint 2)
+exDepth2 = Do "f" (hDepth2 # cDepth) $ App (Var "f" 0) (Vint 2)

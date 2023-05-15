@@ -80,3 +80,6 @@ tOnceSig = Map.fromList([
   ("once", Lsc "once" Tunit Tbool)])
 tOnceComp = HandleA (UList UNone) hOnceT cOnceT
 tOnce = checkFile tOnceGam tOnceSig tOnceComp (Tlist Tstr)
+
+
+exOnce = hOnce # cOnce

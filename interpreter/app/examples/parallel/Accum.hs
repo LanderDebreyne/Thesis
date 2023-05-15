@@ -128,11 +128,11 @@ hAccumL = Handler
 cAccum :: Comp
 cAccum = For "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
-exFor :: Comp
-exFor = hPure # hAccum # cAccum
+exAccum1 :: Comp
+exAccum1 = hPure # hAccum # cAccum
 
 -- Usage:
--- >>> evalFile exFor
+-- >>> evalFile exAccum1
 -- Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit]))
 
 
@@ -160,15 +160,15 @@ hAccumNoFor = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
-exNoFor :: Comp
-exNoFor = hPure # hAccumNoFor # cAccum
+exAccum2 :: Comp
+exAccum2 = hPure # hAccumNoFor # cAccum
 
 -- Each element of the list is treated as a separate computation
 -- The result is a list of results of each computation
 -- The results are not accumulated
 
 -- Usage:
--- >>> evalFile exNoFor
+-- >>> evalFile exAccum2
 -- Return (0, [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())])
 
 
@@ -333,19 +333,19 @@ cAccumSc :: Comp
 cAccumSc = Sc "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
 -- cAccumSc example handled by handler that uses scoped effect for pure for handling
-exForSc1 :: Comp
-exForSc1 = hPureSc # hAccumSc1 # cAccumSc
+exAccum3 :: Comp
+exAccum3 = hPureSc # hAccumSc1 # cAccumSc
 
 -- Usage:
--- evalFile exForSc1
+-- evalFile exAccum3
 -- Return (15, [(),(),(),(),()])
 
 -- cAccumSc example handled by handler that uses parallel effect for pure for handling
-exForSc2 :: Comp
-exForSc2 = hPure # hAccumSc2 # cAccumSc
+exAccum4 :: Comp
+exAccum4 = hPure # hAccumSc2 # cAccumSc
 
 -- Usage:
--- evalFile exForSc2
+-- evalFile exAccum4
 -- Return (15, [(),(),(),(),()])
 
 hAccumScNoFor :: Handler
@@ -370,11 +370,11 @@ hAccumScNoFor = Handler
   )
 
 
-exNoForSc :: Comp
-exNoForSc = hPureSc # hAccumScNoFor # cAccumSc
+exAccum5 :: Comp
+exAccum5 = hPureSc # hAccumScNoFor # cAccumSc
 
 -- Usage:
--- evalFile exNoForSc
+-- evalFile exAccum5
 -- Return (0, [(1, ()),(2, ()),(3, ()),(4, ()),(5, ())])
 
 -- Remark that all cAccum examples find the same solution as their parallel effect counterparts

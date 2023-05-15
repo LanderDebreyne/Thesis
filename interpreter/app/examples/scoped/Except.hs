@@ -200,3 +200,16 @@ tCatch7 = checkFile tCatchGam3 tCatchSig2 tCatchComp7 (Tsum Tstr (Tpair Tstr Tin
 -- Eight typed exception example
 tCatchComp8 = runIncT 42 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
 tCatch8 = checkFile tCatchGam4 tCatchSig2 tCatchComp8 (Tpair (Tsum Tstr Tstr) Tint)
+
+
+exCatch1 = (hExcept # runInc 42 cCatch)
+exCatch2 = (runInc 42 (hExcept # cCatch))
+exCatch3 = (hExcept # runInc 1 cCatch2)
+exCatch4 = (runInc 1 (hExcept # cCatch2))
+exCatch5 = (hExcept # runInc 8 cCatch2)
+exCatch6 = (runInc 8 (hExcept # cCatch2))
+exCatch7 = (hExcept # runInc 42 cCatch2)
+exCatch8 = (runInc 42 (hExcept # cCatch2))
+
+
+

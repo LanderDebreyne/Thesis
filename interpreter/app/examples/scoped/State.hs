@@ -58,13 +58,13 @@ cState = Do "_" (op "put" (Vpair (Vstr "x", Vint 10))) $
          Return (Vpair (Var "x1" 1, Var "x2" 0))
 
 -- Handling @cState@:
-handle_cState :: Comp
-handle_cState = Do "m" (Unop Newmem Vunit) $ 
+exState :: Comp
+exState = Do "m" (Unop Newmem Vunit) $ 
                 Do "c" (hState # cState) $
                 Do "x" (App (Var "c" 0) (Var "m" 1)) $
                 Unop Fst (Var "x" 0)
 
--- >>> evalFile handle_cState
+-- >>> evalFile exState
 -- Return (Vpair (Vint 42,Vint 10))
 
 ----------------------------------------------

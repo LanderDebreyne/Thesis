@@ -65,8 +65,8 @@ handle_cReader c = Do "m" (Unop Newmem (Vunit)) $
                    Unop Fst (Var "x" 0)
 
 -- @cReader@ example:
-example_cReader :: Comp
-example_cReader = handle_cReader (Lam "x" (Return (Vlist [Vint 1, Vint 2, Vint 3, Vint 4])))
+exReader :: Comp
+exReader = handle_cReader (Lam "x" (Return (Vlist [Vint 1, Vint 2, Vint 3, Vint 4])))
 
 -- Usage:
 -- >>> evalFile example_cReader

@@ -93,3 +93,6 @@ tCutSig = Map.fromList([
 tCutComp = HandleA (URet (UList UNone)) hCutT cCutT
 
 tCut = checkFile tCutGam tCutSig tCutComp (Tret (Tlist Tstr))
+
+
+exCut = hCut # cCut

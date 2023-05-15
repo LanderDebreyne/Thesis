@@ -150,3 +150,8 @@ cIncForT = ForA "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) (DotA "y" Tunit (opT 
 cFwdT :: Comp
 cFwdT = ScA "once" Vunit (DotA "_" Tunit cIncT) (DotA "x" Tint (OpA "inc" Vunit (DotA "y" Tint
         (DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) Any $ Return (Var "z" 0)))))
+
+
+exInc1 = hOnce # runInc 0 cInc
+exInc2 = runInc 0 (hOnce # cInc)
+exInc3 = hOnce # runInc 0 cFwd
