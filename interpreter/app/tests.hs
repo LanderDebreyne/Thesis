@@ -54,6 +54,8 @@ reductionGen ((Tdata name comp _):xs) = do
 -- | All test
 
 runAllTests = runTestTT $ TestList (typeCheckTests ++ allTests)
+runUnitTests = runTestTT $ TestList allTests
+runTypeTests = runTestTT $ TestList typeCheckTests
 runFastTests = runTestTT $ TestList fastTests
 
 allTests = testsFromData allTestsData
@@ -77,9 +79,9 @@ reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchT
 
 runIncTests = runTestTT $ TestList incTests
 
-incTests1Data = Tdata "inc_1" (hOnce # runInc 0 cInc) (Return (Vlist [Vpair (Vint 0, Vint 1), Vpair (Vint 0,Vint 1)]))
-incTests2Data = Tdata "inc_2" (runInc 0 (hOnce # cInc)) (Return (Vpair (Vlist [Vint 0,Vint 1],Vint 2)))
-incTests3Data = Tdata "inc_fwd" (hOnce # runInc 0 cFwd) (Return (Vlist [Vpair (Vint 1,Vint 2)]))
+incTests1Data = Tdata "inc_1" exInc1 (Return (Vlist [Vpair (Vint 0, Vint 1), Vpair (Vint 0,Vint 1)]))
+incTests2Data = Tdata "inc_2" exInc2 (Return (Vpair (Vlist [Vint 0,Vint 1],Vint 2)))
+incTests3Data = Tdata "inc_fwd" exInc3 (Return (Vlist [Vpair (Vint 1,Vint 2)]))
 incTestsData = [incTests1Data, incTests2Data, incTests3Data]
 incTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) incTestsData
 
@@ -94,7 +96,7 @@ incTypeTests = incType1 ++ incType2 ++ incType3
 
 runOnceTests = runTestTT $ TestList onceTests
 
-onceTestsData = Tdata "once" (hOnce # cOnce) (Return (Vlist [Vstr "heads"]))
+onceTestsData = Tdata "once" exOnce (Return (Vlist [Vstr "heads"]))
 onceTests = testCaseGen (name onceTestsData) (testC onceTestsData) (result onceTestsData)
 
 -- Once typechecking
@@ -105,7 +107,7 @@ onceTypeTests = typeCheckGen "once" tOnceGam tOnceSig tOnceComp (Tlist Tstr) 1
 
 runCutTests = runTestTT $ TestList cutTests
 
-cutTestsData = Tdata "cut" (hCut # cCut) (Return (Vret (Vlist [Vstr "heads"])))
+cutTestsData = Tdata "cut" exCut (Return (Vret (Vlist [Vstr "heads"])))
 cutTests = testCaseGen (name cutTestsData) (testC cutTestsData) (result cutTestsData)
 
 -- Cut typechecking
@@ -116,14 +118,14 @@ cutTypeTests = typeCheckGen "cut" tCutGam tCutSig tCutComp (Tret (Tlist Tstr)) 1
 
 runCatchTests = runTestTT $ TestList catchTests
 
-catchTestsData1 = Tdata "catch_1" (hExcept # runInc 42 cCatch) (Return (Vsum (Right (Vpair (Vint 10,Vint 42)))))
-catchTestsData2 = Tdata "catch_2" (runInc 42 (hExcept # cCatch)) (Return (Vpair (Vsum (Right (Vint 10)),Vint 43)))
-catchTestsData3 = Tdata "catch_3" (hExcept # runInc 1 cCatch2) (Return (Vsum (Right (Vpair (Vstr "success", Vint 5)))))
-catchTestsData4 = Tdata "catch_4" (runInc 1 (hExcept # cCatch2)) (Return (Vpair (Vsum (Right (Vstr "success")), Vint 5)))
-catchTestsData5 = Tdata "catch_5" (hExcept # runInc 8 cCatch2) (Return (Vsum (Right (Vpair (Vstr "fail", Vint 9)))))
-catchTestsData6 = Tdata "catch_6" (runInc 8 (hExcept # cCatch2)) (Return (Vpair (Vsum (Right (Vstr "fail")), Vint 12)))
-catchTestsData7 = Tdata "catch_7" (hExcept # runInc 42 cCatch2) (Return (Vsum (Left (Vstr "Overflow"))))
-catchTestsData8 = Tdata "catch_8" (runInc 42 (hExcept # cCatch2)) (Return (Vpair (Vsum (Left (Vstr "Overflow")), Vint 43)))
+catchTestsData1 = Tdata "catch_1" exCatch1 (Return (Vsum (Right (Vpair (Vint 10,Vint 42)))))
+catchTestsData2 = Tdata "catch_2" exCatch2 (Return (Vpair (Vsum (Right (Vint 10)),Vint 43)))
+catchTestsData3 = Tdata "catch_3" exCatch3 (Return (Vsum (Right (Vpair (Vstr "success", Vint 5)))))
+catchTestsData4 = Tdata "catch_4" exCatch4 (Return (Vpair (Vsum (Right (Vstr "success")), Vint 5)))
+catchTestsData5 = Tdata "catch_5" exCatch5 (Return (Vsum (Right (Vpair (Vstr "fail", Vint 9)))))
+catchTestsData6 = Tdata "catch_6" exCatch6 (Return (Vpair (Vsum (Right (Vstr "fail")), Vint 12)))
+catchTestsData7 = Tdata "catch_7" exCatch7 (Return (Vsum (Left (Vstr "Overflow"))))
+catchTestsData8 = Tdata "catch_8" exCatch8 (Return (Vpair (Vsum (Left (Vstr "Overflow")), Vint 43)))
 catchTestsData = [catchTestsData1, catchTestsData2, catchTestsData3, catchTestsData4, catchTestsData5, catchTestsData6, catchTestsData7, catchTestsData8]
 catchTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) catchTestsData
 
@@ -143,7 +145,7 @@ catchTypeTests = catchType1 ++ catchType2 ++ catchType3 ++ catchType4 ++ catchTy
 
 runStateTests = runTestTT $ TestList stateTests 
 
-stateTestsData = Tdata "state" (handle_cState) (Return (Vpair (Vint 42,Vint 10)))
+stateTestsData = Tdata "state" exState (Return (Vpair (Vint 42,Vint 10)))
 stateTests = testCaseGen (name stateTestsData) (testC stateTestsData) (result stateTestsData)
 
 -- State typechecking
@@ -154,8 +156,8 @@ stateTypeTests = typeCheckGen "state" tStateGam tStateSig handle_cStateT (Tpair 
 
 runDepthTests = runTestTT $ TestList depthTests
 
-depthTestsData1 = Tdata "depth_1" (Do "f" (hDepth # cDepth) $ App (Var "f" 0) (Vint 2)) (Return (Vlist [Vpair (Vint 1,Vint 1),Vpair (Vint 4,Vint 0)]))
-depthTestsData2 = Tdata "depth_2" (Do "f" (hDepth2 # cDepth) $ App (Var "f" 0) (Vint 2)) (Return (Vlist [Vpair (Vint 1,Vint 0)]))
+depthTestsData1 = Tdata "depth_1" exDepth1 (Return (Vlist [Vpair (Vint 1,Vint 1),Vpair (Vint 4,Vint 0)]))
+depthTestsData2 = Tdata "depth_2" exDepth2 (Return (Vlist [Vpair (Vint 1,Vint 0)]))
 depthTestsData = [depthTestsData1, depthTestsData2]
 depthTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) depthTestsData
 
@@ -169,22 +171,22 @@ depthTypeTests = depthTypeTest1 ++ depthTypeTest2
 
 runParserTests = runTestTT $ TestList parserTests
 
-parserTestsData1 = Tdata "parser_1" (handle_expr1) (Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")])))
-parserTestsData2 = Tdata "parser_2" (handle_expr) (Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")])))
+parserTestsData1 = Tdata "parser_1" exParse1 (Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")])))
+parserTestsData2 = Tdata "parser_2" exParse2 (Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")])))
 parserTestsData = [parserTestsData1, parserTestsData2]
 parserTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) parserTestsData
 
 -- Parser typechecking
 parserTypeTest1 = typeCheckGen "parser_1" tParseGam tParseSig handle_expr1T (Tret (Tlist (Tpair Tint Tstr))) 1
 parserTypeTest2 = typeCheckGen "parser_2" tParseGam tParseSig handle_exprT (Tret (Tlist (Tpair Tint Tstr))) 1
-parserTypeTests =  parserTypeTest1 -- ++ parserTypeTest2
+parserTypeTests =  parserTypeTest1 ++ parserTypeTest2
 
 ---------------------------------------------------------
 -- | Reader tests
 
 runReaderTests = runTestTT $ TestList readerTests
 
-readerTestsData = Tdata "reader" (example_cReader) (Return (Vpair (Vpair (Vlist [Vint 1,Vint 2,Vint 3,Vint 4],Vlist [Vint 1,Vint 2,Vint 3,Vint 4,Vint 5]),Vlist [Vint 1,Vint 2,Vint 3,Vint 4])))
+readerTestsData = Tdata "reader" exReader (Return (Vpair (Vpair (Vlist [Vint 1,Vint 2,Vint 3,Vint 4],Vlist [Vint 1,Vint 2,Vint 3,Vint 4,Vint 5]),Vlist [Vint 1,Vint 2,Vint 3,Vint 4])))
 readerTests = testCaseGen (name readerTestsData) (testC readerTestsData) (result readerTestsData)
 
 -- Reader typechecking
@@ -195,11 +197,11 @@ readerTypeTests = typeCheckGen "reader" tReaderGam tReaderSig handle_cReaderT (T
 
 runAccumTests = runTestTT $ TestList accumTests
 
-accumTestsData1 = Tdata "accum" (exFor) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
-accumTestsData2 = Tdata "accum_no_for" (exNoFor) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
-accumTestsData3 = Tdata "accum_scoped_1" (exForSc1) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
-accumTestsData4 = Tdata "accum_scoped_2" (exForSc2) (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
-accumTestsData5 = Tdata "accum_no_for_scoped" (exNoForSc) (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
+accumTestsData1 = Tdata "accum" exAccum1 (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
+accumTestsData2 = Tdata "accum_no_for" exAccum2 (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
+accumTestsData3 = Tdata "accum_scoped_1" exAccum3 (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
+accumTestsData4 = Tdata "accum_scoped_2" exAccum4 (Return (Vpair (Vint 15,Vlist [Vunit, Vunit, Vunit, Vunit, Vunit])))
+accumTestsData5 = Tdata "accum_no_for_scoped" exAccum5 (Return (Vpair (Vint 0, Vlist [Vpair (Vint 1, Vunit), Vpair (Vint 2, Vunit), Vpair (Vint 3, Vunit), Vpair (Vint 4, Vunit), Vpair (Vint 5, Vunit)])))
 accumTestsData = [accumTestsData1, accumTestsData2, accumTestsData3, accumTestsData4, accumTestsData5]
 accumTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) accumTestsData
 
@@ -215,8 +217,8 @@ accumTypeTests = accumTypeTest1 ++ accumTypeTest2 ++ accumTypeTest3 ++ accumType
 
 runWeakExceptionTests = runTestTT $ TestList weakExceptionTests
 
-weakExceptionTestsData1 = Tdata "weak_exception_1" (exWeak) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
-weakExceptionTestsData2 = Tdata "weak_exception_2" (exWeakSc) (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
+weakExceptionTestsData1 = Tdata "weak_exception_1" exWeak (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
+weakExceptionTestsData2 = Tdata "weak_exception_2" exWeakSc (Return (Vpair (Vstr "start 1!345", Vsum (Left $ Vstr "error"))))
 weakExceptionTestsData = [weakExceptionTestsData1, weakExceptionTestsData2]
 weakExceptionTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) weakExceptionTestsData
 
@@ -230,10 +232,10 @@ weakTypeTests = weakTypeTest1 ++ weakTypeTest2
 
 runPRNGTests = runTestTT $ TestList prngTests
 
-prngTestsData1 = Tdata "prng_1" (exPRNGpar) (Return (Vlist [Vint 80, Vint 38, Vint 7]))
-prngTestsData2 = Tdata "prng_2" (exPRNGseq) (Return (Vlist [Vint 48, Vint 23, Vint 95]))
-prngTestsData3 = Tdata "prng_3" (exPRNGparSc) (Return (Vlist [Vint 80, Vint 38, Vint 7]))
-prngTestsData4 = Tdata "prng_4" (exPRNGseqSc) (Return (Vlist [Vint 48, Vint 23, Vint 95]))
+prngTestsData1 = Tdata "prng_1" exPRNGpar (Return (Vlist [Vint 80, Vint 38, Vint 7]))
+prngTestsData2 = Tdata "prng_2" exPRNGseq (Return (Vlist [Vint 48, Vint 23, Vint 95]))
+prngTestsData3 = Tdata "prng_3" exPRNGparSc (Return (Vlist [Vint 80, Vint 38, Vint 7]))
+prngTestsData4 = Tdata "prng_4" exPRNGseqSc (Return (Vlist [Vint 48, Vint 23, Vint 95]))
 prngTestsData = [prngTestsData1, prngTestsData2, prngTestsData3, prngTestsData4]
 prngTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) prngTestsData
 
