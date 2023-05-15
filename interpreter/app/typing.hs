@@ -9,7 +9,9 @@ import qualified Data.Set as Set
 type Gamma = Map.Map Name ValueType
 type Sigma = Map.Map Name Label
 
-
+-- Typechecking without printing intermediate results
+-- (for testing purposes)
+-- (for parser which has infinite intermediate computations which can not be printed)
 typeCheckParser :: Gamma -> Sigma -> Comp -> ComputationType -> Bool -> Maybe Comp
 typeCheckParser gam sig c ct tr =
   if typeCheckC gam sig c ct tr
@@ -18,6 +20,7 @@ typeCheckParser gam sig c ct tr =
       Nothing -> Just c
   else Nothing
 
+-- | Typechecking with printing intermediate results
 typeCheckEval :: Gamma -> Sigma -> Comp -> ComputationType -> Bool -> [(String, Comp)]
 typeCheckEval gam sig c ct tr = 
   if check "---- New step ----" (typeCheckC gam sig c ct tr) tr
@@ -26,26 +29,35 @@ typeCheckEval gam sig c ct tr =
       (step, Nothing) -> [("Nothing", c)]
   else [("No more evaluation", c)]
 
--- | Evaluation with steps
+-- | Typechecking with steps
+-- Saves the steps in a file
 checkFile :: Gamma -> Sigma -> Comp -> ComputationType -> IO ()
 checkFile gam sig c ct = do
   let steps = typeCheckEval gam sig c ct True
   writeFile "typecheck" (prettyprintT steps 1)
 
 -- | Pretty print verbose evaluation
+-- print the steps in a more readable way
 prettyprintT :: [(String, Comp)] -> Int -> String
 prettyprintT [] _ = "" 
 prettyprintT ((step, c):xs) n = 
   "\n Step " ++ show n ++ ": " ++ step ++ "\n" ++ show c ++ "\n" ++ prettyprintT xs (n+1) ++ "\n"
 
 -- | Trace step if needed
+-- (trace for debugging)
 check :: String -> a -> Bool -> a
 check s ch tr = 
   if tr 
     then trace s ch
     else ch   
 
-
+-- Typechecking a computation
+-- Takes the variable context Gamma
+-- Takes the label context Sigma
+-- Takes the computation to be typechecked
+-- Takes the expected type of the computation
+-- Takes a boolean to determine whether to trace intermediate results
+-- Returns a boolean indicating whether the computation is of the expected type
 typeCheckC :: Gamma -> Sigma -> Comp -> ComputationType -> Bool -> Bool
 typeCheckC _ _ _ Any _ = True
 typeCheckC _ _ Undefined _ _ = True
@@ -135,6 +147,14 @@ typeCheckC gam sig (Binop _ _ _) vt _ = True -- SD-Binop -- TODO (Assumes operat
 typeCheckC gam sig (Unop _ _) vt _ = True -- SD-Unop -- TODO (Assumes operations are well-typed)
 typeCheckC _ _ c t _ = False -- error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show t)
 
+
+-- Typechecking a value
+-- Takes the variable context Gamma
+-- Takes the label context Sigma
+-- Takes the value to be typechecked
+-- Takes the expected type of the value
+-- Takes a boolean to determine whether to trace intermediate results
+-- Returns a boolean indicating whether the value is of the expected type
 typeCheckV :: Gamma -> Sigma -> Value -> ValueType -> Bool -> Bool
 typeCheckV _ _ _ Any _ = True
 typeCheckV gam sig v (TVar n) tr = case Map.lookup n gam of -- SD-ValVar
@@ -198,6 +218,9 @@ typeCheckV gam sig (Vkey k) (Tkey) tr = True -- SD-Key
 -- SD-Par
 typeCheckV _ _ c t _ = False -- error ("Typecheck failed: " ++ show c ++ " is not of type " ++ show t)
 
+-- Typechecking the equality of two types
+-- Takes two types
+-- Returns a boolean indicating whether the types are equal
 typeEq :: ValueType -> ValueType -> Bool
 typeEq Any _ = True
 typeEq _ Any = True
@@ -224,9 +247,16 @@ typeEq (TVar _) t = True
 typeEq t (TVar _) = True
 typeEq _ _ = False
 
+-- Typechecking the equality of two effects
 rowEq :: EffectType -> EffectType -> Bool
 rowEq x y = Set.null (Set.difference x y) && Set.null (Set.difference y x)
 
+-- Transforming the expected type after application of a handler
+-- Takes the variable context Gamma
+-- Takes the handler transformation type to be applied
+-- Takes the expected type of the computation
+-- Takes a boolean to determine whether to trace intermediate results
+-- Returns the transformed type
 transformH :: Gamma -> HTransform -> ValueType -> Bool -> ValueType
 transformH gam _ Any _ = Any
 transformH gam h (TVar n) tr = case Map.lookup n gam of 

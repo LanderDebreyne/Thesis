@@ -145,6 +145,7 @@ infixr 8 #
 (#) :: Handler -> Comp -> Comp
 h # c = Handle h c
 
+-- Unary operations
 data Op1 
     = Not
     | Neg
@@ -166,6 +167,7 @@ data Op1
     | Flatten
     deriving (Show, Eq)
 
+-- Binary operations
 data Op2
     = Add
     | Minus
@@ -258,6 +260,7 @@ type EffectType = Set.Set Label
 -- | Computation type syntax
 type ComputationType = ValueType
 
+-- | Handler type transformation syntax
 data HTransform = UNone 
   | UList HTransform 
   | UFirst HTransform 

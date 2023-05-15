@@ -7,29 +7,36 @@ import System.Random
 type Step = String
 
 -- | Evaluation
+-- Results in a list of all intermediate computations
 eval :: Comp ->  [Comp]
 eval c = case eval1 c of
   Just c' -> c:(eval c')
   Nothing -> [c]
 
--- | Evaluation for parser (due to recursive defintions we can not evaluate/show intermediate steps)
+-- | Evaluation 
+-- Results in a pair of the number of steps and the resulting computation
 evalP :: (Int, Comp) ->  (Int, Comp)
 evalP (s, c) = case eval1 c of
   Just c' -> evalP (s+1, c')
   Nothing -> (s+1, c)
 
+-- | Evaluation 
+-- Results in a pair of the number of steps and the resulting computation
+-- Uses different eval function but dismisses names of taken steps
 evalP' :: (Int, Comp) ->  (Int, Comp)
 evalP' (s, c) = case eval1' c of
   (_, Just c') -> evalP' (s+1, c')
   (_, Nothing) -> (s+1, c)
 
 -- | Evaluation with steps
+-- Saves intermediate steps and computations to file
 evalFile :: Comp -> IO ()
 evalFile c = do
   let steps = eval' c
   writeFile "reduction" (prettyprint steps 1)
 
 -- | Evaluation with steps and flatten result
+-- Saves intermediate steps and computations to file and flattens nested lists and pairs in the result
 evalFileFlat :: Comp -> IO ()
 evalFileFlat c = do
   let steps = eval' c
@@ -39,47 +46,49 @@ evalFileFlat c = do
   appendFile "reductionFlat" (prettyprint stepsFlat 1)
 
 -- | Evaluation without steps
+-- Saves intermediate computations to file
 evalFile' :: Comp -> IO ()
 evalFile' c = do
   let steps = eval c
   writeFile "reductionNoSteps" (prettyprint' steps 1)
 
 -- | Verbose evaluation
+-- Results in a list of all intermediate computations and the step taken
+-- Prints all intermediate computations and the step taken to the console
 eval' :: Comp -> [(Step, Comp)]
 eval' c = case eval1' c of
   (step , Just c') -> (step, c) : eval' c'
   (step , Nothing) -> [(step, c)]
 
 -- | Pretty print verbose evaluation
+-- print the steps and the computations a bit nicer
 prettyprint :: [(Step, Comp)] -> Int -> String
 prettyprint [] _ = "" 
 prettyprint ((step, c) : cs) nr = show c ++ "\n\n" ++ show nr ++ ".\n{-- " ++ step ++ " --}" ++ "\n\n" ++ prettyprint cs (nr+1)
 
 -- | Pretty print verbose evaluation
+-- print the computations a bit nicer
 prettyprint' :: [Comp] -> Int -> String
 prettyprint' [] _ = "" 
 prettyprint' (c : cs) nr = show c ++ "\n\n" ++ show nr ++ ".\n" ++ prettyprint' cs (nr+1)
 
 -- | Single step evaluation
+-- The computation takes one step if possible
 eval1 :: Comp -> Maybe Comp
 eval1 (App (Lam x c) v) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-AppAbs
-
 -- Annotated Lambda function
 eval1 (App (LamA x t c) v) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-AppAbs
 --
-
 eval1 (Let x v c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-Let
 eval1 (Letrec x v c) = return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)] -- E-LetRec
 eval1 (LetrecA x t v c) = return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)] -- E-LetRec
 eval1 (App (Vrec x v1 v2) v) = return . shiftC (-1) $ subst (App v2 v) [(shiftV 1 (Vrec x v1 v2), 0)] -- E-AppRec
-
 eval1 (Do x (Return v) c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
 eval1 (Do x (Op l v (y :. c1)) c2) = return $ Op l v (y :. Do x c1 c2) -- E-DoOp
 eval1 (Do x (OpA l v (DotA y t c1)) c2) = return $ OpA l v (DotA y t (Do x c1 c2)) -- E-DoOp
 eval1 (Do x (Sc l v (y :. c1) (z :. c2)) c3) = return $ Sc l v (y :. c1) (z :. Do x c2 c3) -- E-DoSc
 eval1 (Do x (For l v (y :. c1) (z :. c2)) c3) = return $ For l v (y :. c1) (z :. Do x c2 c3) -- E-DoFor
 eval1 (Do x c1 c2) = do c1' <- eval1 c1; return $ Do x c1' c2 -- E-Do
-
 -- Annotated Do
 eval1 (DoA x (Return v) _ c) = return . shiftC (-1) $ subst c [(shiftV 1 v, 0)] -- E-DoRet
 eval1 (DoA x (OpA l v (DotA y t1 c1)) t c2) = return $ OpA l v (DotA y t1 (DoA x c1 t c2)) -- E-DoOp
@@ -90,11 +99,9 @@ eval1 (DoA x (Sc l v (y :. c1) (z :. c2)) t c3) = return $ Sc l v (y :. c1) (z :
 eval1 (DoA x (For l v (y :. c1) (z :. c2)) t c3) = return $ For l v (y :. c1) (z :. (DoA x c2 t c3)) -- E-DoFor
 eval1 (DoA x c1 t c2) = do c1' <- eval1 c1; return $ DoA x c1' t c2 -- E-Do
 --
-
 eval1 (Handle (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
                          (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r fwd) c1), 1),
                          (shiftV 3 $ Lam z (Handle (Parallel (x, p, k, c) r fwd) c2), 0)])
-
 eval1 (Handle h (Return v)) = return $ let (x, cr) = hreturn h in -- E-HandRet
   shiftC (-1) $ subst cr [(shiftV 1 v, 0)]
 eval1 (Handle h (Op l v (y :. c1))) = return $ case hop h l of -- E-HandOp
@@ -132,12 +139,10 @@ eval1 (Handle h (For label v (y :. c1) (z :. c2))) = return $ case hfor h label 
             For label (shiftV 3 v) (y :. App (Var p 2) (Var y 0)) (z :. App (Var k 1) (Var z 0)), 2)
         ]
 eval1 (Handle h c) = do c' <- eval1 c; return $ Handle h c' -- E-Hand 
-
 -- Annotated Handle
 eval1 (HandleA t (Parallel (x, p, k, c) r fwd) (ForA l v (DotA y a c1) (DotA z b c2))) = Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
                          (shiftV 3 $ LamA y a (HandleA t (Parallel (x, p, k, c) r fwd) c1), 1),
                          (shiftV 3 $ LamA z b (HandleA t (Parallel (x, p, k, c) r fwd) c2), 0)])
-
 eval1 (HandleA t h (Return v)) = return $ let (x, cr) = hreturn h in -- E-HandRet
   shiftC (-1) $ subst cr [(shiftV 1 v, 0)]
 eval1 (HandleA t h (OpA l v (DotA y a c1))) = return $ case hop h l of -- E-HandOp
@@ -172,18 +177,16 @@ eval1 (HandleA t h (ForA label v (DotA y a c1) (DotA z b c2))) = return $ case h
         ]
 eval1 (HandleA t h c) = do c' <- eval1 c; return $ HandleA t h c' -- E-Hand 
 -- 
-
 eval1 (If (Vbool True) c1 c2) = return c1 -- E-IfTrue
 eval1 (If (Vbool False) c1 c2) = return c2 -- E-IfFalse
 eval1 (Unop op v) = evalUnop op v -- E-Unop
 eval1 (Binop op v1 v2) = evalBinop op v1 v2 -- E-Binop
-
 eval1 (Case (Vsum v) x c1 y c2) = return $ case v of
   Left t  -> shiftC (-1) $ subst c1 [(shiftV 1 t, 0)]
   Right t -> shiftC (-1) $ subst c2 [(shiftV 1 t, 0)]
-
 eval1 c = Nothing
 
+-- Evaluate unary operations
 evalUnop :: Op1 -> Value -> Maybe Comp
 evalUnop Fst (Vpair (v1, v2)) = return $ Return v1
 evalUnop Snd (Vpair (v1, v2)) = return $ Return v2
@@ -221,6 +224,8 @@ evalUnop Flatten (Vlist (l:ys)) = case evalUnop Flatten (Vlist (ys)) of
     Vunit -> return . Return . Vlist $ ls
     _ -> return . Return . Vlist $ (l:ls)
 
+
+-- Evaluate binary operations
 evalBinop :: Op2 -> Value -> Value -> Maybe Comp
 evalBinop Add (Vint x) (Vint y) = return . Return . Vint $ x + y
 evalBinop Minus (Vint x) (Vint y) = return . Return . Vint $ x - y
@@ -272,6 +277,8 @@ evalBinop Zip (Vlist xs) (Vlist ys) =  return $ case xs of
 evalBinop _ _ _ = Nothing
 
 -- | Single step evaluation with chosen reduction step
+-- The computation takes one step if possible
+-- The result is a pair of the step taken and the resulting computation
 eval1' :: Comp -> (Step, Maybe Comp)
 eval1' (App (Lam x c) v) = ("E-AppAbs", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)])-- E-AppAbs
 -- Annotated Lambda function
@@ -281,7 +288,6 @@ eval1' (Let x v c) = ("E-Let", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)])
 eval1' (Letrec x v c) = ("E-LetRec", return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)]) -- E-LetRec
 eval1' (LetrecA x vt v c) = ("E-LetRec", return . shiftC (-1) $ subst c [(shiftV 1 (Vrec x v v), 0)]) -- E-LetRec
 eval1' (App (Vrec x v1 v2) v) = ("E-AppRec", return . shiftC (-1) $ subst (App v2 v) [(shiftV 1 (Vrec x v1 v2), 0)]) -- E-AppRec
-
 eval1' (Do x (Return v) c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
 eval1' (Do x (Op l v (y :. c1)) c2) = ("E-DoOp", return $ Op l v (y :. Do x c1 c2)) -- E-DoOp
 eval1' (Do x (OpA l v (DotA y t c1)) c2) = ("E-DoOp", return $ OpA l v (DotA y t (Do x c1 c2))) -- E-DoOp
@@ -290,7 +296,6 @@ eval1' (Do x (For l v (y :. c1) (z :. c2)) c3) = ("E-DoFor", return $ For l v (y
 eval1' (Do x c1 c2) = case (eval1' c1) of 
     (step, (Just c1')) -> ("E-Do and " ++ step, return $ Do x c1' c2) -- E-Do
     (step, Nothing) -> ("Nothing", Nothing)
-
 -- Annotated Do
 eval1' (DoA x (Return v) _ c) = ("E-DoRet", return . shiftC (-1) $ subst c [(shiftV 1 v, 0)]) -- E-DoRet
 eval1' (DoA x (OpA l v (DotA y a c1)) t c2) = ("E-DoOp", return $ OpA l v (DotA y a (DoA x c1 t c2))) -- E-DoOp
@@ -301,11 +306,9 @@ eval1' (DoA x c1 t c2) = case (eval1' c1) of
     (step, (Just c1')) -> ("E-Do and " ++ step, return $ DoA x c1' t c2) -- E-Do
     (step, Nothing) -> ("Nothing", Nothing)
 --
-
 eval1' (Handle (Parallel (x, p, k, c) r fwd) (For l v (y :. c1) (z :. c2))) = ("E-Traverse" , Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
                          (shiftV 3 $ Lam y (Handle (Parallel (x, p, k, c) r fwd) c1), 1),
                          (shiftV 3 $ Lam z (Handle (Parallel (x, p, k, c) r fwd) c2), 0)]))
-
 eval1' (Handle h (Return v)) = ("E-HandRet",  return $ let (x, cr) = hreturn h in -- E-HandRet
   shiftC (-1) $ subst cr [(shiftV 1 v, 0)])
 eval1' (Handle h (Op l v (y :. c1))) = case hop h l of -- E-HandOp
@@ -345,12 +348,10 @@ eval1' (Handle h (For label v (y :. c1) (z :. c2))) = case hfor h label of -- E-
 eval1' (Handle h c) = case eval1' c of 
     (step, (Just c')) -> ("E-Hand and " ++ step, return $ Handle h c') -- E-Hand
     (step, Nothing) -> ("Nothing", Nothing)
-
 -- Annotated Handle
 eval1' (HandleA t (Parallel (x, p, k, c) r fwd) (ForA l v (DotA y a c1) (DotA z b c2))) = ("E-Traverse" , Just (shiftC (-3) $ subst c [(shiftV 3 v, 2), -- E-Traverse
                          (shiftV 3 $ LamA y a (HandleA t (Parallel (x, p, k, c) r fwd) c1), 1),
                          (shiftV 3 $ LamA z b (HandleA t (Parallel (x, p, k, c) r fwd) c2), 0)]))
-
 eval1' (HandleA t h (Return v)) = ("E-HandRet",  return $ let (x, cr) = hreturn h in -- E-HandRet
   shiftC (-1) $ subst cr [(shiftV 1 v, 0)])
 eval1' (HandleA t h (OpA l v (DotA y a c1))) = case hop h l of -- E-HandOp
@@ -387,7 +388,6 @@ eval1' (HandleA t h c) = case eval1' c of
     (step, (Just c')) -> ("E-Hand and " ++ step, return $ HandleA t h c') -- E-Hand
     (step, Nothing) -> ("Nothing", Nothing)
 --
-
 eval1' (If (Vbool True) c1 c2) = ("E-IfTrue", return c1) -- E-IfTrue
 eval1' (If (Vbool False) c1 c2) = ("E-IfTrue", return c2) -- E-IfFalse
 eval1' (Unop op v) = case evalUnop op v of -- E-Unop
@@ -396,7 +396,6 @@ eval1' (Unop op v) = case evalUnop op v of -- E-Unop
 eval1' (Binop op v1 v2) = case evalBinop op v1 v2 of -- E-Binop
     Just c -> ("E-Binop", return $ c)
     Nothing -> ("Nothing", Nothing)
-
 eval1' (Case (Vsum v) x c1 y c2) = case v of
   Left t  -> ("E-CaseLeft", return $ shiftC (-1) $ subst c1 [(shiftV 1 t, 0)]) -- E-CaseLeft
   Right t -> ("E-CaseRight", return $ shiftC (-1) $ subst c2 [(shiftV 1 t, 0)]) -- E-CaseRight
