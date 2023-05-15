@@ -56,9 +56,7 @@ This is actually an algebraic effect but grouped under the scoped effect directo
 
 The examples increment a counter in different ways.
 ```
-exInc1
-exInc2
-exInc3
+exInc1, exInc2, exInc3
 ```
 
 ##### Once effect
@@ -82,14 +80,7 @@ Raising and catching exceptions.
 
 Conditionally raise or do not raise overflow exceptions based on the value of a counter.
 ```
-exCatch1
-exCatch2
-exCatch3
-exCatch4
-exCatch5
-exCatch6
-exCatch7
-exCatch8
+exCatch1, exCatch2, exCatch3, exCatch4, exCatch5, exCatch6, exCatch7, exCatch8
 ```
 
 ##### State effect
@@ -104,16 +95,14 @@ Bounded depth first search.
 
 Bounded depth first search, taking the consumed depth in the scoped computation into account or not.
 ```
-exDepth1
-exDepth2
+exDepth1, exDepth2
 ```
 
 ##### Parser effect
 Parse a string that represents a computation with addition and multiplication and return the result.
 
 ```
-exParse1
-exParse2
+exParse1, exParse2
 ```
 
 ##### Reader effect
@@ -129,29 +118,21 @@ Pass, get and accumulate to a state.
 Accumulate a value
 
 ```
-exAccum1
-exAccum2
-exAccum3
-exAccum4
-exAccum5
+exAccum1, exAccum2, exAccum3, exAccum4, exAccum5
 ```
 
 ##### Weak exception effect
 Throw and exception in one parallel computation, all other parallel computations continue but do not execute their continuation
 
 ```
-exWeak
-exWeakSc
+exWeak, exWeakSc
 ```
 
 ##### PRNG effect
 Sample a pseudo random numbers, in parallel or sequentially.
 
 ```
-exPRNGpar
-exPRNGseq
-exPRNGparSc
-exPRNGseqSc
+exPRNGpar, exPRNGseq, exPRNGparSc, exPRNGseqSc
 ```
 
 ##### Amb effect
@@ -159,18 +140,14 @@ Execute a computation in parallel for every input in a list of input values.
 eg. find all 2 numbers that add to 13 or all 3 letter words of `H` and `T`.
 
 ```
-exAmb
-exComb
-exAmbSc
-exCombSc
+exAmb, exComb, exAmbSc, exCombSc
 ```
 
 #### Combined example: Depth with Amb
 Bounded depth first search, searching all nodes in parallel using the amb effect.
 
 ```
-exDepthAmb1
-exDepthAmb2
+exDepthAmb1, exDepthAmb2
 ```
 
 ### Evaluation by typechecking
