@@ -9,7 +9,9 @@ import Typing
 ----------------------------------------------------------------
 -- Nondeterminism with Once effect (Untyped)
 
--- Once effect handler
+-- | Once effect handler
+-- choose calculates all possible results
+-- once cuts off computation after first result
 hOnce :: Handler
 hOnce = Handler
   "hOnce" ["choose", "fail"] ["once"] []
@@ -32,7 +34,8 @@ hOnce = Handler
   (lift2fwd ("k", "z", Binop ConcatMap (Var "z" 0) (Var "k" 1)))
 
 
--- Once example program
+-- | Once example program
+-- Cuts off computation after first result and results heads in a computation that has two results: heads and tails.
 cOnce :: Comp
 cOnce = Sc "once" Vunit ("_" :. op "choose" Vunit)
                         ("b" :. If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails")))
@@ -44,8 +47,10 @@ cOnce = Sc "once" Vunit ("_" :. op "choose" Vunit)
 ----------------------------------------------------------------
 -- Typed Once effect
 
--- Typed once handler
+-- | Typed once handler
 -- Only returns first result
+-- choose calculates all possible results
+-- once cuts off computation after first result
 hOnceT :: Handler
 hOnceT = Handler
   "hOnce" ["choose", "fail"] ["once"] []
@@ -68,12 +73,13 @@ hOnceT = Handler
   (lift2fwd ("k", "z", Binop ConcatMap (Var "z" 0) (Var "k" 1)))
 
 
--- Typed once example computation
+-- | Typed once example computation
+-- Cuts off computation after first result and results heads in a computation that has two results: heads and tails.
 cOnceT :: Comp
 cOnceT = ScA "once" Vunit (DotA "_" Tunit (opT "choose" Vunit Tbool))
                         (DotA "b" Tbool (If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails"))))
 
--- First typed once example
+-- | First typed once typechecking example
 tOnceGam = Map.empty
 tOnceSig = Map.fromList([
   ("choose", Lop "choose" Tunit Tbool),

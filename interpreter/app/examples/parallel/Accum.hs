@@ -9,8 +9,10 @@ import Typing
 ----------------------------------------------------------------
 -- Accum Effect (Untyped)
 
--- Accum effect handler
+-- | Accum effect handler
 -- Accumulates a value
+-- accum accumulates a value
+-- for sums the accumulated values of a list of computations and runs the continuation with the sum
 hAccum :: Handler
 hAccum = Handler
   "hAccum" ["accum"] [] ["for"]
@@ -48,7 +50,9 @@ hAccum = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
--- Accum handler for Strings
+-- | Accum handler for Strings
+-- accum accumulates a string
+-- for concatenates the accumulated strings of a list of computations and runs the continuation with the accumulated string
 hAccumS :: Handler
 hAccumS = Handler
   "hAccum" ["accum"] [] ["for"]
@@ -86,7 +90,9 @@ hAccumS = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
--- Accum handler for lists
+-- | Accum handler for lists
+-- accum accumulates a list
+-- for concatenates the accumulated lists of a list of computations and runs the continuation with the accumulated list
 hAccumL :: Handler
 hAccumL = Handler
   "hAccumL" ["accum"] [] ["for"]
@@ -124,7 +130,8 @@ hAccumL = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
-
+-- | Accum example
+-- accumulates the values [1,2,3,4,5] and sums to 15
 cAccum :: Comp
 cAccum = For "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
@@ -138,7 +145,8 @@ exAccum1 = hPure # hAccum # cAccum
 
 -- Example without traverse clausule
 
--- Accum effect handler without traverse clause
+-- | Accum effect handler without traverse clause
+-- accum accumulates a value
 hAccumNoFor :: Handler
 hAccumNoFor = Handler
   "hAccum" ["accum"] [] []
@@ -175,7 +183,9 @@ exAccum2 = hPure # hAccumNoFor # cAccum
 ----------------------------------------------------------------------------------------------------------------
 -- Accum example via scoped effect
 
--- Accum effect handler as scoped effect
+-- | Accum effect handler as scoped effect
+-- accum accumulates a value
+-- for sums the accumulated values of a list of computations and runs the continuation with the sum
 hAccumSc1 :: Handler
 hAccumSc1 = Handler
   "hAccumSc" ["accum"] ["for"] []
@@ -213,7 +223,9 @@ hAccumSc1 = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
--- Accum effect handler as scoped effect
+-- | Accum effect handler as scoped effect
+-- accum accumulates a value
+-- for sums the accumulated values of a list of computations and runs the continuation with the sum
 hAccumSc2 :: Handler
 hAccumSc2 = Handler
   "hAccumSc" ["accum"] ["for"] []
@@ -251,7 +263,9 @@ hAccumSc2 = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
--- Accum for string as scoped effect
+-- | Accum for string as scoped effect
+-- accum accumulates a string
+-- for concatenates the accumulated strings of a list of computations and runs the continuation with the accumulated string
 hAccumSSc :: Handler
 hAccumSSc = Handler
   "hAccumSc" ["accum"] ["for"] [] 
@@ -290,7 +304,9 @@ hAccumSSc = Handler
   )
 
 
--- Accum handler for lists as scoped effect
+-- | Accum handler for lists as scoped effect
+-- accum accumulates a list
+-- for concatenates the accumulated lists of a list of computations and runs the continuation with the accumulated list
 hAccumScL :: Handler
 hAccumScL = Handler
   "hAccumScL" ["accum"] ["for"] []
@@ -328,11 +344,12 @@ hAccumScL = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
--- cAccum example rewritten as scoped effect
+-- | cAccum example rewritten as scoped effect
+-- accumulates the values [1,2,3,4,5] and sums to 15
 cAccumSc :: Comp
 cAccumSc = Sc "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) ("y" :. (op "accum" (Var "y" 0))) ("z" :. (Return (Var "z" 0)))
 
--- cAccumSc example handled by handler that uses scoped effect for pure for handling
+-- | cAccumSc example handled by handler that uses scoped effect for pure for handling
 exAccum3 :: Comp
 exAccum3 = hPureSc # hAccumSc1 # cAccumSc
 
@@ -340,7 +357,7 @@ exAccum3 = hPureSc # hAccumSc1 # cAccumSc
 -- evalFile exAccum3
 -- Return (15, [(),(),(),(),()])
 
--- cAccumSc example handled by handler that uses parallel effect for pure for handling
+-- | cAccumSc example handled by handler that uses parallel effect for pure for handling
 exAccum4 :: Comp
 exAccum4 = hPure # hAccumSc2 # cAccumSc
 
@@ -386,6 +403,8 @@ exAccum5 = hPureSc # hAccumScNoFor # cAccumSc
 -- Typed Accum handler for integers
 -- Pass, access and alter an accumulated value
 -- Parallel effect
+-- accum accumulates a value
+-- for sums the accumulated values of a list of computations and runs the continuation with the sum
 hAccumT :: Handler
 hAccumT = Handler
   "hAccum" ["accum"] [] ["for"]
@@ -424,7 +443,7 @@ hAccumT = Handler
   )
 
 
--- Typed Accum handler for strings
+-- | Typed Accum handler for strings
 -- Pass, access and alter an accumulated value
 -- Parallel effect
 hAccumST :: Handler
@@ -465,11 +484,12 @@ hAccumST = Handler
   )
 
 
--- Typed example accum computation
+-- | Typed example accum computation
+-- accumulates the values [1,2,3,4,5] and sums to 15
 cAccumT :: Comp
 cAccumT = ForA "for" (Vlist [Vint 1, Vint 2, Vint 3, Vint 4, Vint 5]) (DotA "y" Tint (opT "accum" (Var "y" 0) Tint)) (DotA "z" Any (Return (Var "z" 0)))
 
--- Typed Accum handler for integers without defined for
+-- | Typed Accum handler for integers without defined for
 -- Pass, access and alter an accumulated value
 -- Without the parallel effect to illustrate the impact of the effect
 hAccumNoForT :: Handler
@@ -493,7 +513,7 @@ hAccumNoForT = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
--- Accum example
+-- | Accum typechecking example
 tAccumGam = Map.empty
 tAccumSig = Map.fromList([
   ("accum", Lop "accum" Tint (Tpair Tint Tunit)),
@@ -502,7 +522,7 @@ tAccumSig = Map.fromList([
 tAccumComp1 = HandleA UNone hPureT (HandleA  (USecond UNone) hAccumT cAccumT)
 tAccum1 = checkFile tAccumGam tAccumSig tAccumComp1 (Tpair Tint (Tlist Tunit))
 
--- Accum example without parallel effect
+-- | Accum typechecking example without parallel effect
 tAccumComp2 = HandleA UNone hPureT (HandleA (USecond UNone) hAccumNoForT cAccumT)
 tAccum2 = checkFile tAccumGam tAccumSig tAccumComp2 (Tpair Tint (Tlist (Tpair Tint Tunit)))
 
@@ -511,11 +531,11 @@ tAccumSigSc = Map.fromList([
   ("for", Lsc "for" (Tlist Any)  Any)
   ])
 
--- Accum example as scoped effect
+-- | Accum typechecking example as scoped effect
 tAccumComp3 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumSc1T cAccumScT)
 tAccum3 = checkFile tAccumGam tAccumSigSc tAccumComp3 (Tpair Tint (Tlist Tunit))
 
--- Accum example as scoped effect without parallel effect
+-- | Accum typechecking example as scoped effect without parallel effect
 tAccumComp4 = HandleA UNone hPureScT (HandleA (USecond UNone) hAccumScNoForT cAccumScT)
 tAccum4 = checkFile tAccumGam tAccumSigSc tAccumComp4 (Tpair Tint (Tlist (Tpair Tint Tunit)))
 
@@ -598,6 +618,87 @@ hAccumSScT = Handler
   ("f", "p", "k", 
       DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
       App (Var "f" 3) (Var "pk" 0)
+  )
+
+-- | Typed Accum handler for lists
+-- Pass, access and alter an accumulated value
+-- Parallel effect
+hAccumLT :: Handler
+hAccumLT = Handler
+  "hAccumL" ["accum"] [] ["for"]
+  ("x", Return (Vpair (Vlist [], Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair (Tlist Any) (Tlist Tunit)) $
+      DoA "m'" (Unop Fst (Var "k'" 0)) (Tlist Any) $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tlist Tunit) $
+      DoA "m''" (Binop Append (Var "x" 4) (Var "m'" 1)) (Tlist Any) $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of
+    "for" ->     (Just ("list", "l", "k", 
+          DoA "pairs" (App (Var "l" 1) (Var "list" 2)) (Tlist (Tpair (Tlist Any) (Tlist Tunit))) $
+          DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
+          DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Tlist Tunit)) (Unop Snd (Var "l" 0)))) (Tlist (Tlist Tunit)) $
+          DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
+          LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+                                    If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
+                                                                      DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
+                                                                      DoA "y" (App (Var "reduce" 4) (Var "t" 0)) (Tlist Any) $
+                                                                      DoA "x" (Binop Append (Var "h" 2) (Var "y" 0)) (Tlist Any) $
+                                                                      Return (Var "x" 0)))
+            (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) (Tlist Any) $
+            DoA "base" (Unop Fst (Var "k'" 2)) (Tlist Any) $
+            DoA "k''" (Unop Snd (Var "k'" 3)) (Nested Tunit)$
+            DoA "res" (Binop Append (Var "base" 1) (Var "rest" 2)) (Tlist Any) $
+            Return  $ (Vpair (Var "res" 0, Var "k''" 1 )))))
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
+  )
+
+
+-- Typed Accum handler for lists as scoped effect
+-- Pass, access and alter an accumulated value
+-- Parallel effect
+hAccumScLT :: Handler
+hAccumScLT = Handler
+  "hAccumScL" ["accum"] ["for"] []
+  ("x", Return (Vpair (Vlist [], Var "x" 0)))
+  (\ oplabel -> case oplabel of
+    "accum" -> Just ("x", "k",
+      DoA "k'" (App (Var "k" 0) (Vunit)) (Tpair (Tlist Tint) (Tlist Tunit)) $
+      DoA "m'" (Unop Fst (Var "k'" 0)) (Tlist Tint) $
+      DoA "s" (Unop Snd (Var "k'" 1)) (Tlist Tunit) $
+      DoA "m''" (Binop Append (Var "x" 4) (Var "m'" 1)) (Tlist Any) $
+      Return (Vpair (Var "m''" 0, Var "s" 1)))
+    _ -> Nothing)
+  (\ sclabel -> case sclabel of
+    "for" -> Just ("x", "p", "k",
+              DoA "pairs" (ScA "for" (Var "x" 2) (DotA "y" Any (App (Var "p" 2) (Var "y" 0))) (DotA "z" Any (Return (Var "z" 0)))) (Tlist (Tpair (Tlist Any) (Nested Tunit))) $
+              DoA "first" (Binop Map (Var "pairs" 0) (LamA "l" (Tpair (Tlist Any) (Nested Tunit)) (Unop Fst (Var "l" 0)))) (Tlist (Tlist Any)) $
+              DoA "second" (Binop Map (Var "pairs" 1) (LamA "l" (Tpair (Tlist Any) (Nested Tunit)) (Unop Snd (Var "l" 0)))) (Nested Tunit) $
+              DoA "k'" (App (Var "k" 3) (Var "second" 0)) (Tpair (Tlist Any) (Nested Tunit)) $
+              LetrecA "reduce" (Tfunction (Tlist (Tlist Any)) (Tlist Any)) (LamA "l" (Tlist (Tlist Any)) . DoA "n" (Unop Empty (Var "l" 0)) Tbool $
+                                        If (Var "n" 0) (Return (Vlist [])) (DoA "h" (Unop Head (Var "l" 1)) (Tlist Any)$
+                                                                          DoA "t" (Unop Tail (Var "l" 2)) (Tlist (Tlist Any)) $
+                                                                          DoA "y" (App (Var "reduce" 4) (Var "t" 0)) (Tlist Any) $
+                                                                          DoA "x" (Binop Append (Var "h" 2) (Var "y" 0)) (Tlist Any) $
+                                                                          Return (Var "x" 0)))
+                (DoA "rest" (App (Var "reduce" 0) (Var "first" 3)) (Tlist Any) $
+                DoA "base" (Unop Fst (Var "k'" 2)) (Tlist Any) $
+                DoA "k''" (Unop Snd (Var "k'" 3)) (Nested Tunit)$
+                DoA "res" (Binop Append (Var "base" 1) (Var "rest" 2)) (Tlist Any) $
+                Return  $ (Vpair (Var "res" 0, Var "k''" 1 ))))
+    _ -> Nothing)
+  (\ forlabel -> case forlabel of 
+    _ -> Nothing)
+  ("f", "p", "k", 
+        DoA "pk" (Return (Vpair (Var "p" 1, Var "k" 0))) (Tpair Any Any) $
+        App (Var "f" 3) (Var "pk" 0)
   )
 
 -- Example Accum computation as scoped effect

@@ -11,7 +11,9 @@ import Typing
 ----------------------------------------------------------------
 -- Exceptions effect (Untyped)
 
--- Exceptions handler
+-- | Exceptions handler
+-- raise raises an exception
+-- catch catches an exception
 hExcept :: Handler
 hExcept = Handler
   "hExcept" ["raise"] ["catch"] []
@@ -34,30 +36,32 @@ hExcept = Handler
   (lift2fwd ("k", "z", app2 exceptMap (Var "z" 0) (Var "k" 1)))
 
 
-
+-- | except map function
 exceptMap :: Value
 exceptMap = Lam "z" . Return . Lam "k" $
   Case (Var "z" 1) "e" (Return (Vsum (Left (Var "e" 0))))
                    "x" (App (Var "k" 1) (Var "x" 0))
 
--- example program that raises an exception
+-- | example program that raises an exception
+-- raises an exception if counter is greater than 10
 cRaise :: Comp
 cRaise = Do "x" (op "inc" Vunit) $
          Do "b" (Binop Larger (Var "x" 0) (Vint 10)) $
          If (Var "b" 0) (Op "raise" (Vstr "Overflow") ("y" :. absurd (Var "y" 0)))
                         (Return (Var "x" 0))
 
--- example program that catches an exception
+-- | example program that catches an exception
 cCatch :: Comp
 cCatch = sc "catch" (Vstr "Overflow") ("b" :. If (Var "b" 0) cRaise (Return (Vint 10)))
 
--- example program that raises an exception
+-- | example program that raises an exception
+-- raises an exception if counter is greater than 10
 cIncr :: Comp
 cIncr = Do "x" (op "inc" Vunit) $
        Do "b" (Binop Larger (Var "x" 0) (Vint 10)) $
        If (Var "b" 0) (op "raise" (Vstr "Overflow")) (Return (Var "x" 1))
 
--- example program that catches an exception
+-- | example program that catches an exception
 cEx :: Comp
 cEx = Do "_" cIncr $
       Do "_" cIncr $
@@ -94,8 +98,9 @@ cCatch2 = Do "_" (cIncr) $
 ----------------------------------------------------------------
 -- Typed Exception example
 
--- Typed exception handler
--- Raise, catch and handle exceptions
+-- | Typed exception handler
+-- raise raises an exception
+-- catch catches an exception
 hExceptT :: Handler
 hExceptT = Handler
   "hExcept" ["raise"] ["catch"] []
@@ -117,37 +122,37 @@ hExceptT = Handler
     _ -> Nothing)
   (lift2fwd ("k", "z", app2T exceptMapT (Var "z" 0) (Var "k" 1)))
 
--- typed except map function
+-- | typed except map function
 exceptMapT :: Value
 exceptMapT = LamA "z" Any . Return . LamA "k" Any $
   Case (Var "z" 1) "e" (Return (Vsum (Left (Var "e" 0))))
                    "x" (App (Var "k" 1) (Var "x" 0))
 
--- Typed example computation raising an exception
+-- | Typed example computation raising an exception
 cRaiseT :: Comp
 cRaiseT = DoA "x'" (opT "inc" Vunit Tint) Tint $
          DoA "b" (Binop Larger (Var "x'" 0) (Vint 10)) Tbool $
          If (Var "b" 0) (OpA "raise" (Vstr "Overflow") (DotA "y" Tunit (absurd (Var "y" 0))))
                         (Return (Var "x'" 1))
 
--- Typed example computation catching an exception
+-- | Typed example computation catching an exception
 cCatchT :: Comp
 cCatchT = scT "catch" (Vstr "Overflow") "b" Tbool (If (Var "b" 0) cRaiseT (Return (Vint 10))) Tint
 
--- Typed example computation conditionally raising an exception using Inc effect
+-- | Typed example computation conditionally raising an exception using Inc effect
 cIncrT :: Comp
 cIncrT = DoA "x" (opT "inc" Vunit Tint) Tint $
        DoA "b" (Binop Larger (Var "x" 0) (Vint 10)) Tbool $
        If (Var "b" 0) (opT "raise" (Vstr "Overflow") Tint) (Return (Var "x" 1))
 
--- Typed example computation that may or may not throw an exception
+-- | Typed example computation that may or may not throw an exception
 cExT :: Comp
 cExT = DoA "_" cIncrT Tint $
       DoA "_" cIncrT Tint $
       DoA "_" cIncrT Tint $
       Return (Vstr "success")
 
--- First typed exception example
+-- | First typed exception typechecking example
 tCatchGam1 = Map.fromList([
   ("tIncA", Tbool)])
 tCatchSig1 = Map.fromList([
@@ -157,7 +162,7 @@ tCatchSig1 = Map.fromList([
 tCatchComp1 = HandleA (USum UNone UNone) hExceptT (runIncT 42 cCatchT (Tsum Tstr (Tpair Tint Tint)))
 tCatch1 = checkFile tCatchGam1 tCatchSig1 tCatchComp1 (Tsum Tstr (Tpair Tint Tint))
 
--- Second typed exception example
+-- | Second typed exception typechecking example
 tCatchGam2 = Map.fromList([
   ("tIncA", (Tsum Tstr Tint))])
 tCatchComp2 = runIncT 42 (HandleA (USum UNone UNone) hExceptT cCatchT) (Tpair (Tsum Tstr Tint) Tint)
@@ -168,36 +173,36 @@ tCatchSig2 = Map.fromList([
   ("catch", Lsc "catch" Tstr Tstr),
   ("inc", Lop "inc" Tunit Tint)])
 
--- Example computation catching exception
+-- | Example computation catching exception
 cCatch2T :: Comp
 cCatch2T = DoA "_" (cIncrT) Tint $
       scT "catch" (Vstr "Overflow") "b" Tbool (If (Var "b" 0) cExT (Return (Vstr "fail"))) Tstr
 
--- Third typed exception example
+-- | Third typed exception example
 tCatchGam3 = Map.fromList([
   ("tIncA", Tstr)])
 tCatchComp3 = HandleA (USum UNone UNone) hExceptT (runIncT 1 cCatch2T (Tsum Tstr (Tpair Tstr Tint)))
 tCatch3 = checkFile tCatchGam3 tCatchSig2 tCatchComp3 (Tsum Tstr (Tpair Tstr Tint))
 
--- Fourth typed exception example
+-- | Fourth typed exception example
 tCatchGam4 = Map.fromList([
   ("tIncA", (Tsum Tstr Tstr))])
 tCatchComp4 = runIncT 1 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
 tCatch4 = checkFile tCatchGam4 tCatchSig2 tCatchComp4 (Tpair (Tsum Tstr Tstr) Tint)
 
--- Fifth typed exception example
+-- | Fifth typed exception example
 tCatchComp5 = HandleA (USum UNone UNone) hExceptT (runIncT 8 cCatch2T (Tsum Tstr (Tpair Tstr Tint)))
 tCatch5 = checkFile tCatchGam3 tCatchSig2 tCatchComp5 (Tsum Tstr (Tpair Tstr Tint))
 
--- Sixth typed exception example
+-- | Sixth typed exception example
 tCatchComp6 = runIncT 8 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
 tCatch6 = checkFile tCatchGam4 tCatchSig2 tCatchComp6 (Tpair (Tsum Tstr Tstr) Tint)
 
--- Seventh typed exception example
+-- | Seventh typed exception example
 tCatchComp7 = HandleA (USum UNone UNone) hExceptT (runIncT 42 cCatch2T (Tsum Tstr (Tpair Tstr Tint)))
 tCatch7 = checkFile tCatchGam3 tCatchSig2 tCatchComp7 (Tsum Tstr (Tpair Tstr Tint))
 
--- Eight typed exception example
+-- | Eight typed exception example
 tCatchComp8 = runIncT 42 (HandleA (USum UNone UNone) hExceptT cCatch2T) (Tpair (Tsum Tstr Tstr) Tint)
 tCatch8 = checkFile tCatchGam4 tCatchSig2 tCatchComp8 (Tpair (Tsum Tstr Tstr) Tint)
 

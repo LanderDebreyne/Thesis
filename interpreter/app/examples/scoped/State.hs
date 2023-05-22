@@ -10,7 +10,11 @@ import Typing
 ----------------------------------------------------------------
 -- Local State Effect (Untyped)
 
--- State handler
+-- | State handler
+-- Passes and updates state
+-- get gets the state
+-- put puts the state
+-- local runs a scoped computation with a local state
 hState :: Handler
 hState = Handler
   "hState" ["get", "put"] ["local"] []
@@ -50,14 +54,15 @@ hState = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
--- State example program
+-- | State example program
+-- puts 10 in the state, runs a scoped computation that puts 42 in the state, gets the state and returns it
 cState :: Comp
 cState = Do "_" (op "put" (Vpair (Vstr "x", Vint 10))) $
          Do "x1" (sc "local" (Vpair (Vstr "x", Vint 42)) ("_" :. op "get" (Vstr "x"))) $
          Do "x2" (op "get" (Vstr "x")) $
          Return (Vpair (Var "x1" 1, Var "x2" 0))
 
--- Handling @cState@:
+-- | Handling @cState@:
 exState :: Comp
 exState = Do "m" (Unop Newmem Vunit) $ 
                 Do "c" (hState # cState) $
@@ -70,8 +75,11 @@ exState = Do "m" (Unop Newmem Vunit) $
 ----------------------------------------------
 -- Typed State effect
 
--- Typed state handler
+-- | Typed state handler
 -- Pass, get and put state
+-- get gets the state
+-- put puts the state
+-- local runs a scoped computation with a local state
 hStateT :: Handler
 hStateT = Handler
   "hState" ["get", "put"] ["local"] []
@@ -111,18 +119,20 @@ hStateT = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
--- Typed state example computation
+-- | Typed state example computation
+-- puts 10 in the state, runs a scoped computation that puts 42 in the state, gets the state and returns it
 cStateT :: Comp
 cStateT = DoA "_" (opT "put" (Vpair (Vstr "x", Vint 10)) Tunit) Tunit $
          DoA "x1" (scT "local" (Vpair (Vstr "x", Vint 42)) "_" Tunit (opT "get" (Vstr "x") Tint) Tint) Tint $
          DoA "x2" (opT "get" (Vstr "x") Tint) Tint $
          Return (Vpair (Var "x1" 1, Var "x2" 0))
 
--- Typed state example
+-- | Typed state typechecking example
 tStateGam = Map.fromList [("hStateA", Tint)]
 tStateSig = Map.fromList [("get", Lop "get" Tstr (Tfunction Tmem (Tpair Tstr Tmem))),
                           ("put", Lop "put" (Tpair Tstr Tint) (Tfunction Tmem (Tpair Tunit Tmem))),
                           ("local", Lsc "local" (Tpair Tstr Tint) Tint)]
+-- | Typed state example
 handle_cStateT :: Comp
 handle_cStateT = DoA "m" (Unop Newmem Vunit) Tmem $ 
                 DoA "c" (HandleA (UFunction (UFirst UNone)) hStateT cStateT) (Tfunction Tmem (Tpair (Tpair Tint Tint) Tmem))$

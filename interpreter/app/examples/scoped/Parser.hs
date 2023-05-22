@@ -11,8 +11,9 @@ import Typing
 ----------------------------------------------------------------
 -- Parser effect (Untyped)
 
--- Parser handler 
+-- | Parser handler 
 -- Consumes one token
+-- token consumes one token
 hToken :: Handler
 hToken = Handler
   "hToken" ["token"] [] []
@@ -43,7 +44,8 @@ hToken = Handler
 -- (<>) :: Comp -> Comp -> Comp
 -- x <> y = Op "choose" Vunit ("b" :. If (Var "b" 0) (shiftC 1 x) (shiftC 1 y))
 
--- Digit parser
+-- | Digit parser
+-- digit parses a single digit
 digit :: Value
 digit =  Lam "_" $ 
          op "token" (Vchar '0')
@@ -57,14 +59,17 @@ digit =  Lam "_" $
       <> op "token" (Vchar '8')
       <> op "token" (Vchar '9')
 
--- Many token parser
+-- | Many token parser
+-- many1 parses one or more tokens of the given parser
 many1 :: Value -> Comp
 many1 p = Do "a" (App p Vunit) $
           Do "as" (many1 p <> Return (Vstr "")) $
           Do "x" (Binop ConsS (Var "a" 1) (Var "as" 0)) $
           Return (Var "x" 0)
 
--- Expression parser
+-- | Expression parser
+-- expr parses an expression
+-- Doesn't use cut to abort early in case of success
 expr :: Value
 expr = Lam "_" $
        (Do "i" (App term Vunit) $
@@ -74,7 +79,8 @@ expr = Lam "_" $
         Return (Var "x" 0))
     <> (Do "i" (App term Vunit) $ Return (Var "i" 0))
 
--- Term parser
+-- | Term parser
+-- parses a multiplication term or a factor
 term :: Value
 term = Lam "_" $
        (Do "i" (App factor Vunit) $
@@ -84,7 +90,8 @@ term = Lam "_" $
         Return (Var "x" 0))
     <> (Do "i" (App factor Vunit) $ Return (Var "i" 0))
 
--- Factor parser
+-- | Factor parser
+-- factor parses a factor (a number or an expression in parenthesis)
 factor :: Value
 factor = Lam "_" $
          (Do "ds" (many1 digit) $
@@ -95,7 +102,8 @@ factor = Lam "_" $
           Do "_" (op "token" (Vchar ')')) $
           Return (Var "i" 1))
 
--- Expression parser using cut to abort early in case of success
+-- | Expression parser using cut to abort early in case of success
+-- significant reduction in execution steps for this example
 expr1 :: Value
 expr1 = Lam "_" $
         Do "i" (App term Vunit) $
@@ -105,14 +113,14 @@ expr1 = Lam "_" $
                                   Do "x" (Binop Add (Var "i" 4) (Var "j" 0)) $
                                   Return (Var "x" 0)) <> Return (Var "i" 1))
 
--- Handling @expr1@:
+-- | Handling @expr1@:
 exParse1 :: Comp
 exParse1 = hCut # (Do "c" (hToken # App expr1 Vunit) $
                        App (Var "c" 0) (Vstr "(2+5)*8"))
 -- >>> evalP exParse1
 -- Return (Vret (Vlist [Vpair (Vint 56,Vstr ""),Vpair (Vint 7,Vstr "*8")]))
 
--- Handling @expr@:
+-- | Handling @expr@:
 exParse2 :: Comp
 exParse2 = hCut # (Do "c" (hToken # App expr Vunit) $
                       App (Var "c" 0) (Vstr "(2+5)*8"))
@@ -122,8 +130,9 @@ exParse2 = hCut # (Do "c" (hToken # App expr Vunit) $
 --------------------------------------------------------------------------------------------------------------------------------
 -- Typed Parser example
 
--- Typed parser handler 
+-- | Typed parser handler 
 -- Handler consumes one token
+-- token consumes one token
 hTokenT :: Handler
 hTokenT = Handler
   "hToken" ["token"] [] []
@@ -150,11 +159,12 @@ hTokenT = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
--- Parsing "OR" operator
+-- | Parsing "OR" operator
 (<>) :: Comp -> Comp -> Comp
 x <> y = OpA "choose" Vunit (DotA "b" Tbool (If (Var "b" 0) (shiftC 1 x) (shiftC 1 y)))
 
--- Digit parser
+-- | Digit parser
+-- digit parses a single digit
 digitT :: Value
 digitT =  LamA "_" Tunit $ 
          opT "token" (Vchar '0') Tunit
@@ -168,14 +178,17 @@ digitT =  LamA "_" Tunit $
       <> opT "token" (Vchar '8') Tunit
       <> opT "token" (Vchar '9') Tunit
 
--- Many token parser
+-- | Many token parser
+-- many1 parses one or more tokens of the given parser
 many1T :: Value -> Comp
 many1T p = DoA "a" (App p Vunit) Tstr $
           DoA "as" (many1T p <> Return (Vstr "")) Tstr $
           DoA "x" (Binop ConsS (Var "a" 1) (Var "as" 0)) Tstr $
           Return (Var "x" 0)
 
--- Expression parser
+-- | Expression parser
+-- expr parses an expression
+-- Doesn't use cut to abort early in case of success
 exprT :: Value
 exprT = LamA "_" Tunit $
        (DoA "i" (App termT Vunit) Tint $
@@ -186,6 +199,7 @@ exprT = LamA "_" Tunit $
     <> (DoA "i" (App termT Vunit) Tint $ Return (Var "i" 0))
 
 -- Term parser
+-- term parses a multiplication term or a factor
 termT :: Value
 termT = LamA "_" Tunit $
        (DoA "i" (App factorT Vunit) Tint $
@@ -195,7 +209,8 @@ termT = LamA "_" Tunit $
         Return (Var "x" 0))
     <> (DoA "i" (App factorT Vunit) Tint $ Return (Var "i" 0))
 
--- Factor Parser
+-- | Factor Parser
+-- factor parses a factor (a number or an expression in parenthesis)
 factorT :: Value
 factorT = LamA "_" Tunit $
          (DoA "ds" (many1T digitT) Tstr $
@@ -206,7 +221,7 @@ factorT = LamA "_" Tunit $
           DoA "_" (opT "token" (Vchar ')') Tunit) Tunit $
           Return (Var "i" 1))
 
--- Expression parser
+-- | Expression parser
 -- Uses cut to abort early in case of success
 expr1T :: Value
 expr1T = LamA "_" Tunit $
@@ -218,17 +233,18 @@ expr1T = LamA "_" Tunit $
                                             Return (Var "x" 0)) <> Return (Var "i" 1))) 
                           (DotA "z" Any (Return (Var "z" 0)))
 
--- Typed parser example to parse and compute calculation from string
+-- | Typed parser example to parse and compute calculation from string
 -- Uses early abort with cut
 handle_expr1T :: Comp
 handle_expr1T = HandleA (URet (UList UNone)) hCutT (DoA "c" (HandleA (UFunction (UFirst UNone)) hTokenT (App expr1T Vunit)) (Tfunction Tstr Any) $
                        App (Var "c" 0) (Vstr "(2+5)*8"))
 
--- Typed parser example to parse and compute calculation from string 
+-- | Typed parser example to parse and compute calculation from string 
 handle_exprT :: Comp
 handle_exprT = HandleA (URet (UList UNone)) hCutT (DoA "c" (HandleA (UFunction (UFirst UNone)) hTokenT (App exprT Vunit)) (Tfunction Tstr Any) $
                       App (Var "c" 0) (Vstr "(2+5)*8"))
 
+-- | First typed parser typechecking example
 tParseGam = Map.fromList([
   ("tCutA", (Tpair Tint Tstr))])
 tParseSig = Map.fromList([

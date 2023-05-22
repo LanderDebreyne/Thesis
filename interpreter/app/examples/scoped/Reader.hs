@@ -7,11 +7,10 @@ import qualified Data.Map as Map
 import Typing
 
 ----------------------------------------------------------------
--- Reader effect
--- ask algebraic effect
--- local scoped effect
-
--- | @hReader@ is a reader handler
+-- | Reader effect
+-- ask retrieves the reader value
+-- local alters the reader value
+-- @hReader@ is a reader handler
 hReader :: Handler
 hReader = Handler
   "hReader" ["ask"] ["local"] []
@@ -45,6 +44,7 @@ hReader = Handler
 
 
 -- | cReader is an example reader effect program
+-- asks for the reader value and alters it locally
 cReader :: Comp
 cReader = Do "x1" (op "ask" Vunit) $
           Do "x2" ((sc "local" (Lam "x" (Binop Append (Var "x" 0) (Vlist [Vint 5])))) ("_" :. op "ask" Vunit)) $
@@ -56,7 +56,7 @@ runReader :: Value -> Comp -> Comp
 runReader s c = Do "x3" ((sc "local" s) ("_" :. c)) $ 
                 Return (Var "x3" 0)
 
--- Handling @cReader@:
+-- | Handling @cReader@:
 handle_cReader :: Value -> Comp
 handle_cReader c = Do "m" (Unop Newmem (Vunit)) $
                    Do "m" (Binop Update (Vpair ((Vstr "readerEnv"), (Vlist [Vint 1, Vint 2, Vint 3, Vint 4]))) (Var "m" 0)) $
@@ -64,7 +64,7 @@ handle_cReader c = Do "m" (Unop Newmem (Vunit)) $
                    Do "x" (App (Var "c" 0) (Var "m" 1)) $
                    Unop Fst (Var "x" 0)
 
--- @cReader@ example:
+-- | @cReader@ example:
 exReader :: Comp
 exReader = handle_cReader (Lam "x" (Return (Vlist [Vint 1, Vint 2, Vint 3, Vint 4])))
 
@@ -75,8 +75,9 @@ exReader = handle_cReader (Lam "x" (Return (Vlist [Vint 1, Vint 2, Vint 3, Vint 
 ------------------------------------------------------------------------
 -- Typed reader example
 
--- Typed reader example
--- Ask state and alter local state
+-- | Typed reader example
+-- ask retrieves the reader value
+-- local alters the reader value
 hReaderT :: Handler
 hReaderT = Handler
   "hReader" ["ask"] ["local"] []
@@ -108,14 +109,15 @@ hReaderT = Handler
         App (Var "f" 4) (Var "pk" 0)
   )
 
--- Typed example computation using reader
+-- | Typed example computation using reader
+-- asks for the reader value and alters it locally
 cReaderT :: Comp
 cReaderT = DoA "x1" (opT "ask" Vunit (Tlist Tint)) (Tlist Tint) $
           DoA "x2" ((scT "local" (LamA "x" (Tlist Tint) (Binop Append (Var "x" 0) (Vlist [Vint 5])))) "_" Tunit (opT "ask" Vunit (Tlist Tint)) (Tlist Tint)) (Tlist Tint) $
           DoA "x3" (opT "ask" Vunit (Tlist Tint)) (Tlist Tint) $ 
           Return (Vpair ((Vpair (Var "x3" 0, Var "x2" 1)), (Var "x1" 2)))
 
--- Typed reader example
+-- | Typed reader example
 handle_cReaderT :: Comp
 handle_cReaderT = DoA "m" (Unop Newmem Vunit) Tmem $
                   DoA "m'" (Binop Update (Vpair (Vstr "readerEnv", Vlist [Vint 1, Vint 2, Vint 3, Vint 4])) (Var "m" 0)) Tmem $
@@ -123,6 +125,7 @@ handle_cReaderT = DoA "m" (Unop Newmem Vunit) Tmem $
                    DoA "x" (App (Var "c" 0) (Var "m'" 1)) (Tpair (Tpair (Tpair (Tlist Tint) (Tlist Tint)) (Tlist Tint)) Tmem) $
                    Unop Fst (Var "x" 0)
 
+-- | Typed reader typechecking example
 tReaderGam = Map.empty
 tReaderSig = Map.fromList([
   ("ask", Lop "ask" Tunit (Tfunction Tmem (Tlist Tint))),

@@ -9,7 +9,11 @@ import Typing
 ----------------------------------------------------------------
 -- Depth-Bounded Search Effect (Untyped)
 
--- Depth-Bounded Search handler
+-- | Depth-Bounded Search handler
+-- The depth bound is passed as an argument to the handler.
+-- The depth consumed by the scoped computation is not counted in the global depth bound.
+-- choose calculates all possible results, but only if the depth bound is not exceeded.
+-- depth calculates all possible results that do not exceed the depth bound.
 hDepth :: Handler
 hDepth = Handler
   "hDepth" ["choose", "fail"] ["depth"] []
@@ -46,8 +50,11 @@ hDepth = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
--- Depth-Bounded Search handler
+-- | Depth-Bounded Search handler
+-- The depth bound is passed as an argument to the handler.
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
+-- choose calculates all possible results, but only if the depth bound is not exceeded.
+-- depth calculates all possible results that do not exceed the depth bound.
 hDepth2 :: Handler
 hDepth2 = Handler
   "hDepth" ["choose", "fail"] ["depth"] []
@@ -89,7 +96,8 @@ hDepth2 = Handler
     )))
 
 
--- Depth bounded search example program 
+-- | Depth bounded search example program
+-- Finds results of depth 1 
 cDepth :: Comp
 cDepth = Sc "depth" (Vint 1) ("_" :.
  Do "b" (op "choose" Vunit) $
@@ -118,9 +126,11 @@ cDepth = Sc "depth" (Vint 1) ("_" :.
 ---------------------------------------------------------------------------------------------------------------------------
 -- Typed Bounded Depth First Search effect
 
--- Typed bounded depth first search handler
--- Restarts depth bound in the continuation
+-- | Typed bounded depth first search handler
+-- Does not restart depth bound in the continuation
 -- Does not take into account consumed depth in scoped computation
+-- choose calculates all possible results, but only if the depth bound is not exceeded.
+-- depth calculates all possible results that do not exceed the depth bound.
 hDepthT :: Handler
 hDepthT = Handler
   "hDepth" ["choose", "fail"] ["depth"] []
@@ -157,9 +167,11 @@ hDepthT = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
--- Typed bounded depth first search handler
+-- | Typed bounded depth first search handler
 -- Does not restart depth bound in the continuation
 -- Takes into account consumed depth in scoped computation
+-- choose calculates all possible results, but only if the depth bound is not exceeded.
+-- depth calculates all possible results that do not exceed the depth bound.
 hDepth2T :: Handler
 hDepth2T = Handler
   "hDepth" ["choose", "fail"] ["depth"] []
@@ -200,7 +212,8 @@ hDepth2T = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
--- Typed depth example computation
+-- | Typed depth example computation
+-- Finds results of depth 1
 cDepthT :: Comp
 cDepthT = ScA "depth" (Vint 1) (DotA "_" Tunit
  (DoA "b" (opT "choose" Vunit Tbool) Tbool $
@@ -219,7 +232,8 @@ cDepthT = ScA "depth" (Vint 1) (DotA "_" Tunit
                             (Return (Vint 5))
                             (Return (Vint 6))))))
 
--- First typed depth example
+-- | First typed depth typechecking example
+-- Uses first typed depth handler, which does not take into account consumed depth in scoped computation
 tDepthGam = Map.empty
 tDepthSig = Map.fromList([
   ("depth", Lsc "depth" Tint Tint),
@@ -230,7 +244,8 @@ tDepthSig = Map.fromList([
 tDepthComp1 = DoA "f" (HandleA (UFunction (UList (UFirst UNone))) hDepthT cDepthT) (Tfunction Tint (Tlist (Tpair Tint Tint))) $ App (Var "f" 0) (Vint 2)
 tDepth1 = checkFile tDepthGam tDepthSig tDepthComp1 (Tlist (Tpair Tint Tint))
 
--- Second typed depth example
+-- | Second typed depth typechecking example
+-- Uses second typed depth handler, which does take into account consumed depth in scoped computation
 tDepthComp2 = DoA "f" (HandleA (UFunction (UList (UFirst UNone))) hDepth2T cDepthT) (Tfunction Tint (Tlist (Tpair Tint Tint))) $ App (Var "f" 0) (Vint 2)
 tDepth2 = checkFile tDepthGam tDepthSig tDepthComp2 (Tlist (Tpair Tint Tint))
 

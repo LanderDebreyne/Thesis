@@ -11,7 +11,11 @@ import qualified Data.Map as Map
 ----------------------------------------------------------------
 -- Depth-Bounded Search with Amb (Untyped)
 
--- Depth-Bounded Search handler that uses parallel Amb for parallel search
+-- | Depth-Bounded Search handler that uses parallel Amb for parallel search
+-- Combines the depth handler with the amb handler
+-- The depth consumed by the scoped computation is not counted in the global depth bound.
+-- choose calculates all possible results up to the depth bound
+-- depth calculates the depth of the scoped computation
 hDepthAmb :: Handler
 hDepthAmb = Handler
   "hDepthAmb" ["choose", "fail"] ["depth"] []
@@ -46,8 +50,10 @@ hDepthAmb = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
--- Depth-Bounded Search handler that uses parallel Amb for parallel search
+-- | Depth-Bounded Search handler that uses parallel Amb for parallel search
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
+-- choose calculates all possible results up to the depth bound
+-- depth calculates the depth of the scoped computation
 hDepthAmb2 :: Handler
 hDepthAmb2 = Handler
   "hDepthAmb2" ["choose", "fail"] ["depth"] []
@@ -102,7 +108,11 @@ exDepthAmb2 = hPure # hAmb # (Do "f" (hDepthAmb2 # cDepth) $ App (Var "f" 0) (Vi
 --------------------------------------------------------------------------------------------------------------------
 -- Depth-Bounded Search with Amb (Typed)
 
--- Depth-Bounded Search handler that uses parallel Amb for parallel search
+-- | Typed depth-Bounded Search handler that uses parallel Amb for parallel search
+-- Combines the depth handler with the amb handler
+-- The depth consumed by the scoped computation is not counted in the global depth bound.
+-- choose calculates all possible results up to the depth bound
+-- depth calculates the depth of the scoped computation
 hDepthAmbT :: Handler
 hDepthAmbT = Handler
   "hDepthAmb" ["choose", "fail"] ["depth"] []
@@ -137,8 +147,10 @@ hDepthAmbT = Handler
         App (Var "k'" 0) (Var "d" 1))
     )))
 
--- Depth-Bounded Search handler that uses parallel Amb for parallel search
+-- | Typed depth-Bounded Search handler that uses parallel Amb for parallel search
 -- The depth consumed by the scoped computation is also counted in the global depth bound.
+-- choose calculates all possible results up to the depth bound
+-- depth calculates the depth of the scoped computation
 hDepthAmb2T :: Handler
 hDepthAmb2T = Handler
   "hDepthAmb2" ["choose", "fail"] ["depth"] []
@@ -185,14 +197,14 @@ tDepthAmbSig = Map.fromList([
   ])
 
 
--- | Depth-Bounded Search with Amb using first handler
+-- | Depth-Bounded Search with Amb using first handler typechecking example
 ------
 tDepthAmbComp1 = HandleA UNone hPureT (HandleA (UList UNone) hAmbT (DoA "f" (HandleA (UList UNone) hDepthAmbT cDepthT) (Tfunction Tint Any) $ App (Var "f" 0) (Vint 2)))
 -- Typechecking
 tDepthAmb1 = checkFile Map.empty tDepthAmbSig tDepthAmbComp1 (Nested (Tpair Tint Tint))
 ------
 
--- | Depth-Bounded Search with Amb using second handler
+-- | Depth-Bounded Search with Amb using second handler typechecking example
 ------
 tDepthAmbComp2 = HandleA UNone hPureT (HandleA (UList UNone) hAmbT (DoA "f" (HandleA (UList UNone) hDepthAmb2T cDepthT) (Tfunction Tint Any) $ App (Var "f" 0) (Vint 2)))
 -- Typechecking

@@ -10,6 +10,13 @@ import Typing
 ----------------------------------------------------------------
 -- Weak exceptions example
 
+-- | Weak exceptions handler
+-- Implements exceptions as a parallel effect
+-- If a computation running in parallel with other computation encounters an exception
+-- Other computation don't immediately stop computation
+-- But they do not run their continuation
+-- throw throws an exception
+-- for only runs the continuation if no exception is thrown
 hWeak :: Handler
 hWeak = Handler
   "hWeak" ["throw"] [] ["for"]
@@ -33,7 +40,9 @@ hWeak = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
-
+-- | Weak exceptions example computation
+-- throws an exception if counter is equal to 2
+-- does not run the continuation does run the other parallel computations
 cWeak :: Comp
 cWeak = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
          (For "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
@@ -54,6 +63,8 @@ exWeak = hPure # hAccumS # hWeak # cWeak
 --------------------------------------------------------------------------------------------------------------------------------
 -- Weak exceptions example as scoped effect
 
+-- | Weak exceptions handler as scoped effect
+-- Implements exceptions as a parallel effect
 hWeakSc :: Handler
 hWeakSc = Handler
   "hWeak" ["throw"] ["for"] []
@@ -76,6 +87,9 @@ hWeakSc = Handler
         App (Var "f" 3) (Var "pk" 0)
   )
 
+-- | Weak exceptions as scoped effect example computation
+-- throws an exception if counter is equal to 2
+-- does not run the continuation does run the other parallel computations
 cWeakSc :: Comp
 cWeakSc = Do "_" (Op "accum" (Vstr "start ") ("y" :. Return (Var "y" 0))) $ 
          (Sc "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
@@ -96,7 +110,7 @@ exWeakSc = hPureSc # hAccumSSc # hWeakSc # cWeakSc
 -------------------------------------------------------------------------------
 -- Typed weak exceptions example
 
--- Typed weak exceptions handler
+-- | Typed weak exceptions handler
 -- Implements exceptions as a parallel effect
 -- If a computation running in parallel with other computation encounters an exception
 -- Other computation don't immediately stop computation
@@ -124,7 +138,9 @@ hWeakT = Handler
       App (Var "f" 3) (Var "pk" 0)
   )
 
--- Typed weak exceptions example computation
+-- | Typed weak exceptions example computation
+-- throws an exception if counter is equal to 2
+-- does not run the continuation does run the other parallel computations
 cWeakT :: Comp
 cWeakT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Tunit (Return (Var "y" 0)))) Tunit $ 
          (ForA "for" (Vlist [Vstr "1", Vstr "2", Vstr "3", Vstr "4", Vstr "5"])
@@ -135,7 +151,7 @@ cWeakT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Tunit (Return (Var "y" 0
         (OpA "accum" (Var "y" 1) (DotA "y" Tunit (Return (Var "y" 0))))))
         (DotA "z" Any (Return (Var "z" 0))))
 
--- Typed weak exceptions 
+-- | Typed weak exceptions typechecking example 
 tWeakGam = Map.empty
 tWeakSig = Map.fromList([
   ("accum", Lop "accum" Tstr (Tpair Tstr Tunit)),
@@ -145,7 +161,7 @@ tWeakSig = Map.fromList([
 tWeakComp1 = HandleA UNone hPureT (HandleA (USecond UNone) hAccumST (HandleA (USum UNone UNone) hWeakT cWeakT))
 tWeak1 = checkFile tWeakGam tWeakSig tWeakComp1 (Tpair Tstr (Tsum Tstr Tunit))
 
--- Typed weak exceptions handler as scoped effect
+-- | Typed weak exceptions handler as scoped effect
 -- Implements exceptions as a parallel effect
 -- If a computation running in parallel with other computation encounters an exception
 -- Other computation don't immediately stop computation
@@ -183,7 +199,7 @@ cWeakScT = DoA "_" (OpA "accum" (Vstr "start ") (DotA "y" Any (Return (Var "y" 0
         (OpA "accum" (Var "y" 1) (DotA "y" Any (Return (Var "y" 0))))))
         (DotA "z" Any (Return (Var "z" 0))))
 
--- Typed weak exceptions as scoped effect example
+-- | Typed weak exceptions as scoped effect typechecking example
 tWeakSigSc = Map.fromList([
   ("accum", Lop "accum" Tstr (Tpair Tstr Tunit)),
   ("throw", Lop "throw" Tstr (Tpair Tstr Tunit)),

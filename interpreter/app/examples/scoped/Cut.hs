@@ -9,7 +9,10 @@ import Typing
 ----------------------------------------------------------------
 -- Nondeterminism with Cut Effect (Untyped)
 
--- Cut effect handler
+-- | Cut effect handler
+-- choose calculates all possible results
+-- cut cuts off computation after first result
+-- call calls a scoped computation (containing cut)
 hCut :: Handler
 hCut = Handler
   "hCut" ["choose", "fail", "cut"] ["call"] []
@@ -33,7 +36,8 @@ hCut = Handler
   (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
 
 
--- | A simple program simulates the behavior of @cOnce@ using @cut@ and @call@.
+-- | A simple program that simulates the behavior of @cOnce@ using @cut@ and @call@.
+-- Cuts off computation after first result and results heads in a computation that has two results: heads and tails.
 cCut :: Comp
 cCut = Do "b" (sc "call" Vunit ("_" :.
           Do "y" (op "choose" Vunit) $
@@ -48,9 +52,10 @@ cCut = Do "b" (sc "call" Vunit ("_" :.
 ----------------------------------------------------------------
 -- Typed Cut effect
 
--- Typed cut handler
--- Only returns first result
--- Cuts off computation after first result
+-- | Typed cut handler
+-- choose calculates all possible results
+-- cut cuts off computation after first result
+-- call calls a scoped computation (containing cut)
 hCutT :: Handler
 hCutT = Handler
   "hCut" ["choose", "fail", "cut"] ["call"] []
@@ -74,7 +79,8 @@ hCutT = Handler
   (lift2fwd ("k", "z", Binop ConcatMapCutList (Var "z" 0) (Var "k" 1)))
 
 
--- Typed cut effect example computation
+-- | Typed cut effect example computation
+-- Cuts off computation after first result and results heads in a computation that has two results: heads and tails.
 cCutT :: Comp
 cCutT = DoA "b" (scT "call" Vunit "_" Tunit
           (DoA "y" (opT "choose" Vunit Tbool) (Tbool) $
@@ -83,7 +89,7 @@ cCutT = DoA "b" (scT "call" Vunit "_" Tunit
        If (Var "b" 0) (Return (Vstr "heads")) (Return (Vstr "tails"))
 
 
--- Typed cut effect example
+-- | Typed cut effect typechecking example
 tCutGam = Map.fromList([
   ("tCutA", Tbool)])
 tCutSig = Map.fromList([

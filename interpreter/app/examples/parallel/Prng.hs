@@ -10,8 +10,12 @@ import System.Random
 ----------------------------------------------------------
 -- PRNG example
 
--- PRNG handler
+-- | PRNG handler
 -- Picks a random number
+-- Works in parallel computations by splitting the keys
+-- Works in sequential computations by threading the keys through
+-- sampleUniform returns a random number
+-- for runs a computation for each element in a list and splits the keys
 hPRNG :: Handler
 hPRNG = Handler
   "hPRNG" ["sampleUniform"] [] ["for"]
@@ -44,15 +48,20 @@ hPRNG = Handler
   )
 
 
+-- | PRNG example computation
+-- Picks 3 random numbers in parallel
 cPRNG :: Comp
 cPRNG = For "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
 
+-- | PRNG example computation
+-- Picks 3 random numbers sequentially
 cPRNGseq :: Comp
 cPRNGseq =  Do "1" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Do "2" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Do "3" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
 
+-- | Pure handler that also threads prng keys through
 -- Needs new parallel handler to thread keys through correctly
 hPureK :: Handler
 hPureK = Parallel
@@ -90,8 +99,11 @@ exPRNGseq = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 
 ----------------------------------------------------------------------------------------------------------------------------
 
--- PRNG example as scoped effect
-
+-- | PRNG handler as scoped effect
+-- Picks a random number
+-- Works in parallel computations by splitting the keys
+-- Works in sequential computations by threading the keys through
+-- sampleUniform returns a random number
 hPRNGSc :: Handler
 hPRNGSc = Handler
   "hPRNGSc" ["sampleUniform"] ["for"] []
@@ -122,15 +134,20 @@ hPRNGSc = Handler
         App (Var "f" 4) (Var "pk" 0)
   )
 
+-- | PRNG example computation as scoped effect
+-- Picks 3 random numbers in parallel
 cPRNGSc :: Comp
 cPRNGSc = Sc "for" (Vlist [Vunit, Vunit, Vunit]) ("y" :. Op "sampleUniform" (Vunit) ("y" :. Return (Var "y" 0))) ("y" :. Return (Var "y" 0))
 
+-- | PRNG example computation as scoped effect
+-- Picks 3 random numbers sequentially
 cPRNGseqSc :: Comp
 cPRNGseqSc =  Do "1" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Do "2" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Do "3" (Op "sampleUniform" Vunit ("y" :. Return (Var "y" 0))) $
             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
 
+-- | Pure handler that also threads prng keys through as scoped effect
 -- Needs new parallel handler to thread keys through correctly
 hPureKSc :: Handler
 hPureKSc = Handler
@@ -176,9 +193,11 @@ exPRNGseqSc = hPure # (Do "key" (Return (Vkey (mkStdGen 42))) $
 ---------------------------------------------------------------------------------------------------------------------------------------
 -- Typed Pseudo Random Number Generator Example
 
--- Typed prng handler
+-- | Typed prng handler
 -- Outputs pseudo random numbers
 -- Works in parallel computations by splitting the keys
+-- Works in sequential computations by threading the keys through
+-- sampleUniform returns a random number
 hPRNGT :: Handler
 hPRNGT = Handler
   "hPRNG" ["sampleUniform"] [] ["for"]
@@ -210,17 +229,20 @@ hPRNGT = Handler
         App (Var "f" 4) (Var "pk" 0)
   )
 
--- Typed parallel prng example computation
+-- | Typed parallel prng example computation
+-- Picks 3 random numbers in parallel
 cPRNGT :: Comp
 cPRNGT = ForA "for" (Vlist [Vunit, Vunit, Vunit]) (DotA "y" Tunit (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0))))) (DotA "z" Any (Return (Var "z" 0)))
 
--- Typed sequential prng example computation
+-- | Typed sequential prng example computation
+-- Picks 3 random numbers sequentially
 cPRNGseqT :: Comp
 cPRNGseqT = DoA "1" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
             DoA "2" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
             DoA "3" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
 
+-- | Typed pure handler that also threads prng keys through
 -- Typed pure parallel handler that also threads prng keys through
 hPureKT :: Handler
 hPureKT = Parallel
@@ -234,7 +256,7 @@ hPureKT = Parallel
         App (Var "f" 4) (Var "pk" 0)
   )
 
--- Typed parallel prng example
+-- | Typed parallel prng typechecking example
 tPRNGGam = Map.empty
 tPRNGSig = Map.fromList([
   ("sampleUniform", Lop "sampleUniform" Tunit (Tfunction Tkey (Nested Tint))),
@@ -247,9 +269,11 @@ tPRNG1 = checkFile tPRNGGam tPRNGSig tPRNGComp1 (Tlist Tint)
 tPRNGComp2 = HandleA UNone hPureT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureT (HandleA (UFunction UNone) hPRNGT cPRNGseqT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
 tPRNG2 = checkFile tPRNGGam tPRNGSig tPRNGComp2 (Tlist Tint)
 
--- Typed prng handler as scoped effect
+-- | Typed prng handler as scoped effect
 -- Outputs pseudo random numbers
 -- Works in parallel computations by splitting the keys
+-- Works in sequential computations by threading the keys through
+-- sampleUniform returns a random number
 hPRNGScT :: Handler
 hPRNGScT = Handler
   "hPRNGSc" ["sampleUniform"] ["for"] []
@@ -280,17 +304,18 @@ hPRNGScT = Handler
         App (Var "f" 4) (Var "pk" 0)
   )
 
--- Typed parallel prng as scoped effect example
+-- | Typed parallel prng as scoped effect example
 cPRNGScT :: Comp
 cPRNGScT = ScA "for" (Vlist [Vunit, Vunit, Vunit]) (DotA "y" Tint (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0))))) (DotA "z" Any (Return (Var "z" 0)))
 
--- Typed sequential prng as scoped effect example
+-- | Typed sequential prng as scoped effect example
 cPRNGseqScT :: Comp
 cPRNGseqScT =  DoA "1" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
             DoA "2" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
             DoA "3" (OpA "sampleUniform" (Vunit) (DotA "y" Tint (Return (Var "y" 0)))) Tint $
             Return (Vlist [Var "1" 2, Var "2" 1, Var "3" 0])
 
+-- | Typed pure handler that also threads prng keys through as scoped effect
 -- Typed pure handler as scoped effect that also threads prng keys through
 hPureKScT :: Handler
 hPureKScT = Handler
@@ -311,7 +336,7 @@ hPureKScT = Handler
         App (Var "f" 4) (Var "pk" 0)
   )
 
--- Typed parallel prng as scoped effect example
+-- | Typed parallel prng as scoped effect typechecking example
 tPRNGGamSc = Map.empty
 tPRNGSigSc = Map.fromList([
   ("sampleUniform", Lop "sampleUniform" Tunit (Tfunction Tkey (Nested Tint))),
@@ -320,6 +345,6 @@ tPRNGSigSc = Map.fromList([
 tPRNGComp3 = HandleA UNone hPureScT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureKScT (HandleA (UFunction UNone) hPRNGScT cPRNGScT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
 tPRNG3 = checkFile tPRNGGamSc tPRNGSigSc tPRNGComp3 (Tlist Tint)
 
--- Typed sequential prng as scoped effect example
+-- | Typed sequential prng as scoped effect typechecking example
 tPRNGComp4 = HandleA UNone hPureT (DoA "key" (Return (Vkey (mkStdGen 42))) Tkey $ DoA "ex" (HandleA UNone hPureScT (HandleA (UFunction UNone) hPRNGScT cPRNGseqScT)) (Tfunction Tkey Any) $ App (Var "ex" 0) (Var "key" 1))
 tPRNG4 = checkFile tPRNGGamSc tPRNGSigSc tPRNGComp4 (Tlist Tint)

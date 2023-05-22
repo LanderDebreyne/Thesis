@@ -11,7 +11,10 @@ import Typing
 ----------------------------------------------------------------
 -- Inc Effect, incrementing counter state (Untyped)
 
--- Inc effect handler
+-- | Inc effect handler
+-- Increments and passes counter state
+-- inc increments the counter by 1
+-- for sums the counters of a list of computations and runs the continuation with the sum 
 hInc :: Handler
 hInc = Handler
   "hInc" ["inc"] [] []
@@ -49,16 +52,18 @@ hInc = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
--- Applying initial counter value
+-- | Applying initial counter value
 runInc :: Int -> Comp -> Comp
 runInc s c = Do "c'" (hInc # c) $ App (Var "c'" 0) (Vint s)
 
--- Example program
+-- | Example program
+-- cInc increments the counter by 1
 cInc :: Comp
 cInc = Op "choose" Vunit ("b" :.
         If (Var "b" 0) (op "inc" Vunit) (op "inc" Vunit))
 
--- Example program using for 
+-- | Example program using for
+-- increments the counter by 1 for each element in the list 
 cIncFor :: Comp
 cIncFor = For "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit) ("z" :. Return (Var "z" 0))
 
@@ -68,7 +73,8 @@ cIncFor = For "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) ("y" :. op "inc" Vunit)
 -- Return (Vlist [Vpair (Vint 0,Vint 1),Vpair (Vint 0,Vint 1)])
 -- Return (Vpair (Vlist [Vint 0,Vint 1],Vint 2))
 
--- Example program that uses forwarding in the evaluation
+-- | Example program that uses forwarding in the evaluation
+-- forwards hInc through cFwd to first handle the once operation by hOnce
 cFwd :: Comp
 cFwd = Sc "once" Vunit ("_" :. cInc) ("x" :. Op "inc" Vunit ("y" :. 
         Do "z" (Binop Add (Var "x" 1) (Var "y" 0)) $ Return (Var "z" 0)))
@@ -81,8 +87,10 @@ cFwd = Sc "once" Vunit ("_" :. cInc) ("x" :. Op "inc" Vunit ("y" :.
 -- Inc Effect, incrementing counter state (Untyped)
 
 
--- Inc effect handler
+-- | Inc effect handler
 -- Increments and passes counter state
+-- inc increments the counter by 1
+-- for sums the counters of a list of computations and runs the continuation with the sum
 hIncT :: Handler
 hIncT = Handler
   "hInc" ["inc"] [] []
@@ -106,16 +114,17 @@ hIncT = Handler
                  App (Var "k'" 0) (Var "s'" 1)
     )))
 
--- Apply initial value
+-- | Apply initial value
 runIncT :: Int -> Comp -> ValueType -> Comp
 runIncT s c vt = DoA "c'" (HandleA (UFunction (UFirst UNone)) hIncT c) (Tfunction Tint vt) $ App (Var "c'" 0) (Vint s)
 
--- Typed inc example computation
+-- | Typed inc example computation
+-- increments the counter by 1
 cIncT :: Comp
 cIncT = OpA "choose" Vunit (DotA "b" Tbool
         (If (Var "b" 0) (opT "inc" Vunit (TVar "tIncB")) (opT "inc" Vunit (TVar "tIncB"))))
 
--- First inc example
+-- | First inc typechecking example
 tInc1Gam = Map.fromList([
   ("tIncA", Tint), 
   ("tIncB", (Tlist Tint)),
@@ -126,7 +135,7 @@ tInc1Sig = Map.fromList([
 tInc1Comp = (HandleA (UList UNone) (hOnceT) (runIncT 0 cIncT (Tpair (Tlist Tint) Tint)))
 tInc1 = checkFile tInc1Gam tInc1Sig tInc1Comp (Tlist (Tpair Tint Tint))
 
--- Second inc example
+-- | Second inc typechecking example
 tInc2Gam = Map.fromList([
   ("tIncA", Tlist Tint), 
   ("tIncB", Tint),
@@ -134,7 +143,7 @@ tInc2Gam = Map.fromList([
 tInc2Comp = runIncT 0 (HandleA (UList UNone) (hOnceT) (cIncT)) (Tpair (Tlist Tint) Tint)
 tInc2 = checkFile tInc2Gam tInc1Sig tInc2Comp (Tpair (Tlist Tint) Tint)
 
--- Third inc example
+-- | Third inc typechecking example
 tInc3Sig = Map.fromList([
   ("inc", Lop "inc" Tunit Tunit), 
   ("choose", Lop "choose" Tunit Tbool),
@@ -142,15 +151,14 @@ tInc3Sig = Map.fromList([
 tInc3Comp = HandleA (UList UNone) (hOnceT) (runIncT 0 cFwdT (Tpair (Tlist Tint) Tint))
 tInc3 = checkFile tInc1Gam tInc3Sig tInc3Comp (Tlist (Tpair Tint Tint))
 
--- Typed inc example computation using parallel effect
+-- | Typed inc example computation using parallel effect
 cIncForT :: Comp
 cIncForT = ForA "for" (Vlist [Vunit, Vunit, Vunit, Vunit]) (DotA "y" Tunit (opT "inc" Vunit (TVar "tIncB"))) (DotA "z" Any (Return (Var "z" 0)))
 
--- Typed example of inc that uses forwarding
+-- | Typed example of inc that uses forwarding
 cFwdT :: Comp
 cFwdT = ScA "once" Vunit (DotA "_" Tunit cIncT) (DotA "x" Tint (OpA "inc" Vunit (DotA "y" Tint
         (DoA "z" (Binop Add (Var "x" 1) (Var "y" 0)) Any $ Return (Var "z" 0)))))
-
 
 exInc1 = hOnce # runInc 0 cInc
 exInc2 = runInc 0 (hOnce # cInc)

@@ -22,10 +22,9 @@ import qualified Data.Map as Map
 
 data Tdata = Tdata { name :: String, testC :: Comp, result :: Comp } deriving (Show)
 
--- | Unit Test cases for results for all examples using different evaluation strategies
+-- Unit Test cases for results for all examples using different evaluation strategies
 
 -- | Unit test generator for a given test and result
-
 testCaseGen :: String -> Comp -> Comp -> [Test]
 testCaseGen name test result = [TestCase (assertEqual (name ++ " NVL") (last (eval test)) result)
     , TestCase (assertEqual (name ++ " VL") (snd $ last (eval' test)) result)
@@ -33,7 +32,6 @@ testCaseGen name test result = [TestCase (assertEqual (name ++ " NVL") (last (ev
 
 
 -- | Unit test generator for typechecking a computation
-
 typeCheckGen :: String -> Gamma -> Sigma -> Comp -> ComputationType -> Int -> [Test]
 typeCheckGen name gam sig test result n = x : y
     where x = TestCase (assertEqual (name ++ ".type_check."++ (show n)) (typeCheckC gam sig test result False) True)
@@ -43,7 +41,6 @@ typeCheckGen name gam sig test result n = x : y
 
 
 -- | Reduction generator for given list of Tests
-
 reductionGen :: [Tdata] -> IO ()
 reductionGen [] = return ()
 reductionGen ((Tdata name comp _):xs) = do
@@ -51,9 +48,7 @@ reductionGen ((Tdata name comp _):xs) = do
     writeFile ("reductions/" ++ name) (prettyprint steps 1)
     reductionGen xs
 
--- | All test
-
-runAllTests = runTestTT $ TestList (typeCheckTests ++ allTests)
+runAllTests = runTestTT $ TestList (typeCheckTests ++ allTests) -- ^ All tests 
 runUnitTests = runTestTT $ TestList allTests
 runTypeTests = runTestTT $ TestList typeCheckTests
 runFastTests = runTestTT $ TestList fastTests
@@ -64,6 +59,7 @@ slowTests = testsFromData slowTestsData
 
 typeCheckTests = incTypeTests ++ onceTypeTests ++ cutTypeTests ++ catchTypeTests ++ stateTypeTests ++ depthTypeTests ++ parserTypeTests ++ readerTypeTests ++ accumTypeTests ++ weakTypeTests ++ prngTypeTests ++ ambTypeTests ++ depthAmbTypeTests
 
+-- | List of tests from list of test data
 testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
 
