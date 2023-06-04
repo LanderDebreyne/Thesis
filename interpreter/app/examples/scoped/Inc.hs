@@ -14,7 +14,7 @@ import Typing
 -- | Inc effect handler
 -- Increments and passes counter state
 -- inc increments the counter by 1
--- for sums the counters of a list of computations and runs the continuation with the sum 
+-- the for operation sums the counters of a list of computations and runs the continuation with the sum 
 hInc :: Handler
 hInc = Handler
   "hInc" ["inc"] [] []
@@ -163,3 +163,45 @@ cFwdT = ScA "once" Vunit (DotA "_" Tunit cIncT) (DotA "x" Tint (OpA "inc" Vunit 
 exInc1 = hOnce # runInc 0 cInc
 exInc2 = runInc 0 (hOnce # cInc)
 exInc3 = hOnce # runInc 0 cFwd
+
+
+
+
+----------------------------------------------------------------
+
+-- | exCoin example for background Section 2.2.4 of the paper
+exCoin = Do "lc1" (App checkCoin (Vpair (Vlist [], Vint 0))) $
+         Do "lc2" (App checkCoin (Var "lc1" 0)) $
+         Do "lc3" (App checkCoin (Var "lc2" 0)) $
+         Do "lc4" (App checkCoin (Var "lc3" 0)) $
+         Do "l4" (Unop Fst (Var "lc4" 0)) $
+         Do "c4" (Unop Snd (Var "lc4" 1)) $
+         Do "3h" (Binop Eq (Var "c6" 0) (Vint 3)) $
+          If (Var "3h" 0) 
+            (Return (Var "l3" 2))
+            (op "fail" Vunit)
+           
+
+checkCoin = Lam "lc" $ 
+            Do "l" (Unop Fst (Var "lc" 0)) $
+            Do "c" (Unop Snd (Var "lc" 1)) $
+            Do "b" (Binop Eq (Var "c" 0) (Vint 3)) $ 
+            If (Var "b" 0) 
+              (Return (Var "lc" 3)) 
+              (Do "c1" (App incHeads (Var "c" 1)) $
+              Do "t" (Binop Eq (Var "c" 2) (Var "c1" 0)) $
+              If (Var "t" 0) 
+                (Do "l'" (Binop Append (Vstr "T") (Var "l" 4))$
+                Return (Vpair (Var "l'" 0, Var "c1" 2))) 
+                (Do "l'" (Binop Append (Vstr "H") (Var "l" 4))$
+                Return (Vpair (Var "l'" 0, Var "c1" 2))))
+
+incHeads = Lam "c" $ 
+          Do "b" (Do "_" (op "inc" Vunit) $ op "choose" Vunit) $ 
+          If (Var "b" 0) 
+              (Do "c1" (Binop Add (Var "c" 1) (Vint 1)) $ 
+                Return (Var "c1" 0)) 
+              (Return (Var "c" 1))
+ 
+coinOnce = Do "r" (Sc "once" Vunit ("y" :. exProg) ("z" :. Return (Var "z" 0))) $
+            Return (Var "r" 0)
