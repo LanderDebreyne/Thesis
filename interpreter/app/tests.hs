@@ -17,6 +17,7 @@ import DepthWithAmb
 import Evaluation
 import Syntax
 import Typing
+import Coins
 import Test.HUnit
 import qualified Data.Map as Map
 
@@ -64,11 +65,11 @@ testsFromData :: [Tdata] -> [Test]
 testsFromData = concat . map (\(Tdata name test result) -> testCaseGen name test result)
 
 allTestsData = fastTestsData ++ slowTestsData
-fastTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
+fastTestsData = incTestsData ++ [onceTestsData] ++ coinTestsData ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ depthAmbTestsData
 slowTestsData = parserTestsData ++ ambTestsData  
 
 -- Parser tests do not work as reduction because parser uses haskell recursion and tries to print an infinite list
-reductionTestsData = incTestsData ++ [onceTestsData] ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData ++ depthAmbTestsData 
+reductionTestsData = incTestsData ++ [onceTestsData] ++ coinTestsData ++ [cutTestsData] ++ catchTestsData ++ [stateTestsData] ++ depthTestsData ++ [readerTestsData] ++ accumTestsData ++ weakExceptionTestsData ++ prngTestsData ++ ambTestsData ++ depthAmbTestsData 
 
 ---------------------------------------------------------
 -- | Inc tests
@@ -97,6 +98,22 @@ onceTests = testCaseGen (name onceTestsData) (testC onceTestsData) (result onceT
 
 -- Once typechecking
 onceTypeTests = typeCheckGen "once" tOnceGam tOnceSig tOnceComp (Tlist Tstr) 1
+
+---------------------------------------------------------
+-- | Coin tests
+runCoinTests = runTestTT $ TestList coinTests
+coinTestData1 = Tdata "coinTrue" coinTrue (Return (Vstr "The coin flip result is heads"))
+coinTestData2 = Tdata "coinBoth" coinBoth (Return (Vlist [Vstr "The coin flip result is heads", Vstr "The coin flip result is tails"])) 
+coinTestData3 = Tdata "local" localState (Return (Vlist [Vpair (Vlist [Vstr "H", Vstr "H", Vstr "H"], Vint 3), 
+                                                        Vpair (Vlist [Vstr "H", Vstr "T", Vstr "H", Vstr "H"], Vint 4),
+                                                        Vpair (Vlist [Vstr "H", Vstr "H", Vstr "T", Vstr "H"], Vint 4),
+                                                        Vpair (Vlist [Vstr "H", Vstr "H", Vstr "H", Vstr "T"], Vint 4)]))
+coinTestData4 = Tdata "global" globalState (Return (Vpair (Vlist [Vlist [Vstr "H", Vstr "H", Vstr "H"],
+                                                        Vlist [Vstr "H", Vstr "T", Vstr "H", Vstr "H"],
+                                                        Vlist [Vstr "H", Vstr "H", Vstr "T", Vstr "H"],
+                                                        Vlist [Vstr "H", Vstr "H", Vstr "H", Vstr "T"]], Vint 15)))
+coinTestsData = [coinTestData1, coinTestData2, coinTestData3, coinTestData4] 
+coinTests = concat $ map (\(Tdata name test result) -> testCaseGen name test result) coinTestsData
 
 ---------------------------------------------------------
 -- | Cut tests
