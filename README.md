@@ -67,6 +67,12 @@ Return the first result of a heads or tails.
 exOnce
 ```
 
+#### Coins examples
+Coins examples from Section 2.2 in the paper.
+```
+coinTrue, coinBoth, localState, globalState
+```
+
 ##### Cut effect
 Nondeterminism with cut.
 
